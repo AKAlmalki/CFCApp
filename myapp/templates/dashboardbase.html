@@ -9,8 +9,9 @@
     <title>{% block title %}لوحة التحكم{% endblock %}</title>
     {% comment %} Bootstrp CSS {% endcomment %} {% comment %} {% load bootstrap5
     %} {% endcomment %} {% comment %} {% bootstrap_css %} {% endcomment %}
-    <link rel="stylesheet" href="/static/css/bootstrap.rtl.css" />
-    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/css/bootstrap.rtl.min.css'%}" />
+    <script src="{% static '/js/bootstrap.bundle.min.js'%}"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;500;700;800&display=swap" rel="stylesheet">
@@ -25,7 +26,7 @@
       <div class="container-fluid">
         {% comment %} <a href="/dashboard" class="navbar-brand">جمعية اصدقاء المجتمع</a> {% endcomment %}
         <a class="navbar-brand" href="#">
-          <img src="/static/imgs/logo-c-1-white.png" height="60" alt="Community Friends Charity Logo"
+          <img src="{% static '/imgs/logo-c-1-white.png' %}" height="60" alt="Community Friends Charity Logo"
             loading="lazy" />
         </a> 
         <button
