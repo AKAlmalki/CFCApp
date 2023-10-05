@@ -1,2 +1,0 @@
-# CFCApp
-Community Friends Charity
