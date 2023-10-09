@@ -29,7 +29,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'port433.link', 'www.port433.link']
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['port433.link', 'www.port433.link', 'https://port433.link', '34.89.34.177', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -60,7 +61,9 @@ ROOT_URLCONF = 'cfc_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,8 +135,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = '/static/'
-import os
+STATIC_URL = 'static/'
+# STATICFILE_DIRS = [
+#         os.path.join(BASE_DIR, 'web/static'),
+# ]    
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Default primary key field type
