@@ -1,39 +1,97 @@
 {% extends "dashboardbase.html" %} {% block title %} الصفحة الرئيسية {% endblock %}
 {% block content %}
 <div class="container">
-  <div class="p-5 my-4 bg-light rounded-3">
-      <h1>صفحة التقارير</h1>
-      <p class="lead">In today's world internet is the most popular way of connecting with the people. At <a href="https://www.tutorialrepublic.com" class="text-success" target="_blank">tutorialrepublic.com</a> you will learn the essential web development technologies along with real life practice examples, so that you can create your own website to connect with the people around the world.</p>
-      <p><a href="https://www.tutorialrepublic.com" target="_blank" class="btn btn-success btn-lg">Get started today</a></p>
-  </div>
   
-  {% comment %} <p>الصفحة الرئيسية للاحصائيات</p>
-  <form action="/name/" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <label for="name">Your name: </label>
-    <input id="name" type="text" name="name" value="{{ current_name }}">
-    <input type="submit" value="OK">
-  </form> {% endcomment %}
-  <div>
-    <div></div>
-    <div></div>
-    <div></div>
+  <div class="mt-5">
+    {% comment %} action="/supporters/individuals/new" method="POST" {% endcomment %}
+    <h2 class="pb-3">بناء التقارير</h2>
+    <form action="/dashboard/reports" method="POST">
+      {% csrf_token %}
+      <div class="form-group pb-3 row">
+        <div class="col-8">
+          <label for="beneficiary_name" class="form-label">اسم المستفيد</label>
+          <input type="search" class="form-control" id="beneficiary_name" placeholder="" name="beneficiary_name">
+        </div>
+        <div class="col">
+          <label for="national_id" class="form-label">رقم الهوية</label>
+          <input type="text" class="form-control" id="national_id" placeholder="XXX-XXX-XXX-XXXX" name="national_id" min=0 >
+        </div>
+      </div>
+      <div class="form-group pb-3 row">
+        <div class="col">
+          <label for="category" class="form-label">نوع الدعم</label>
+          <select id="category" class="form-select" name="category">
+            <option selected>اختار...</option>
+            <option>أسرة محتاجة</option>
+            <option>أرملة</option>
+          </select>
+        </div>
+        <div class="col">
+          <label for="marital_status" class="form-label">الحالة الاجتماعية</label>
+          <select id="marital_status" class="form-select" name="marital_status"> 
+            <option selected>اختار...</option>
+            <option>متزوج-متزوجة</option>
+            <option>مطلق-مطلقة</option>
+            <option>أرمل-أرملة</option>
+          </select>
+        </div>
+        <div class="col">
+          <label for="is_qualified" class="form-label">استحقاقية الدعم</label>
+          <select id="category" class="form-select" name="is_qualified">
+            <option selected>اختار...</option>
+            <option>مؤهل</option>
+            <option>غير مؤهل</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary px-5 py-2">ابحث</button>
+      <a href="/dashboard/reports" class="btn btn-secondary px-3 py-2">البدء من جديد</a>
+    </form>
   </div>
+
+  {% if beneficiaries %}
+  <div class="row mt-4">
+    <h3>النتائج</h3>
+    <hr />
+    <ul class="">
+      {% for beneficiary in beneficiaries %}
+        <li class="col">
+          <p>-الاسم: {{ beneficiary.name }}</p>
+          <p>-الجنسية: {{ beneficiary.nationality }}</p>
+          <p>-تاريخ الميلاد: {{ beneficiary.date_of_birth }}</p>
+          <p>-رقم الجوال: {{ beneficiary.phone_number }}</p>
+          {% if beneficiary.is_qualified == 0 %}
+            <p>-هل هو مؤهل؟: لا</p>
+          {% else %}
+            <p>-هل هو مؤهل؟: نعم</p>
+          {% endif %}
+          
+          <p>-الحالة الاجتماعية: {{ beneficiary.marital_status }}</p>
+          <p>-التصنيف: {{ beneficiary.category }}</p>
+          <p>-رقم الهوية: {{ beneficiary.national_id }}</p>
+        </li>
+        <hr />
+      {% endfor %}
+    </ul>
+  </div>
+  {% else %}
+  {% endif %}
+
   <hr>
   <footer>
-      <div class="row">
-          <div class="col-md-6">
-              <p>Copyright &copy; 2021 Tutorial Republic</p>
-          </div>
-          <div class="col-md-6 text-md-end">
-              <a href="#" class="text-dark">Terms of Use</a> 
-              <span class="text-muted mx-2">|</span> 
-              <a href="#" class="text-dark">Privacy Policy</a>
-          </div>
-      </div>
-  </footer>
+    <div class="row">
+        <div class="col-md-6">
+            <p>Copyright &copy; 2021 جميع الحقوق محفوظة لدى جمعية أصدقاء المجتمع</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <a href="#" class="text-dark">شروط الأستخدام</a> 
+            <span class="text-muted mx-2">|</span> 
+            <a href="#" class="text-dark">سياسة الخصوصية</a>
+        </div>
+    </div>
+</footer>
 </div>
 
 
 {% endblock %}
+{% comment %} <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> {% endcomment %}

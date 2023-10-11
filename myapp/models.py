@@ -36,6 +36,7 @@ class beneficiary(models.Model):
     file_no = models.CharField(max_length=500, null=True)
     name = models.CharField(max_length=55)
     nationality = models.CharField(max_length=55)
+    #gender
     date_of_birth = models.DateTimeField()
     phone_number = models.CharField(max_length=20)
     national_id = models.CharField(max_length=20)
@@ -47,6 +48,9 @@ class beneficiary(models.Model):
     is_benefiting = models.BooleanField(default=False)
     inquiries = models.CharField(max_length=500)
     justifications = models.CharField(max_length=500)
+
+    def __str__(self):
+        return "name: " + self.name + ", national_id:" + self.national_id
 
 
 class orphan(models.Model):

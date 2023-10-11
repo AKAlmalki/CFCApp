@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse
 from django.http import HttpResponseRedirect
 from .models import TodoItem, beneficiary, supporter_operation, entity, individual, individual_supporter_operation, entity_supporter_operation
 from .forms import NameForm, BeneficiaryForm, SupporterIndividualForm, SupporterEntityForm
+from django.db.models import Q
 import datetime
 
 # Create your views here.
@@ -60,7 +61,46 @@ def test1(request):
 
 
 def dashboard_reports(request):
-    return render(request, "reports.html")
+
+    if request.method == "POST":
+
+        beneficiary_arr = beneficiary.objects.all()
+
+        beneficiary_name = request.POST.get("beneficiary_name")
+        national_id = request.POST.get("national_id")
+        category = request.POST.get("category")
+        marital_status = request.POST.get("marital_status")
+        is_qualified = request.POST.get("is_qualified")
+
+        if beneficiary_name != "" and beneficiary_name is not None:
+            beneficiary_arr = beneficiary_arr.filter(name__icontains=beneficiary_name)
+
+        if national_id != "" and national_id is not None:
+            beneficiary_arr = beneficiary_arr.filter(national_id=national_id)
+
+        if category != "اختار..." and national_id is not None:
+            beneficiary_arr = beneficiary_arr.filter(category=category)
+
+        if marital_status != "اختار..." and national_id is not None:
+            beneficiary_arr = beneficiary_arr.filter(marital_status=marital_status)
+
+        if is_qualified != "اختار..." and national_id is not None:
+            if is_qualified == "مؤهل":
+                is_qualified = True
+            else:
+                is_qualified = False
+                
+            beneficiary_arr = beneficiary_arr.filter(is_qualified=is_qualified)
+
+
+        context = {
+            "beneficiaries": beneficiary_arr
+        }
+
+        return render(request, "reports.html", context)
+
+    else:
+        return render(request, "reports.html")
 
 
 def beneficiary_indiv(request):
