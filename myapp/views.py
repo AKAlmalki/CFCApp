@@ -1,8 +1,10 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect
 from .models import TodoItem, beneficiary, supporter_operation, entity, individual, individual_supporter_operation, entity_supporter_operation
-from .forms import NameForm, BeneficiaryForm, SupporterIndividualForm, SupporterEntityForm
+from .forms import NameForm, BeneficiaryForm, SupporterIndividualForm, SupporterEntityForm, RegisterForm
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, logout, authenticate
 import datetime
 
 # Create your views here.
@@ -10,6 +12,21 @@ import datetime
 
 def home(request):
     return render(request, "home.html")
+
+
+def sign_up(request):
+    if request.method == 'POST':
+        print()
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('/home')
+    else:
+        print()
+        form = RegisterForm()
+
+    return render(request, "registration/sign_up.html", {"form": form})
 
 
 def todos(request):
@@ -39,6 +56,7 @@ def get_name(request):
     return render(request, "home.html", {"form": form})
 
 
+@login_required(login_url="/login")
 def dashboard(request):
     # insights for the dashboard
     beneficiaries_num = beneficiary.objects.count()
@@ -48,6 +66,7 @@ def dashboard(request):
     return render(request, "dashboard.html", {"beneficiaries_num": beneficiaries_num, "supporter_operations_num": supporter_operations_num, "entities_num": entities_num})
 
 
+@login_required(login_url="/login")
 def dashboard_requests(request):
     beneficiary_obj = beneficiary.objects.all()
     entity_obj = entity.objects.all()
@@ -60,6 +79,7 @@ def test1(request):
     return render(request, "index.html")
 
 
+@login_required(login_url="/login")
 def dashboard_reports(request):
 
     if request.method == "POST":
@@ -73,7 +93,8 @@ def dashboard_reports(request):
         is_qualified = request.POST.get("is_qualified")
 
         if beneficiary_name != "" and beneficiary_name is not None:
-            beneficiary_arr = beneficiary_arr.filter(name__icontains=beneficiary_name)
+            beneficiary_arr = beneficiary_arr.filter(
+                name__icontains=beneficiary_name)
 
         if national_id != "" and national_id is not None:
             beneficiary_arr = beneficiary_arr.filter(national_id=national_id)
@@ -82,16 +103,16 @@ def dashboard_reports(request):
             beneficiary_arr = beneficiary_arr.filter(category=category)
 
         if marital_status != "اختار..." and national_id is not None:
-            beneficiary_arr = beneficiary_arr.filter(marital_status=marital_status)
+            beneficiary_arr = beneficiary_arr.filter(
+                marital_status=marital_status)
 
         if is_qualified != "اختار..." and national_id is not None:
             if is_qualified == "مؤهل":
                 is_qualified = True
             else:
                 is_qualified = False
-                
-            beneficiary_arr = beneficiary_arr.filter(is_qualified=is_qualified)
 
+            beneficiary_arr = beneficiary_arr.filter(is_qualified=is_qualified)
 
         context = {
             "beneficiaries": beneficiary_arr

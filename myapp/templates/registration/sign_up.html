@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% block title %}Sign Up{% endblock %} 
+{% block content %}
+<div class="container mt-5 mb-4 p-5 my-4 bg-light rounded-3 ">
+  <h2 class="mb-4">تسجيل جديد</h2>
+  <form method="post">
+    {% csrf_token %}
+    {% comment %} {{form}} {% endcomment %}
+    <div class="col mb-3">
+      <label for="id_username" class="form-label"
+        >اسم المستخدم:</label
+      >
+      <input type="text" name="username" class="form-control" autofocus required id="id_username">
+    </div>
+    <div class="col mb-3">
+      <label for="id_email" class="form-label"
+        >البريد الالكتروني:</label
+      >
+      <input type="email" name="email" class="form-control" maxlength="320" required id="id_email">
+    </div>
+    <div class="col mb-3">
+      <label for="id_password1" class="form-label"
+        >كلمة المرور:</label
+      >
+      <input type="password" name="password1" class="form-control" required id="id_password1">
+    </div>
+    <div class="col mb-3">
+      <label for="id_password2" class="form-label"
+        >كلمة المرور:</label
+      >
+      <input type="password" name="password2" class="form-control mb-3" required id="id_password2">
+    </div>
+    <p>لديك حساب بالفعل؟ سجل دخولك من <a href="/login">هنا</a>!</p>
+    <button type="submit" class="btn btn-success">تسجيل</button>
+  </form>
+</div>
+{% endblock %}

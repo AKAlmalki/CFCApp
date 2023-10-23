@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% load static %} {% block title %} Home Page {% endblock %} {% block content %}
 <div class="container">
   <div class="p-5 my-4 bg-light rounded-3">
-      <h1 class="mb-3">الصندوق الرعوي للأيتام لحياة كريمة</h1>
+      <h1 class="mb-3">الصندوق التنموي للأيتام لحياة كريمة</h1>
       <p class="lead">استثمر معنا لأخرتك وشارك بتأمين حياة أحد الأسر   المحتاجة أو الارامل <a href="https://www.tutorialrepublic.com" class="text-success" target="_blank">من هنا</a> ابدا بملئ طلب كفالة أو دعم مادي او غير عيني (أثاث أدوات مكتبية) للأيتام والمحتاجين</p>
       <div class="d-flex flex-row mb-3 column-gap-3">
         <p><a href="/beneficiaries/individuals/new" class="btn btn-success btn-lg">طلب مستفيد</a></p>
@@ -50,18 +50,5 @@
     <input id="name" type="text" name="name" value="{{ current_name }}">
     <input type="submit" value="OK">
   </form> {% endcomment %}
-  <hr>
-  <footer>
-      <div class="row">
-          <div class="col-md-6">
-              <p>Copyright &copy; 2021 جميع الحقوق محفوظة لدى جمعية أصدقاء المجتمع</p>
-          </div>
-          <div class="col-md-6 text-md-end">
-              <a href="#" class="text-dark">شروط الأستخدام</a> 
-              <span class="text-muted mx-2">|</span> 
-              <a href="#" class="text-dark">سياسة الخصوصية</a>
-          </div>
-      </div>
-  </footer>
 </div>
 {% endblock %}
