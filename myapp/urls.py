@@ -3,6 +3,11 @@ from . import views
 
 urlpatterns = [
     path(
+        "",
+        views.home_redirect,
+        name="index"
+    ),
+    path(
         "home/",
         views.home,
         name="home"
@@ -25,6 +30,16 @@ urlpatterns = [
     path(
         "index/",
         views.test1,
+        name="index"
+    ),
+    path(
+        "handle_test2",
+        views.handle_test2,
+        name="handle_test2"
+    ),
+    path(
+        "index2/",
+        views.test2,
         name="index"
     ),
     path(
@@ -56,5 +71,25 @@ urlpatterns = [
         "sign-up",
         views.sign_up,
         name="sign-up"
+    ),
+    path(
+        "login/",
+        views.signin,
+        name="login"
+    ),
+    path(
+        "wizard-form",
+        views.beneficiaryWizardView.as_view(views.FORMS),
+        name="wizard-form"
+    ),
+    path(
+        "wizard-form2",
+        views.individualtest,
+        name="individual"
+    ),
+    path(
+        "wizard-form3",
+        views.individual2test,
+        name="individual2test"
     )
 ]

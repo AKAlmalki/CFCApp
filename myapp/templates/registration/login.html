@@ -4,6 +4,14 @@
   <form method="post">
     {% csrf_token %}
     {% comment %} {{form}} {% endcomment %}
+    {% comment %} To display any messages in the page (such as error messages) {% endcomment %}
+    {% if messages %}
+      {% for message in messages %}
+        {% if message.tags == "error" %}
+          <div class="alert alert-danger" role="alert">{{message}}</div>
+        {% endif%}
+      {% endfor %}
+    {% endif %}
     <div class="col mb-4">
       <label for="id_username" class="form-label"
         >اسم المستخدم</label
@@ -17,7 +25,7 @@
       <input type="password" class="form-control" id="id_password" name="password" autocomplete="current-password" required/>
     </div>
     <p>ليس لديك حساب؟ سجل <a href="/sign-up">هنا</a>!</p>
-    <button type="submit" class="btn btn-success">Login</button>
+    <button type="submit" class="btn btn-success">تسجيل الدخول</button>
   </form>
 </div>
 {% endblock %}

@@ -3,30 +3,97 @@ from django.http import HttpResponseRedirect
 from .models import TodoItem, beneficiary, supporter_operation, entity, individual, individual_supporter_operation, entity_supporter_operation
 from .forms import NameForm, BeneficiaryForm, SupporterIndividualForm, SupporterEntityForm, RegisterForm
 from django.db.models import Q
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 import datetime
+from formtools.wizard.views import SessionWizardView
+from .forms import beneficiaryPersonalDetails, dependentPersonalDetails, beneficiaryIndividual2
 
 # Create your views here.
+
+FORMS = [("personalinfo", beneficiaryPersonalDetails),
+         ("individual", dependentPersonalDetails),
+         ("individual2", beneficiaryIndividual2)]
+
+TEMPLATES = {"personalinfo": "main/index.html",
+             "individual": "main/individual.html",
+             "individual2": "main/individual2.html"}
+
+
+def show_business_form(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step('0') or {}
+    return cleaned_data.get('is_business_guest')
+
+
+class beneficiaryWizardView(SessionWizardView):
+    # form_list = FORMS
+    # 1 == the second form; because the indexing start from zero
+    # condition_dict = {"1": show_business_form}
+
+    def get_template_names(self):
+        return [TEMPLATES[self.steps.current]]
+
+    def done(self, form_list, **kwargs):
+        print("hello world")
+        form_data = [form.cleaned_data for form in form_list]
+        print(form_data)
+        print(form_list, form_list.cleaned_data)
+        return HttpResponseRedirect("/home")
+    # context = {}
+    # return render(request, 'main/index.html', context)
+
+# Just for testing purposes
+
+
+def individual2test(request):
+    return render(request, 'main/individual2.html')
+
+
+def individualtest(request):
+    return render(request, 'main/individual.html')
 
 
 def home(request):
     return render(request, "home.html")
 
 
+def home_redirect(request):
+    return redirect("/home")
+
+
 def sign_up(request):
     if request.method == 'POST':
-        print()
+
         form = RegisterForm(request.POST)
         if form.is_valid():
+            # consider the case when the user already exists
+            # if User.objects.filter(username=form.cleaned_data.username).exists():
             user = form.save()
             login(request, user)
             return redirect('/home')
     else:
-        print()
         form = RegisterForm()
 
     return render(request, "registration/sign_up.html", {"form": form})
+
+
+def signin(request):
+
+    if request.method == 'POST':
+
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "تم تسجيل الدخول بنجاح")
+            return redirect("home")
+        else:
+            messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
+            return redirect("login")
+
+    return render(request, "registration/login.html")
 
 
 def todos(request):
@@ -77,6 +144,19 @@ def dashboard_requests(request):
 
 def test1(request):
     return render(request, "index.html")
+
+
+def test2(request):
+    return render(request, "main/index2.html")
+
+
+def handle_test2(request):
+
+    if request.method == "POST":
+        var1 = request.POST.get("var1")
+        print(var1)
+
+    return render(request, "main/index2.html")
 
 
 @login_required(login_url="/login")

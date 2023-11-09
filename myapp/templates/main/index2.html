@@ -1,0 +1,562 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/custom_form2.css' %}" />
+  <!-- Include jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  
+  <!-- Include jQuery Validation Plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+  {% comment %} <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+  <link
+  rel="stylesheet"
+  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+/>
+  <link
+  href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"
+  rel="stylesheet"
+  id="bootstrap-css"
+/> {% endcomment %}
+<style type="text/css">
+    #dependent_information,
+    #housing_income_need_information,
+    #attachments_information,
+    #submit_confirmation {
+      display: none;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-4 p-5 my-4 bg-light rounded-3 ">
+    
+    <div>
+        <h1>تقديم طلب دعم</h1>
+        <div id="multi-step-form-container">
+            <!-- Form Steps / Progress Bar -->
+            <ul class="form-stepper form-stepper-horizontal text-center mx-auto pl-0">
+                <!-- Step 1 -->
+                <li class="form-stepper-active text-center form-stepper-list" step="1">
+                    <a class="mx-2">
+                        <span class="form-stepper-circle">
+                            <span>1</span>
+                        </span>
+                        <div class="label">بيانات مقدم الطلب</div>
+                    </a>
+                </li>
+                <!-- Step 2 -->
+                <li class="form-stepper-unfinished text-center form-stepper-list" step="2">
+                    <a class="mx-2">
+                        <span class="form-stepper-circle text-muted">
+                            <span>2</span>
+                        </span>
+                        <div class="label text-muted">بيانات المرافقين</div>
+                    </a>
+                </li>
+                <!-- Step 3 -->
+                <li class="form-stepper-unfinished text-center form-stepper-list" step="3">
+                    <a class="mx-2">
+                        <span class="form-stepper-circle text-muted">
+                            <span>3</span>
+                        </span>
+                        <div class="label text-muted">بيانات السكن والدخل والاحتياج</div>
+                    </a>
+                </li>
+                <!-- Step 4 -->
+                <li class="form-stepper-unfinished text-center form-stepper-list" step="4">
+                    <a class="mx-2">
+                        <span class="form-stepper-circle text-muted">
+                            <span>4</span>
+                        </span>
+                        <div class="label text-muted">المرفقات</div>
+                    </a>
+                </li>
+                <!-- Step 5 -->
+                <li class="form-stepper-unfinished text-center form-stepper-list" step="5">
+                    <a class="mx-2">
+                        <span class="form-stepper-circle text-muted">
+                            <span>5</span>
+                        </span>
+                        <div class="label text-muted text-decoration-none">تقديم الطلب</div>
+                    </a>
+                </li>
+            </ul>
+            <!-- Step Wise Form Content -->
+            <form id="myform" name="myform" enctype="multipart/form-data" method="POST" action="/handle_test2" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <!-- Step 1 Content -->
+                <fieldset id="personal_information" class="form-step">
+                    <legend class="font-normal">بيانات مقدم الطلب</legend>
+                    <!-- Step 1 input fields -->
+                    <div class="mt-3">
+                        <div class="container mt-5 mb-4 p-5 my-4 bg-light rounded-3 ">
+                            <div class="container">
+                                {% comment %} Full Name and DOB {% endcomment %}
+                                <div class="row">
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_first_name" class="form-label">الاسم الأول</label>
+                                            
+                                        <input type="text" class="form-control form-control-lg" id="id_personalinfo_first_name" maxlength="55" required name="personalinfo_first_name">
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_second_name" class="form-label">الاسم الثاني</label>
+                                        <input type="text" class="form-control form-control-lg" id="id_personalinfo_second_name" maxlength="55" required name="personalinfo_second_name">
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_last_name" class="form-label">الاسم الاخير (اسم العائلة)</label>
+                                        <input type="text" class="form-control form-control-lg" id="id_personalinfo_last_name" maxlength="55" required name="personalinfo_last_name">
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_date_of_birth" class="form-label">تاريخ الميلاد</label>
+                                        <input type="date" class="form-control form-control-lg" id="id_personalinfo-date_of_birth" maxlength="55" required name="personalinfo_date_of_birth">
+                                    </div>
+                                </div>
+                        
+                                <hr>
+                                {% comment %} Nationality information and Gender {% endcomment %}
+                                <div class="row">
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_gender" class="form-label">الجنس</label>
+                                        <select name="personalinfo_gender" class="form-control form-control-lg" id="id_personalinfo_gender" required>
+                                            <option value selected>---------</option>
+                                            <option value="M">ذكر</option>
+                                            <option value="F">انثى</option>
+                                        </select>
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_national_id" class="form-label">رقم الهوية الوطنية \ الإقامة</label>
+                                        <input type="text" class="form-control form-control-lg" id="id_personalinfo_national_id" maxlength="20" name="personalinfo_national_id" required>
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_national_id_exp_date" class="form-label">تاريخ انتهاء الهوية \ الإقامة</label>
+                                        <input type="date" class="form-control form-control-lg" id="id_personalinfo_national_id_exp_date" name="personalinfo_national_id_exp_date" required>
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_nationality" class="form-label">الجنسية</label>
+                                        <input type="text" class="form-control form-control-lg" id="id_personalinfo_nationality" name="personalinfo_nationality" required>
+                                    </div>
+                                </div>
+                        
+                                <hr>
+                                {% comment %} age, category, marital status, and education level {% endcomment %}
+                                <div class="row">
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_category" class="form-label">التصنيف الرئيسي</label>
+                                        <select name="personalinfo_category" class="form-control form-control-lg" required id="id_personalinfo_category">
+                                            <option value selected>---------</option>
+                                            <option value="regular family">أسرة عادية</option>
+                                            <option value="orphan family">أرسلة أيتام</option>
+                                            <option value="widowed family">أسرة أرملة</option>
+                                            <option value="prisoners family">أسرة سجناء</option>
+                                            <option value="divorced family">أسرة مطلقة</option>
+                                            <option value="individual">فرد</option>
+                                        </select>
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_marital_status" class="form-label">الحالة الاجتماعية</label>
+                                        <select name="personalinfo_marital_status" class="form-control form-control-lg" required id="id_personalinfo_marital_status">
+                                            <option value selected>---------</option>
+                                            <option value="married">متزوج/ـة</option>
+                                            <option value="single">أعزب/ـة</option>
+                                            <option value="widower">أرمل/ـة</option>
+                                            <option value="divorced">مطلقة</option>
+                                        </select>
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_educational_level" class="form-label">المؤهل التعليمي</label>
+                                        <select name="personalinfo_educational_level" class="form-control form-control-lg" id="id_personalinfo_educational_level">
+                                            <option value="" selected>---------</option>
+                                            <option value="primary-1">أول ابتدائي</option>
+                                            <option value="primary-2">ثاني ابتدائي</option>
+                                            <option value="primary-3">ثالث ابتدائي</option>
+                                            <option value="primary-4">رابع ابتدائي</option>
+                                            <option value="primary-5">خامس ابتدائي</option>
+                                            <option value="primary-6">سادس ابتدائي</option>
+                                            <option value="middle-1">اول متوسط</option>
+                                            <option value="middle-2">ثاني متوسط</option>
+                                            <option value="middle-3">ثالث متوسط</option>
+                                            <option value="secondary-1">اول ثانوي</option>
+                                            <option value="secondary-2">ثاني ثانوي</option>
+                                            <option value="secondary-3">ثالث ثانوي</option>
+                                            <option value="university">جامعي</option>
+                                            <option value="none">لا يدرس</option>
+                                        </select>
+                                    </div>
+                                </div>
+                        
+                                <hr>
+                                {% comment %} the date of father's death, and where {% endcomment %}
+                                <div class="row">
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_date_of_death_of_father_or_husband" class="form-label">تاريخ وفاة الأب \ الزوج (عند اختيار أرمله)</label>
+                                        <input type="date" name="personalinfo_date_of_death_of_father_or_husband" class="form-control form-control-lg" required id="id_personalinfo_date_of_death_of_father_or_husband">
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_washing_place" class="form-label">المغسلة التي تم التجهيز فيها</label>
+                                        <input type="text" name="personalinfo_washing_place" maxlength="55" class="form-control form-control-lg" required id="id_personalinfo_washing_place">
+                                    </div>
+                                </div>
+                        
+                                <hr>
+                                {% comment %} health condition {% endcomment %}
+                                <div class="row">
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_health_status" class="form-label">الحالة الصحية</label>
+                                        <select name="personalinfo_health_status" class="form-control form-control-lg" required id="id_personalinfo_health_status">
+                                            <option value="" selected>---------</option>
+                                            <option value="good">جيدة</option>
+                                            <option value="not good">غير جيدة</option>
+                                        </select>
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_disease_type" class="form-label">نوع المرض (عند اختيار غير جيدة)</label>
+                                        <input type="text" name="personalinfo_disease_type" maxlength="100" class="form-control form-control-lg" required id="id_personalinfo_disease_type">
+                                    </div>
+                                </div>
+                        
+                                <hr>
+                                {% comment %} work condition, contact information {% endcomment %}
+                                <div class="row">
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_work_status" class="form-label">هل تعمل؟</label>
+                                        <select name="personalinfo_work_status" class="form-control form-control-lg" required id="id_personalinfo_work_status">
+                                            <option value="" selected>---------</option>
+                                            <option value="yes">نعم</option>
+                                            <option value="no">لا</option>
+                                        </select>
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_employer" class="form-label">جهة العمل (عند اختيار نعم)</label>
+                                        <input type="text" name="personalinfo_employer" maxlength="100" class="form-control form-control-lg" required id="id_personalinfo_employer">
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_phone_number" class="form-label">رقم التواصل</label>
+                                        <input type="tel" name="personalinfo_phone_number" class="form-control form-control-lg" required id="id_personalinfo_phone_number">
+                                    </div>
+                                    <div class="col mb-4 form-group">
+                                        <label for="personalinfo_email" class="form-label">البريد الالكتروني</label>
+                                        <input type="email" name="personalinfo_email" maxlength="254" class="form-control form-control-lg" id="id_personalinfo_email">
+                                    </div>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button class="button btn-navigate-form-step next" type="button" step_number="2">التالي</button>
+                    </div>
+                </fieldset>
+                <!-- Step 2 Content, default hidden on page load. -->
+                <fieldset id="dependent_information" class="form-step">
+                    <h2 class="font-normal">بيانات المرافقين</h2>
+                    <!-- Step 2 input fields -->
+                    <div class="mt-3">
+                        Step 2 input fields goes here..
+                    </div>
+                    <div class="mt-3">
+                        <button class="button btn-navigate-form-step previous" type="button" step_number="1">السابق</button>
+                        <button class="button btn-navigate-form-step next" type="button" step_number="3">التالي</button>
+                    </div>
+                </fieldset>
+                <!-- Step 3 Content, default hidden on page load. -->
+                <fieldset id="housing_income_need_information" class="form-step">
+                    <h2 class="font-normal">بيانات السكن والدخل والاحتياج</h2>
+                    <!-- Step 3 input fields -->
+                    <div class="mt-3">
+                        Step 3 input fields goes here..
+                    </div>
+                    <div class="mt-3">
+                        <button class="button btn-navigate-form-step previous" type="button" step_number="2">السابق</button>
+                        <button class="button btn-navigate-form-step next" type="button" step_number="4">التالي</button>
+                    </div>
+                </fieldset>
+                <!-- Step 4 Content, default hidden on page load. -->
+                <fieldset id="attachments_information" class="form-step">
+                    <h2 class="font-normal">المرفقات</h2>
+                    <!-- Step 4 input fields -->
+                    <div class="mt-3">
+                        Step 4 input fields goes here..
+                    </div>
+                    <div class="mt-3">
+                        <button class="button btn-navigate-form-step previous" type="button" step_number="3">السابق</button>
+                        <button class="button btn-navigate-form-step next" type="button" step_number="5">التالي</button>
+                    </div>
+                </fieldset>
+                <!-- Step 4 Content, default hidden on page load. -->
+                <fieldset id="submit_confirmation" class="form-step">
+                    <h2 class="font-normal">تقديم الطلب</h2>
+                    <!-- Step 5 input fields -->
+                    <div class="mt-3">
+                        Step 5 input fields goes here..
+                    </div>
+                    <div class="mt-3">
+                        <button class="button btn-navigate-form-step previous" type="button" step_number="4">السابق</button>
+                        <button class="button submit-btn next" type="submit">تقديم الطلب</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $.validator.addMethod(
+          "nameRegex",
+          function (value, element) {
+            return this.optional(element) || /^[a-zA-Z0-9]*$/i.test(value);
+          },
+          "يحتوي الأسم على حروف فقط."
+        );
+
+        // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
+        function validateSAID(id) {
+          let type = id.substr(0, 1);
+          let sum = 0;
+          const _idLength = 10;
+          const _type1 = '1';
+          const _type2 = '2';
+          id = id.trim();
+          if (isNaN(parseInt(id)) || (id.length !== _idLength) || (type !== _type2 && type !== _type1)) {
+            return false;
+          }
+          for (let num = 0; num < 10; num++) {
+            const digit = Number(id[num]);
+            if (num % 2 === 0) {
+              const doubled = digit * 2;
+              const ZFOdd = `00${doubled}`.slice(-2);
+              sum += Number(ZFOdd[0]) + Number(ZFOdd[1]);
+            } else {
+              sum += digit;
+            }
+        
+          }
+          return (sum % 10 !== 0) ? false : true;
+        }
+
+        $.validator.addMethod(
+          "nationalidRegex",
+          function (value, element) {
+            console.log(value, validateSAID(value))
+            return this.optional(element) || validateSAID(value);
+          },
+          "أدخل رقم هوية/إقامة صحيح."
+        );
+
+        $.validator.addMethod(
+          "phonenumberRegex",
+          function (value, element) {
+            return this.optional(element) || /^(?:\+?\d{1,3}[-\s]?)?\d{10}$/i.test(value);
+          },
+          "الرجاء إدخال رقم جوال صحيح."
+        );
+
+        //^(+\d{1,3}\s)?(?\d{3})?[\s.-]\d{3}[\s.-]\d{4}$
+
+        // The below code will change the default validation messages
+        $.extend($.validator.messages, {
+          required: "هذا الحقل مطلوب.",
+          remote: "Please fix this field.",
+          email: "الرجاء إدخال بريد الكتروني صالح.",
+          url: "الرجاء إدخال رابط صحيح وفعال.",
+          date: "الرجاء إدخال تاريخ صالح.",
+          dateISO: "Please enter a valid date (ISO).",
+          number: "الرجاء إدخال رقم صحيح.",
+          digits: "الرجاء إدخال أرقام فقط.",
+          creditcard: "الرجاء إدخال رقم بطاقة ائتمان صالحة.",
+          equalTo: "رجاء أدخل نفس القيمة مره أخرى.",
+          accept: "Please enter a value with a valid extension.",
+          maxlength: $.validator.format("Please enter no more than {0} characters."),
+          minlength: $.validator.format("الرجاء إدخال على الأقل {0} حروف."),
+          rangelength: $.validator.format("Please enter a value between {0} and {1} characters long."),
+          range: $.validator.format("الرجاء إدخال رقم بين {0} و {1}."),
+          max: $.validator.format(" الرجاء إدخال قيمة أقل من أو تساوي {0}."),
+          min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}.")
+      });
+
+        $(".next").click(function () {
+          var form = $("#myform");
+          form.validate({
+            errorElement: "span",
+            errorClass: "help-block invalid-feedback",
+            highlight: function (element, errorClass, validClass) {
+              $(element).closest(".form-group").addClass("has-error");
+            },
+            unhighlight: function (element, errorClass, validClass) {
+              $(element).closest(".form-group").removeClass("has-error");
+            },
+            rules: {
+              personalinfo_first_name: {
+                required: true,
+                nameRegex: true,
+                minlength: 3,
+              },
+              personalinfo_second_name: {
+                required: true,
+                nameRegex: true,
+                minlength: 3,
+              },
+              personalinfo_last_name: {
+                required: true,
+                nameRegex: true,
+                minlength: 3,
+              },
+              personalinfo_date_of_birth: {
+                required: true,
+              },
+              password: {
+                required: true,
+              },
+              conf_password: {
+                required: true,
+                equalTo: "#password",
+              },
+              company: {
+                required: true,
+              },
+              personalinfo_national_id: {
+                required: true,
+                nationalidRegex: true,
+                
+              },
+              url: {
+                required: true,
+              },
+              name: {
+                required: true,
+                minlength: 3,
+              },
+            },
+            messages: {
+              username: {
+                required: "Username required",
+              },
+              password: {
+                required: "Password required",
+              },
+              conf_password: {
+                required: "Password required",
+                equalTo: "Password don't match",
+              },
+              name: {
+                required: "Name required",
+              },
+              email: {
+                required: "Email required",
+              },
+            },
+          });
+          if (form.valid() === true) {
+            if ($("#personal_information").is(":visible")) {
+              current_fs = $("#personal_information");
+              next_fs = $("#dependent_information");
+            } else if ($("#dependent_information").is(":visible")) {
+              current_fs = $("#dependent_information");
+              next_fs = $("#housing_income_need_information");
+            } else if ($("#housing_income_need_information").is(":visible")) {
+              current_fs = $("#housing_income_need_information");
+              next_fs = $("#attachments_information");
+            } else if ($("#attachments_information").is(":visible")) {
+              current_fs = $("#attachments_information");
+              next_fs = $("#submit_confirmation");
+            }
+
+            next_fs.show();
+            current_fs.hide();
+          }
+        });
+
+        $(".previous").click(function () {
+          if ($("#dependent_information").is(":visible")) {
+            current_fs = $("#dependent_information");
+            next_fs = $("#personal_information");
+          } else if ($("#housing_income_need_information").is(":visible")) {
+            current_fs = $("#housing_income_need_information");
+            next_fs = $("#dependent_information");
+          } else if ($("#attachments_information").is(":visible")) {
+            current_fs = $("#attachments_information");
+            next_fs = $("#housing_income_need_information");
+          } else if ($("#submit_confirmation").is(":visible")) {
+            current_fs = $("#submit_confirmation");
+            next_fs = $("#attachments_information");
+          }
+
+          next_fs.show();
+          current_fs.hide();
+        });
+
+        //@naresh action dynamic childs
+        var next_exp = 0;
+        $("#add-more1").click(function (e) {
+          e.preventDefault();
+          var addto = "#fielda" + next_exp;
+          var addRemove = "#fielda" + next_exp;
+          next_exp = next_exp + 1;
+          var newInp =
+            ' <div id="fielda' +
+            next_exp +
+            '" name="field1' +
+            next_exp +
+            '"><div class="form-group"><label class="col-md-3">Job Title</label><div class="col-md-7"><input type="text"  name="job_tit[]" id="job_tit" class="form-control" placeholder="e.g. Java/php Developer" required> </div><br><br><br><!-- Text input--><div class="form-group"><label class="col-md-3">Company</label><div class="col-md-7"><input type="text"  name="company[]" id="company" class="form-control" placeholder="" required> </div> <div><br><br><!-- Text input--><div class="form-group"><label class="col-md-3">City</label> <div class="col-md-7"><input type="text"  name="city[]" id="city" class="form-control" placeholder="" required></div></div><br><br><!-- Text input--><div class="form-group"><label class="col-md-3">Time period</label><div class="col-md-8"><div class="col-md-3"><select class="form-control"  name="work_from[]" ><option value="1995">    1995	</option><option value="1996">	1996	</option><option value="1997">	1997	</option><option value="1998">	1998	</option><option value="1999">	1999	</option><option value="2000">	2000	</option><option value="2001">	2001	</option><option value="2002">	2002	</option><option value="2003">	2003	</option><option value="2004">	2004	</option><option value="2005">	2005	</option><option value="2006">	2006	</option><option value="2007">	2007	</option><option value="2008">	2008	</option><option value="2009">	2009	</option><option value="2010">	2010	</option><option value="2011">	2011	</option><option value="2012">	2012	</option><option value="2013">	2013	</option><option value="2014">	2014	</option><option value="2015">	2015	</option><option value="2016">	2016	</option></select></div><div class="col-md-1"><label>To</label></div><div class="col-md-3"><select class="form-control"  name="work_to[]" ><option value="1980">	1980	</option><option value="2000">	2000	</option><option value="2001">	2001	</option><option value="2002">	2002	</option><option value="2003">	2003	</option><option value="2004">	2004	</option><option value="2005">	2005	</option><option value="2006">	2006	</option><option value="2007">	2007	</option><option value="2008">	2008	</option><option value="2009">	2009	</option><option value="2010">	2010	</option><option value="2011">	2011	</option><option value="2012">	2012	</option><option value="2013">	2013	</option><option value="2014">	2014	</option><option value="2015">	2015	</option><option value="2016">	2016	</option><option value="2017">	2017	</option><option value="2018">	2018	</option><option value="2019">	2019	</option><option value="2020">	2020	</option></select></div></div></div><br><br><div class="form-group"><input type="checkbox" name="cur_work[]" value="cur_work"> I currently work here<br></div><br><hr></div>';
+          var newInput = $(newInp);
+
+          var removeBtn =
+            '<button id="remove' +
+            (next_exp - 1) +
+            '" class="btn btn-danger remove-me" >Remove</button></div></div><div id="field"><br>';
+          var removeButton = $(removeBtn);
+          $(addto).after(newInput);
+          $(addRemove).after(removeButton);
+          $("#fielda" + next_exp).attr(
+            "data-source",
+            $(addto).attr("data-source")
+          );
+          $("#count").val(next_exp);
+
+          $(".remove-me").click(function (e) {
+            e.preventDefault();
+            var fieldNum = this.id.charAt(this.id.length - 1);
+            var fieldID = "#fielda" + fieldNum;
+            $(this).remove();
+            $(fieldID).remove();
+          });
+        });
+
+        //@naresh action dynamic childs
+        var nextedu = 0;
+        $("#add-more").click(function (e) {
+          e.preventDefault();
+          var addto = "#field" + nextedu;
+          var addRemove = "#field" + nextedu;
+          nextedu = nextedu + 1;
+          var newIn =
+            ' <div id="field' +
+            nextedu +
+            '" name="field' +
+            nextedu +
+            '"><div class="form-group"><label class="col-md-3">Education level</label><div class="col-md-7"><select class="form-control"  name="edu_level[]" ><option value="1">High school or equivalent</option><option value="2">Diploma</option><option value="3">Higher National Diploma</option><option value="4">Bachelos</option><option value="5">Masters</option><option value="6">Doctorate</option></select></div></div><br><br><br><!-- Text input--><div class="form-group"><label class="col-md-3">Field of Study</label><div class="col-md-7"><input type="text"  name="field_stu[]" id="field_stu" class="form-control" placeholder="e.g. Computer Science, Intellectual Property,Psychology." required> </div></div><br><br><!-- Text input--><div class="form-group"><label class="col-md-3">University</label><div class="col-md-7"><input type="text"  name="university[]" id="university" class="form-control" placeholder="" required></div></div><br><br><!-- Text input--><div class="form-group"><label class="col-md-3">Time period</label><div class="col-md-8"><div class="col-md-3"><select class="form-control"  name="edu_from[]" ><option value="1995">    1995    </option><option value="1996">	1996	</option><option value="1997">	1997	</option><option value="1998">	1998	</option><option value="1999">	1999	</option><option value="2000">	2000	</option><option value="2001">	2001	</option><option value="2002">	2002	</option><option value="2003">	2003	</option><option value="2004">	2004	</option><option value="2005">	2005	</option><option value="2006">	2006	</option><option value="2007">	2007	</option><option value="2008">	2008	</option><option value="2009">	2009	</option><option value="2010">	2010	</option><option value="2011">	2011	</option><option value="2012">	2012	</option><option value="2013">	2013	</option><option value="2014">	2014	</option><option value="2015">	2015	</option><option value="2016">	2016	</option></select></div><div class="col-md-1"><label>To</label></div><div class="col-md-3"><select class="form-control"  name="edu_to[]" ><option value="1980">	1980	</option><option value="2000">	2000	</option><option value="2001">	2001	</option><option value="2002">	2002	</option><option value="2003">	2003	</option><option value="2004">	2004	</option><option value="2005">	2005	</option><option value="2006">	2006	</option><option value="2007">	2007	</option><option value="2008">	2008	</option><option value="2009">	2009	</option><option value="2010">	2010	</option><option value="2011">	2011	</option><option value="2012">	2012	</option><option value="2013">	2013	</option><option value="2014">	2014	</option><option value="2015">	2015	</option><option value="2016">	2016	</option><option value="2017">	2017	</option><option value="2018">	2018	</option><option value="2019">	2019	</option><option value="2020">	2020	</option></select></div></div></div> <br><hr></div>';
+          var newInput = $(newIn);
+
+          var removeBtn =
+            '<button id="remove' +
+            (nextedu - 1) +
+            '" class="btn btn-danger remove-me" >Remove</button></div></div><div id="field">';
+          var removeButton = $(removeBtn);
+          $(addto).after(newInput);
+          $(addRemove).after(removeButton);
+          $("#field" + nextedu).attr(
+            "data-source",
+            $(addto).attr("data-source")
+          );
+          $("#count").val(nextedu);
+
+          $(".remove-me").click(function (e) {
+            e.preventDefault();
+            var fieldNum = this.id.charAt(this.id.length - 1);
+            var fieldID = "#field" + fieldNum;
+            $(this).remove();
+            $(fieldID).remove();
+          });
+        });
+      });
+</script>
+{% endblock %}
