@@ -43,8 +43,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
-    'bootstrap5'
+    'bootstrap5',
+    'formtools',
+    'crispy_forms',
+    'widget_tweaks'
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -63,7 +68,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
 
-            ],
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -92,7 +97,7 @@ WSGI_APPLICATION = 'cfc_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DATABASE_NAME'), #here,
+        'NAME': os.environ.get('DATABASE_NAME'),  # here,
         'USER': os.environ.get('DATABASE_USER'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
         'HOST': os.environ.get('DATABASE_HOST'),
@@ -138,7 +143,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 # STATICFILE_DIRS = [
 #         os.path.join(BASE_DIR, 'web/static'),
-# ]    
+# ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
@@ -146,3 +151,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = "/home"
+
+LOGOUT_REDIRECT_URL = "/home"

@@ -1,4 +1,4 @@
-{% extends "dashboardbase.html" %} {% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container mt-5 mb-4 p-5 my-4 bg-light rounded-3 ">
   <h2 class="mb-4">تسجيل داعم (أفراد)</h2>
   <form action="/supporters/individuals/new" method="POST">
@@ -30,7 +30,7 @@
       </div>
       <div class="col mb-4">
         <label for="amount" class="form-label">القيمة (ريال سعودي)</label>
-        <input type="Number" class="form-control" id="amount" name="amount"/>
+        <input type="Number" min=0 class="form-control" id="amount" name="amount"/>
       </div>
     </div>
     <hr class="mb-3"/>

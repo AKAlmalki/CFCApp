@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load i18n %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-4 p-5 my-4 bg-light rounded-3 ">
+    <h2 class="mb-4">تقديم طلب دعم</h2>
+    <p>بيانات مقدم الطلب</p>
+        <p>الخطوة {{ wizard.steps.step1 }} من {{ wizard.steps.count }}</p>
+        <form action="{%url 'wizard-form' %}" method="post">{% csrf_token %}
+
+        {{ wizard.management_form }}
+        <div class="container">
+            {% comment %} Full Name {% endcomment %}
+            <div class="row">
+                <div class="col mb-4">
+                    <label for="first_name" class="form-label"
+                        >الاسم الأول</label
+                    >
+                    {% render_field wizard.form.first_name class+="form-control form-control-lg" type="text"%}
+                </div>
+                <div class="col mb-4">
+                    <label for="second_name" class="form-label"
+                    >الاسم الثاني</label
+                    >
+                    {% render_field wizard.form.middle_name class+="form-control form-control-lg" type="text"%}
+                </div>
+                <div class="col mb-4">
+                    <label for="last_name" class="form-label"
+                    >الاسم الاخير (اسم العائلة)</label
+                    >
+                    {% comment %} <input type="text" class="form-control" id="family_name" name="family_name" /> {% endcomment %}
+                    {% render_field wizard.form.last_name class+="form-control form-control-lg" type="text"%}
+                </div>
+                <div class="col mb-4">
+                    <label for="date_of_birth" class="form-label"
+                    >تاريخ الميلاد</label
+                    >
+                    {% render_field wizard.form.date_of_birth class+="form-control form-control-lg" type="date"%}
+                </div>
+            </div>
+
+            <hr>
+            {% comment %} Nationality information and Gender {% endcomment %}
+            <div class="row">
+                <div class="col mb-4">
+                    <label for="gender" class="form-label"
+                        >الجنس</label
+                    >
+                    {% render_field wizard.form.gender class+="form-control form-control-lg"%}
+                </div>
+                <div class="col mb-4">
+                    <label for="second_name" class="form-label"
+                    >رقم الهوية الوطنية \ الإقامة</label
+                    >
+                    {% render_field wizard.form.national_id class+="form-control form-control-lg"%}
+                </div>
+                <div class="col mb-4">
+                    <label for="family_name" class="form-label"
+                    >تاريخ انتهاء الهوية \ الإقامة</label
+                    >
+                    {% render_field wizard.form.national_id_exp_date class+="form-control form-control-lg" type="date"%}
+                </div>
+                <div class="col mb-4">
+                    <label for="family_name" class="form-label"
+                    >الجنسية</label
+                    >
+                    {% render_field wizard.form.nationality class+="form-control form-control-lg"%}
+                </div>
+            </div>
+
+            <hr>
+            {% comment %} age, category, marital status, and education level {% endcomment %}
+            <div class="row">
+                <div class="col mb-4">
+                    <label for="second_name" class="form-label"
+                    >التصنيف الرئيسي</label
+                    >
+                    {% render_field wizard.form.category class+="form-control form-control-lg"%}
+                </div>
+                <div class="col mb-4">
+                    <label for="family_name" class="form-label"
+                    >الحالة الاجتماعية</label
+                    >
+                    {% render_field wizard.form.marital_status class+="form-control form-control-lg"%}
+                </div>
+                <div class="col mb-4">
+                    <label for="family_name" class="form-label"
+                    >المؤهل التعليمي</label
+                    >
+                    {% render_field wizard.form.educational_level class+="form-control form-control-lg"%}
+                </div>
+            </div>
+
+            <hr>
+            {% comment %} the date of father's death, and where {% endcomment %}
+            <div class="row">
+                <div class="col mb-4">
+                <label for="first_name" class="form-label"
+                    >تاريخ وفاة الأب \ الزوج (عند اختيار أرمله)</label
+                >
+                {% render_field wizard.form.date_of_death_of_father_or_husband class+="form-control form-control-lg" type="date"%}
+                </div>
+                <div class="col mb-4">
+                    <label for="second_name" class="form-label"
+                    >المغسلة التي تم التجهيز فيها</label
+                    >
+                    {% render_field wizard.form.washing_place class+="form-control form-control-lg"%}
+                </div>
+            </div>
+
+            <hr>
+            {% comment %} health condition {% endcomment %}
+            <div class="row">
+                <div class="col mb-4">
+                <label for="first_name" class="form-label"
+                    >الحالة الصحية</label
+                >
+                {% render_field wizard.form.health_status class+="form-control form-control-lg"%}
+                </div>
+                <div class="col mb-4">
+                    <label for="second_name" class="form-label"
+                    >نوع المرض (عند اختيار غير جيدة)</label
+                    >
+                    {% render_field wizard.form.disease_type class+="form-control form-control-lg"%}
+                </div>
+            </div>
+
+            <hr>
+            {% comment %} work condition, contact information {% endcomment %}
+            <div class="row">
+                <div class="col mb-4">
+                <label for="first_name" class="form-label"
+                    >هل تعمل؟</label
+                >
+                {% render_field wizard.form.work_status class+="form-control form-control-lg"%}
+                </div>
+                <div class="col mb-4">
+                    <label for="second_name" class="form-label"
+                    >جهة العمل (عند اختيار نعم)</label
+                    >
+                    {% render_field wizard.form.employer class+="form-control form-control-lg"%}
+                </div>
+                <div class="col mb-4">
+                        <label for="first_name" class="form-label"
+                            >رقم التواصل</label
+                        >
+                        {{ wizard.form.name.label_tag }}
+
+                        {% render_field wizard.form.phone_number class+="form-control form-control-lg" min=10 max=12%}
+                    </div>
+                    <div class="col mb-4">
+                        <label for="second_name" class="form-label"
+                        >البريد الالكتروني</label
+                        >
+                        {% render_field wizard.form.email class+="form-control form-control-lg"%}
+                    </div>
+            </div>
+        </div>
+
+    <button class="btn btn-secondary ps-5 pe-5" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "first step" %}</button>
+    <button class="btn btn-secondary ps-5 pe-5" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "prev step" %}</button>
+
+    <button class="btn btn-success ps-5 pe-5" name="wizard_goto_step" type="submit" value="{{ wizard.steps.next }}">التالي</button>
+    
+    </form>
+</div>
+{% endblock %}

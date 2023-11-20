@@ -2,13 +2,94 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.home, name="home"),
-    path("todos/", views.todos, name="Todos"),
-    path("name/", views.get_name, name="action"),
-    path("dashboard/", views.dashboard, name="dashboard"),
-    path("index/", views.test1, name="index"),
-    path("beneficiaries/individuals/new", views.beneficiary_indiv, name="post_beneficiary"),
-    path("supporters/entities/new", views.supporter_entity, name="supporter_entity"),
-    path("supporters/individuals/new", views.supporter_indiv, name="supporter_indiv"),
-    path("dashboard/requests", views.dashboard_requests, name="requests"),
+    path(
+        "",
+        views.home_redirect,
+        name="index"
+    ),
+    path(
+        "home/",
+        views.home,
+        name="home"
+    ),
+    path(
+        "todos/",
+        views.todos,
+        name="Todos"
+    ),
+    path(
+        "name/",
+        views.get_name,
+        name="action"
+    ),
+    path(
+        "dashboard/",
+        views.dashboard,
+        name="dashboard"
+    ),
+    path(
+        "index/",
+        views.test1,
+        name="index"
+    ),
+    path(
+        "handle_test2",
+        views.handle_test2,
+        name="handle_test2"
+    ),
+    path(
+        "index2/",
+        views.test2,
+        name="index"
+    ),
+    path(
+        "beneficiaries/individuals/new",
+        views.beneficiary_indiv,
+        name="post_beneficiary"
+    ),
+    path(
+        "supporters/entities/new",
+        views.supporter_entity,
+        name="supporter_entity"
+    ),
+    path(
+        "supporters/individuals/new",
+        views.supporter_indiv,
+        name="supporter_indiv"
+    ),
+    path(
+        "dashboard/requests",
+        views.dashboard_requests,
+        name="requests"
+    ),
+    path(
+        "dashboard/reports",
+        views.dashboard_reports,
+        name="reports"
+    ),
+    path(
+        "sign-up",
+        views.sign_up,
+        name="sign-up"
+    ),
+    path(
+        "login/",
+        views.signin,
+        name="login"
+    ),
+    path(
+        "wizard-form",
+        views.beneficiaryWizardView.as_view(views.FORMS),
+        name="wizard-form"
+    ),
+    path(
+        "wizard-form2",
+        views.individualtest,
+        name="individual"
+    ),
+    path(
+        "wizard-form3",
+        views.individual2test,
+        name="individual2test"
+    )
 ]

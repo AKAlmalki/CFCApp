@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load i18n %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-4 p-5 my-4 bg-light rounded-3 ">
+    <h2 class="mb-4">تقديم طلب دعم</h2>
+    <p>بيانات مقدم الطلب</p>
+        <p>الخطوة {{ wizard.steps.step1 }} من {{ wizard.steps.count }}</p>
+        <form action="{%url 'wizard-form' %}" method="post">{% csrf_token %}
+
+        {{ wizard.management_form }}
+        <div class="container">
+            {% comment %} Full Name {% endcomment %}
+            <div class="row">
+                <div class="col mb-4">
+                    <label for="name" class="form-label"
+                        >الاسم الأول</label
+                    >
+                    {% render_field wizard.form.name class+="form-control form-control-lg" type="text"%}
+                </div>
+            </div>
+        </div>
+    <button class="btn btn-secondary ps-5 pe-5" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "first step" %}</button>
+    <button class="btn btn-secondary ps-5 pe-5" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "prev step" %}</button>
+    <button class="btn btn-success ps-5 pe-5" name="wizard_goto_step" type="submit">التالي</button>
+    <input class="btn btn-success ps-5 pe-5" type="submit" value="{% translate "submit" %}"/>
+    
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% load static %} {% block title %} Login {% endblock %} {% block content %}
+<div class="container mt-5 mb-4 p-5 my-4 bg-light rounded-3 ">
+  <h2 class="mb-4">تسجيل الدخول</h2>
+  <form method="post">
+    {% csrf_token %}
+    {% comment %} {{form}} {% endcomment %}
+    {% comment %} To display any messages in the page (such as error messages) {% endcomment %}
+    {% if messages %}
+      {% for message in messages %}
+        {% if message.tags == "error" %}
+          <div class="alert alert-danger" role="alert">{{message}}</div>
+        {% endif%}
+      {% endfor %}
+    {% endif %}
+    <div class="col mb-4">
+      <label for="id_username" class="form-label"
+        >اسم المستخدم</label
+      >
+      <input type="text" class="form-control" id="id_username" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required/>
+    </div>
+    <div class="col mb-4">
+      <label for="id_password" class="form-label"
+        >كلمة المرور</label
+      >
+      <input type="password" class="form-control" id="id_password" name="password" autocomplete="current-password" required/>
+    </div>
+    <p>ليس لديك حساب؟ سجل <a href="/sign-up">هنا</a>!</p>
+    <button type="submit" class="btn btn-success">تسجيل الدخول</button>
+  </form>
+</div>
+{% endblock %}
