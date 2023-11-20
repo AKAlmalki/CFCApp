@@ -32,6 +32,10 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 # ALLOWED_HOSTS = ['port433.link', 'www.port433.link', 'https://port433.link', '34.89.34.177', 'localhost', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://port433.link',
+    'http://port433.link'
+]
 
 # Application definition
 
