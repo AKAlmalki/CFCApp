@@ -4,6 +4,15 @@ h1 {
 h2 {
     margin: 0;
 }
+button:disabled,
+button[disabled] {
+    padding: 0.7rem 1.5rem;
+    border: 1px solid #909fe3;
+    background-color: #909fe3;
+    color: #2f4dd4;
+    border-radius: 5px;
+    cursor: pointer;
+}
 #multi-step-form-container {
     margin-top: 5rem;
 }
@@ -25,9 +34,16 @@ h2 {
     border-radius: 5px;
     cursor: pointer;
 }
+
 .submit-btn {
     border: 1px solid #0e9594;
     background-color: #0e9594;
+}
+.submit-btn:disabled,
+.submit-btn[disabled] {
+    border: 1px solid #76a1a1;
+    background-color: #76a1a1;
+    color: #326d6c;
 }
 .mt-3 {
     margin-top: 2rem;
