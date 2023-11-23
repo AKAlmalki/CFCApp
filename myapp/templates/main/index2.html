@@ -8,6 +8,8 @@
   <!-- Include jQuery Validation Plugin -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 
+  <script src="{% static 'js/index2.js' %}"></script>
+
   {% comment %} <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
   <link
   rel="stylesheet"
@@ -98,20 +100,20 @@
                                 {% comment %} Full Name and DOB {% endcomment %}
                                 <div class="row row-cols-md-2 row-cols-xl-4 justify-content-center align-items-end">
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_first_name" class="form-label">الاسم الأول</label>
+                                        <label for="id_personalinfo_first_name" class="form-label">الاسم الأول<span style="color: red;">*</span></label>
                                             
                                         <input type="text" class="form-control form-control-lg" id="id_personalinfo_first_name" maxlength="55" required name="personalinfo_first_name">
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_second_name" class="form-label">الاسم الثاني</label>
+                                        <label for="id_personalinfo_second_name" class="form-label">الاسم الثاني<span style="color: red;">*</span></label>
                                         <input type="text" class="form-control form-control-lg" id="id_personalinfo_second_name" maxlength="55" required name="personalinfo_second_name">
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_last_name" class="form-label">الاسم الاخير (اسم العائلة)</label>
+                                        <label for="id_personalinfo_last_name" class="form-label">الاسم الاخير<span style="color: red;">*</span> (اسم العائلة)</label>
                                         <input type="text" class="form-control form-control-lg" id="id_personalinfo_last_name" maxlength="55" required name="personalinfo_last_name">
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_date_of_birth" class="form-label">تاريخ الميلاد</label>
+                                        <label for="id_personalinfo_date_of_birth" class="form-label">تاريخ الميلاد<span style="color: red;">*</span></label>
                                         <input type="date" class="form-control form-control-lg" id="id_personalinfo_date_of_birth" maxlength="55" required name="personalinfo_date_of_birth">
                                     </div>
                                 </div>
@@ -120,7 +122,7 @@
                                 {% comment %} Nationality information and Gender {% endcomment %}
                                 <div class="row row-cols-md-2 row-cols-xl-4 justify-content-center align-items-end">
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_gender" class="form-label">الجنس</label>
+                                        <label for="id_personalinfo_gender" class="form-label">الجنس<span style="color: red;">*</span></label>
                                         <select name="personalinfo_gender" class="form-control form-control-lg" id="id_personalinfo_gender" required>
                                             <option value selected>---------</option>
                                             <option value="M">ذكر</option>
@@ -128,16 +130,257 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_national_id" class="form-label">رقم الهوية الوطنية \ الإقامة</label>
+                                        <label for="id_personalinfo_national_id" class="form-label">رقم الهوية الوطنية \ الإقامة<span style="color: red;">*</span></label>
                                         <input type="text" class="form-control form-control-lg" id="id_personalinfo_national_id" maxlength="20" name="personalinfo_national_id" required>
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_national_id_exp_date" class="form-label">تاريخ انتهاء الهوية \ الإقامة</label>
+                                        <label for="id_personalinfo_national_id_exp_date" class="form-label">تاريخ انتهاء الهوية \ الإقامة<span style="color: red;">*</span></label>
                                         <input type="date" class="form-control form-control-lg" id="id_personalinfo_national_id_exp_date" name="personalinfo_national_id_exp_date" required>
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_nationality" class="form-label">الجنسية</label>
-                                        <input type="text" class="form-control form-control-lg" id="id_personalinfo_nationality" name="personalinfo_nationality" required>
+                                        <label for="id_personalinfo_nationality" class="form-label">الجنسية<span style="color: red;">*</span></label>
+                                        <select name="personalinfo_nationality" class="form-control form-control-lg" id="id_personalinfo_nationality">
+                                          <option value selected>---------</option>
+                                          <option value="Afghanistan">Afghanistan</option>
+                                          <option value="Albania">Albania</option>
+                                          <option value="Algeria">Algeria</option>
+                                          <option value="American Samoa">American Samoa</option>
+                                          <option value="Andorra">Andorra</option>
+                                          <option value="Angola">Angola</option>
+                                          <option value="Anguilla">Anguilla</option>
+                                          <option value="Antartica">Antarctica</option>
+                                          <option value="Antigua and Barbuda">Antigua and Barbuda</option>
+                                          <option value="Argentina">Argentina</option>
+                                          <option value="Armenia">Armenia</option>
+                                          <option value="Aruba">Aruba</option>
+                                          <option value="Australia">Australia</option>
+                                          <option value="Austria">Austria</option>
+                                          <option value="Azerbaijan">Azerbaijan</option>
+                                          <option value="Bahamas">Bahamas</option>
+                                          <option value="Bahrain">Bahrain</option>
+                                          <option value="Bangladesh">Bangladesh</option>
+                                          <option value="Barbados">Barbados</option>
+                                          <option value="Belarus">Belarus</option>
+                                          <option value="Belgium">Belgium</option>
+                                          <option value="Belize">Belize</option>
+                                          <option value="Benin">Benin</option>
+                                          <option value="Bermuda">Bermuda</option>
+                                          <option value="Bhutan">Bhutan</option>
+                                          <option value="Bolivia">Bolivia</option>
+                                          <option value="Bosnia and Herzegowina">Bosnia and Herzegowina</option>
+                                          <option value="Botswana">Botswana</option>
+                                          <option value="Bouvet Island">Bouvet Island</option>
+                                          <option value="Brazil">Brazil</option>
+                                          <option value="British Indian Ocean Territory">British Indian Ocean Territory</option>
+                                          <option value="Brunei Darussalam">Brunei Darussalam</option>
+                                          <option value="Bulgaria">Bulgaria</option>
+                                          <option value="Burkina Faso">Burkina Faso</option>
+                                          <option value="Burundi">Burundi</option>
+                                          <option value="Cambodia">Cambodia</option>
+                                          <option value="Cameroon">Cameroon</option>
+                                          <option value="Canada">Canada</option>
+                                          <option value="Cape Verde">Cape Verde</option>
+                                          <option value="Cayman Islands">Cayman Islands</option>
+                                          <option value="Central African Republic">Central African Republic</option>
+                                          <option value="Chad">Chad</option>
+                                          <option value="Chile">Chile</option>
+                                          <option value="China">China</option>
+                                          <option value="Christmas Island">Christmas Island</option>
+                                          <option value="Cocos Islands">Cocos (Keeling) Islands</option>
+                                          <option value="Colombia">Colombia</option>
+                                          <option value="Comoros">Comoros</option>
+                                          <option value="Congo">Congo</option>
+                                          <option value="Congo">Congo, the Democratic Republic of the</option>
+                                          <option value="Cook Islands">Cook Islands</option>
+                                          <option value="Costa Rica">Costa Rica</option>
+                                          <option value="Cota D'Ivoire">Cote d'Ivoire</option>
+                                          <option value="Croatia">Croatia (Hrvatska)</option>
+                                          <option value="Cuba">Cuba</option>
+                                          <option value="Cyprus">Cyprus</option>
+                                          <option value="Czech Republic">Czech Republic</option>
+                                          <option value="Denmark">Denmark</option>
+                                          <option value="Djibouti">Djibouti</option>
+                                          <option value="Dominica">Dominica</option>
+                                          <option value="Dominican Republic">Dominican Republic</option>
+                                          <option value="East Timor">East Timor</option>
+                                          <option value="Ecuador">Ecuador</option>
+                                          <option value="Egypt">Egypt</option>
+                                          <option value="El Salvador">El Salvador</option>
+                                          <option value="Equatorial Guinea">Equatorial Guinea</option>
+                                          <option value="Eritrea">Eritrea</option>
+                                          <option value="Estonia">Estonia</option>
+                                          <option value="Ethiopia">Ethiopia</option>
+                                          <option value="Falkland Islands">Falkland Islands (Malvinas)</option>
+                                          <option value="Faroe Islands">Faroe Islands</option>
+                                          <option value="Fiji">Fiji</option>
+                                          <option value="Finland">Finland</option>
+                                          <option value="France">France</option>
+                                          <option value="France Metropolitan">France, Metropolitan</option>
+                                          <option value="French Guiana">French Guiana</option>
+                                          <option value="French Polynesia">French Polynesia</option>
+                                          <option value="French Southern Territories">French Southern Territories</option>
+                                          <option value="Gabon">Gabon</option>
+                                          <option value="Gambia">Gambia</option>
+                                          <option value="Georgia">Georgia</option>
+                                          <option value="Germany">Germany</option>
+                                          <option value="Ghana">Ghana</option>
+                                          <option value="Gibraltar">Gibraltar</option>
+                                          <option value="Greece">Greece</option>
+                                          <option value="Greenland">Greenland</option>
+                                          <option value="Grenada">Grenada</option>
+                                          <option value="Guadeloupe">Guadeloupe</option>
+                                          <option value="Guam">Guam</option>
+                                          <option value="Guatemala">Guatemala</option>
+                                          <option value="Guinea">Guinea</option>
+                                          <option value="Guinea-Bissau">Guinea-Bissau</option>
+                                          <option value="Guyana">Guyana</option>
+                                          <option value="Haiti">Haiti</option>
+                                          <option value="Heard and McDonald Islands">Heard and Mc Donald Islands</option>
+                                          <option value="Holy See">Holy See (Vatican City State)</option>
+                                          <option value="Honduras">Honduras</option>
+                                          <option value="Hong Kong">Hong Kong</option>
+                                          <option value="Hungary">Hungary</option>
+                                          <option value="Iceland">Iceland</option>
+                                          <option value="India">India</option>
+                                          <option value="Indonesia">Indonesia</option>
+                                          <option value="Iran">Iran (Islamic Republic of)</option>
+                                          <option value="Iraq">Iraq</option>
+                                          <option value="Ireland">Ireland</option>
+                                          <option value="Israel">Israel</option>
+                                          <option value="Italy">Italy</option>
+                                          <option value="Jamaica">Jamaica</option>
+                                          <option value="Japan">Japan</option>
+                                          <option value="Jordan">Jordan</option>
+                                          <option value="Kazakhstan">Kazakhstan</option>
+                                          <option value="Kenya">Kenya</option>
+                                          <option value="Kiribati">Kiribati</option>
+                                          <option value="Democratic People's Republic of Korea">Korea, Democratic People's Republic of</option>
+                                          <option value="Korea">Korea, Republic of</option>
+                                          <option value="Kuwait">Kuwait</option>
+                                          <option value="Kyrgyzstan">Kyrgyzstan</option>
+                                          <option value="Lao">Lao People's Democratic Republic</option>
+                                          <option value="Latvia">Latvia</option>
+                                          <option value="Lebanon">Lebanon</option>
+                                          <option value="Lesotho">Lesotho</option>
+                                          <option value="Liberia">Liberia</option>
+                                          <option value="Libyan Arab Jamahiriya">Libyan Arab Jamahiriya</option>
+                                          <option value="Liechtenstein">Liechtenstein</option>
+                                          <option value="Lithuania">Lithuania</option>
+                                          <option value="Luxembourg">Luxembourg</option>
+                                          <option value="Macau">Macau</option>
+                                          <option value="Macedonia">Macedonia, The Former Yugoslav Republic of</option>
+                                          <option value="Madagascar">Madagascar</option>
+                                          <option value="Malawi">Malawi</option>
+                                          <option value="Malaysia">Malaysia</option>
+                                          <option value="Maldives">Maldives</option>
+                                          <option value="Mali">Mali</option>
+                                          <option value="Malta">Malta</option>
+                                          <option value="Marshall Islands">Marshall Islands</option>
+                                          <option value="Martinique">Martinique</option>
+                                          <option value="Mauritania">Mauritania</option>
+                                          <option value="Mauritius">Mauritius</option>
+                                          <option value="Mayotte">Mayotte</option>
+                                          <option value="Mexico">Mexico</option>
+                                          <option value="Micronesia">Micronesia, Federated States of</option>
+                                          <option value="Moldova">Moldova, Republic of</option>
+                                          <option value="Monaco">Monaco</option>
+                                          <option value="Mongolia">Mongolia</option>
+                                          <option value="Montserrat">Montserrat</option>
+                                          <option value="Morocco">Morocco</option>
+                                          <option value="Mozambique">Mozambique</option>
+                                          <option value="Myanmar">Myanmar</option>
+                                          <option value="Namibia">Namibia</option>
+                                          <option value="Nauru">Nauru</option>
+                                          <option value="Nepal">Nepal</option>
+                                          <option value="Netherlands">Netherlands</option>
+                                          <option value="Netherlands Antilles">Netherlands Antilles</option>
+                                          <option value="New Caledonia">New Caledonia</option>
+                                          <option value="New Zealand">New Zealand</option>
+                                          <option value="Nicaragua">Nicaragua</option>
+                                          <option value="Niger">Niger</option>
+                                          <option value="Nigeria">Nigeria</option>
+                                          <option value="Niue">Niue</option>
+                                          <option value="Norfolk Island">Norfolk Island</option>
+                                          <option value="Northern Mariana Islands">Northern Mariana Islands</option>
+                                          <option value="Norway">Norway</option>
+                                          <option value="Oman">Oman</option>
+                                          <option value="Pakistan">Pakistan</option>
+                                          <option value="Palau">Palau</option>
+                                          <option value="Panama">Panama</option>
+                                          <option value="Papua New Guinea">Papua New Guinea</option>
+                                          <option value="Paraguay">Paraguay</option>
+                                          <option value="Peru">Peru</option>
+                                          <option value="Philippines">Philippines</option>
+                                          <option value="Pitcairn">Pitcairn</option>
+                                          <option value="Poland">Poland</option>
+                                          <option value="Portugal">Portugal</option>
+                                          <option value="Puerto Rico">Puerto Rico</option>
+                                          <option value="Qatar">Qatar</option>
+                                          <option value="Reunion">Reunion</option>
+                                          <option value="Romania">Romania</option>
+                                          <option value="Russia">Russian Federation</option>
+                                          <option value="Rwanda">Rwanda</option>
+                                          <option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option> 
+                                          <option value="Saint LUCIA">Saint LUCIA</option>
+                                          <option value="Saint Vincent">Saint Vincent and the Grenadines</option>
+                                          <option value="Samoa">Samoa</option>
+                                          <option value="San Marino">San Marino</option>
+                                          <option value="Sao Tome and Principe">Sao Tome and Principe</option> 
+                                          <option value="Saudi Arabia">Saudi Arabia</option>
+                                          <option value="Senegal">Senegal</option>
+                                          <option value="Seychelles">Seychelles</option>
+                                          <option value="Sierra">Sierra Leone</option>
+                                          <option value="Singapore">Singapore</option>
+                                          <option value="Slovakia">Slovakia (Slovak Republic)</option>
+                                          <option value="Slovenia">Slovenia</option>
+                                          <option value="Solomon Islands">Solomon Islands</option>
+                                          <option value="Somalia">Somalia</option>
+                                          <option value="South Africa">South Africa</option>
+                                          <option value="South Georgia">South Georgia and the South Sandwich Islands</option>
+                                          <option value="Span">Spain</option>
+                                          <option value="SriLanka">Sri Lanka</option>
+                                          <option value="St. Helena">St. Helena</option>
+                                          <option value="St. Pierre and Miguelon">St. Pierre and Miquelon</option>
+                                          <option value="Sudan">Sudan</option>
+                                          <option value="Suriname">Suriname</option>
+                                          <option value="Svalbard">Svalbard and Jan Mayen Islands</option>
+                                          <option value="Swaziland">Swaziland</option>
+                                          <option value="Sweden">Sweden</option>
+                                          <option value="Switzerland">Switzerland</option>
+                                          <option value="Syria">Syrian Arab Republic</option>
+                                          <option value="Taiwan">Taiwan, Province of China</option>
+                                          <option value="Tajikistan">Tajikistan</option>
+                                          <option value="Tanzania">Tanzania, United Republic of</option>
+                                          <option value="Thailand">Thailand</option>
+                                          <option value="Togo">Togo</option>
+                                          <option value="Tokelau">Tokelau</option>
+                                          <option value="Tonga">Tonga</option>
+                                          <option value="Trinidad and Tobago">Trinidad and Tobago</option>
+                                          <option value="Tunisia">Tunisia</option>
+                                          <option value="Turkey">Turkey</option>
+                                          <option value="Turkmenistan">Turkmenistan</option>
+                                          <option value="Turks and Caicos">Turks and Caicos Islands</option>
+                                          <option value="Tuvalu">Tuvalu</option>
+                                          <option value="Uganda">Uganda</option>
+                                          <option value="Ukraine">Ukraine</option>
+                                          <option value="United Arab Emirates">United Arab Emirates</option>
+                                          <option value="United Kingdom">United Kingdom</option>
+                                          <option value="United States">United States</option>
+                                          <option value="United States Minor Outlying Islands">United States Minor Outlying Islands</option>
+                                          <option value="Uruguay">Uruguay</option>
+                                          <option value="Uzbekistan">Uzbekistan</option>
+                                          <option value="Vanuatu">Vanuatu</option>
+                                          <option value="Venezuela">Venezuela</option>
+                                          <option value="Vietnam">Viet Nam</option>
+                                          <option value="Virgin Islands (British)">Virgin Islands (British)</option>
+                                          <option value="Virgin Islands (U.S)">Virgin Islands (U.S.)</option>
+                                          <option value="Wallis and Futana Islands">Wallis and Futuna Islands</option>
+                                          <option value="Western Sahara">Western Sahara</option>
+                                          <option value="Yemen">Yemen</option>
+                                          <option value="Serbia">Serbia</option>
+                                          <option value="Zambia">Zambia</option>
+                                          <option value="Zimbabwe">Zimbabwe</option>
+                                        </select>
                                     </div>
                                 </div>
                         
@@ -145,7 +388,7 @@
                                 {% comment %} age, category, marital status, and education level {% endcomment %}
                                 <div class="row row-cols-md-2 row-cols-xl-3">
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_category" class="form-label">التصنيف الرئيسي</label>
+                                        <label for="id_personalinfo_category" class="form-label">التصنيف الرئيسي<span style="color: red;">*</span></label>
                                         <select name="personalinfo_category" class="form-control form-control-lg" required id="id_personalinfo_category">
                                             <option value selected>---------</option>
                                             <option value="regular family">أسرة عادية</option>
@@ -157,8 +400,8 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_marital_status" class="form-label">الحالة الاجتماعية</label>
-                                        <select name="personalinfo_marital_status" class="form-control form-control-lg" required id="id_personalinfo_marital_status">
+                                        <label for="id_personalinfo_marital_status" class="form-label">الحالة الاجتماعية<span style="color: red;">*</span></label>
+                                        <select name="personalinfo_marital_status" class="form-control form-control-lg" required id="id_personalinfo_marital_status" onchange="widowerCheck(this);">
                                             <option value selected>---------</option>
                                             <option value="married">متزوج/ـة</option>
                                             <option value="single">أعزب/ـة</option>
@@ -167,7 +410,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-12 mb-4 form-group">
-                                        <label for="id_personalinfo_educational_level" class="form-label">المؤهل التعليمي</label>
+                                        <label for="id_personalinfo_educational_level" class="form-label">المؤهل التعليمي<span style="color: red;">*</span></label>
                                         <select name="personalinfo_educational_level" class="form-control form-control-lg" id="id_personalinfo_educational_level">
                                             <option value="" selected>---------</option>
                                             <option value="primary-1">أول ابتدائي</option>
@@ -190,58 +433,80 @@
                         
                                 <hr>
                                 {% comment %} the date of father's death, and where {% endcomment %}
-                                <div class="row justify-content-center align-items-end">
+                                <div class="row justify-content-center align-items-end" id="id_personalinfo_widower_group_info" style="display: none;">
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_date_of_death_of_father_or_husband" class="form-label">تاريخ وفاة الأب \ الزوج (عند اختيار أرمله)</label>
+                                        <label for="id_personalinfo_date_of_death_of_father_or_husband" class="form-label">تاريخ وفاة الأب \ الزوج<span style="color: red;">*</span> (عند اختيار أرمله)</label>
                                         <input type="date" name="personalinfo_date_of_death_of_father_or_husband" class="form-control form-control-lg" id="id_personalinfo_date_of_death_of_father_or_husband">
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_washing_place" class="form-label">المغسلة التي تم التجهيز فيها</label>
-                                        <input type="text" name="personalinfo_washing_place" maxlength="55" class="form-control form-control-lg" id="id_personalinfo_washing_place">
+                                        <label for="id_personalinfo_washing_place" class="form-label">المغسلة التي تم التجهيز فيها<span style="color: red;">*</span></label>
+                                        <select name="personalinfo_washing_place" class="form-control form-control-lg" id="id_personalinfo_washing_place">
+                                          <option value="" selected>---------</option>
+                                          <option value="إكرام فلسطين">إكرام فلسطين</option>
+                                          <option value="الثنيان">الثنيان</option>
+                                          <option value="العمودي">العمودي</option>
+                                          <option value="ابن القيم">ابن القيم</option>
+                                          <option value="الأمير منصور">الأمير منصور</option>
+                                          <option value="الملك فهد">الملك فهد</option>
+                                          <option value="الملك عبدالعزيز">الملك عبدالعزيز</option>
+                                          <option value="اللامي">اللامي</option>
+                                          <option value="طيبة">طيبة</option>
+                                          <option value="القريقري">القريقري</option>
+                                          <option value="شرق جدة">شرق جدة</option>
+                                          <option value="other">أخرى</option>
+                                      </select>
                                     </div>
                                 </div>
                         
-                                <hr>
+                                <hr id="widower_hr" style="display: none;">
                                 {% comment %} health condition {% endcomment %}
-                                <div class="row">
+                                <div class="row justify-content-baseline align-items-end">
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_health_status" class="form-label">الحالة الصحية</label>
-                                        <select name="personalinfo_health_status" class="form-control form-control-lg" id="id_personalinfo_health_status">
+                                        <label for="id_personalinfo_health_status" class="form-label">الحالة الصحية<span style="color: red;">*</span></label>
+                                        <select name="personalinfo_health_status" class="form-control form-control-lg" id="id_personalinfo_health_status" onchange="healthCheck(this);">
                                             <option value="" selected>---------</option>
                                             <option value="good">جيدة</option>
                                             <option value="not good">غير جيدة</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_disease_type" class="form-label">نوع المرض (عند اختيار غير جيدة)</label>
+                                    <div class="col-md-6 mb-4 form-group" id="id_personalinfo_disease_type_group_info" style="display: none;">
+                                        <label for="id_personalinfo_disease_type" class="form-label">نوع المرض<span style="color: red;">*</span> (عند اختيار غير جيدة)</label>
                                         <input type="text" name="personalinfo_disease_type" maxlength="100" class="form-control form-control-lg" id="id_personalinfo_disease_type">
                                     </div>
                                 </div>
                         
                                 <hr>
+
+                                <div class="row justify-content-baseline align-items-end">
+                                  <div class="col-md-6 mb-4 form-group">
+                                    <label for="id_personalinfo_work_status" class="form-label">هل تعمل؟<span style="color: red;">*</span></label>
+                                    <select name="personalinfo_work_status" class="form-control form-control-lg" required id="id_personalinfo_work_status" onchange="workCheck(this);">
+                                        <option value="" selected>---------</option>
+                                        <option value="yes">نعم</option>
+                                        <option value="no">لا</option>
+                                    </select>
+                                  </div>
+                                  <div class="col-md-6 mb-4 form-group" id="id_personalinfo_employer_group_info" style="display: none;">
+                                      <label for="id_personalinfo_employer" class="form-label">جهة العمل<span style="color: red;">*</span> (عند اختيار نعم)</label>
+                                      <input type="text" name="personalinfo_employer" maxlength="100" class="form-control form-control-lg" id="id_personalinfo_employer">
+                                  </div>
+                                </div>
+
+                                <hr>
+
                                 {% comment %} work condition, contact information {% endcomment %}
-                                <div class="row row-cols-md-2 row-cols-xl-4 justify-content-center align-items-end">
+                                <div class="row justify-content-center align-items-end">
+                                    
                                     <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_work_status" class="form-label">هل تعمل؟</label>
-                                        <select name="personalinfo_work_status" class="form-control form-control-lg" required id="id_personalinfo_work_status">
-                                            <option value="" selected>---------</option>
-                                            <option value="yes">نعم</option>
-                                            <option value="no">لا</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_employer" class="form-label">جهة العمل (عند اختيار نعم)</label>
-                                        <input type="text" name="personalinfo_employer" maxlength="100" class="form-control form-control-lg" id="id_personalinfo_employer">
-                                    </div>
-                                    <div class="col-md-6 mb-4 form-group">
-                                        <label for="id_personalinfo_phone_number" class="form-label">رقم التواصل</label>
+                                        <label for="id_personalinfo_phone_number" class="form-label">رقم التواصل<span style="color: red;">*</span></label>
                                         <input type="tel" name="personalinfo_phone_number" class="form-control form-control-lg" required id="id_personalinfo_phone_number">
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_email" class="form-label">البريد الالكتروني</label>
                                         <input type="email" name="personalinfo_email" maxlength="254" class="form-control form-control-lg" id="id_personalinfo_email">
                                     </div>
-                                </div> 
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -266,15 +531,15 @@
                       <div id="family-form">
                         <div class="row row-cols-md-2 row-cols-xl-4">
                           <div class="col-md-6 mb-4 form-group">
-                            <label for="dependentName" class="form-label">الأسم<span style="font-size: 0.9rem;"> (حسب الهوية/الإقامة)</span></label>
+                            <label for="dependentName" class="form-label">الأسم<span style="color: red;">*</span><span style="font-size: 0.9rem;"> (حسب الهوية/الإقامة)</span></label>
                             <input type="text" id="dependentName"  class="form-control form-control-lg" name="dependentinfo_name">
                           </div>
                           <div class="col-md-6 mb-4 form-group">
-                            <label for="dependentAge" class="form-label">العمر</label>
+                            <label for="dependentAge" class="form-label">العمر<span style="color: red;">*</span></label>
                             <input type="number" id="dependentAge" class="form-control form-control-lg" name="dependentinfo_age">
                           </div>
                           <div class="col-md-6 mb-4 form-group">
-                            <label for="dependentGender" class="form-label">الجنس</label>
+                            <label for="dependentGender" class="form-label">الجنس<span style="color: red;">*</span></label>
                             <select name="dependentinfo_gender" class="form-control form-control-lg" id="dependentGender">
                               <option value selected>---------</option>
                               <option value="M">ذكر</option>
@@ -282,7 +547,7 @@
                             </select>
                           </div>
                           <div class="col-md-6 mb-4 form-group">
-                            <label for="id_dependentinfo_relationship" class="form-label">صلة القرابة</label>
+                            <label for="id_dependentinfo_relationship" class="form-label">صلة القرابة<span style="color: red;">*</span></label>
                             <select name="dependentinfo_relationship" class="form-control form-control-lg" id="id_dependentinfo_relationship">
                               <option value selected>---------</option>
                               <option value="son">ابن</option>
@@ -299,7 +564,7 @@
 
                         <div class="row row-cols-md-2 row-cols-xl-4">
                           <div class="col-md-6 mb-4 form-group">
-                            <label for="id_dependentinfo_educational_status" class="form-label">الحالة الدراسية</label>
+                            <label for="id_dependentinfo_educational_status" class="form-label">الحالة الدراسية<span style="color: red;">*</span></label>
                             <select name="dependentinfo_educational_status" class="form-control form-control-lg" id="id_dependentinfo_educational_status">
                                 <option value selected>---------</option>
                                 <option value="primary-1">أول ابتدائي</option>
@@ -319,7 +584,7 @@
                             </select>
                           </div>
                           <div class="col-md-6 mb-4 form-group">
-                            <label for="id_dependentinfo_marital_status" class="form-label">الحالة الاجتماعية</label>
+                            <label for="id_dependentinfo_marital_status" class="form-label">الحالة الاجتماعية<span style="color: red;">*</span></label>
                             <select name="dependentinfo_marital_status" class="form-control form-control-lg" id="id_dependentinfo_marital_status">
                                 <option value selected>---------</option>
                                 <option value="student">طالب/ـة</option>
@@ -332,7 +597,7 @@
                               </select>
                           </div>
                           <div class="col-md-6 mb-4 form-group">
-                            <label for="id_dependentinfo_educational_level" class="form-label">المؤهل التعليمي</label>
+                            <label for="id_dependentinfo_educational_level" class="form-label">المؤهل التعليمي<span style="color: red;">*</span></label>
                             <select name="dependentinfo_educational_level" class="form-control form-control-lg" id="id_dependentinfo_educational_level">
                                 <option value selected>---------</option>
                                 <option value="none">لا يوجد</option>
@@ -343,7 +608,7 @@
                             </select>
                           </div>
                           <div class="col-md-6 mb-4 form-group">
-                            <label for="id_dependentinfo_date_of_birth" class="form-label">تاريخ الميلاد</label>
+                            <label for="id_dependentinfo_date_of_birth" class="form-label">تاريخ الميلاد<span style="color: red;">*</span></label>
                             <input type="date" class="form-control form-control-lg" id="id_dependentinfo_date_of_birth" maxlength="55" name="dependentinfo_date_of_birth">
                           </div>
                         </div>
@@ -352,11 +617,11 @@
 
                         <div class="row">
                           <div class="col-md-6 mb-4 form-group">
-                            <label for="id_dependentinfo_national_id" class="form-label">رقم الهوية الوطنية \ الإقامة</label>
+                            <label for="id_dependentinfo_national_id" class="form-label">رقم الهوية الوطنية \ الإقامة<span style="color: red;">*</span></label>
                             <input type="text" class="form-control form-control-lg" id="id_dependentinfo_national_id" maxlength="20" name="dependentinfo_national_id">
                           </div>
                           <div class="col-md-6 mb-4 form-group">
-                              <label for="id_dependentinfo_national_id_exp_date" class="form-label">تاريخ انتهاء الهوية \ الإقامة</label>
+                              <label for="id_dependentinfo_national_id_exp_date" class="form-label">تاريخ انتهاء الهوية \ الإقامة<span style="color: red;">*</span></label>
                               <input type="date" class="form-control form-control-lg" id="id_dependentinfo_national_id_exp_date" name="dependentinfo_national_id_exp_date">
                           </div>
                         </div>
@@ -365,7 +630,7 @@
 
                         <div class="row row-cols-md-2 row-cols-xl-4">
                           <div class="col-md-6 mb-4 form-group">
-                            <label for="id_dependentinfo_health_status" class="form-label">الحالة الصحية</label>
+                            <label for="id_dependentinfo_health_status" class="form-label">الحالة الصحية<span style="color: red;">*</span></label>
                             <select name="dependentinfo_health_status" class="form-control form-control-lg" id="id_dependentinfo_health_status">
                                 <option value selected>---------</option>
                                 <option value="good">جيدة</option>
@@ -373,7 +638,7 @@
                             </select>
                           </div>
                           <div class="col-md-6 mb-4 form-group">
-                              <label for="id_dependentinfo_disease_type" class="form-label">نوع المرض (عند اختيار غير جيدة)</label>
+                              <label for="id_dependentinfo_disease_type" class="form-label">نوع المرض<span style="color: red;">*</span> (عند اختيار غير جيدة)</label>
                               <input type="text" name="dependentinfo_disease_type" maxlength="100" class="form-control form-control-lg" id="id_dependentinfo_disease_type">
                           </div>
                           <div class="col-md-6 mb-4 form-group">
@@ -401,7 +666,8 @@
 
                         <div class="row">
                           <div class="col-md-6 mb-4 form-group">
-                            <label for="id_dependentinfo_needs_type" class="form-label">نوع الاحتياج للمرافق</label>
+                            {% comment %} needs to be multiple choice {% endcomment %}
+                            <label for="id_dependentinfo_needs_type" class="form-label">نوع الاحتياج للمرافق<span style="color: red;">*</span></label>
                             <select name="dependentinfo_needs_type" class="form-control form-control-lg" id="id_dependentinfo_needs_type">
                               <option value selected>---------</option>
                               <option value="economic">اقتصادي</option>
@@ -988,6 +1254,15 @@
           "يحتوي الأسم على حروف فقط."
         );
 
+        $.validator.addMethod(
+        "fullNameRegex",
+        function(value, element) {
+            return this.optional(element) || /^[a-zA-Z\u0621-\u064A]+([ '-][a-zA-Z\u0621-\u064A]+)*$/i.test(value);
+        },
+        "يجب أن يتكون الاسم الكامل من الاسم الأول والأوسط والأخير."
+        );
+
+
         // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
         function validateSAID(id) {
           let type = id.substr(0, 1);
@@ -1124,22 +1399,22 @@
                 required: true,
               },
               personalinfo_date_of_death_of_father_or_husband: {
-                //
+                required: true,
               },
               personalinfo_washing_place: {
                 //
               },
               personalinfo_health_status: {
-                //
+                required: true,
               },
               personalinfo_disease_type: {
-                //
+                required: true,
               },
               personalinfo_work_status: {
                 required: true,
               },
               personalinfo_employer: {
-                //needs to be a condition if the user says he/she is working, then he/she must write the employer name
+                required: true,
               },
               personalinfo_phone_number: {
                 required: true,
@@ -1150,7 +1425,7 @@
               // dependent_information ---------
               dependentinfo_name: {
                 required: true,
-                nameRegex: true,
+                fullNameRegex: true,
                 minlength: 3,
                 maxlength: 20,
               },
