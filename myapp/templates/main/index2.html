@@ -31,7 +31,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-4 p-5 my-4 rounded-3 ">
+<div class="container mt-5 px-0 mb-4 p-5 rounded-3">
     
     <div>
         <h1>تقديم طلب دعم</h1>
@@ -91,8 +91,8 @@
             <form id="myform" name="myform" enctype="multipart/form-data" method="POST" action="/handle_test2" class="needs-validation bg-light" novalidate>
                 {% csrf_token %}
                 <!-- Step 1 Content -->
-                <fieldset id="personal_information" class="form-step">
-                    <legend class="fs-2 mb-5">بيانات مقدم الطلب</legend>
+                <fieldset id="personal_information" class="form-step px-3 px-lg-5">
+                    <legend class="fs-2 fw-bold mb-5">بيانات مقدم الطلب</legend>
                     <!-- Step 1 input fields -->
                     <div class="mt-3">
                         <div class="">
@@ -102,19 +102,19 @@
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_first_name" class="form-label">الاسم الأول<span style="color: red;">*</span></label>
                                             
-                                        <input type="text" class="form-control form-control-lg" id="id_personalinfo_first_name" maxlength="55" required name="personalinfo_first_name">
+                                        <input type="text" class="form-control" id="id_personalinfo_first_name" maxlength="55" required name="personalinfo_first_name">
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_second_name" class="form-label">الاسم الثاني<span style="color: red;">*</span></label>
-                                        <input type="text" class="form-control form-control-lg" id="id_personalinfo_second_name" maxlength="55" required name="personalinfo_second_name">
+                                        <input type="text" class="form-control" id="id_personalinfo_second_name" maxlength="55" required name="personalinfo_second_name">
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_last_name" class="form-label">الاسم الاخير<span style="color: red;">*</span> (اسم العائلة)</label>
-                                        <input type="text" class="form-control form-control-lg" id="id_personalinfo_last_name" maxlength="55" required name="personalinfo_last_name">
+                                        <input type="text" class="form-control" id="id_personalinfo_last_name" maxlength="55" required name="personalinfo_last_name">
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_date_of_birth" class="form-label">تاريخ الميلاد<span style="color: red;">*</span></label>
-                                        <input type="date" class="form-control form-control-lg" id="id_personalinfo_date_of_birth" maxlength="55" required name="personalinfo_date_of_birth">
+                                        <input type="date" class="form-control" id="id_personalinfo_date_of_birth" maxlength="55" required name="personalinfo_date_of_birth">
                                     </div>
                                 </div>
                         
@@ -123,7 +123,7 @@
                                 <div class="row row-cols-md-2 row-cols-xl-4 justify-content-center align-items-end">
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_gender" class="form-label">الجنس<span style="color: red;">*</span></label>
-                                        <select name="personalinfo_gender" class="form-control form-control-lg" id="id_personalinfo_gender" required>
+                                        <select name="personalinfo_gender" class="form-control" id="id_personalinfo_gender" required>
                                             <option value selected>---------</option>
                                             <option value="M">ذكر</option>
                                             <option value="F">انثى</option>
@@ -131,15 +131,15 @@
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_national_id" class="form-label">رقم الهوية الوطنية \ الإقامة<span style="color: red;">*</span></label>
-                                        <input type="text" class="form-control form-control-lg" id="id_personalinfo_national_id" maxlength="20" name="personalinfo_national_id" required>
+                                        <input type="text" class="form-control" id="id_personalinfo_national_id" maxlength="20" name="personalinfo_national_id" required>
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_national_id_exp_date" class="form-label">تاريخ انتهاء الهوية \ الإقامة<span style="color: red;">*</span></label>
-                                        <input type="date" class="form-control form-control-lg" id="id_personalinfo_national_id_exp_date" name="personalinfo_national_id_exp_date" required>
+                                        <input type="date" class="form-control" id="id_personalinfo_national_id_exp_date" name="personalinfo_national_id_exp_date" required>
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_nationality" class="form-label">الجنسية<span style="color: red;">*</span></label>
-                                        <select name="personalinfo_nationality" class="form-control form-control-lg" id="id_personalinfo_nationality">
+                                        <select name="personalinfo_nationality" class="form-control" id="id_personalinfo_nationality">
                                             <option value selected>إختر</option>
                                             <option value="السعودية">السعودية</option>
                                             <option value="أفغانستان">أفغانستان</option>
@@ -344,7 +344,7 @@
                                 <div class="row row-cols-md-2 row-cols-xl-3">
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_category" class="form-label">التصنيف الرئيسي<span style="color: red;">*</span></label>
-                                        <select name="personalinfo_category" class="form-control form-control-lg" required id="id_personalinfo_category">
+                                        <select name="personalinfo_category" class="form-control" required id="id_personalinfo_category">
                                             <option value selected>---------</option>
                                             <option value="regular family">أسرة عادية</option>
                                             <option value="orphan family">أسرة أيتام</option>
@@ -356,7 +356,7 @@
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_marital_status" class="form-label">الحالة الاجتماعية<span style="color: red;">*</span></label>
-                                        <select name="personalinfo_marital_status" class="form-control form-control-lg" required id="id_personalinfo_marital_status" onchange="widowerCheck(this);">
+                                        <select name="personalinfo_marital_status" class="form-control" required id="id_personalinfo_marital_status" onchange="widowerCheck(this);">
                                             <option value selected>---------</option>
                                             <option value="married">متزوج/ـة</option>
                                             <option value="single">أعزب/ـة</option>
@@ -366,7 +366,7 @@
                                     </div>
                                     <div class="col-md-12 mb-4 form-group">
                                         <label for="id_personalinfo_educational_level" class="form-label">المؤهل التعليمي<span style="color: red;">*</span></label>
-                                        <select name="personalinfo_educational_level" class="form-control form-control-lg" id="id_personalinfo_educational_level">
+                                        <select name="personalinfo_educational_level" class="form-control" id="id_personalinfo_educational_level">
                                             <option value="" selected>---------</option>
                                             <option value="primary-1">أول ابتدائي</option>
                                             <option value="primary-2">ثاني ابتدائي</option>
@@ -391,11 +391,11 @@
                                 <div class="row justify-content-center align-items-end" id="id_personalinfo_widower_group_info" style="display: none;">
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_date_of_death_of_father_or_husband" class="form-label">تاريخ وفاة الأب \ الزوج<span style="color: red;">*</span> (عند اختيار أرمله)</label>
-                                        <input type="date" name="personalinfo_date_of_death_of_father_or_husband" class="form-control form-control-lg" id="id_personalinfo_date_of_death_of_father_or_husband">
+                                        <input type="date" name="personalinfo_date_of_death_of_father_or_husband" class="form-control" id="id_personalinfo_date_of_death_of_father_or_husband">
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_washing_place" class="form-label">المغسلة التي تم التجهيز فيها<span style="color: red;">*</span></label>
-                                        <select name="personalinfo_washing_place" class="form-control form-control-lg" id="id_personalinfo_washing_place">
+                                        <select name="personalinfo_washing_place" class="form-control" id="id_personalinfo_washing_place">
                                           <option value="" selected>---------</option>
                                           <option value="إكرام فلسطين">إكرام فلسطين</option>
                                           <option value="الثنيان">الثنيان</option>
@@ -418,7 +418,7 @@
                                 <div class="row justify-content-baseline align-items-end">
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_health_status" class="form-label">الحالة الصحية<span style="color: red;">*</span></label>
-                                        <select name="personalinfo_health_status" class="form-control form-control-lg" id="id_personalinfo_health_status" onchange="healthCheck(this);">
+                                        <select name="personalinfo_health_status" class="form-control" id="id_personalinfo_health_status" onchange="healthCheck(this);">
                                             <option value="" selected>---------</option>
                                             <option value="good">جيدة</option>
                                             <option value="not good">غير جيدة</option>
@@ -426,7 +426,7 @@
                                     </div>
                                     <div class="col-md-6 mb-4 form-group" id="id_personalinfo_disease_type_group_info" style="display: none;">
                                         <label for="id_personalinfo_disease_type" class="form-label">نوع المرض<span style="color: red;">*</span> (عند اختيار غير جيدة)</label>
-                                        <input type="text" name="personalinfo_disease_type" maxlength="100" class="form-control form-control-lg" id="id_personalinfo_disease_type">
+                                        <input type="text" name="personalinfo_disease_type" maxlength="100" class="form-control" id="id_personalinfo_disease_type">
                                     </div>
                                 </div>
                         
@@ -435,7 +435,7 @@
                                 <div class="row justify-content-baseline align-items-end">
                                   <div class="col-md-6 mb-4 form-group">
                                     <label for="id_personalinfo_work_status" class="form-label">هل تعمل؟<span style="color: red;">*</span></label>
-                                    <select name="personalinfo_work_status" class="form-control form-control-lg" required id="id_personalinfo_work_status" onchange="workCheck(this);">
+                                    <select name="personalinfo_work_status" class="form-control" required id="id_personalinfo_work_status" onchange="workCheck(this);">
                                         <option value="" selected>---------</option>
                                         <option value="yes">نعم</option>
                                         <option value="no">لا</option>
@@ -443,7 +443,7 @@
                                   </div>
                                   <div class="col-md-6 mb-4 form-group" id="id_personalinfo_employer_group_info" style="display: none;">
                                       <label for="id_personalinfo_employer" class="form-label">جهة العمل<span style="color: red;">*</span> (عند اختيار نعم)</label>
-                                      <input type="text" name="personalinfo_employer" maxlength="100" class="form-control form-control-lg" id="id_personalinfo_employer">
+                                      <input type="text" name="personalinfo_employer" maxlength="100" class="form-control" id="id_personalinfo_employer">
                                   </div>
                                 </div>
 
@@ -454,11 +454,11 @@
                                     
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_phone_number" class="form-label">رقم التواصل<span style="color: red;">*</span></label>
-                                        <input type="tel" name="personalinfo_phone_number" class="form-control form-control-lg" required id="id_personalinfo_phone_number">
+                                        <input type="tel" name="personalinfo_phone_number" class="form-control" required id="id_personalinfo_phone_number">
                                     </div>
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_email" class="form-label">البريد الالكتروني</label>
-                                        <input type="email" name="personalinfo_email" maxlength="254" class="form-control form-control-lg" id="id_personalinfo_email">
+                                        <input type="email" name="personalinfo_email" maxlength="254" class="form-control" id="id_personalinfo_email">
                                     </div>
                                 </div>
 
@@ -479,23 +479,23 @@
                     </div>
                 </fieldset>
                 <!-- Step 2 Content, default hidden on page load. -->
-                <fieldset id="dependent_information" class="form-step">
-                    <h2 class="font-normal mb-5">بيانات المرافقين</h2>
+                <fieldset id="dependent_information" class="form-step px-3 px-lg-5">
+                    <h2 class="fs-2 fw-bold mb-5">بيانات المرافقين</h2>
                     <!-- Step 2 input fields -->
                     <div class="mt-3">
                       <div id="family-form">
                         <div class="row row-cols-md-2 row-cols-xl-4">
                           <div class="col-md-6 mb-4 form-group">
                             <label for="dependentName" class="form-label">الأسم<span style="color: red;">*</span><span style="font-size: 0.9rem;"> (حسب الهوية/الإقامة)</span></label>
-                            <input type="text" id="dependentName"  class="form-control form-control-lg" name="dependentinfo_name">
+                            <input type="text" id="dependentName"  class="form-control" name="dependentinfo_name">
                           </div>
                           <div class="col-md-6 mb-4 form-group">
                             <label for="dependentAge" class="form-label">العمر<span style="color: red;">*</span></label>
-                            <input type="number" id="dependentAge" class="form-control form-control-lg" name="dependentinfo_age">
+                            <input type="number" id="dependentAge" class="form-control" name="dependentinfo_age">
                           </div>
                           <div class="col-md-6 mb-4 form-group">
                             <label for="dependentGender" class="form-label">الجنس<span style="color: red;">*</span></label>
-                            <select name="dependentinfo_gender" class="form-control form-control-lg" id="dependentGender">
+                            <select name="dependentinfo_gender" class="form-control" id="dependentGender">
                               <option value selected>---------</option>
                               <option value="M">ذكر</option>
                               <option value="F">انثى</option>
@@ -503,7 +503,7 @@
                           </div>
                           <div class="col-md-6 mb-4 form-group">
                             <label for="id_dependentinfo_relationship" class="form-label">صلة القرابة<span style="color: red;">*</span></label>
-                            <select name="dependentinfo_relationship" class="form-control form-control-lg" id="id_dependentinfo_relationship">
+                            <select name="dependentinfo_relationship" class="form-control" id="id_dependentinfo_relationship">
                               <option value selected>---------</option>
                               <option value="son">ابن</option>
                               <option value="daughter">ابنة</option>
@@ -520,7 +520,7 @@
                         <div class="row row-cols-md-2 row-cols-xl-4">
                           <div class="col-md-6 mb-4 form-group">
                             <label for="id_dependentinfo_educational_status" class="form-label">الحالة الدراسية<span style="color: red;">*</span></label>
-                            <select name="dependentinfo_educational_status" class="form-control form-control-lg" id="id_dependentinfo_educational_status">
+                            <select name="dependentinfo_educational_status" class="form-control" id="id_dependentinfo_educational_status">
                                 <option value selected>---------</option>
                                 <option value="primary-1">أول ابتدائي</option>
                                 <option value="primary-2">ثاني ابتدائي</option>
@@ -540,7 +540,7 @@
                           </div>
                           <div class="col-md-6 mb-4 form-group">
                             <label for="id_dependentinfo_marital_status" class="form-label">الحالة الاجتماعية<span style="color: red;">*</span></label>
-                            <select name="dependentinfo_marital_status" class="form-control form-control-lg" id="id_dependentinfo_marital_status">
+                            <select name="dependentinfo_marital_status" class="form-control" id="id_dependentinfo_marital_status">
                                 <option value selected>---------</option>
                                 <option value="student">طالب/ـة</option>
                                 <option value="child">طفل/ـة</option>
@@ -553,7 +553,7 @@
                           </div>
                           <div class="col-md-6 mb-4 form-group">
                             <label for="id_dependentinfo_educational_level" class="form-label">المؤهل التعليمي<span style="color: red;">*</span></label>
-                            <select name="dependentinfo_educational_level" class="form-control form-control-lg" id="id_dependentinfo_educational_level">
+                            <select name="dependentinfo_educational_level" class="form-control" id="id_dependentinfo_educational_level">
                                 <option value selected>---------</option>
                                 <option value="none">لا يوجد</option>
                                 <option value="primary">ابتدائي</option>
@@ -564,7 +564,7 @@
                           </div>
                           <div class="col-md-6 mb-4 form-group">
                             <label for="id_dependentinfo_date_of_birth" class="form-label">تاريخ الميلاد<span style="color: red;">*</span></label>
-                            <input type="date" class="form-control form-control-lg" id="id_dependentinfo_date_of_birth" maxlength="55" name="dependentinfo_date_of_birth">
+                            <input type="date" class="form-control" id="id_dependentinfo_date_of_birth" maxlength="55" name="dependentinfo_date_of_birth">
                           </div>
                         </div>
 
@@ -573,11 +573,11 @@
                         <div class="row">
                           <div class="col-md-6 mb-4 form-group">
                             <label for="id_dependentinfo_national_id" class="form-label">رقم الهوية الوطنية \ الإقامة<span style="color: red;">*</span></label>
-                            <input type="text" class="form-control form-control-lg" id="id_dependentinfo_national_id" maxlength="20" name="dependentinfo_national_id">
+                            <input type="text" class="form-control" id="id_dependentinfo_national_id" maxlength="20" name="dependentinfo_national_id">
                           </div>
                           <div class="col-md-6 mb-4 form-group">
                               <label for="id_dependentinfo_national_id_exp_date" class="form-label">تاريخ انتهاء الهوية \ الإقامة<span style="color: red;">*</span></label>
-                              <input type="date" class="form-control form-control-lg" id="id_dependentinfo_national_id_exp_date" name="dependentinfo_national_id_exp_date">
+                              <input type="date" class="form-control" id="id_dependentinfo_national_id_exp_date" name="dependentinfo_national_id_exp_date">
                           </div>
                         </div>
 
@@ -586,7 +586,7 @@
                         <div class="row row-cols-md-2 row-cols-xl-4">
                           <div class="col-md-6 mb-4 form-group">
                             <label for="id_dependentinfo_health_status" class="form-label">الحالة الصحية<span style="color: red;">*</span></label>
-                            <select name="dependentinfo_health_status" class="form-control form-control-lg" id="id_dependentinfo_health_status">
+                            <select name="dependentinfo_health_status" class="form-control" id="id_dependentinfo_health_status">
                                 <option value selected>---------</option>
                                 <option value="good">جيدة</option>
                                 <option value="not good">غير جيدة</option>
@@ -594,15 +594,15 @@
                           </div>
                           <div class="col-md-6 mb-4 form-group">
                               <label for="id_dependentinfo_disease_type" class="form-label">نوع المرض<span style="color: red;">*</span> (عند اختيار غير جيدة)</label>
-                              <input type="text" name="dependentinfo_disease_type" maxlength="100" class="form-control form-control-lg" id="id_dependentinfo_disease_type">
+                              <input type="text" name="dependentinfo_disease_type" maxlength="100" class="form-control" id="id_dependentinfo_disease_type">
                           </div>
                           <div class="col-md-6 mb-4 form-group">
                             <label for="id_dependentinfo_monthly_income" class="form-label">دخل الفرد (شهريا)</label>
-                            <input type="number" name="dependentinfo_monthly_income" max="9999999999999999" min="0" class="form-control form-control-lg" id="id_dependentinfo_monthly_income">
+                            <input type="number" name="dependentinfo_monthly_income" max="9999999999999999" min="0" class="form-control" id="id_dependentinfo_monthly_income">
                           </div>
                           <div class="col-md-6 mb-4 form-group">
                               <label for="id_dependentinfo_income_source" class="form-label">مصدر الدخل</label>
-                              <select name="dependentinfo_income_source" class="form-control form-control-lg" id="id_dependentinfo_income_source">
+                              <select name="dependentinfo_income_source" class="form-control" id="id_dependentinfo_income_source">
                                 <option value selected>---------</option>
                                 <option value="salary">الراتب</option>
                                 <option value="social development">التأمينات الاجتماعية</option>
@@ -623,7 +623,7 @@
                           <div class="col-md-6 mb-4 form-group">
                             {% comment %} needs to be multiple choice {% endcomment %}
                             <label for="id_dependentinfo_needs_type" class="form-label">نوع الاحتياج للمرافق<span style="color: red;">*</span></label>
-                            <select name="dependentinfo_needs_type" class="form-control form-control-lg" id="id_dependentinfo_needs_type">
+                            <select name="dependentinfo_needs_type" class="form-control" id="id_dependentinfo_needs_type">
                               <option value selected>---------</option>
                               <option value="economic">اقتصادي</option>
                               <option value="healthy">صحي</option>
@@ -634,7 +634,7 @@
                           </div>
                           <div class="col-md-6 mb-4 form-group">
                               <label for="id_dependentinfo_needs_description" class="form-label">وصف الاحتياج</label>
-                              <textarea type="textarea" class="form-control form-control-lg" id="id_dependentinfo_needs_description" name="dependentinfo_needs_description" maxlength="2000"></textarea>
+                              <textarea type="textarea" class="form-control" id="id_dependentinfo_needs_description" name="dependentinfo_needs_description" maxlength="2000"></textarea>
                           </div>
                         </div>
 
@@ -672,8 +672,8 @@
                     </div>
                 </fieldset>
                 <!-- Step 3 Content, default hidden on page load. -->
-                <fieldset id="housing_income_need_information" class="form-step">
-                    <h2 class="font-normal">بيانات السكن والدخل والاحتياج</h2>
+                <fieldset id="housing_income_need_information" class="form-step px-3 px-lg-5">
+                    <h2 class="fs-2 fw-bold mb-5">بيانات السكن والدخل والاحتياج</h2>
                     
                     <!-- Step 3 input fields -->
                     <div class="mt-5">
@@ -681,43 +681,43 @@
                       <div class="row row-cols-md-2 row-cols-xl-4 mt-4">
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_houseinfo_building_number" class="form-label">رقم المبنى</label>
-                          <input type="number" name="houseinfo_building_number" min="0" max="9999999" class="form-control form-control-lg" id="id_houseinfo_building_number">
+                          <input type="number" name="houseinfo_building_number" min="0" max="9999999" class="form-control" id="id_houseinfo_building_number">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_houseinfo_street_name" class="form-label">اسم الشارع</label>
-                          <input type="text" name="houseinfo_street_name" maxlength="50" class="form-control form-control-lg" id="id_houseinfo_street_name">
+                          <input type="text" name="houseinfo_street_name" maxlength="50" class="form-control" id="id_houseinfo_street_name">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_houseinfo_neighborhood" class="form-label">الحي</label>
-                          <input type="text" name="houseinfo_neighborhood" maxlength="50" class="form-control form-control-lg" id="id_houseinfo_neighborhood">
+                          <input type="text" name="houseinfo_neighborhood" maxlength="50" class="form-control" id="id_houseinfo_neighborhood">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_houseinfo_city" class="form-label">المدينة</label>
-                          <input type="text" name="houseinfo_city" maxlength="50" class="form-control form-control-lg" id="id_houseinfo_city">
+                          <input type="text" name="houseinfo_city" maxlength="50" class="form-control" id="id_houseinfo_city">
                         </div>
                       </div>
                       <div class="row row-cols-md-2 row-cols-xl-4 mt-4">
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_houseinfo_postal_code" class="form-label">الرمز البريدي</label>
-                          <input type="number" name="houseinfo_postal_code" min="0" max="9999999" class="form-control form-control-lg" id="id_houseinfo_postal_code">
+                          <input type="number" name="houseinfo_postal_code" min="0" max="9999999" class="form-control" id="id_houseinfo_postal_code">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_houseinfo_additional_number" class="form-label">الرقم الإضافي</label>
-                          <input type="number" name="houseinfo_additional_number" min="0" max="9999999"  class="form-control form-control-lg" id="id_houseinfo_additional_number">
+                          <input type="number" name="houseinfo_additional_number" min="0" max="9999999"  class="form-control" id="id_houseinfo_additional_number">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_houseinfo_unit" class="form-label">الوحدة</label>
-                          <input type="text" name="houseinfo_unit" maxlength="50" class="form-control form-control-lg" id="id_houseinfo_unit">
+                          <input type="text" name="houseinfo_unit" maxlength="50" class="form-control" id="id_houseinfo_unit">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_houseinfo_location_url" class="form-label">رابط موقع المنزل (google maps)</label>
-                          <input type="url" name="houseinfo_location_url" maxlength="250" class="form-control form-control-lg" id="id_houseinfo_location_url">
+                          <input type="url" name="houseinfo_location_url" maxlength="250" class="form-control" id="id_houseinfo_location_url">
                         </div>
                       </div>
                       <div class="row justify-content-center align-items-end">
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_houseinfo_housing_type" class="form-label">نوع السكن</label>
-                          <select name="houseinfo_housing_type" class="form-control form-control-lg" id="id_houseinfo_housing_type">
+                          <label for="id_houseinfo_housing_type" class="form-label">نوع السكن<span style="color: red;">*</span></label>
+                          <select name="houseinfo_housing_type" class="form-control" id="id_houseinfo_housing_type">
                             <option value selected>---------</option>
                             <option value="شعبي">شعبي</option>
                             <option value="شقة">شقة</option>
@@ -726,8 +726,8 @@
                           </select>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_houseinfo_housing_ownership" class="form-label">ملكية السكن</label>
-                          <select name="houseinfo_housing_ownership" class="form-control form-control-lg" id="id_houseinfo_housing_ownership">
+                          <label for="id_houseinfo_housing_ownership" class="form-label">ملكية السكن<span style="color: red;">*</span></label>
+                          <select name="houseinfo_housing_ownership" class="form-control" id="id_houseinfo_housing_ownership">
                             <option value selected>---------</option>
                             <option value="ملك">ملك</option>
                             <option value="وقف">وقف</option>
@@ -739,96 +739,102 @@
                       <hr>
 
                       <h4 class="font-normal">مصادر دخل رب الأسرة (المعيل)</h4>
+                      <div class="alert alert-warning mt-3" role="alert" id="checkboxError">
+                        الرجاء إدخال مصادر الدخل ادناه, وفي حال عدم وجود الدخل المسمى, يرجى ادخال قيمة صفر (0)
+                      </div>
                       <div class="row row-cols-md-2 row-cols-xl-4 mt-4 justify-content-center align-items-end">
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_incomeinfo_salary" class="form-label">الراتب</label>
-                          <input type="number" name="incomeinfo_salary" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_incomeinfo_salary">
+                          <label for="id_incomeinfo_salary" class="form-label">الراتب<span style="color: red;">*</span></label>
+                          <input type="number" name="incomeinfo_salary" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_salary">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_incomeinfo_social_insurance" class="form-label">التأمينات الاجتماعية</label>
-                          <input type="number" name="incomeinfo_social_insurance" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_incomeinfo_social_insurance">
+                          <label for="id_incomeinfo_social_insurance" class="form-label">التأمينات الاجتماعية<span style="color: red;">*</span></label>
+                          <input type="number" name="incomeinfo_social_insurance" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_social_insurance">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_incomeinfo_charity" class="form-label">جمعيات خيرية</label>
-                          <input type="number" name="incomeinfo_charity" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_incomeinfo_charity">
+                          <label for="id_incomeinfo_charity" class="form-label">جمعيات خيرية<span style="color: red;">*</span></label>
+                          <input type="number" name="incomeinfo_charity" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_charity">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_incomeinfo_social_warranty" class="form-label">الضمان الاجتماعي</label>
-                          <input type="number" name="incomeinfo_social_warranty" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_incomeinfo_social_warranty">
+                          <label for="id_incomeinfo_social_warranty" class="form-label">الضمان الاجتماعي<span style="color: red;">*</span></label>
+                          <input type="number" name="incomeinfo_social_warranty" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_social_warranty">
                         </div>
                       </div>
                       <div class="row row-cols-md-2 row-cols-xl-4">
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_incomeinfo_pension_agency" class="form-label">مصلحة التقاعد</label>
-                          <input type="number" name="incomeinfo_pension_agency" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_incomeinfo_pension_agency">
+                          <label for="id_incomeinfo_pension_agency" class="form-label">مصلحة التقاعد<span style="color: red;">*</span></label>
+                          <input type="number" name="incomeinfo_pension_agency" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_pension_agency">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_incomeinfo_citizen_account" class="form-label">حساب المواطن</label>
-                          <input type="number" name="incomeinfo_citizen_account" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_incomeinfo_citizen_account">
+                          <label for="id_incomeinfo_citizen_account" class="form-label">حساب المواطن<span style="color: red;">*</span></label>
+                          <input type="number" name="incomeinfo_citizen_account" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_citizen_account">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_incomeinfo_benefactor" class="form-label">فاعل خير</label>
-                          <input type="number" name="incomeinfo_benefactor" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_incomeinfo_benefactor">
+                          <input type="number" name="incomeinfo_benefactor" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_benefactor">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_incomeinfo_other" class="form-label">أخرى</label>
-                          <input type="number" name="incomeinfo_other" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_incomeinfo_other">
+                          <input type="number" name="incomeinfo_other" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_other">
                         </div>
                       </div>
                       <div class="row justify-content-center align-items-end">
                         <div class="col mb-4 form-group">
-                          <label for="id_incomeinfo_total_income" class="form-label">إجمالي الدخل</label>
-                          <input type="number" name="incomeinfo_total_income" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_incomeinfo_total_income">
+                          <label for="id_incomeinfo_total" class="form-label">إجمالي الدخل</label>
+                          <input type="number" name="incomeinfo_total" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_incomeinfo_total" disabled readonly>
                         </div>
                       </div>
 
                       <hr>
 
                       <h4 class="font-normal">مصروفات الأسرة</h4>
+                      <div class="alert alert-warning mt-3" role="alert" id="checkboxError">
+                        الرجاء ادخال مصروفات الأسرة ادناه, وفي حال عدم وجود أو عدم تكفل المعيل بالمصروف المسمى, يرجى ادخال قيمة صفر (0)
+                      </div>
                       <div class="row row-cols-md-2 row-cols-xl-4 mt-4">
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_expensesinfo_housing_rent" class="form-label">إيجار السكن</label>
-                          <input type="number" name="expensesinfo_housing_rent" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_expensesinfo_housing_rent">
+                          <label for="id_expensesinfo_housing_rent" class="form-label">إيجار السكن<span style="color: red;">*</span></label>
+                          <input type="number" name="expensesinfo_housing_rent" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_housing_rent">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_expensesinfo_electricity_bills" class="form-label">فواتير كهرباء</label>
-                          <input type="number" name="expensesinfo_electricity_bills" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_expensesinfo_electricity_bills">
+                          <label for="id_expensesinfo_electricity_bills" class="form-label">فواتير كهرباء<span style="color: red;">*</span></label>
+                          <input type="number" name="expensesinfo_electricity_bills" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_electricity_bills">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_expensesinfo_water_bills" class="form-label">فواتير ماء</label>
-                          <input type="number" name="expensesinfo_water_bills" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_expensesinfo_water_bills">
+                          <label for="id_expensesinfo_water_bills" class="form-label">فواتير ماء<span style="color: red;">*</span></label>
+                          <input type="number" name="expensesinfo_water_bills" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_water_bills">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_expensesinfo_transportation" class="form-label">مواصلات</label>
-                          <input type="number" name="expensesinfo_transportation" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_expensesinfo_transportation">
+                          <label for="id_expensesinfo_transportation" class="form-label">مواصلات<span style="color: red;">*</span></label>
+                          <input type="number" name="expensesinfo_transportation" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_transportation">
                         </div>
                       </div>
                       <div class="row row-cols-md-2 row-cols-xl-4">
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_expensesinfo_health_supplies" class="form-label">مستلزمات صحية</label>
-                          <input type="number" name="expensesinfo_health_supplies" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_expensesinfo_health_supplies">
+                          <label for="id_expensesinfo_health_supplies" class="form-label">مستلزمات صحية<span style="color: red;">*</span></label>
+                          <input type="number" name="expensesinfo_health_supplies" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_health_supplies">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_expensesinfo_food_supplies" class="form-label">مستلزمات غذائية</label>
-                          <input type="number" name="expensesinfo_food_supplies" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_expensesinfo_food_supplies">
+                          <label for="id_expensesinfo_food_supplies" class="form-label">مستلزمات غذائية<span style="color: red;">*</span></label>
+                          <input type="number" name="expensesinfo_food_supplies" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_food_supplies">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_expensesinfo_educational_supplies" class="form-label">مستلزمات دراسية</label>
-                          <input type="number" name="expensesinfo_educational_supplies" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_expensesinfo_educational_supplies">
+                          <label for="id_expensesinfo_educational_supplies" class="form-label">مستلزمات دراسية<span style="color: red;">*</span></label>
+                          <input type="number" name="expensesinfo_educational_supplies" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_educational_supplies">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_proven_debts" class="form-label">ديون مثبتة</label>
-                          <input type="number" name="expensesinfo_proven_debts" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_expensesinfo_proven_debts">
+                          <input type="number" name="expensesinfo_proven_debts" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_proven_debts">
                         </div>
                       </div>
                       <div class="row justify-content-center align-items-end">
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_other" class="form-label">أخرى</label>
-                          <input type="number" name="expensesinfo_other" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_expensesinfo_other">
+                          <input type="number" name="expensesinfo_other" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_other">
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_total" class="form-label">إجمالي المصروفات</label>
-                          <input type="number" name="expensesinfo_total" min="0.00" max="99999999.00" step="0.01" class="form-control form-control-lg" id="id_expensesinfo_total">
+                          <input type="number" name="expensesinfo_total" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_total" disabled readonly>
                         </div>
                       </div>
 
@@ -836,8 +842,8 @@
 
                       <div class="row mt-3 justify-content-center align-items-end">
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_familyinfo_family_issues" class="form-label">المشكلات التي تعاني منها الأسرة</label>
-                          <select multiple size="5" name="familyinfo_family_issues" class="form-control form-control-lg" id="id_familyinfo_family_issues">
+                          <label for="id_familyinfo_family_issues" class="form-label">المشكلات التي تعاني منها الأسرة<span style="color: red;">*</span></label>
+                          <select multiple size="5" name="familyinfo_family_issues" class="form-control" id="id_familyinfo_family_issues">
                             <option value="اقتصادية">اقتصادية</option>
                             <option value="صحية">صحية</option>
                             <option value="تعليمية">تعليمية</option>
@@ -846,8 +852,8 @@
                           </select>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_familyinfo_needs_type" class="form-label">نوع الاحتياج</label>
-                          <select multiple size="5" name="familyinfo_needs_type" class="form-control form-control-lg" id="id_familyinfo_needs_type">
+                          <label for="id_familyinfo_needs_type" class="form-label">نوع الاحتياج<span style="color: red;">*</span></label>
+                          <select multiple size="5" name="familyinfo_needs_type" class="form-control" id="id_familyinfo_needs_type">
                             <option value="سلال غذائية">سلال غذائية</option>
                             <option value="كسوة">كسوة</option>
                             <option value="حقائب مدرسية">حقائب مدرسية</option>
@@ -865,14 +871,14 @@
                       </div>
                       <div class="row">
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_beneficiaryinfo_iban" class="form-label">الحساب البنكي للمستفيد (IBAN)</label>
-                          <input type="text" name="beneficiaryinfo_iban" maxlength="50" class="form-control form-control-lg" id="id_beneficiaryinfo_iban" placeholder="" value="SA" onclick="resetInputIban()">
+                          <label for="id_beneficiaryinfo_iban" class="form-label">الحساب البنكي للمستفيد<span style="color: red;">*</span> (IBAN)</label>
+                          <input type="text" name="beneficiaryinfo_iban" maxlength="50" class="form-control" id="id_beneficiaryinfo_iban" placeholder="" value="SA" onclick="resetInputIban()">
                           {% comment %} <input type="text" id="ibanInput" placeholder="Enter IBAN">
                           <div id="ibanValidationResult"></div> {% endcomment %}
                         </div>
                         <div class="col-md-6 mb-4 form-group">
-                          <label for="id_beneficiaryinfo_bank" class="form-label">البنك</label>
-                          <select name="beneficiaryinfo_bank" class="form-control form-control-lg" id="id_beneficiaryinfo_bank">
+                          <label for="id_beneficiaryinfo_bank" class="form-label">البنك<span style="color: red;">*</span></label>
+                          <select name="beneficiaryinfo_bank" class="form-control" id="id_beneficiaryinfo_bank">
                             <option value selected>---------</option>
                             <option value="الأهلي السعودي">الأهلي السعودي</option>
                             <option value="الراجحي">الراجحي</option>
@@ -889,10 +895,10 @@
                       <div class="row">
                           <div class="col mb-4 form-group">
                             <label for="id_familyinfo_needs_description" class="form-label">وصف الاحتياج</label>
-                            <textarea row="5" col="40" type="textarea" class="form-control form-control-lg" id="id_familyinfo_needs_description" name="familyinfo_needs_description" maxlength="2000"></textarea>
+                            <textarea row="5" col="40" type="textarea" class="form-control" id="id_familyinfo_needs_description" name="familyinfo_needs_description" maxlength="2000"></textarea>
                         </div>
                       </div>
-
+                      
                       <hr>
 
                     </div>
@@ -902,8 +908,8 @@
                     </div>
                 </fieldset>
                 <!-- Step 4 Content, default hidden on page load. -->
-                <fieldset id="attachments_information" class="form-step">
-                    <h2 class="font-normal">المرفقات</h2>
+                <fieldset id="attachments_information" class="form-step px-3 px-lg-5">
+                    <h2 class="fs-2 fw-bold mb-5">المرفقات</h2>
                     <!-- Step 4 input fields -->
                     <div class="row mt-3 column-gap-4">
                       <div class="col row-gap-3 mb-3 mt-2">
@@ -957,8 +963,8 @@
                     </div>
                 </fieldset>
 
-                <fieldset id="submit_confirmation" class="form-step">
-                    <h2 class="font-normal">تقديم الطلب</h2>
+                <fieldset id="submit_confirmation" class="form-step px-3 px-lg-5">
+                    <h2 class="fs-2 fw-bold mb-5">تقديم الطلب</h2>
                     <!-- Step 5 input fields -->
                     <div class="mt-3">
                       <div class="alert alert-primary" role="alert" id="checkboxError">
@@ -1127,9 +1133,46 @@
           }
         });
 
-        function resetInputIban() {
-          document.getElementById('id_beneficiaryinfo_iban').value = "SA";
+        // The Code segment to calculate the incomeinfo 
+
+        // Select all your input fields
+        var incomeinfo_inputs = document.querySelectorAll('input[type=number][name^=incomeinfo_]:not([name=incomeinfo_total])');
+
+        // Function to calculate the sum
+        function calculateSumIncome() {
+            let sum = 0;
+            incomeinfo_inputs.forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                sum += value;
+            });
+            document.getElementById('id_incomeinfo_total').value = sum.toFixed(2);
         }
+
+        // Add event listeners to all input fields
+        incomeinfo_inputs.forEach(input => input.addEventListener('input', calculateSumIncome));
+
+        // Code segment ends
+
+
+        // The Code segment to calculate the expensesinfo 
+
+        // Select all your input fields
+        var expensesinfo_inputs = document.querySelectorAll('input[type=number][name^=expensesinfo_]:not([name=expensesinfo_total])');
+
+        // Function to calculate the sum
+        function calculateSumExpenses() {
+            let sum = 0;
+            expensesinfo_inputs.forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                sum += value;
+            });
+            document.getElementById('id_expensesinfo_total').value = sum.toFixed(2);
+        }
+
+        // Add event listeners to all input fields
+        expensesinfo_inputs.forEach(input => input.addEventListener('input', calculateSumExpenses));
+
+        // Code segment ends
 
         /*
         // Function to update the state of the submit button

@@ -24,3 +24,10 @@ function workCheck(that) {
       document.getElementById("id_personalinfo_employer_group_info").style.display = "none"
   }
 }
+
+// Function to reset the input for IBAN input field 
+function resetInputIban() {
+  document.getElementById('id_beneficiaryinfo_iban').value = "SA";
+}
+
+
