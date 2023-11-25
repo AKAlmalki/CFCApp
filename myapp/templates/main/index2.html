@@ -98,7 +98,7 @@
                         <div class="">
                             <div class="container">
                                 {% comment %} Full Name and DOB {% endcomment %}
-                                <div class="row row-cols-md-2 row-cols-xl-4 justify-content-center align-items-end">
+                                <div class="row row-cols-md-2 row-cols-xl-4">
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_first_name" class="form-label">الاسم الأول<span style="color: red;">*</span></label>
                                             
@@ -120,7 +120,7 @@
                         
                                 <hr>
                                 {% comment %} Nationality information and Gender {% endcomment %}
-                                <div class="row row-cols-md-2 row-cols-xl-4 justify-content-center align-items-end">
+                                <div class="row row-cols-md-2 row-cols-xl-4">
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_gender" class="form-label">الجنس<span style="color: red;">*</span></label>
                                         <select name="personalinfo_gender" class="form-control" id="id_personalinfo_gender" required>
@@ -344,7 +344,7 @@
                                 <div class="row row-cols-md-2 row-cols-xl-3">
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_category" class="form-label">التصنيف الرئيسي<span style="color: red;">*</span></label>
-                                        <select name="personalinfo_category" class="form-control" required id="id_personalinfo_category">
+                                        <select name="personalinfo_category" class="form-control" required id="id_personalinfo_category" onchange="categoryCheck(this);">
                                             <option value selected>---------</option>
                                             <option value="regular family">أسرة عادية</option>
                                             <option value="orphan family">أسرة أيتام</option>
@@ -388,7 +388,7 @@
                         
                                 <hr>
                                 {% comment %} the date of father's death, and where {% endcomment %}
-                                <div class="row justify-content-center align-items-end" id="id_personalinfo_widower_group_info" style="display: none;">
+                                <div class="row" id="id_personalinfo_widower_group_info" style="display: none!important;">
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_date_of_death_of_father_or_husband" class="form-label">تاريخ وفاة الأب \ الزوج<span style="color: red;">*</span> (عند اختيار أرمله)</label>
                                         <input type="date" name="personalinfo_date_of_death_of_father_or_husband" class="form-control" id="id_personalinfo_date_of_death_of_father_or_husband">
@@ -415,7 +415,7 @@
                         
                                 <hr id="widower_hr" style="display: none;">
                                 {% comment %} health condition {% endcomment %}
-                                <div class="row justify-content-baseline align-items-end">
+                                <div class="row">
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_health_status" class="form-label">الحالة الصحية<span style="color: red;">*</span></label>
                                         <select name="personalinfo_health_status" class="form-control" id="id_personalinfo_health_status" onchange="healthCheck(this);">
@@ -432,7 +432,7 @@
                         
                                 <hr>
 
-                                <div class="row justify-content-baseline align-items-end">
+                                <div class="row">
                                   <div class="col-md-6 mb-4 form-group">
                                     <label for="id_personalinfo_work_status" class="form-label">هل تعمل؟<span style="color: red;">*</span></label>
                                     <select name="personalinfo_work_status" class="form-control" required id="id_personalinfo_work_status" onchange="workCheck(this);">
@@ -450,7 +450,7 @@
                                 <hr>
 
                                 {% comment %} work condition, contact information {% endcomment %}
-                                <div class="row justify-content-center align-items-end">
+                                <div class="row">
                                     
                                     <div class="col-md-6 mb-4 form-group">
                                         <label for="id_personalinfo_phone_number" class="form-label">رقم التواصل<span style="color: red;">*</span></label>
@@ -469,7 +469,7 @@
                       <div class="col-lg-8 col-lg-offset-4">
                         <div class="checkbox form-check">
                           <label class="form-check-label fs-6" for="skip-step">هل لديك أبناء/مرافقين ترغب بإضافتهم كمستفيدين؟</label>
-                          <input class="form-check-input" type="checkbox" id="skip-step" >
+                          <input class="form-check-input" type="checkbox" id="skip-step" name="addDependent">
                           <p class="text-muted" style="font-size: 0.8rem;">في حال الاختيار سوف تظهر نافذة المرافقين</p>
                         </div>
                       </div>
@@ -714,7 +714,7 @@
                           <input type="url" name="houseinfo_location_url" maxlength="250" class="form-control" id="id_houseinfo_location_url">
                         </div>
                       </div>
-                      <div class="row justify-content-center align-items-end">
+                      <div class="row">
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_houseinfo_housing_type" class="form-label">نوع السكن<span style="color: red;">*</span></label>
                           <select name="houseinfo_housing_type" class="form-control" id="id_houseinfo_housing_type">
@@ -742,46 +742,73 @@
                       <div class="alert alert-warning mt-3" role="alert" id="checkboxError">
                         الرجاء إدخال مصادر الدخل ادناه, وفي حال عدم وجود الدخل المسمى, يرجى ادخال قيمة صفر (0)
                       </div>
-                      <div class="row row-cols-md-2 row-cols-xl-4 mt-4 justify-content-center align-items-end">
+                      <div class="row row-cols-md-2 row-cols-xl-4 mt-4">
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_incomeinfo_salary" class="form-label">الراتب<span style="color: red;">*</span></label>
-                          <input type="number" name="incomeinfo_salary" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_salary">
+                          <div class="input-group mb-3">
+                            <input type="number" name="incomeinfo_salary" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_salary">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_incomeinfo_social_insurance" class="form-label">التأمينات الاجتماعية<span style="color: red;">*</span></label>
-                          <input type="number" name="incomeinfo_social_insurance" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_social_insurance">
+                          <div class="input-group mb-3">
+                            <input type="number" name="incomeinfo_social_insurance" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_social_insurance">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_incomeinfo_charity" class="form-label">جمعيات خيرية<span style="color: red;">*</span></label>
-                          <input type="number" name="incomeinfo_charity" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_charity">
+                          <div class="input-group mb-3">
+                            <input type="number" name="incomeinfo_charity" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_charity">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_incomeinfo_social_warranty" class="form-label">الضمان الاجتماعي<span style="color: red;">*</span></label>
-                          <input type="number" name="incomeinfo_social_warranty" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_social_warranty">
+                          <div class="input-group mb-3">
+                            <input type="number" name="incomeinfo_social_warranty" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_social_warranty">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                       </div>
                       <div class="row row-cols-md-2 row-cols-xl-4">
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_incomeinfo_pension_agency" class="form-label">مصلحة التقاعد<span style="color: red;">*</span></label>
-                          <input type="number" name="incomeinfo_pension_agency" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_pension_agency">
+                          <div class="input-group mb-3">
+                            <input type="number" name="incomeinfo_pension_agency" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_pension_agency">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_incomeinfo_citizen_account" class="form-label">حساب المواطن<span style="color: red;">*</span></label>
-                          <input type="number" name="incomeinfo_citizen_account" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_citizen_account">
+                          <div class="input-group mb-3">
+                            <input type="number" name="incomeinfo_citizen_account" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_citizen_account">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_incomeinfo_benefactor" class="form-label">فاعل خير</label>
-                          <input type="number" name="incomeinfo_benefactor" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_benefactor">
+                          <div class="input-group mb-3">
+                            <input type="number" name="incomeinfo_benefactor" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_benefactor">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_incomeinfo_other" class="form-label">أخرى</label>
-                          <input type="number" name="incomeinfo_other" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_other">
+                          <div class="input-group mb-3">
+                            <input type="number" name="incomeinfo_other" min="0.00" max="99999999.00" class="form-control" id="id_incomeinfo_other">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                       </div>
-                      <div class="row justify-content-center align-items-end">
+                      <div class="row">
                         <div class="col mb-4 form-group">
                           <label for="id_incomeinfo_total" class="form-label">إجمالي الدخل</label>
-                          <input type="number" name="incomeinfo_total" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_incomeinfo_total" disabled readonly>
+                          <div class="input-group mb-3">
+                            <input type="number" name="incomeinfo_total" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_incomeinfo_total" disabled readonly>
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                       </div>
 
@@ -794,53 +821,83 @@
                       <div class="row row-cols-md-2 row-cols-xl-4 mt-4">
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_housing_rent" class="form-label">إيجار السكن<span style="color: red;">*</span></label>
-                          <input type="number" name="expensesinfo_housing_rent" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_housing_rent">
+                          <div class="input-group mb-3">
+                            <input type="number" name="expensesinfo_housing_rent" min="0.00" max="99999999.00" class="form-control" id="id_expensesinfo_housing_rent">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_electricity_bills" class="form-label">فواتير كهرباء<span style="color: red;">*</span></label>
-                          <input type="number" name="expensesinfo_electricity_bills" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_electricity_bills">
+                          <div class="input-group mb-3">
+                            <input type="number" name="expensesinfo_electricity_bills" min="0.00" max="99999999.00" class="form-control" id="id_expensesinfo_electricity_bills">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_water_bills" class="form-label">فواتير ماء<span style="color: red;">*</span></label>
-                          <input type="number" name="expensesinfo_water_bills" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_water_bills">
+                          <div class="input-group mb-3">
+                            <input type="number" name="expensesinfo_water_bills" min="0.00" max="99999999.00" class="form-control" id="id_expensesinfo_water_bills">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_transportation" class="form-label">مواصلات<span style="color: red;">*</span></label>
-                          <input type="number" name="expensesinfo_transportation" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_transportation">
+                          <div class="input-group mb-3">
+                            <input type="number" name="expensesinfo_transportation" min="0.00" max="99999999.00" class="form-control" id="id_expensesinfo_transportation">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                       </div>
                       <div class="row row-cols-md-2 row-cols-xl-4">
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_health_supplies" class="form-label">مستلزمات صحية<span style="color: red;">*</span></label>
-                          <input type="number" name="expensesinfo_health_supplies" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_health_supplies">
+                          <div class="input-group mb-3">
+                            <input type="number" name="expensesinfo_health_supplies" min="0.00" max="99999999.00" class="form-control" id="id_expensesinfo_health_supplies">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_food_supplies" class="form-label">مستلزمات غذائية<span style="color: red;">*</span></label>
-                          <input type="number" name="expensesinfo_food_supplies" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_food_supplies">
+                          <div class="input-group mb-3">
+                            <input type="number" name="expensesinfo_food_supplies" min="0.00" max="99999999.00" class="form-control" id="id_expensesinfo_food_supplies">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_educational_supplies" class="form-label">مستلزمات دراسية<span style="color: red;">*</span></label>
-                          <input type="number" name="expensesinfo_educational_supplies" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_educational_supplies">
+                          <div class="input-group mb-3">
+                            <input type="number" name="expensesinfo_educational_supplies" min="0.00" max="99999999.00" class="form-control" id="id_expensesinfo_educational_supplies">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_proven_debts" class="form-label">ديون مثبتة</label>
-                          <input type="number" name="expensesinfo_proven_debts" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_proven_debts">
+                          <div class="input-group mb-3">
+                            <input type="number" name="expensesinfo_proven_debts" min="0.00" max="99999999.00" class="form-control" id="id_expensesinfo_proven_debts">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                       </div>
-                      <div class="row justify-content-center align-items-end">
+                      <div class="row">
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_other" class="form-label">أخرى</label>
-                          <input type="number" name="expensesinfo_other" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_other">
+                          <div class="input-group mb-3">
+                            <input type="number" name="expensesinfo_other" min="0.00" max="99999999.00" class="form-control" id="id_expensesinfo_other">
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_expensesinfo_total" class="form-label">إجمالي المصروفات</label>
-                          <input type="number" name="expensesinfo_total" min="0.00" max="99999999.00" step="0.01" class="form-control" id="id_expensesinfo_total" disabled readonly>
+                          <div class="input-group mb-3">
+                            <input type="number" name="expensesinfo_total" min="0.00" max="99999999.00" class="form-control" id="id_expensesinfo_total" disabled readonly>
+                            <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                          </div>
                         </div>
                       </div>
 
                       <hr>
 
-                      <div class="row mt-3 justify-content-center align-items-end">
+                      <div class="row mt-3">
                         <div class="col-md-6 mb-4 form-group">
                           <label for="id_familyinfo_family_issues" class="form-label">المشكلات التي تعاني منها الأسرة<span style="color: red;">*</span></label>
                           <select multiple size="5" name="familyinfo_family_issues" class="form-control" id="id_familyinfo_family_issues">
@@ -912,48 +969,173 @@
                     <h2 class="fs-2 fw-bold mb-5">المرفقات</h2>
                     <!-- Step 4 input fields -->
                     <div class="row mt-3 column-gap-4">
+
                       <div class="col row-gap-3 mb-3 mt-2">
-                        <div class="mb-4 d-flex flex-row column-gap-4">
+                        <div class="mb-4 row column-gap-4">
                           <div class="col d-flex flex-column">
-                            <label class="form-label">إرفاق صورة الهوية الوطنية/الإقامة</label>
-                            <div class="col text-muted" id="fileNamesBeneficiaryNationalID"></div> <!--- Place of showing file names -->
+                            <label class="form-label" id="id_beneficiaryNationalIDTitle">صورة الهوية الوطنية/الإقامة</label>
+                            <div class="col text-muted" id="id_fileNamesBeneficiaryNationalID"></div> <!--- Place of showing file names -->
                           </div>
                           <div class="col-4 d-flex justify-content-center">
-                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="formFileBeneficiaryNationalID">إرفاق ملف</label>
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileBeneficiaryNationalID">إرفاق ملف</label>
                           </div>
-                          <input class="form-control d-none" type="file" id="formFileBeneficiaryNationalID" name="fileBeneficiaryNationalID">
+                          <input class="form-control d-none" type="file" id="id_formFileBeneficiaryNationalID" name="fileBeneficiaryNationalID">
                         </div>
-                        <div class="mb-4 d-flex flex-row column-gap-4">
+
+                        <hr>
+
+                        <div class="mb-4 row column-gap-4">
                           <div class="col d-flex flex-column">
-                            <label class="form-label">إرفاق صورة الهوية الوطنية/الإقامة للمرافقين</label>
-                            <div class="col text-muted" id="fileNamesNationalIDForBeneficiaryDependents"></div> <!--- Place of showing file names -->
+                            <label class="form-label">العنوان الوطني</label>
+                            <div class="col text-muted" id="id_fileNamesNationalAddress"></div> <!--- Place of showing file names -->
                           </div>
                           <div class="col-4 d-flex justify-content-center">
-                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="formFileNationalIDForBeneficiaryDependents">إرفاق ملفات</label>
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileBeneficiaryNationalAddress">إرفاق ملف</label>
                           </div>
-                          <input class="form-control d-none" type="file" id="formFileNationalIDForBeneficiaryDependents" multiple name="fileNationalIDForBeneficiaryDependents">
+                          <input class="form-control d-none" type="file" id="id_formFileBeneficiaryNationalAddress" name="fileBeneficiaryNationalAddress">
                         </div>
-                      </div>
-                      <div class="col row-gap-3 mb-3 mt-2">
-                        <div class="mb-4 d-flex flex-row column-gap-4">
+
+                        <hr>
+
+                        <div class="mb-4 row column-gap-4">
                           <div class="col d-flex flex-column">
-                            <label class="form-label">إرفاق العنوان الوطني</label>
-                            <div class="col text-muted" id="fileNamesNationalAddress"></div> <!--- Place of showing file names -->
+                            <label class="form-label">صك الدين (في حال وجود دين)</label>
+                            <div class="col text-muted" id="id_fileNamesDeptInstrument"></div> <!--- Place of showing file names -->
                           </div>
                           <div class="col-4 d-flex justify-content-center">
-                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="formFileBeneficiaryNationalAddress">إرفاق ملف</label>
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileDeptInstrument">إرفاق ملفات</label>
                           </div>
-                          <input class="form-control d-none" type="file" id="formFileBeneficiaryNationalAddress">
+                          <input class="form-control d-none" type="file" id="id_formFileDeptInstrument" name="fileDeptInstrument" multiple>
                         </div>
-                        <div class="mb-4 d-flex flex-row column-gap-4">
+
+                        <hr>
+
+                        <div class="mb-4 row column-gap-4">
+                          <div class="col d-flex flex-column">
+                            <label class="form-label">عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية</label>
+                            <div class="col text-muted" id="id_fileNamesLeaseContractOrTitleDeed"></div> <!--- Place of showing file names -->
+                          </div>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileLeaseContractOrTitleDeed">إرفاق ملفات</label>
+                          </div>
+                          <input class="form-control d-none" type="file" id="id_formFileLeaseContractOrTitleDeed" name="fileLeaseContractOrTitleDeed" multiple>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-4 row column-gap-4">
+                          <div class="col d-flex flex-column">
+                            <label class="form-label">الفواتير (كهرباء - ماء)</label>
+                            <div class="col text-muted" id="id_fileNamesWaterOrElectricityBills"></div> <!--- Place of showing file names -->
+                          </div>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileWaterOrElectricityBills">إرفاق ملفات</label>
+                          </div>
+                          <input class="form-control d-none" type="file" id="id_formFileWaterOrElectricityBills" name="fileWaterOrElectricityBills" multiple>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-4 row column-gap-4" id="id_attachmentNationalIDForBeneficiaryForDependents_group_info" style="display: none;">
+                          <div class="col d-flex flex-column">
+                            <label class="form-label" id="id_NationalIDForBeneficiaryForDependentsTitle">صورة الهوية الوطنية/الإقامة للمرافقين</label>
+                            <div class="col text-muted" id="id_fileNamesNationalIDForBeneficiaryForDependents"></div> <!--- Place of showing file names -->
+                          </div>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileNationalIDForBeneficiaryForDependents">إرفاق ملفات</label>
+                          </div>
+                          <input class="form-control d-none" type="file" id="id_formFileNationalIDForBeneficiaryForDependents" name="fileNationalIDForBeneficiaryDependents" multiple>
+                        </div>
+
+                        <hr id="id_attachmentNationalIDForBeneficiaryForDependents_group_info_hr" style="display: none;">
+
+                        <div class="mb-4 row column-gap-4" id="id_attachmentSocialWarrantyInquiry_group_info" style="display: none;">
+                          <div class="col d-flex flex-column">
+                            <label class="form-label" id="id_SocialWarrantyInquiryTitle">مشهد الضمان الاجتماعي</label>
+                            <div class="col text-muted" id="id_fileNamesSocialWarrantyInquiry"></div> <!--- Place of showing file names -->
+                          </div>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileSocialWarrantyInquiry">إرفاق ملفات</label>
+                          </div>
+                          <input class="form-control d-none" type="file" id="id_formFileSocialWarrantyInquiry" name="fileSocialWarrantyInquiry" multiple>
+                        </div>
+
+                        <hr id="id_attachmentSocialWarrantyInquiry_group_info_hr" style="display: none;">
+
+                        <div class="mb-4 row column-gap-4" id="id_attachmentPensionOrSocialInsuranceInquiry_group_info" style="display: none;">
+                          <div class="col d-flex flex-column">
+                            <label class="form-label" id="id_PensionOrSocialInsuranceInquiryTitle">مشهد التقاعد أو التأمينات الاجتماعية</label>
+                            <div class="col text-muted" id="id_fileNamesPensionOrSocialInsuranceInquiry"></div> <!--- Place of showing file names -->
+                          </div>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFilePensionOrSocialInsuranceInquiry">إرفاق ملفات</label>
+                          </div>
+                          <input class="form-control d-none" type="file" id="id_formFilePensionOrSocialInsuranceInquiry" name="filePensionOrSocialInsuranceInquiry" multiple>
+                        </div>
+
+                        <hr id="id_attachmentPensionOrSocialInsuranceInquiry_group_info_hr" style="display: none;">
+
+                        <div class="mb-4 row column-gap-4" id="id_attachmentFatherOrHusbandDeathCertificate_group_info" style="display: none;">
+                          <div class="col d-flex flex-column">
+                            <label class="form-label">شهادة الوفاة للزوج / الأب</label>
+                            <div class="col text-muted" id="id_fileNamesFatherOrHusbandDeathCertificate"></div> <!--- Place of showing file names -->
+                          </div>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileFatherOrHusbandDeathCertificate">إرفاق ملف</label>
+                          </div>
+                          <input class="form-control d-none" type="file" id="id_formFileFatherOrHusbandDeathCertificate" name="fileFatherOrHusbandDeathCertificate">
+                        </div>
+
+                        <hr id="id_attachmentFatherOrHusbandDeathCertificate_group_info_hr" style="display: none;">
+
+                        <div class="mb-4 row column-gap-4" id="id_attachmentLetterFromPrison_group_info" style="display: none;">
+                          <div class="col d-flex flex-column">
+                            <label class="form-label">خطاب من السجن (في حال أسرة سجين)</label>
+                            <div class="col text-muted" id="id_fileNamesLetterFromPrison"></div> <!--- Place of showing file names -->
+                          </div>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileLetterFromPrison">إرفاق ملفات</label>
+                          </div>
+                          <input class="form-control d-none" type="file" id="id_formFileLetterFromPrison" name="fileLetterFromPrison" multiple>
+                        </div>
+
+                        <hr id="id_attachmentLetterFromPrison_group_info_hr" style="display: none;">
+
+                        <div class="mb-4 row column-gap-4" id="id_attachmentDivorceDeed_group_info" style="display: none;">
+                          <div class="col d-flex flex-column">
+                            <label class="form-label">صك الطلاق</label>
+                            <div class="col text-muted" id="id_fileNamesDivorceDeed"></div> <!--- Place of showing file names -->
+                          </div>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileDivorceDeed">إرفاق ملف</label>
+                          </div>
+                          <input class="form-control d-none" type="file" id="id_formFileDivorceDeed" name="fileDivorceDeed">
+                        </div>
+
+                        <hr id="id_attachmentDivorceDeed_group_info_hr" style="display: none;">
+
+                        <div class="mb-4 row column-gap-4" id="id_attachmentChildrenResponsibilityDeed_group_info" style="display: none;">
+                          <div class="col d-flex flex-column">
+                            <label class="form-label">صك إعالة الأبناء (في حال كانوا مرافقين)</label>
+                            <div class="col text-muted" id="id_fileNamesChildrenResponsibilityDeed"></div> <!--- Place of showing file names -->
+                          </div>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileChildrenResponsibilityDeed">إرفاق ملفات</label>
+                          </div>
+                          <input class="form-control d-none" type="file" id="id_formFileChildrenResponsibilityDeed" name="fileChildrenResponsibilityDeed" multiple>
+                        </div>
+
+                        <hr id="id_attachmentChildrenResponsibilityDeed_group_info_hr" style="display: none;">
+
+                        <div class="mb-4 row column-gap-4">
                           <div class="col d-flex flex-column">
                             <label class="form-label">إرفاق مستندات أخرى</label>
-                            <div class="col text-muted" id="fileNamesOther"></div> <!--- Place of showing file names -->
+                            <div class="col text-muted" id="id_fileNamesOther"></div> <!--- Place of showing file names -->
                           </div>
                           <div class="col-4 d-flex justify-content-center">
-                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="formFileOther">إرفاق ملفات</label>
+                            <label class="btn btn-success w-100 mb-2 mt-2 align-self-baseline" for="id_formFileOther">إرفاق ملفات</label>
                           </div>
-                          <input class="form-control d-none" type="file" id="formFileOther" name="files" multiple>
+                          <input class="form-control d-none" type="file" id="id_formFileOther" name="fileOther" multiple>
                         </div>
                       </div>
                     </div>
@@ -1076,11 +1258,20 @@
             });
         }
     
-        // Initialize for each file input
-        updateFileNamesDisplay('formFileBeneficiaryNationalAddress', 'fileNamesNationalAddress');
-        updateFileNamesDisplay('formFileOther', 'fileNamesOther');
-        updateFileNamesDisplay('formFileNationalIDForBeneficiaryDependents', 'fileNamesNationalIDForBeneficiaryDependents');
-        updateFileNamesDisplay('formFileBeneficiaryNationalID','fileNamesBeneficiaryNationalID');
+        // Initialize for each file input (fileInputId, fileNamesDivId)
+        updateFileNamesDisplay('id_formFileBeneficiaryNationalAddress', 'id_fileNamesNationalAddress');
+        updateFileNamesDisplay('id_formFileLeaseContractOrTitleDeed', 'id_fileNamesLeaseContractOrTitleDeed');
+        updateFileNamesDisplay('id_formFileDeptInstrument', 'id_fileNamesDeptInstrument');
+        updateFileNamesDisplay('id_formFileNationalIDForBeneficiaryForDependents', 'id_fileNamesNationalIDForBeneficiaryForDependents');
+        updateFileNamesDisplay('id_formFileBeneficiaryNationalID','id_fileNamesBeneficiaryNationalID');
+        updateFileNamesDisplay('id_formFileWaterOrElectricityBills','id_fileNamesWaterOrElectricityBills');
+        updateFileNamesDisplay('id_formFileSocialWarrantyInquiry','id_fileNamesSocialWarrantyInquiry');
+        updateFileNamesDisplay('id_formFilePensionOrSocialInsuranceInquiry','id_fileNamesPensionOrSocialInsuranceInquiry');
+        updateFileNamesDisplay('id_formFileFatherOrHusbandDeathCertificate','id_fileNamesFatherOrHusbandDeathCertificate');
+        updateFileNamesDisplay('id_formFileLetterFromPrison','id_fileNamesLetterFromPrison');
+        updateFileNamesDisplay('id_formFileDivorceDeed','id_fileNamesDivorceDeed');
+        updateFileNamesDisplay('id_formFileChildrenResponsibilityDeed','id_fileNamesChildrenResponsibilityDeed');
+        updateFileNamesDisplay('id_formFileOther', 'id_fileNamesOther');
 
         /**
         * validates IBAN
@@ -1345,10 +1536,25 @@
             errorClass: "help-block invalid-feedback",
             highlight: function (element, errorClass, validClass) {
               $(element).closest(".form-group").addClass("has-error");
+              //$(element).fadeOut(function() {
+              //  $(element).fadeIn();
+              //  });
             },
             unhighlight: function (element, errorClass, validClass) {
               $(element).closest(".form-group").removeClass("has-error");
             },
+            errorPlacement: function (error, element) {
+              // Check if the element is inside an input-group
+              if (element.parent('.input-group').length) {
+                  // Place the error after the input-group
+                  error.insertAfter(element.parent('.input-group'));
+              } else {
+                  // Default placement for other elements
+                  error.insertAfter(element);
+              }
+            },
+            focusInvalid: true,
+            debug: true,
 
             // Adding the rules (validations) for each input in the form.
             rules: {
@@ -1372,6 +1578,7 @@
               },
               personalinfo_date_of_birth: {
                 required: true,
+                dateISO: true,
               },
               personalinfo_gender: {
                 required: true,
@@ -1382,6 +1589,7 @@
               },
               personalinfo_national_id_exp_date: {
                 required: true,
+                dateISO: true,
               },
               personalinfo_nationality: {
                 required: true,
@@ -1398,6 +1606,7 @@
               },
               personalinfo_date_of_death_of_father_or_husband: {
                 required: true,
+                dateISO: true,
               },
               personalinfo_washing_place: {
                 //
@@ -1439,6 +1648,7 @@
               },
               dependentinfo_national_id_exp_date: {
                 required: true,
+                dateISO: true,
               },
               dependentinfo_gender: {
                 required: true,
@@ -1454,6 +1664,7 @@
               },
               dependentinfo_date_of_birth: {
                 required: true,
+                dateISO: true,
               },
               dependentinfo_needs_type: {
                 required: true,
