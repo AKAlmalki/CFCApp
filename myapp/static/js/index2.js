@@ -10,13 +10,13 @@ function widowerCheck(that) {
 }
 
 function personalInfoHealthCheck(that) {
-  if (that.value == "not good") {
-      document.getElementById("id_personalinfo_disease_type_group_info").style.display = "block";
-  } else {
-      document.getElementById("id_personalinfo_disease_type_group_info").style.display = "none";
+    if (that.value == "غير جيدة") {
+        document.getElementById("id_personalinfo_disease_type_group_info").style.display = "block";
+    } else {
+        document.getElementById("id_personalinfo_disease_type_group_info").style.display = "none";
+    }
   }
-}
-
+  
 function dependentInfoHealthCheck(that) {
   if (that.value == "غير جيدة") {
       document.getElementById("id_dependentinfo_disease_type_group_info").style.display = "block";
@@ -24,6 +24,14 @@ function dependentInfoHealthCheck(that) {
       document.getElementById("id_dependentinfo_disease_type_group_info").style.display = "none";
   }
 }
+
+function dependentEditInfoHealthCheck(that) {
+    if (that.value == "غير جيدة") {
+        document.getElementById("id_dependent_edit_info_disease_type_group_info").style.display = "block";
+    } else {
+        document.getElementById("id_dependent_edit_info_disease_type_group_info").style.display = "none";
+    }
+  }
 
 function workCheck(that) {
   if (that.value == "yes") {

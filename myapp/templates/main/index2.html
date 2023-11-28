@@ -420,8 +420,8 @@
                                         <label for="id_personalinfo_health_status" class="form-label">الحالة الصحية<span style="color: red;">*</span></label>
                                         <select name="personalinfo_health_status" class="form-control" id="id_personalinfo_health_status" onchange="personalInfoHealthCheck(this);">
                                             <option value="" selected>---------</option>
-                                            <option value="good">جيدة</option>
-                                            <option value="not good">غير جيدة</option>
+                                            <option value="جيدة">جيدة</option>
+                                            <option value="غير جيدة">غير جيدة</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-4 form-group" id="id_personalinfo_disease_type_group_info" style="display: none;">
@@ -605,7 +605,7 @@
                         </div>
 
                         <hr>
-
+                        
                         <div class="row">
                           <div class="col-md-6 mb-4 form-group">
                             <label for="id_dependentinfo_health_status" class="form-label">الحالة الصحية<span style="color: red;">*</span></label>
@@ -615,7 +615,7 @@
                                 <option value="غير جيدة">غير جيدة</option>
                             </select>
                           </div>
-                          <div class="col-md-6 mb-4 form-group" id="id_dependentinfo_disease_type_group_info" style="display: none!important;">
+                          <div class="col-md-6 mb-4 form-group" id="id_dependentinfo_disease_type_group_info" style="display: none;">
                               <label for="id_dependentinfo_disease_type" class="form-label">نوع المرض<span style="color: red;">*</span> (عند اختيار غير جيدة)</label>
                               <input type="text" name="dependentinfo_disease_type" maxlength="100" class="form-control" id="id_dependentinfo_disease_type">
                           </div>
@@ -1195,7 +1195,7 @@
               <h5 class="modal-title" id="editModalLabel">تعديل معلومات المرافق</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body bg-light">
               <div class="row row-cols-md-2 row-cols-xl-3">
                 <div class="col-md-12 mb-4 form-group">
                   <label for="id_editDependentName" class="form-label">الأسم<span style="font-size: 0.9rem;"> (حسب الهوية/الإقامة)</span></label>
@@ -1323,13 +1323,13 @@
               <div class="row">
                 <div class="col-md-6 mb-4 form-group">
                   <label for="id_editDependentHealthStatus" class="form-label">الحالة الصحية</label>
-                  <select name="DependentHealthStatus" class="form-control" id="id_editDependentHealthStatus" onchange="">
+                  <select name="DependentHealthStatus" class="form-control" id="id_editDependentHealthStatus" onchange="dependentEditInfoHealthCheck(this);">
                       <option value selected>---------</option>
                       <option value="جيدة">جيدة</option>
                       <option value="غير جيدة">غير جيدة</option>
                   </select>
                 </div>
-                <div class="col-md-6 mb-4 form-group" id="id_dependentinfo_disease_type_group_info" style="display: none!important;">
+                <div class="col-md-6 mb-4 form-group" id="id_dependent_edit_info_disease_type_group_info" style="display: none;">
                     <label for="id_editDependentDiseaseType" class="form-label">نوع المرض (عند اختيار غير جيدة)</label>
                     <input type="text" name="DependentDiseaseType" maxlength="100" class="form-control" id="id_editDependentDiseaseType">
                 </div>
