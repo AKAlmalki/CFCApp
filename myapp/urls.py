@@ -43,9 +43,14 @@ urlpatterns = [
         name="index"
     ),
     path(
-        "beneficiaries/individuals/new",
+        "beneficiaries/new",
         views.beneficiary_indiv,
         name="post_beneficiary"
+    ),
+    path(
+        "confirmation",
+        views.confirmBeneficiaryRequestView,
+        name="beneficiary_confirmation"
     ),
     path(
         "supporters/entities/new",

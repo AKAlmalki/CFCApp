@@ -6,7 +6,6 @@ h2 {
 }
 button:disabled,
 button[disabled] {
-    padding: 0.7rem 1.5rem;
     border: 1px solid #909fe3;
     background-color: #909fe3;
     color: #2f4dd4;

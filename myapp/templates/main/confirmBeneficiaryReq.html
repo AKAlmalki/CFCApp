@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<div class="container">
+  <div class="row justify-content-center" style="height: 70vh">
+    <div class="">
+      <div class="card mt-5 bg-light h-75">
+        <div
+          class="card-body text-center d-flex flex-column justify-content-center align-items-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="132"
+            height="132"
+            fill="#198754"
+            class="bi bi-check-lg mt-auto"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"
+            />
+          </svg>
+          <h1 class="card-title text-success mt-auto">تم تقديم الطلب بنجاح</h1>
+          <p class="card-text">
+            سيتم التواصل معكم في حال قبول الطلب خلال 15 يوم عمل
+          </p>
+          <a href="/home" class="col-12 col-md-4 btn btn-success mt-auto mb-3"
+            >الرجوع للصفحة الرئيسية</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

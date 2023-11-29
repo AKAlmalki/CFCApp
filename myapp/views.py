@@ -62,6 +62,10 @@ def home_redirect(request):
     return redirect("/home")
 
 
+def confirmBeneficiaryRequestView(request):
+    return render(request, "main/confirmBeneficiaryReq.html")
+
+
 def sign_up(request):
     if request.method == 'POST':
 
@@ -206,45 +210,45 @@ def dashboard_reports(request):
 
 def beneficiary_indiv(request):
 
-    if request.method == "POST":
+    # if request.method == "POST":
 
-        form = BeneficiaryForm(request.POST)
+    #     form = BeneficiaryForm(request.POST)
 
-        # print(form.is_valid(),form.data)
+    #     # print(form.is_valid(),form.data)
 
-        if form.is_valid():
+    #     if form.is_valid():
 
-            beneficiary_obj = beneficiary(
-                file_no="000",
-                name=form.data.get("name"),
-                nationality=form.data.get("nationality"),
-                date_of_birth=form.data.get("date_of_birth"),
-                phone_number=form.data.get("phone_number"),
-                national_id=form.data.get("national_id"),
-                national_address=form.data.get("national_address"),
-                relationship=form.data.get("relationship"),
-                is_qualified=False,
-                category=form.data.get("category"),
-                marital_status=form.data.get("marital_status"),
-                is_benefiting=False,
-                inquiries="inquiries",
-                justifications=form.data.get("justifications"),
-            )
+    #         beneficiary_obj = beneficiary(
+    #             file_no="000",
+    #             name=form.data.get("name"),
+    #             nationality=form.data.get("nationality"),
+    #             date_of_birth=form.data.get("date_of_birth"),
+    #             phone_number=form.data.get("phone_number"),
+    #             national_id=form.data.get("national_id"),
+    #             national_address=form.data.get("national_address"),
+    #             relationship=form.data.get("relationship"),
+    #             is_qualified=False,
+    #             category=form.data.get("category"),
+    #             marital_status=form.data.get("marital_status"),
+    #             is_benefiting=False,
+    #             inquiries="inquiries",
+    #             justifications=form.data.get("justifications"),
+    #         )
 
-            print(beneficiary_obj)
-            beneficiary_obj.save()  # save the object in the database
-            #  beneficiary.objects.create(form)
+    #         print(beneficiary_obj)
+    #         beneficiary_obj.save()  # save the object in the database
+    #         #  beneficiary.objects.create(form)
 
-            return HttpResponseRedirect("/")
-        else:
-            print(form.errors)
+    #         return HttpResponseRedirect("/")
+    #     else:
+    #         print(form.errors)
 
-    else:
-        form = BeneficiaryForm()
+    # else:
+    #     form = BeneficiaryForm()
 
-        return render(request, "beneficiary_form(indiv).html", {'form': form})
+    #     return render(request, "beneficiary_form(indiv).html", {'form': form})
 
-    return HttpResponseRedirect("/beneficiaries/individuals/new")
+    return render(request, "main/confirmBeneficiaryReq.html")
 
 
 def supporter_entity(request):
