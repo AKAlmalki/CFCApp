@@ -18,11 +18,6 @@ urlpatterns = [
         name="Todos"
     ),
     path(
-        "dashboard/",
-        views.dashboard,
-        name="dashboard"
-    ),
-    path(
         "index/",
         views.test1,
         name="index"
@@ -57,6 +52,16 @@ urlpatterns = [
     #     views.supporter_indiv,
     #     name="supporter_indiv"
     # ),
+    path(
+        "dashboard/",
+        views.dashboard,
+        name="dashboard"
+    ),
+    path(
+        "dashboard2/",
+        views.new_dashboard,
+        name="dashboard2"
+    ),
     path(
         "dashboard/requests",
         views.dashboard_requests,

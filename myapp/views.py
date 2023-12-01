@@ -103,6 +103,11 @@ def dashboard(request):
     return render(request, "dashboard.html", {"beneficiaries_num": beneficiaries_num, "supporter_operations_num": supporter_operations_num, "entities_num": entities_num})
 
 
+def new_dashboard(request):
+
+    return render(request, "dashboard/dashboard2.html")
+
+
 @login_required(login_url="/login")
 def dashboard_requests(request):
     beneficiary_obj = beneficiary.objects.all()
