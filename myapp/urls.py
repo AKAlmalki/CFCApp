@@ -18,11 +18,6 @@ urlpatterns = [
         name="Todos"
     ),
     path(
-        "name/",
-        views.get_name,
-        name="action"
-    ),
-    path(
         "dashboard/",
         views.dashboard,
         name="dashboard"
@@ -52,16 +47,16 @@ urlpatterns = [
         views.confirmBeneficiaryRequestView,
         name="beneficiary_confirmation"
     ),
-    path(
-        "supporters/entities/new",
-        views.supporter_entity,
-        name="supporter_entity"
-    ),
-    path(
-        "supporters/individuals/new",
-        views.supporter_indiv,
-        name="supporter_indiv"
-    ),
+    # path(
+    #     "supporters/entities/new",
+    #     views.supporter_entity,
+    #     name="supporter_entity"
+    # ),
+    # path(
+    #     "supporters/individuals/new",
+    #     views.supporter_indiv,
+    #     name="supporter_indiv"
+    # ),
     path(
         "dashboard/requests",
         views.dashboard_requests,
@@ -82,19 +77,4 @@ urlpatterns = [
         views.signin,
         name="login"
     ),
-    path(
-        "wizard-form",
-        views.beneficiaryWizardView.as_view(views.FORMS),
-        name="wizard-form"
-    ),
-    path(
-        "wizard-form2",
-        views.individualtest,
-        name="individual"
-    ),
-    path(
-        "wizard-form3",
-        views.individual2test,
-        name="individual2test"
-    )
 ]

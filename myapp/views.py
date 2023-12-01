@@ -1,47 +1,13 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect
 from .models import TodoItem, beneficiary, supporter_operation, entity, individual, individual_supporter_operation, entity_supporter_operation
-from .forms import NameForm, BeneficiaryForm, SupporterIndividualForm, SupporterEntityForm, RegisterForm
+from .forms import RegisterForm
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 import datetime
-from formtools.wizard.views import SessionWizardView
-from .forms import beneficiaryPersonalDetails, dependentPersonalDetails, beneficiaryIndividual2
 
-# Create your views here.
-
-FORMS = [("personalinfo", beneficiaryPersonalDetails),
-         ("individual", dependentPersonalDetails),
-         ("individual2", beneficiaryIndividual2)]
-
-TEMPLATES = {"personalinfo": "main/index.html",
-             "individual": "main/individual.html",
-             "individual2": "main/individual2.html"}
-
-
-def show_business_form(wizard):
-    cleaned_data = wizard.get_cleaned_data_for_step('0') or {}
-    return cleaned_data.get('is_business_guest')
-
-
-class beneficiaryWizardView(SessionWizardView):
-    # form_list = FORMS
-    # 1 == the second form; because the indexing start from zero
-    # condition_dict = {"1": show_business_form}
-
-    def get_template_names(self):
-        return [TEMPLATES[self.steps.current]]
-
-    def done(self, form_list, **kwargs):
-        print("hello world")
-        form_data = [form.cleaned_data for form in form_list]
-        print(form_data)
-        print(form_list, form_list.cleaned_data)
-        return HttpResponseRedirect("/home")
-    # context = {}
-    # return render(request, 'main/index.html', context)
 
 # Just for testing purposes
 
@@ -105,26 +71,26 @@ def todos(request):
     return render(request, "todos.html", {"todos": items})
 
 
-def get_name(request):
-    # if this is a POST request we need to process the form data
+# def get_name(request):
+#     # if this is a POST request we need to process the form data
 
-    if request.method == "POST":
-        # create a form instance and populate it with data from the request:
-        form = NameForm(request.POST)
-        print(form.data.get('name'))
-        # check whether it's valid:
-        if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
+#     if request.method == "POST":
+#         # create a form instance and populate it with data from the request:
+#         form = NameForm(request.POST)
+#         print(form.data.get('name'))
+#         # check whether it's valid:
+#         if form.is_valid():
+#             # process the data in form.cleaned_data as required
+#             # ...
+#             # redirect to a new URL:
 
-            return HttpResponseRedirect("/")
+#             return HttpResponseRedirect("/")
 
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = NameForm()
+#     # if a GET (or any other method) we'll create a blank form
+#     else:
+#         form = NameForm()
 
-    return render(request, "home.html", {"form": form})
+#     return render(request, "home.html", {"form": form})
 
 
 @login_required(login_url="/login")
@@ -251,99 +217,50 @@ def beneficiary_indiv(request):
     return render(request, "main/confirmBeneficiaryReq.html")
 
 
-def supporter_entity(request):
+# def supporter_entity(request):
 
-    if request.method == "POST":
+#     if request.method == "POST":
 
-        form = SupporterEntityForm(request.POST)
+#         form = SupporterEntityForm(request.POST)
 
-        # print(form.is_valid(),form.data)
+#         # print(form.is_valid(),form.data)
 
-        if form.is_valid():
+#         if form.is_valid():
 
-            entity_obj = entity(
-                name=form.data.get("name"),
-                account=form.data.get("account"),
-                total_amount=form.data.get("amount"),
-            )
+#             entity_obj = entity(
+#                 name=form.data.get("name"),
+#                 account=form.data.get("account"),
+#                 total_amount=form.data.get("amount"),
+#             )
 
-            entity_obj.save()  # save the object in the database
+#             entity_obj.save()  # save the object in the database
 
-            supporter_operation_obj = supporter_operation(
-                category=form.data.get("category"),
-                amount=form.data.get("amount"),
-            )
+#             supporter_operation_obj = supporter_operation(
+#                 category=form.data.get("category"),
+#                 amount=form.data.get("amount"),
+#             )
 
-            supporter_operation_obj.save()  # save the object in the database
+#             supporter_operation_obj.save()  # save the object in the database
 
-            current_date = datetime.datetime.now()
+#             current_date = datetime.datetime.now()
 
-            entity_supporter_operation_obj = entity_supporter_operation(
-                entity_id=entity_obj,
-                supporter_operation_id=supporter_operation_obj,
-                date=current_date,
-                status="0",
-                amount=form.data.get("amount"),
-            )
+#             entity_supporter_operation_obj = entity_supporter_operation(
+#                 entity_id=entity_obj,
+#                 supporter_operation_id=supporter_operation_obj,
+#                 date=current_date,
+#                 status="0",
+#                 amount=form.data.get("amount"),
+#             )
 
-            entity_supporter_operation_obj.save()  # save the object in the database
+#             entity_supporter_operation_obj.save()  # save the object in the database
 
-            return HttpResponseRedirect("/")
-        else:
-            print(form.errors)
+#             return HttpResponseRedirect("/")
+#         else:
+#             print(form.errors)
 
-    else:
-        form = SupporterEntityForm()
+#     else:
+#         form = SupporterEntityForm()
 
-        return render(request, "supporter_form(entity).html", {'form': form})
+#         return render(request, "supporter_form(entity).html", {'form': form})
 
-    return HttpResponseRedirect("/supporters/entities/new")
-
-
-def supporter_indiv(request):
-
-    if request.method == "POST":
-
-        form = SupporterIndividualForm(request.POST)
-
-        # print(form.is_valid(),form.data)
-
-        if form.is_valid():
-
-            individual_obj = individual(
-                name=form.data.get("name"),
-                account=form.data.get("account"),
-                total_amount=form.data.get("amount"),
-            )
-
-            individual_obj.save()  # save the object in the database
-
-            supporter_operation_obj = supporter_operation(
-                category=form.data.get("category"),
-                amount=form.data.get("amount"),
-            )
-
-            supporter_operation_obj.save()  # save the object in the database
-
-            current_date = datetime.datetime.now()
-
-            individual_supporter_operation_obj = individual_supporter_operation(
-                individual_id=individual_obj,
-                supporter_operation_id=supporter_operation_obj,
-                date=current_date,
-                status="0",
-                amount=form.data.get("amount"),
-            )
-
-            individual_supporter_operation_obj.save()  # save the object in the database
-
-            return HttpResponseRedirect("/")
-        else:
-            print(form.errors)
-
-    else:
-        form = SupporterIndividualForm()
-
-        return render(request, "supporter_form(indiv).html", {'form': form})
-
-    return HttpResponseRedirect("/supporters/individuals/new")
+#     return HttpResponseRedirect("/supporters/entities/new")

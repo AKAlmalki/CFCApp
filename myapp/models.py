@@ -98,8 +98,7 @@ class beneficiary(models.Model):
     nationality = models.CharField(max_length=55)
     gender = models.CharField(max_length=1, choices=GENDER, null=True)
     date_of_birth = models.DateField()
-    phone_number = models.CharField(
-        max_length=12, validators=[RegexValidator(regex='^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$', message='Enter a valid phone number', code='nomatch')])
+    phone_number = models.CharField(max_length=15)
     email = models.EmailField()
     national_id = models.CharField(max_length=20)
     national_id_exp_date = models.DateField(null=True)
@@ -118,7 +117,7 @@ class beneficiary(models.Model):
     work_status = models.CharField(
         max_length=55, choices=WORK_STATUS, null=True)
     employer = models.CharField(max_length=100, null=True)
-    date_of_death_of_father_or_husband = models.DateField(null=True)
+    death_date_father_husband = models.DateField(null=True)
     washing_place = models.CharField(max_length=55, null=True)
     is_benefiting = models.BooleanField(default=False)
     inquiries = models.CharField(max_length=500)
