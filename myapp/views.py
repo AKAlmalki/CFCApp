@@ -6,8 +6,13 @@ from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
+from django.views.decorators.csrf import csrf_exempt
 import datetime
+import logging
+import os
 
+# Set up logging
+logger = logging.getLogger(__name__)
 
 # Just for testing purposes
 
@@ -179,47 +184,33 @@ def dashboard_reports(request):
         return render(request, "reports.html")
 
 
+# This is for demonstration purposes only. In production, use CSRF protection.
+@csrf_exempt
 def beneficiary_indiv(request):
 
-    # if request.method == "POST":
+    if request.method == "POST":
 
-    #     form = BeneficiaryForm(request.POST)
+        if request.method == "POST":
+            # Access form data
+            form_data = request.POST
+            file1 = request.FILES['fileBeneficiaryNationalID']
+            file_path = os.path.join('/home/shino/Desktop/', file1.name)
 
-    #     # print(form.is_valid(),form.data)
+            with open(file_path, 'wb+') as destination:
+                for chunk in file1.chunks():
+                    destination.write(chunk)
 
-    #     if form.is_valid():
+            # Print or log form data
+            print("Form submission: %s", form_data)
 
-    #         beneficiary_obj = beneficiary(
-    #             file_no="000",
-    #             name=form.data.get("name"),
-    #             nationality=form.data.get("nationality"),
-    #             date_of_birth=form.data.get("date_of_birth"),
-    #             phone_number=form.data.get("phone_number"),
-    #             national_id=form.data.get("national_id"),
-    #             national_address=form.data.get("national_address"),
-    #             relationship=form.data.get("relationship"),
-    #             is_qualified=False,
-    #             category=form.data.get("category"),
-    #             marital_status=form.data.get("marital_status"),
-    #             is_benefiting=False,
-    #             inquiries="inquiries",
-    #             justifications=form.data.get("justifications"),
-    #         )
+            # Redirect or respond to the request
+            return HttpResponse("Form submitted successfully!")
 
-    #         print(beneficiary_obj)
-    #         beneficiary_obj.save()  # save the object in the database
-    #         #  beneficiary.objects.create(form)
+            # return render(request, "dashboard/confirmBeneficiaryReq.html")
+        else:
+            print("[Error] - Unkwon erorr.")
 
-    #         return HttpResponseRedirect("/")
-    #     else:
-    #         print(form.errors)
-
-    # else:
-    #     form = BeneficiaryForm()
-
-    #     return render(request, "beneficiary_form(indiv).html", {'form': form})
-
-    return render(request, "main/confirmBeneficiaryReq.html")
+    return render(request, "main/index2.html")
 
 
 # def supporter_entity(request):
