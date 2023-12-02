@@ -2602,21 +2602,34 @@
 
           <div class="row">
             <div class="col-md-12 mb-4 form-group">
-              <label for="id_dependent_edit_info_needs_type" class="form-label"
-                >نوع الاحتياج للمرافق</label
+              <label class="form-label"
+                >نوع الاحتياج للمرافق<span style="color: red"
+                  >*</span
+                > <span style="font-size: 0.9rem">
+                  (إختيار متعدد)</span
+                ></label
               >
-              <select
+              <div
                 name="dependent_edit_info_needs_type"
-                class="form-control"
+                class="d-grid gap-2"
+                style="grid-template-columns: 1fr 1fr 1fr;"
                 id="id_dependent_edit_info_needs_type"
               >
-                <option value selected>---------</option>
-                <option value="اقتصادي">اقتصادي</option>
-                <option value="صحي">صحي</option>
-                <option value="تعليمي">تعليمي</option>
-                <option value="توظيف">توظيف</option>
-                <option value="كفالة">كفالة</option>
-              </select>
+                <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_economical" autocomplete="off" name="dependent_edit_info_needs_type_economical" value="اقتصادي">
+                <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_economical">اقتصادي</label>
+
+                <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_educational" autocomplete="off" name="dependent_edit_info_needs_type_educational" value="تعليمي">
+                <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_educational">تعليمي</label>
+
+                <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_employment" autocomplete="off" name="dependent_edit_info_needs_type_employment" value="توظيف">
+                <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_employment">توظيف</label>
+
+                <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_sponsorship" autocomplete="off" name="dependent_edit_info_needs_type_sponsorship" value="كفالة">
+                <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_sponsorship">كفالة</label>
+
+                <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_healthy" autocomplete="off" name="dependent_edit_info_needs_type_healthy" value="صحي">
+                <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_healthy">صحي</label>
+              </div>
             </div>
             <div class="col-md-12 mb-4 form-group">
               <label
@@ -2688,7 +2701,7 @@
     
     // Use this function to get JSON when you need it
     const dependentsJSON = getTableDataAsJSON();
-    console.log(dependentsJSON); // Logs the JSON string
+    //console.log(dependentsJSON); // Logs the JSON string
     
     document.getElementById('myform').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -3737,6 +3750,12 @@
         "#id_dependent_info_needs_description"
       ).val();
 
+      // Collecting and storing dependent needs type values
+      var dependentNeedsTypeArray = [];
+      $("#id_dependent_info_needs_type input[type=checkbox]:checked").each(function() {
+        dependentNeedsTypeArray.push($(this).val());
+      });
+
       if ($("#myform").valid() === true) {
         var $row = $("<tr></tr>");
         $row.append(
@@ -3796,9 +3815,10 @@
             .text(dependentIncomeSource)
             .attr("data-attr", "dependent_edit_info_income_source")
         );
+        // Add dependent needs type as a hidden cell or in any other way you prefer
         $row.append(
           $("<td></td>")
-            .text(dependentNeedsType)
+            .text(dependentNeedsTypeArray.join(','))
             .addClass("d-none")
             .attr("data-attr", "dependent_edit_info_needs_type")
         );
@@ -3851,6 +3871,7 @@
             populateEditModal($row);
           });
 
+        // Delete Button
         var $deleteButton = $('<button type="button">حذف</button>')
           .addClass("delete btn btn-danger")
           .click(function (event) {
@@ -3858,6 +3879,7 @@
             $row.remove();
           });
 
+        // Action cell that containes Delete & Edit buttons
         var $actionsCell = $(
           '<td class="d-grid gap-2" style="grid-template-columns: 80px 80px; grid-template-rows: 50px;"></td>'
         ).append($deleteButton);
@@ -3866,6 +3888,9 @@
         $row.append($actionsCell);
 
         $("#family-table tbody").append($row);
+
+        // Clear checkboxes of dependent needs type
+        $("#id_dependent_info_needs_type input[type=checkbox]").prop('checked', false);
 
         // Clear input fields
         $("#id_dependent_info_first_name").val("");
@@ -3967,33 +3992,59 @@
     }
 
     function populateEditModal($row) {
+      // First, uncheck all checkboxes in the modal
+      $("#editModal").find("input[type='checkbox']").prop('checked', false);
+  
       $row.children("td").each(function () {
-        var tdDataAttr = $(this).data("attr"); // Assuming each <td> has a data-attr attribute
-        var $input = $("#editModal").find(
-          '.modal-body [name="' + tdDataAttr + '"]'
-        );
-        if ($input.length) {
-          $input.val($(this).text());
-        }
+          var tdDataAttr = $(this).data("attr");
+          var cellText = $(this).text();
+          var $inputs = $("#editModal").find('[name^="' + tdDataAttr + '"]'); // Selects all inputs that start with tdDataAttr
+  
+          $inputs.each(function() {
+              if ($(this).attr('type') === 'checkbox') {
+                  // Splitting the comma-separated values
+                  var values = cellText.split(',').map(function(item) {
+                      return item.trim(); // Trimming any extra whitespace
+                  });
+  
+                  // Check if the checkbox value is in the values array
+                  if (values.includes($(this).val())) {
+                      $(this).prop('checked', true);
+                  }
+              } else {
+                  $(this).val(cellText);
+              }
+          });
       });
-
-      // Store the row being edited as data on the 'Save Changes' button
+  
       $("#saveChanges").data("rowToEdit", $row);
     }
+  
 
     $("#saveChanges").click(function (event) {
       event.preventDefault();
-
+  
       var $rowToEdit = $(this).data("rowToEdit");
-      $("#editModal")
-        .find(".modal-body input, .modal-body select, .modal-body textarea")
-        .each(function () {
+  
+      // Iterate over all inputs, selects, and textareas in the modal
+      $("#editModal").find(".modal-body input, .modal-body select, .modal-body textarea").each(function () {
           var inputName = $(this).attr("name");
-          $rowToEdit
-            .find('td[data-attr="' + inputName + '"]')
-            .text($(this).val());
-        });
-
+          var $cell = $rowToEdit.find('td[data-attr="' + inputName + '"]');
+  
+          if ($(this).attr('type') === 'checkbox') {
+              // If it's a checkbox, gather all checked values with this name
+              var checkedValues = [];
+              $('#editModal input[name="' + inputName + '"]:checked').each(function() {
+                  checkedValues.push($(this).val());
+              });
+              // Join the values with a comma and update the cell text
+              $cell.text(checkedValues.join(','));
+          } else {
+              // For other input types, just update the cell text
+              $cell.text($(this).val());
+          }
+      });
+  
       $("#editModal").modal("hide");
     });
   });
