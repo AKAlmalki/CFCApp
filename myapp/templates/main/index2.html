@@ -482,6 +482,7 @@
                       <option value="single">أعزب/ـة</option>
                       <option value="widower">أرمل/ـة</option>
                       <option value="divorced">مطلقة</option>
+                      <option value="deserted">مهجورة</option>
                     </select>
                   </div>
                   <div class="col-md-12 mb-4 form-group">
@@ -706,22 +707,65 @@
           <!-- Step 2 input fields -->
           <div class="mt-3">
             <div id="family-form">
-              <div class="row row-cols-md-2 row-cols-xl-3">
-                <div class="col-md-12 mb-4 form-group">
-                  <label for="id_dependent_info_name" class="form-label"
-                    >الأسم<span style="color: red">*</span
-                    ><span style="font-size: 0.9rem">
-                      (حسب الهوية/الإقامة)</span
+              <div class="row row-cols-md-2 row-cols-xl-4">
+                <div class="col-md-6 mb-4 form-group">
+                  <label for="id_dependent_info_first_name" class="form-label"
+                    >الأسم الأول<span style="color: red">*</span
                     ></label
                   >
                   <input
                     type="text"
-                    id="id_dependent_info_name"
+                    id="id_dependent_info_first_name"
                     class="form-control"
-                    name="dependent_info_name"
+                    name="dependent_info_first_name"
                   />
                 </div>
                 <div class="col-md-6 mb-4 form-group">
+                  <label for="id_dependent_info_second_name" class="form-label"
+                    >الأسم الثاني<span style="color: red">*</span
+                    ></label
+                  >
+                  <input
+                    type="text"
+                    id="id_dependent_info_second_name"
+                    class="form-control"
+                    name="dependent_info_second_name"
+                  />
+                </div>
+                <div class="col-md-6 mb-4 form-group">
+                  <label for="id_dependent_info_last_name" class="form-label"
+                    >الأسم الأخير<span style="color: red">*</span
+                    ><span style="font-size: 0.9rem">
+                      (أسم العائلة)</span
+                    ></label
+                  >
+                  <input
+                    type="text"
+                    id="id_dependent_info_last_name"
+                    class="form-control"
+                    name="dependent_info_last_name"
+                  />
+                </div>
+                <div class="col-md-6 mb-4 form-group">
+                  <label
+                    for="id_dependent_info_date_of_birth"
+                    class="form-label"
+                    >تاريخ الميلاد<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="id_dependent_info_date_of_birth"
+                    maxlength="55"
+                    name="dependent_info_date_of_birth"
+                  />
+                </div>
+              </div>
+
+              <hr>
+
+              <div class="row row-cols-md-2 row-cols-xl-3">
+                <div class="col-md-8 mb-4 form-group">
                   <label for="id_dependent_info_gender" class="form-label"
                     >الجنس<span style="color: red">*</span></label
                   >
@@ -735,7 +779,7 @@
                     <option value="انثى">انثى</option>
                   </select>
                 </div>
-                <div class="col-md-6 mb-4 form-group">
+                <div class="col-md-8 mb-4 form-group">
                   <label for="id_dependent_info_relationship" class="form-label"
                     >صلة القرابة<span style="color: red">*</span></label
                   >
@@ -747,46 +791,15 @@
                     <option value selected>---------</option>
                     <option value="ابن">ابن</option>
                     <option value="ابنة">ابنة</option>
+                    <option value="أخ">أخ</option>
+                    <option value="أخت">أخت</option>
                     <option value="زوج/ـة">زوج/ـة</option>
                     <option value="خال/ـة">خال/ـة</option>
                     <option value="عم/ـة">عم/ـة</option>
-                    <option value="جد/ـة">جد/ـة"</option>
+                    <option value="جد/ـة">جد/ـة</option>
                   </select>
                 </div>
-              </div>
-
-              <hr />
-
-              <div class="row row-cols-md-2 row-cols-xl-4">
-                <div class="col-md-6 mb-4 form-group">
-                  <label
-                    for="id_dependent_info_educational_status"
-                    class="form-label"
-                    >الحالة الدراسية<span style="color: red">*</span></label
-                  >
-                  <select
-                    name="dependent_info_educational_status"
-                    class="form-control"
-                    id="id_dependent_info_educational_status"
-                  >
-                    <option value selected>---------</option>
-                    <option value="أول ابتدائي">أول ابتدائي</option>
-                    <option value="ثاني ابتدائي">ثاني ابتدائي</option>
-                    <option value="ثالث ابتدائي">ثالث ابتدائي</option>
-                    <option value="رابع ابتدائي">رابع ابتدائي</option>
-                    <option value="خامس ابتدائي">خامس ابتدائي</option>
-                    <option value="سادس ابتدائي">سادس ابتدائي</option>
-                    <option value="اول متوسط">اول متوسط</option>
-                    <option value="ثاني متوسط">ثاني متوسط</option>
-                    <option value="ثالث متوسط">ثالث متوسط</option>
-                    <option value="اول ثانوي">اول ثانوي</option>
-                    <option value="ثاني ثانوي">ثاني ثانوي</option>
-                    <option value="ثالث ثانوي">ثالث ثانوي</option>
-                    <option value="جامعي">جامعي</option>
-                    <option value="لا يدرس">لا يدرس</option>
-                  </select>
-                </div>
-                <div class="col-md-6 mb-4 form-group">
+                <div class="col-md-8 mb-4 form-group">
                   <label
                     for="id_dependent_info_marital_status"
                     class="form-label"
@@ -805,18 +818,68 @@
                     <option value="أعزب/ـة">أعزب/ـة</option>
                     <option value="أرملة/ـة">أرمل/ـة</option>
                     <option value="مطلقة">مطلقة</option>
+                    <option value="مهجورة">مهجورة</option>
                   </select>
                 </div>
+              </div>
+
+              <hr />
+
+              <div class="row row-cols-md-2">
                 <div class="col-md-6 mb-4 form-group">
+                  <label
+                    for="id_dependent_info_educational_status"
+                    class="form-label"
+                    >الحالة الدراسية<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="dependent_info_educational_status"
+                    class="form-control"
+                    id="id_dependent_info_educational_status"
+                    onchange="educationalStatusCheck(this);"
+                  >
+                    <option value selected>---------</option>
+                    <option value="يدرس">يدرس</option>
+                    <option value="لا يدرس">لا يدرس</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-4 form-group" style="display: none;" id="id_dependent_info_educational_level_group_info">
                   <label
                     for="id_dependent_info_educational_level"
                     class="form-label"
-                    >المؤهل التعليمي<span style="color: red">*</span></label
+                    >المرحلة الدراسية<span style="color: red">*</span></label
                   >
                   <select
                     name="dependent_info_educational_level"
                     class="form-control"
                     id="id_dependent_info_educational_level"
+                  >
+                    <option value selected>---------</option>
+                    <option value="أول ابتدائي">أول ابتدائي</option>
+                    <option value="ثاني ابتدائي">ثاني ابتدائي</option>
+                    <option value="ثالث ابتدائي">ثالث ابتدائي</option>
+                    <option value="رابع ابتدائي">رابع ابتدائي</option>
+                    <option value="خامس ابتدائي">خامس ابتدائي</option>
+                    <option value="سادس ابتدائي">سادس ابتدائي</option>
+                    <option value="اول متوسط">اول متوسط</option>
+                    <option value="ثاني متوسط">ثاني متوسط</option>
+                    <option value="ثالث متوسط">ثالث متوسط</option>
+                    <option value="اول ثانوي">اول ثانوي</option>
+                    <option value="ثاني ثانوي">ثاني ثانوي</option>
+                    <option value="ثالث ثانوي">ثالث ثانوي</option>
+                    <option value="جامعي">جامعي</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-4 form-group" style="display: none;" id="id_dependent_info_educational_degree_group_info">
+                  <label
+                    for="id_dependent_info_educational_degree"
+                    class="form-label"
+                    >المؤهل التعليمي<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="dependent_info_educational_degree"
+                    class="form-control"
+                    id="id_dependent_info_educational_degree"
                   >
                     <option value selected>---------</option>
                     <option value="لا يوجد">لا يوجد</option>
@@ -825,20 +888,6 @@
                     <option value="ثانوي">ثانوي</option>
                     <option value="جامعي">جامعي</option>
                   </select>
-                </div>
-                <div class="col-md-6 mb-4 form-group">
-                  <label
-                    for="id_dependent_info_date_of_birth"
-                    class="form-label"
-                    >تاريخ الميلاد<span style="color: red">*</span></label
-                  >
-                  <input
-                    type="date"
-                    class="form-control"
-                    id="id_dependent_info_date_of_birth"
-                    maxlength="55"
-                    name="dependent_info_date_of_birth"
-                  />
                 </div>
               </div>
 
@@ -883,7 +932,7 @@
                   <label
                     for="id_dependent_info_monthly_income"
                     class="form-label"
-                    >دخل الفرد (شهريا)</label
+                    >دخل المرافق (شهريا)</label
                   >
                   <div class="input-group mb-3">
                     <input
@@ -901,7 +950,7 @@
                   <label
                     for="id_dependent_info_income_source"
                     class="form-label"
-                    >مصدر الدخل</label
+                    >مصدر الدخل للمرافق</label
                   >
                   <select
                     name="dependent_info_income_source"
@@ -967,37 +1016,38 @@
 
               <div class="row">
                 <div class="col-md-12 mb-4 form-group">
-                  <label for="id_dependent_info_needs_type" class="form-label"
+                  <label class="form-label"
                     >نوع الاحتياج للمرافق<span style="color: red"
                       >*</span
+                    > <span style="font-size: 0.9rem">
+                      (إختيار متعدد)</span
                     ></label
                   >
-                  <select
+                  <div
                     name="dependent_info_needs_type"
-                    class="form-control"
+                    class="d-grid gap-2"
+                    style="grid-template-columns: 1fr 1fr 1fr;"
                     id="id_dependent_info_needs_type"
                   >
-                    <option value selected>---------</option>
-                    <option value="اقتصادي">اقتصادي</option>
-                    <option value="صحي">صحي</option>
-                    <option value="تعليمي">تعليمي</option>
-                    <option value="توظيف">توظيف</option>
-                    <option value="كفالة">كفالة</option>
-                  </select>
+                    <input type="checkbox" class="btn-check" id="id_dependent_info_needs_type_economical" autocomplete="off" name="dependent_info_needs_type_economical" value="اقتصادي">
+                    <label class="btn btn-outline-primary" for="id_dependent_info_needs_type_economical">اقتصادي</label>
+
+                    <input type="checkbox" class="btn-check" id="id_dependent_info_needs_type_educational" autocomplete="off" name="dependent_info_needs_type_educational" value="تعليمي">
+                    <label class="btn btn-outline-primary" for="id_dependent_info_needs_type_educational">تعليمي</label>
+
+                    <input type="checkbox" class="btn-check" id="id_dependent_info_needs_type_employment" autocomplete="off" name="dependent_info_needs_type_employment" value="توظيف">
+                    <label class="btn btn-outline-primary" for="id_dependent_info_needs_type_employment">توظيف</label>
+
+                    <input type="checkbox" class="btn-check" id="id_dependent_info_needs_type_sponsorship" autocomplete="off" name="dependent_info_needs_type_sponsorship" value="كفالة">
+                    <label class="btn btn-outline-primary" for="id_dependent_info_needs_type_sponsorship">كفالة</label>
+
+                    <input type="checkbox" class="btn-check" id="id_dependent_info_needs_type_healthy" autocomplete="off" name="dependent_info_needs_type_healthy" value="صحي">
+                    <label class="btn btn-outline-primary" for="id_dependent_info_needs_type_healthy">صحي</label>
+                  </div>
                 </div>
                 <div class="col-md-12 mb-4 form-group">
-                  <label
-                    for="id_dependent_info_needs_description"
-                    class="form-label"
-                    >وصف الاحتياج</label
-                  >
-                  <textarea
-                    type="textarea"
-                    class="form-control"
-                    id="id_dependent_info_needs_description"
-                    name="dependent_info_needs_description"
-                    maxlength="2000"
-                  ></textarea>
+                  <label for="id_dependent_info_needs_description" class="form-label">وصف الاحتياج</label>
+                  <textarea type="textarea" class="form-control form-control-lg" id="id_dependent_info_needs_description" name="dependentinfo_needs_description" maxlength="2000"></textarea>
                 </div>
               </div>
 
@@ -1018,23 +1068,25 @@
                 >
                   <thead>
                     <tr>
-                      <th scope="col">الأسم</th>
+                      <th scope="col">الأسم الأول</th>
+                      <th scope="col" class="d-none">الأسم الثاني</th>
+                      <th scope="col" class="d-none">الأسم الأخير</th>
                       <th scope="col">الجنس</th>
                       <th scope="col">صلة القرابة</th>
                       <th scope="col">الحالة الدراسية</th>
                       <th scope="col">الحالة الاجتماعية</th>
                       <th scope="col">رقم الهوية</th>
                       <th scope="col">الحالة الصحية</th>
-                      <th scope="col">دخل الفرد (شهريا)</th>
+                      <th scope="col">دخل المرافق (شهريا)</th>
                       <th scope="col">مصدر الدخل</th>
-                      <th scope="col">نوع الاحتياج</th>
-                      <th scope="col" class="text-center">خيارات</th>
+                      <th scope="col" class="d-none">نوع الاحتياج</th>
                       <th scope="col" class="d-none">المؤهل التعليمي</th>
                       <th scope="col" class="d-none">تاريخ الميلاد</th>
                       <th scope="col" class="d-none">
                         تاريح انتهاء الهوية/الإقامة
                       </th>
                       <th scope="col" class="d-none">وصف الاحتياج</th>
+                      <th scope="col" class="text-center">خيارات</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1208,7 +1260,7 @@
 
             <hr />
 
-            <h4 class="font-normal">مصادر دخل رب الأسرة (المعيل - سنويَا)</h4>
+            <h4 class="font-normal">مصادر دخل رب الأسرة (المعيل - شهريًا)</h4>
             <div
               class="alert alert-warning mt-3"
               role="alert"
@@ -1371,14 +1423,13 @@
 
             <hr />
 
-            <h4 class="font-normal">مصروفات الأسرة (سنويَا)</h4>
+            <h4 class="font-normal">مصروفات الأسرة (شهريًا)</h4>
             <div
               class="alert alert-warning mt-3"
               role="alert"
               id="checkboxError"
             >
-              الرجاء ادخال مصروفات الأسرة ادناه, وفي حال عدم وجود أو عدم تكفل
-              المعيل بالمصروف المسمى, يرجى ادخال قيمة صفر (0)
+              الرجاء ادخال مصروفات الأسرة ادناه, وفي حال عدم وجود الدخل المسمى, يرجى ادخال قيمة صفر (0)
             </div>
             <div class="row row-cols-md-2 row-cols-xl-4 mt-4">
               <div class="col-md-6 mb-4 form-group">
@@ -1511,6 +1562,7 @@
                     max="99999999.00"
                     class="form-control"
                     id="id_expensesinfo_proven_debts"
+                    oninput="provenDebtValueCheck(this);"
                   />
                   <span class="input-group-text" id="basic-addon1">ر.س.</span>
                 </div>
@@ -1557,48 +1609,80 @@
 
             <div class="row mt-3">
               <div class="col-md-6 mb-4 form-group">
-                <label for="id_familyinfo_family_issues" class="form-label"
+                <label class="form-label"
                   >المشكلات التي تعاني منها الأسرة<span style="color: red"
                     >*</span
+                  > <span style="font-size: 0.9rem">
+                    (إختيار متعدد)</span
                   ></label
                 >
-                <select
-                  multiple
-                  size="5"
-                  name="familyinfo_family_issues"
-                  class="form-control"
-                  id="id_familyinfo_family_issues"
-                >
-                  <option value="اقتصادية">اقتصادية</option>
-                  <option value="صحية">صحية</option>
-                  <option value="تعليمية">تعليمية</option>
-                  <option value="توظيف">توظيف</option>
-                  <option value="كفالة">كفالة</option>
-                </select>
+                  <div
+                    name="familyinfo_family_issues"
+                    class="d-grid gap-2"
+                    style="grid-template-columns: 1fr 1fr;"
+                    id="id_familyinfo_family_issues"
+                  >
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_issues_economical" autocomplete="off" name="familyinfo_issues_economical" value="اقتصادية">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_issues_economical">اقتصادية</label>
+
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_issues_educational" autocomplete="off" name="familyinfo_issues_educational" value="تعليمية">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_issues_educational">تعليمية</label>
+
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_issues_employment" autocomplete="off" name="familyinfo_issues_employment" value="توظيف">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_issues_employment">توظيف</label>
+
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_issues_sponsorship" autocomplete="off" name="familyinfo_issues_sponsorship" value="كفالة">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_issues_sponsorship">كفالة</label>
+
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_issues_healthy" autocomplete="off" name="familyinfo_issues_healthy" value="صحية">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_issues_healthy">صحية</label>
+                  </div>
               </div>
               <div class="col-md-6 mb-4 form-group">
-                <label for="id_familyinfo_needs_type" class="form-label"
-                  >نوع الاحتياج<span style="color: red">*</span></label
+                <label class="form-label"
+                  >نوع الاحتياج<span style="color: red">*</span> <span style="font-size: 0.9rem">
+                    (إختيار متعدد)</span
+                  ></label
                 >
-                <select
-                  multiple
-                  size="5"
+                <div
                   name="familyinfo_needs_type"
-                  class="form-control"
+                  class="d-grid gap-2"
+                  style="grid-template-columns: 1fr 1fr;"
                   id="id_familyinfo_needs_type"
                 >
-                  <option value="سلال غذائية">سلال غذائية</option>
-                  <option value="كسوة">كسوة</option>
-                  <option value="حقائب مدرسية">حقائب مدرسية</option>
-                  <option value="فلاتر مياه">فلاتر مياه</option>
-                  <option value="سداد إيجار">سداد إيجار</option>
-                  <option value="سداد كهرباء">سداد كهرباء</option>
-                  <option value="سداد دين">سداد دين</option>
-                  <option value="تدريب">تدريب</option>
-                  <option value="أجهزة كهربائية">أجهزة كهربائية</option>
-                  <option value="أثاث">أثاث</option>
-                  <option value="ترميم">ترميم</option>
-                </select>
+                  <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_food_baskets" autocomplete="off" name="familyinfo_needs_type_food_baskets" value="سلال غذائية">
+                  <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_food_baskets">سلال غذائية</label>
+
+                  <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_clothing" autocomplete="off" name="familyinfo_needs_type_clothing" value="كسوة">
+                  <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_clothing">كسوة</label>
+
+                  <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_school_bags"  autocomplete="off" name="familyinfo_needs_type_school_bags" value="حقائب مدرسية">
+                  <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_school_bags">حقائب مدرسية</label>
+
+                  <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_water_filters"  autocomplete="off" name="familyinfo_needs_type_water_filters" value="فلاتر مياه">
+                  <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_water_filters">فلاتر مياه</label>
+
+                  <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_rent_payment"  autocomplete="off" name="familyinfo_needs_type_rent_payment" value="سداد إيجار">
+                  <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_rent_payment">سداد إيجار</label>
+
+                  <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_electricity_payment"  autocomplete="off" name="familyinfo_needs_type_electricity_payment" value="سداد كهرباء">
+                  <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_electricity_payment">سداد كهرباء</label>
+
+                  <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_dept_payment" autocomplete="off" name="familyinfo_needs_type_dept_payment" value="سداد دين">
+                  <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_dept_payment">سداد دين</label>
+
+                  <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_training"  autocomplete="off" name="familyinfo_needs_type_training" value="تدريب">
+                  <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_training">تدريب</label>
+
+                  <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_electronic_devices" autocomplete="off" name="familyinfo_needs_type_electronic_devices" value="أجهزة كهربائية">
+                  <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_electronic_devices">أجهزة كهربائية</label>
+
+                  <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_furniture" autocomplete="off" name="familyinfo_needs_type_furniture" value="أثاث">
+                  <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_furniture">أثاث</label>
+
+                  <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_home_renovation" autocomplete="off" name="familyinfo_needs_type_home_renovation" value="ترميم">
+                  <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_home_renovation">ترميم</label>
+                </div>
               </div>
             </div>
             <div class="row">
@@ -1638,22 +1722,6 @@
                   <option value="السعودي الفرنسي">السعودي الفرنسي</option>
                   <option value="العربي">العربي</option>
                 </select>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col mb-4 form-group">
-                <label for="id_familyinfo_needs_description" class="form-label"
-                  >وصف الاحتياج</label
-                >
-                <textarea
-                  row="5"
-                  col="40"
-                  type="textarea"
-                  class="form-control"
-                  id="id_familyinfo_needs_description"
-                  name="familyinfo_needs_description"
-                  maxlength="2000"
-                ></textarea>
               </div>
             </div>
 
@@ -2207,7 +2275,7 @@
   aria-labelledby="editModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="editModalLabel">تعديل معلومات المرافق</h5>
@@ -2228,29 +2296,71 @@
           novalidate
         >
           {% csrf_token %}
-          <div class="row row-cols-md-2 row-cols-xl-3">
-            <div class="col-md-12 mb-4 form-group">
-              <label for="id_dependent_edit_info_name" class="form-label"
-                >الأسم<span style="font-size: 0.9rem">
-                  (حسب الهوية/الإقامة)</span
+          <div class="row row-cols-md-2 row-cols-xl-4">
+            <div class="col-md-6 mb-4 form-group">
+              <label for="id_dependent_edit_info_first_name" class="form-label"
+                >الأسم الأول<span style="color: red">*</span
                 ></label
               >
               <input
                 type="text"
-                id="id_dependent_edit_info_name"
-                class="form-control mb-3"
-                placeholder="أسم المرافق"
-                name="dependent_edit_info_name"
+                id="id_dependent_edit_info_first_name"
+                class="form-control"
+                name="dependent_edit_info_first_name"
               />
             </div>
+            <div class="col-md-6 mb-4 form-group">
+              <label for="id_dependent_edit_info_second_name" class="form-label"
+                >الأسم الثاني<span style="color: red">*</span
+                ></label
+              >
+              <input
+                type="text"
+                id="id_dependent_edit_info_second_name"
+                class="form-control"
+                name="dependent_edit_info_second_name"
+              />
+            </div>
+            <div class="col-md-6 mb-4 form-group">
+              <label for="id_dependent_edit_info_last_name" class="form-label"
+                >الأسم الأخير<span style="color: red">*</span
+                ><span style="font-size: 0.9rem">
+                  (أسم العائلة)</span
+                ></label
+              >
+              <input
+                type="text"
+                id="id_dependent_edit_info_last_name"
+                class="form-control"
+                name="dependent_edit_info_last_name"
+              />
+            </div>
+            <div class="col-md-6 mb-4 form-group">
+              <label
+                for="id_dependent_edit_info_date_of_birth"
+                class="form-label"
+                >تاريخ الميلاد<span style="color: red">*</span></label
+              >
+              <input
+                type="date"
+                class="form-control"
+                id="id_dependent_edit_info_date_of_birth"
+                maxlength="55"
+                name="dependent_edit_info_date_of_birth"
+              />
+            </div>
+          </div>
 
+          <hr>
+
+          <div class="row row-cols-md-2 row-cols-xl-3">
             <div class="col-md-6 mb-4 form-group">
               <label for="id_dependent_edit_info_gender" class="form-label"
-                >الجنس</label
+                >الجنس<span style="color: red">*</span></label
               >
               <select
                 name="dependent_edit_info_gender"
-                class="form-control mb-3"
+                class="form-control"
                 id="id_dependent_edit_info_gender"
               >
                 <option value selected>---------</option>
@@ -2258,42 +2368,80 @@
                 <option value="انثى">انثى</option>
               </select>
             </div>
-
             <div class="col-md-6 mb-4 form-group">
-              <label
-                for="id_dependent_edit_info_relationship"
-                class="form-label"
-                >صلة القرابة</label
+              <label for="id_dependent_edit_info_relationship" class="form-label"
+                >صلة القرابة<span style="color: red">*</span></label
               >
               <select
                 name="dependent_edit_info_relationship"
-                class="form-control mb-3"
+                class="form-control"
                 id="id_dependent_edit_info_relationship"
               >
                 <option value selected>---------</option>
                 <option value="ابن">ابن</option>
                 <option value="ابنة">ابنة</option>
+                <option value="أخ">أخ</option>
+                <option value="أخت">أخت</option>
                 <option value="زوج/ـة">زوج/ـة</option>
                 <option value="خال/ـة">خال/ـة</option>
                 <option value="عم/ـة">عم/ـة</option>
-                <option value="جد/ـة">جد/ـة"</option>
+                <option value="جد/ـة">جد/ـة</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-4 form-group">
+              <label
+                for="id_dependent_edit_info_marital_status"
+                class="form-label"
+                >الحالة الاجتماعية<span style="color: red">*</span></label
+              >
+              <select
+                name="dependent_edit_info_marital_status"
+                class="form-control"
+                id="id_dependent_edit_info_marital_status"
+              >
+                <option value selected>---------</option>
+                <option value="طالب/ـة">طالب/ـة</option>
+                <option value="طفل/ـة">طفل/ـة</option>
+                <option value="ربة منزل">ربة منزل</option>
+                <option value="متزوج/ـة">متزوج/ـة</option>
+                <option value="أعزب/ـة">أعزب/ـة</option>
+                <option value="أرملة/ـة">أرمل/ـة</option>
+                <option value="مطلقة">مطلقة</option>
+                <option value="مهجورة">مهجورة</option>
               </select>
             </div>
           </div>
 
           <hr />
 
-          <div class="row row-cols-md-2 row-cols-xl-4">
+          <div class="row row-cols-md-2">
             <div class="col-md-6 mb-4 form-group">
               <label
                 for="id_dependent_edit_info_educational_status"
                 class="form-label"
-                >الحالة الدراسية</label
+                >الحالة الدراسية<span style="color: red">*</span></label
               >
               <select
                 name="dependent_edit_info_educational_status"
                 class="form-control"
                 id="id_dependent_edit_info_educational_status"
+                onchange="educationalStatusEditInfoCheck(this);"
+              >
+                <option value selected>---------</option>
+                <option value="يدرس">يدرس</option>
+                <option value="لا يدرس">لا يدرس</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-4 form-group" style="display: none;" id="id_dependent_edit_info_educational_level_group_info">
+              <label
+                for="id_dependent_edit_info_educational_level"
+                class="form-label"
+                >المرحلة الدراسية<span style="color: red">*</span></label
+              >
+              <select
+                name="dependent_edit_info_educational_level"
+                class="form-control"
+                id="id_dependent_edit_info_educational_level"
               >
                 <option value selected>---------</option>
                 <option value="أول ابتدائي">أول ابتدائي</option>
@@ -2309,40 +2457,18 @@
                 <option value="ثاني ثانوي">ثاني ثانوي</option>
                 <option value="ثالث ثانوي">ثالث ثانوي</option>
                 <option value="جامعي">جامعي</option>
-                <option value="لا يدرس">لا يدرس</option>
               </select>
             </div>
-            <div class="col-md-6 mb-4 form-group">
+            <div class="col-md-6 mb-4 form-group" style="display: none;" id="id_dependent_edit_info_educational_degree_group_info">
               <label
-                for="id_dependent_edit_info_marital_status"
+                for="id_dependent_edit_info_educational_degree"
                 class="form-label"
-                >الحالة الاجتماعية</label
+                >المؤهل التعليمي<span style="color: red">*</span></label
               >
               <select
-                name="dependent_edit_info_marital_status"
+                name="dependent_edit_info_educational_degree"
                 class="form-control"
-                id="id_dependent_edit_info_marital_status"
-              >
-                <option value selected>---------</option>
-                <option value="طالب/ـة">طالب/ـة</option>
-                <option value="طفل/ـة">طفل/ـة</option>
-                <option value="ربة منزل">ربة منزل</option>
-                <option value="متزوج/ـة">متزوج/ـة</option>
-                <option value="أعزب/ـة">أعزب/ـة</option>
-                <option value="أرملة/ـة">أرمل/ـة</option>
-                <option value="مطلقة">مطلقة</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-4 form-group">
-              <label
-                for="id_dependent_edit_info_educational_level"
-                class="form-label"
-                >المؤهل التعليمي</label
-              >
-              <select
-                name="dependent_edit_info_educational_level"
-                class="form-control"
-                id="id_dependent_edit_info_educational_level"
+                id="id_dependent_edit_info_educational_degree"
               >
                 <option value selected>---------</option>
                 <option value="لا يوجد">لا يوجد</option>
@@ -2351,20 +2477,6 @@
                 <option value="ثانوي">ثانوي</option>
                 <option value="جامعي">جامعي</option>
               </select>
-            </div>
-            <div class="col-md-6 mb-4 form-group">
-              <label
-                for="id_dependent_edit_info_date_of_birth"
-                class="form-label"
-                >تاريخ الميلاد</label
-              >
-              <input
-                type="date"
-                class="form-control"
-                id="id_dependent_edit_info_date_of_birth"
-                maxlength="55"
-                name="dependent_edit_info_date_of_birth"
-              />
             </div>
           </div>
 
@@ -2405,7 +2517,7 @@
               <label
                 for="id_dependent_edit_info_monthly_income"
                 class="form-label"
-                >دخل الفرد (شهريا)</label
+                >دخل المرافق (شهريا)</label
               >
               <div class="input-group mb-3">
                 <input
@@ -2423,7 +2535,7 @@
               <label
                 for="id_dependent_edit_info_income_source"
                 class="form-label"
-                >مصدر الدخل</label
+                >مصدر الدخل للمرافق</label
               >
               <select
                 name="dependent_edit_info_income_source"
@@ -2543,48 +2655,109 @@
 
 <script>
   $(document).ready(function () {
-    /*
-    // Confirmation modal dialog
-    var submitBtn = document.getElementById("submit-btn");
-    var confirmationModal = new bootstrap.Modal(
-      document.getElementById("confirmationModal")
-    );
+     function getTableDataAsJSON() {
+        const table = document.getElementById('family-table'); // Replace with your table ID
+        const rows = document.querySelectorAll('#family-table tr');
+        let dependentsData = [];
+    
+        for (let i = 1; i < rows.length; i++) { // Start from 1 to skip table header
+            const cells = rows[i].getElementsByTagName('td');
+            let dependent = {
+                firstName: cells[0].innerText, // Assuming first cell contains the first name
+                secondName: cells[1].innerText,
+                lastName: cells[2].innerText,
+                gender: cells[3].innerText,
+                relationship: cells[4].innerText,
+                educationalStatus: cells[5].innerText,
+                martialStatus: cells[6].innerText,
+                nationalID: cells[7].innerText,
+                healthStatus: cells[8].innerText,
+                incomeAmount: cells[9].innerText,
+                incomeSource: cells[10].innerText,
+                needsType: cells[11].innerText,
+                educationalDegree: cells[12].innerText,
+                dateOfBitrh: cells[13].innerText,
+                nationalIDExpDate: cells[14].innerText,
+                needsDescription: cells[15].innerText,
+            };
+            dependentsData.push(dependent);
+        }
+    
+        return JSON.stringify(dependentsData);
+    }
+    
+    // Use this function to get JSON when you need it
+    const dependentsJSON = getTableDataAsJSON();
+    console.log(dependentsJSON); // Logs the JSON string
+    
+    document.getElementById('myform').addEventListener('submit', function(e) {
+      e.preventDefault();
+  
+      const formData = new FormData(this);
+      let jsonObject = {};
+  
+      // Iterate over all form fields
+      for (const [key, value] of formData.entries()) {
+          // Exclude checkboxes from being added directly
+          const formElement = document.getElementsByName(key)[0];
+          if(formElement && formElement.type !== 'checkbox') {
+              jsonObject[key] = value;
+          }
+      }
+  
+      // Collecting checkbox values
+      let dependentNeedsType = [];
+      document.querySelectorAll('#id_dependent_info_needs_type input[type=checkbox]').forEach((checkbox) => {
+          if (checkbox.checked) {
+            dependentNeedsType.push(checkbox.value); // or checkbox.value if it has a meaningful value
+          }
+      });
+  
+      // Adding checkboxes to the JSON object
+      jsonObject['dependent_info_needs_type'] = dependentNeedsType;
 
-    submitBtn.addEventListener("click", function (event) {
-      event.preventDefault();
-      confirmationModal.show();
+      // Collecting checkbox values
+      let familyIssue = [];
+      document.querySelectorAll('#id_familyinfo_family_issues input[type=checkbox]').forEach((checkbox) => {
+          if (checkbox.checked) {
+            familyIssue.push(checkbox.value); // or checkbox.value if it has a meaningful value
+          }
+      });
+  
+      // Adding checkboxes to the JSON object
+      jsonObject['familyinfo_family_issues'] = familyIssue;
+
+      // Collecting checkbox values
+      let familyNeedsType = [];
+      document.querySelectorAll('#id_familyinfo_needs_type input[type=checkbox]').forEach((checkbox) => {
+          if (checkbox.checked) {
+            familyNeedsType.push(checkbox.value); // or checkbox.value if it has a meaningful value
+          }
+      });
+  
+      // Adding checkboxes to the JSON object
+      jsonObject['familyinfo_needs_type'] = familyNeedsType;
+
+      // Adding information of the dependents table to the JSON object
+      jsonObject['dependents-table'] = getTableDataAsJSON();
+  
+      fetch('http://127.0.0.1:8000/beneficiaries/new', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(jsonObject),
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log('Success:', data);
+          // Handle success
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+          // Handle error
+      });
     });
-
-    // HTML:
-    <div
-      class="modal fade"
-      id="confirmationModal"
-      tabindex="-1"
-      aria-labelledby="confirmationModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="confirmationModalLabel">تأكيد الطلب</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">هل أنت متأكد من أنك تريد تقديم هذا الطلب؟</div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              إلغاء
-            </button>
-            <button type="button" class="btn btn-primary">تأكيد</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    */
 
     var $modalForm = $("#editModalForm");
     var $saveChangesButton = $("#saveChanges");
@@ -2638,15 +2811,37 @@
       "أدخل رقم هوية/إقامة صحيح."
     );
 
+    $.validator.addMethod(
+      "dependentNameRegex",
+      function (value, element) {
+        return (
+          this.optional(element) || /^[a-zA-Z0-9\u0621-\u064A]*$/i.test(value)
+        );
+      },
+      "يحتوي الأسم على حروف فقط."
+    );
+
     // Define your validation rules here
     $modalForm.validate({
       // Your validation rules
       rules: {
         // rules for your fields
         // dependent_information ---------
-        dependent_edit_info_name: {
+        dependent_edit_info_first_name: {
           required: true,
-          fullNameRegex: true,
+          dependentNameRegex: true,
+          minlength: 2,
+          maxlength: 50,
+        },
+        dependent_edit_info_second_name: {
+          required: true,
+          dependentNameRegex: true,
+          minlength: 2,
+          maxlength: 50,
+        },
+        dependent_edit_info_last_name: {
+          required: true,
+          dependentNameRegex: true,
           minlength: 2,
           maxlength: 50,
         },
@@ -2670,6 +2865,12 @@
         dependent_edit_info_educational_status: {
           required: true,
         },
+        dependent_edit_info_educational_level: {
+          required: true,
+        },
+        dependent_edit_info_educational_degree: {
+          required: true,
+        },
         dependent_edit_info_health_status: {
           required: true,
         },
@@ -2685,7 +2886,15 @@
         },
       },
       messages: {
-        dependent_edit_info_name: {
+        dependent_edit_info_first_name: {
+          required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
+          minlength: "يجب ألا يقل الاسم عن حرفين",
+        },
+        dependent_edit_info_second_name: {
+          required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
+          minlength: "يجب ألا يقل الاسم عن حرفين",
+        },
+        dependent_edit_info_last_name: {
           required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
           minlength: "يجب ألا يقل الاسم عن حرفين",
         },
@@ -3223,7 +3432,7 @@
             dateISO: true,
           },
           personalinfo_washing_place: {
-            //
+            required: false,
           },
           personalinfo_health_status: {
             required: true,
@@ -3271,6 +3480,12 @@
           dependent_info_educational_status: {
             required: true,
           },
+          dependent_info_educational_level: {
+            required: true,
+          },
+          dependent_info_educational_degree: {
+            required: true,
+          },
           dependent_info_health_status: {
             required: true,
           },
@@ -3285,10 +3500,85 @@
             required: true,
           },
           // housing_income_need_information ---------
+          houseinfo_building_number: {
+            required: true,
+          },
+          houseinfo_street_name: {
+            required: true,
+          },
+          houseinfo_neighborhood: {
+            required: true,
+          },
+          houseinfo_city: {
+            required: true,
+          },
+          houseinfo_postal_code:{
+            required: true,
+          },
+          houseinfo_additional_number: {
+            required: true,
+          },
+          houseinfo_unit: {
+            required: true,
+          },
+          houseinfo_location_url: {
+            required: true,
+          },
           houseinfo_housing_type: {
             required: true,
           },
           houseinfo_housing_ownership: {
+            required: true,
+          },
+          incomeinfo_salary: {
+            required: true,
+          },
+          incomeinfo_social_insurance: {
+            required: true,
+          },
+          incomeinfo_charity: {
+            required: true,
+          },
+          incomeinfo_social_warranty: {
+            required: true,
+          },
+          incomeinfo_pension_agency: {
+            required: true,
+          },
+          incomeinfo_citizen_account: {
+            required: true,
+          },
+          incomeinfo_benefactor: {
+            required: true,
+          },
+          incomeinfo_other: {
+            required: true,
+          },
+          expensesinfo_housing_rent: {
+            required: true,
+          },
+          expensesinfo_electricity_bills: {
+            required: true,
+          },
+          expensesinfo_water_bills: {
+            required: true,
+          },
+          expensesinfo_transportation: {
+            required: true,
+          },
+          expensesinfo_health_supplies: {
+            required: true,
+          },
+          expensesinfo_food_supplies: {
+            required: true,
+          },
+          expensesinfo_educational_supplies: {
+            required: true,
+          },
+          expensesinfo_proven_debts: {
+            required: true,
+          },
+          expensesinfo_other: {
             required: true,
           },
           familyinfo_family_issues: {
@@ -3304,16 +3594,37 @@
             required: true,
           },
           // attachments_information ---------
-          formFileBeneficiaryNationalID: {
+          fileBeneficiaryNationalID: {
             required: true,
           },
-          formFileNationalIDForBeneficiaryDependents: {
+          fileNationalIDForBeneficiaryDependents: {
             required: true,
           },
-          formFileBeneficiaryNationalAddress: {
+          fileBeneficiaryNationalAddress: {
             required: true,
           },
-          formFileOther: {
+          filePensionOrSocialInsuranceInquiry: {
+            required: true,
+          },
+          fileFatherOrHusbandDeathCertificate: {
+            required: true,
+          },
+          fileLetterFromPrison: {
+            required: true,
+          },
+          fileDivorceDeed: {
+            required: true,
+          },
+          fileChildrenResponsibilityDeed: {
+            required: true,
+          },
+          fileLeaseContractOrTitleDeed: {
+            required: true,
+          },
+          fileWaterOrElectricityBills: {
+            required: true,
+          },
+          fileSocialWarrantyInquiry: {
             required: true,
           },
         },
@@ -3393,7 +3704,9 @@
       // This line prevents the form from submitting
       event.preventDefault();
 
-      var dependentName = $("#id_dependent_info_name").val().trim();
+      var dependentFirstName = $("#id_dependent_info_first_name").val().trim();
+      var dependentSecondName = $("#id_dependent_info_second_name").val().trim();
+      var dependentLastName = $("#id_dependent_info_last_name").val().trim();
       var dependentGender = $("#id_dependent_info_gender").val();
 
       var dependentRelationship = $("#id_dependent_info_relationship").val();
@@ -3411,6 +3724,9 @@
       var dependentEducationalLevel = $(
         "#id_dependent_info_educational_level"
       ).val();
+      var dependentEducationalDegree = $(
+        "#id_dependent_info_educational_degree"
+      ).val();
       var dependentDateOfBirth = $("#id_dependent_info_date_of_birth").val();
       var dependentNationalIDExpDate = $(
         "#id_dependent_info_national_id_exp_date"
@@ -3425,15 +3741,26 @@
         var $row = $("<tr></tr>");
         $row.append(
           $("<td></td>")
-            .text(dependentName)
-            .attr("data-attr", "dependent_edit_info_name")
+            .text(dependentFirstName)
+            .attr("data-attr", "dependent_edit_info_first_name")
+        );
+        $row.append(
+          $("<td></td>")
+            .text(dependentSecondName)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_second_name")
+        );
+        $row.append(
+          $("<td></td>")
+            .text(dependentLastName)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_last_name")
         );
         $row.append(
           $("<td></td>")
             .text(dependentGender)
             .attr("data-attr", "dependent_edit_info_gender")
         );
-
         $row.append(
           $("<td></td>")
             .text(dependentRelationship)
@@ -3454,7 +3781,6 @@
             .text(dependentNationalID)
             .attr("data-attr", "dependent_edit_info_national_id")
         );
-
         $row.append(
           $("<td></td>")
             .text(dependentHealthStatus)
@@ -3473,14 +3799,20 @@
         $row.append(
           $("<td></td>")
             .text(dependentNeedsType)
+            .addClass("d-none")
             .attr("data-attr", "dependent_edit_info_needs_type")
         );
-
         $row.append(
           $("<td></td>")
             .text(dependentEducationalLevel)
             .addClass("d-none")
             .attr("data-attr", "dependent_edit_info_educational_level")
+        );
+        $row.append(
+          $("<td></td>")
+            .text(dependentEducationalDegree)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_educational_degree")
         );
         $row.append(
           $("<td></td>")
@@ -3536,7 +3868,9 @@
         $("#family-table tbody").append($row);
 
         // Clear input fields
-        $("#id_dependent_info_name").val("");
+        $("#id_dependent_info_first_name").val("");
+        $("#id_dependent_info_second_name").val("");
+        $("#id_dependent_info_last_name").val("");
         $("#id_dependent_info_gender").val("");
         $("#id_dependent_info_relationship").val("");
         $("#id_dependent_info_educational_status").val("");
@@ -3547,6 +3881,7 @@
         $("#id_dependent_info_income_source").val("");
         $("#id_dependent_info_needs_type").val("");
         $("#id_dependent_info_educational_level").val("");
+        $("#id_dependent_info_educational_degree").val("");
         $("#id_dependent_info_date_of_birth").val("");
         $("#id_dependent_info_national_id_exp_date").val("");
         $("#id_dependent_info_needs_description").val("");

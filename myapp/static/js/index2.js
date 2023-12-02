@@ -244,3 +244,34 @@ function categoryCheck(that) {
 function resetInputIban() {
   document.getElementById('id_beneficiaryinfo_iban').value = "SA";
 }
+
+function educationalStatusCheck(that) {
+  if (that.value == "يدرس") {
+      document.getElementById("id_dependent_info_educational_level_group_info").style.display = "block";
+      document.getElementById("id_dependent_info_educational_degree_group_info").style.display = "none";
+  } else {
+      document.getElementById("id_dependent_info_educational_level_group_info").style.display = "none";
+      document.getElementById("id_dependent_info_educational_degree_group_info").style.display = "block";
+  }
+}
+
+function educationalStatusEditInfoCheck(that) {
+  if (that.value == "يدرس") {
+      document.getElementById("id_dependent_edit_info_educational_level_group_info").style.display = "block";
+      document.getElementById("id_dependent_edit_info_educational_degree_group_info").style.display = "none";
+  } else {
+      document.getElementById("id_dependent_edit_info_educational_level_group_info").style.display = "none";
+      document.getElementById("id_dependent_edit_info_educational_degree_group_info").style.display = "block";
+  }
+}
+
+function provenDebtValueCheck(that) {
+  var debtValue = parseFloat(that.value); // Convert the value to a number
+  var fileInput = document.getElementById('id_formFileDeptInstrument');
+
+  if (debtValue > 0) {
+      fileInput.required = true; // Set the file input as required
+  } else {
+      fileInput.required = false; // Remove the required attribute
+  }
+}

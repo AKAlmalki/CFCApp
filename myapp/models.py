@@ -15,6 +15,8 @@ class TodoItem(models.Model):
 
 RELATIONSHIP = [("son", "ابن"),
                 ("daughter", "ابنة"),
+                ("brother", "أخ"),
+                ("sister", "أخت"),
                 ("husband/wife", "زوج/ـة"),
                 ("maternal aunt/maternal uncle", "خال/ـة"),
                 ("paternal aunt/paternal uncle", "عم/ـة"),
@@ -30,7 +32,8 @@ CATEGORY = [("regular family", "أسرة عادية"),
 MARITAL_STATUS = [("married", "متزوج/ـة"),
                   ("single", "أعزب/ـة"),
                   ("widower", "أرمل/ـة"),
-                  ("divorced", "مطلقة")]
+                  ("divorced", "مطلقة"),
+                  ("deserted", "مهجورة")]
 EDUCATIONAL_STATUS = [("none", "لا يوجد"),
                       ("primary", "ابتدائي"),
                       ("middle", "متوسط"),

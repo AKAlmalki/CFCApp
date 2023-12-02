@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from .models import TodoItem, beneficiary, supporter_operation, entity, individual, individual_supporter_operation, entity_supporter_operation
 from .forms import RegisterForm
 from django.db.models import Q
@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 import datetime
 import logging
 import os
+import json
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -188,29 +189,44 @@ def dashboard_reports(request):
 @csrf_exempt
 def beneficiary_indiv(request):
 
-    if request.method == "POST":
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        # Process the data...
+        return JsonResponse({'status': 'success', 'data': data})
 
-        if request.method == "POST":
-            # Access form data
-            form_data = request.POST
-            file1 = request.FILES['fileBeneficiaryNationalID']
-            file_path = os.path.join('/home/shino/Desktop/', file1.name)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
-            with open(file_path, 'wb+') as destination:
-                for chunk in file1.chunks():
-                    destination.write(chunk)
+    # # In case request is POST
+    # if request.method == "POST":
 
-            # Print or log form data
-            print("Form submission: %s", form_data)
+    #     if request.method == "POST":
+    #         # Access form data
+    #         form_data = request.POST
 
-            # Redirect or respond to the request
-            return HttpResponse("Form submitted successfully!")
+    #         # Access the files sent with the request [Access by name]
+    #         file1 = request.FILES.get('fileBeneficiaryNationalID', None)
 
-            # return render(request, "dashboard/confirmBeneficiaryReq.html")
-        else:
-            print("[Error] - Unkwon erorr.")
+    #         if file1 is not None:
+    #             # Path where the file will be stored, and its name as a second parameter
+    #             file_path = os.path.join('/home/shino/Desktop/', file1.name)
 
-    return render(request, "main/index2.html")
+    #             with open(file_path, 'wb+') as destination:
+    #                 for chunk in file1.chunks():
+    #                     destination.write(chunk)
+
+    #         # Print or log form data
+    #         print("Form submission: %s", form_data)
+
+    #         # Redirect or respond to the request
+    #         return HttpResponse("Form submitted successfully!")
+
+    #         # In case of successful submission and valid form data
+    #         # return render(request, "dashboard/confirmBeneficiaryReq.html")
+    #     else:
+    #         print("[Error] - Unkwon erorr.")
+
+    # # Otherwise, redirect to the form page
+    # return render(request, "main/index2.html")
 
 
 # def supporter_entity(request):
