@@ -2716,6 +2716,8 @@
                 dateOfBitrh: cells[13].innerText,
                 nationalIDExpDate: cells[14].innerText,
                 needsDescription: cells[15].innerText,
+                educationalLevel: cells[16].innerText,
+                diseaseType: cells[17].innerText,
             };
             dependentsData.push(dependent);
         }
@@ -2787,8 +2789,11 @@
       })
       .then(response => response.json())
       .then(data => {
-          console.log('Success:', data);
-          // Handle success
+          if (data.redirect) {
+              window.location.href = data.redirect; // Redirects to the URL provided by server
+          } else {
+              // Handle other responses
+          }
       })
       .catch((error) => {
           console.error('Error:', error);
@@ -3848,12 +3853,6 @@
         );
         $row.append(
           $("<td></td>")
-            .text(dependentEducationalLevel)
-            .addClass("d-none")
-            .attr("data-attr", "dependent_edit_info_educational_level")
-        );
-        $row.append(
-          $("<td></td>")
             .text(dependentEducationalDegree)
             .addClass("d-none")
             .attr("data-attr", "dependent_edit_info_educational_degree")
@@ -3872,16 +3871,23 @@
         );
         $row.append(
           $("<td></td>")
-            .text(DependentDiseaseType)
-            .addClass("d-none")
-            .attr("data-attr", "dependent_edit_info_disease_type")
-        );
-        $row.append(
-          $("<td></td>")
             .text(DependentNeedsDescription)
             .addClass("d-none")
             .attr("data-attr", "dependent_edit_info_needs_description")
         );
+        $row.append(
+          $("<td></td>")
+            .text(dependentEducationalLevel)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_educational_level")
+        );
+        $row.append(
+          $("<td></td>")
+            .text(DependentDiseaseType)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_disease_type")
+        );
+
 
         // Edit Button
         var $editButton = $("<button>تعديل</button>")

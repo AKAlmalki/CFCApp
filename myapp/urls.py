@@ -13,21 +13,6 @@ urlpatterns = [
         name="home"
     ),
     path(
-        "todos/",
-        views.todos,
-        name="Todos"
-    ),
-    path(
-        "index/",
-        views.test1,
-        name="index"
-    ),
-    path(
-        "handle_test2",
-        views.handle_test2,
-        name="handle_test2"
-    ),
-    path(
         "index2/",
         views.test2,
         name="index"
@@ -35,7 +20,7 @@ urlpatterns = [
     path(
         "beneficiaries/new",
         views.beneficiary_indiv,
-        name="post_beneficiary"
+        name="beneficiary_new"
     ),
     path(
         "confirmation",
@@ -54,12 +39,12 @@ urlpatterns = [
     # ),
     path(
         "dashboard/",
-        views.dashboard,
+        views.new_dashboard,
         name="dashboard"
     ),
     path(
         "dashboard2/",
-        views.new_dashboard,
+        views.dashboard,
         name="dashboard2"
     ),
     path(

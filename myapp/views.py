@@ -1,13 +1,13 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import TodoItem, beneficiary, supporter_operation, entity, individual, individual_supporter_operation, entity_supporter_operation
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, individual_supporter_operation, entity_supporter_operation
 from .forms import RegisterForm
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.views.decorators.csrf import csrf_exempt
-import datetime
+from datetime import datetime
 import logging
 import os
 import json
@@ -15,7 +15,16 @@ import json
 # Set up logging
 logger = logging.getLogger(__name__)
 
-# Just for testing purposes
+
+def convert_to_date(date_str):
+    if not date_str:
+        return None  # or handle it as needed in your context
+
+    try:
+        return datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        print(f"Invalid date format for {date_str}")
+        return None  # or raise an exception, depending on your requirement
 
 
 def individual2test(request):
@@ -72,11 +81,6 @@ def signin(request):
     return render(request, "registration/login.html")
 
 
-def todos(request):
-    items = TodoItem.objects.all()
-    return render(request, "todos.html", {"todos": items})
-
-
 # def get_name(request):
 #     # if this is a POST request we need to process the form data
 
@@ -123,20 +127,7 @@ def dashboard_requests(request):
     return render(request, "requests.html", {"beneficiary_obj": beneficiary_obj, "beneficiaries_headers": ['التصنيف', 'مؤهل؟', 'الاجراءات'], "entity_obj": entity_obj, "entities_headers": ['الأسم', 'المبلغ كامل'], "individual_obj": individual_obj, "individuals_headers": ['الأسم', 'المبلغ كامل']})
 
 
-def test1(request):
-    return render(request, "index.html")
-
-
 def test2(request):
-    return render(request, "main/index2.html")
-
-
-def handle_test2(request):
-
-    if request.method == "POST":
-        var1 = request.POST.get("var1")
-        print(var1)
-
     return render(request, "main/index2.html")
 
 
@@ -190,89 +181,219 @@ def dashboard_reports(request):
 def beneficiary_indiv(request):
 
     if request.method == 'POST':
-        data = json.loads(request.body)
-        # Process the data...
-        return JsonResponse({'status': 'success', 'data': data})
+        data = json.loads(request.body.decode('utf-8'))
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+        # Accessing the data for beneficiary
+        first_name = data.get('personalinfo_first_name', None)
+        second_name = data.get('personalinfo_second_name', None)
+        last_name = data.get('personalinfo_last_name', None)
+        date_of_birth_data = data.get('personalinfo_date_of_birth', None)
+        date_of_birth = None
+        # Check if the date string exists and is not empty
+        if date_of_birth_data:
+            # Convert the date string to a date object
+            date_of_birth = datetime.strptime(
+                date_of_birth_data, '%Y-%m-%d').date()
+        else:
+            print("No valid date found in JSON")
+        gender = data.get('personalinfo_gender', None)
+        national_id = data.get('personalinfo_national_id', None)
+        national_id_exp_date_data = data.get(
+            'personalinfo_national_id_exp_date', None)
+        national_id_exp_date = convert_to_date(
+            national_id_exp_date_data)
+        nationality = data.get('personalinfo_nationality', None)
+        category = data.get('personalinfo_category', None)
+        marital_status = data.get('personalinfo_marital_status', None)
+        educational_level = data.get('personalinfo_educational_level', None)
+        date_of_death_of_father_or_husband = data.get(
+            'personalinfo_date_of_death_of_father_or_husband', None)
+        if date_of_death_of_father_or_husband is not None:
+            date_of_death_of_father_or_husband = convert_to_date(
+                date_of_death_of_father_or_husband)
+        washing_place = data.get('personalinfo_washing_place', None)
+        health_status = data.get('personalinfo_health_status', None)
+        disease_type = data.get('personalinfo_disease_type', None)
+        work_status = data.get('personalinfo_work_status', None)
+        employer = data.get('personalinfo_employer', None)
+        phone_number = data.get('personalinfo_phone_number', None)
+        email = data.get('personalinfo_email', None)
+        bank_type = data.get('beneficiaryinfo_bank', None)
+        bank_iban = data.get('beneficiaryinfo_iban', None)
+        family_issues = data.get('familyinfo_family_issues', None)
+        family_needs = data.get('familyinfo_needs_type', None)
 
-    # # In case request is POST
-    # if request.method == "POST":
+        beneficiary_obj = beneficiary(
+            first_name=first_name,
+            second_name=second_name,
+            last_name=last_name,
+            nationality=nationality,
+            gender=gender,
+            date_of_birth=date_of_birth,
+            phone_number=phone_number,
+            email=email,
+            national_id=national_id,
+            national_id_exp_date=national_id_exp_date,
+            category=category,
+            marital_status=marital_status,
+            educational_level=educational_level,
+            death_date_father_husband=date_of_death_of_father_or_husband,
+            washing_place=washing_place,
+            health_status=health_status,
+            disease_type=disease_type,
+            work_status=work_status,
+            employer=employer,
+            bank_type=bank_type,
+            bank_iban=bank_iban,
+            family_issues=family_issues,
+            family_needs=family_needs,
+        )
+        beneficiary_obj.save(category_seg="CAT", region_seg="SA")
 
-    #     if request.method == "POST":
-    #         # Access form data
-    #         form_data = request.POST
+        # Accessing the data for beneficiary_house
+        building_number = data.get('houseinfo_building_number', None)
+        street_name = data.get('houseinfo_street_name', None)
+        neighborhood = data.get('houseinfo_neighborhood', None)
+        city = data.get('houseinfo_city', None)
+        postal_code = data.get('houseinfo_postal_code', None)
+        additional_number = data.get('houseinfo_additional_number', None)
+        unit = data.get('houseinfo_unit', None)
+        location_url = data.get('houseinfo_location_url', None)
+        housing_type = data.get('houseinfo_housing_type', None)
+        housing_ownership = data.get('houseinfo_housing_ownership', None)
 
-    #         # Access the files sent with the request [Access by name]
-    #         file1 = request.FILES.get('fileBeneficiaryNationalID', None)
+        beneficiary_house_obj = beneficiary_house(
+            building_number=building_number,
+            street_name=street_name,
+            neighborhood=neighborhood,
+            city=city,
+            postal_code=postal_code,
+            additional_number=additional_number,
+            unit=unit,
+            location_url=location_url,
+            housing_type=housing_type,
+            housing_ownership=housing_ownership,
+            beneficiary_id=beneficiary_obj,
+        )
+        beneficiary_house_obj.save()
 
-    #         if file1 is not None:
-    #             # Path where the file will be stored, and its name as a second parameter
-    #             file_path = os.path.join('/home/shino/Desktop/', file1.name)
+        # Accessing the data for beneficiary_income_expense
+        salary_in = data.get('incomeinfo_salary', None)
+        social_insurance_in = data.get('incomeinfo_social_insurance', None)
+        charity_in = data.get('incomeinfo_charity', None)
+        social_warranty_in = data.get('incomeinfo_social_warranty', None)
+        pension_agency_in = data.get('incomeinfo_pension_agency', None)
+        citizen_account_in = data.get('incomeinfo_citizen_account', None)
+        benefactor_in = data.get('incomeinfo_benefactor', None)
+        other_in = data.get('incomeinfo_other', None)
+        housing_rent_ex = data.get('expensesinfo_housing_rent', None)
+        electricity_bills_ex = data.get('expensesinfo_electricity_bills', None)
+        water_bills_ex = data.get('expensesinfo_water_bills', None)
+        transportation_ex = data.get('expensesinfo_transportation', None)
+        health_supplies_ex = data.get('expensesinfo_health_supplies', None)
+        food_supplies_ex = data.get('expensesinfo_food_supplies', None)
+        educational_supplies_ex = data.get(
+            'expensesinfo_educational_supplies', None)
+        proven_debts_ex = data.get('expensesinfo_proven_debts', None)
+        other_ex = data.get('expensesinfo_other', None)
 
-    #             with open(file_path, 'wb+') as destination:
-    #                 for chunk in file1.chunks():
-    #                     destination.write(chunk)
+        beneficiary_income_expense_obj = beneficiary_income_expense(
+            salary_in=salary_in,
+            social_insurance_in=social_insurance_in,
+            charity_in=charity_in,
+            social_warranty_in=social_warranty_in,
+            pension_agency_in=pension_agency_in,
+            citizen_account_in=citizen_account_in,
+            benefactor_in=benefactor_in,
+            other_in=other_in,
+            housing_rent_ex=housing_rent_ex,
+            electricity_bills_ex=electricity_bills_ex,
+            water_bills_ex=water_bills_ex,
+            transportation_ex=transportation_ex,
+            health_supplies_ex=health_supplies_ex,
+            food_supplies_ex=food_supplies_ex,
+            educational_supplies_ex=educational_supplies_ex,
+            proven_debts_ex=proven_debts_ex,
+            other_ex=other_ex,
+            beneficiary_id=beneficiary_obj,
+        )
+        beneficiary_income_expense_obj.save()
 
-    #         # Print or log form data
-    #         print("Form submission: %s", form_data)
+        # print("Beneficiary: ", first_name, second_name, last_name, date_of_birth, gender, national_id, national_id_exp_date, nationality, category, marital_status,
+        #       educational_level, date_of_death_of_father_or_husband, washing_place, health_status, disease_type, work_status, employer, phone_number, email, bank_iban, bank_type, family_issues, family_needs)
 
-    #         # Redirect or respond to the request
-    #         return HttpResponse("Form submitted successfully!")
+        # print("\nBeneficiary House: ", building_number, street_name, neighborhood, city, postal_code,
+        #       postal_code, additional_number, unit, location_url, housing_type, housing_ownership)
 
-    #         # In case of successful submission and valid form data
-    #         # return render(request, "dashboard/confirmBeneficiaryReq.html")
-    #     else:
-    #         print("[Error] - Unkwon erorr.")
+        # print("\nBeneficiary Income Expenses: ", salary_in, social_insurance_in, charity_in, social_warranty_in, pension_agency_in, citizen_account_in, benefactor_in, other_in,
+        #       housing_rent_ex, electricity_bills_ex, water_bills_ex, transportation_ex, health_supplies_ex, food_supplies_ex, educational_supplies_ex, proven_debts_ex, other_ex)
 
-    # # Otherwise, redirect to the form page
-    # return render(request, "main/index2.html")
+        dependent_table = data.get('dependents-table', None)
 
+        # Parse the JSON string into a Python object
+        try:
+            dependents_list = json.loads(dependent_table)
+        except json.JSONDecodeError:
+            print("Error parsing JSON")
+            dependents_list = []
 
-# def supporter_entity(request):
+        # Now, you can iterate over the list of dependents
+        for dep in dependents_list:
+            print(dep)  # This will print each dependent as a dictionary
+            # Extract the data for each field
+            first_name = dep.get('firstName', '')
+            second_name = dep.get('secondName', '')
+            last_name = dep.get('lastName', '')
+            gender = dep.get('gender', '')
+            relationship = dep.get('relationship', '')
+            educational_status = dep.get('educationalStatus', None)
+            marital_status = dep.get('martialStatus', '')
+            national_id = dep.get('nationalID', '')
+            health_status = dep.get('healthStatus', None)
+            income_amount = dep.get('incomeAmount', 0)
+            income_source = dep.get('incomeSource', '')
+            needs_type = dep.get('needsType', '')
+            educational_degree = dep.get('educationalDegree', '')
+            date_of_birth = dep.get('dateOfBitrh', None)
+            if date_of_birth is not None:
+                date_of_birth = convert_to_date(date_of_birth_data)
+            national_id_exp_date = dep.get(
+                'nationalIDExpDate', None)
+            if national_id_exp_date is not None:
+                date_of_birth = convert_to_date(national_id_exp_date)
+            needs_description = dep.get('needsDescription', '')
+            educational_level = dep.get('educationalLevel', None)
+            disease_type = dep.get('diseaseType', None)
 
-#     if request.method == "POST":
+            # Create a new dependent object and save it to the database
+            new_dependent = dependent(
+                first_name=first_name,
+                second_name=second_name,
+                last_name=last_name,
+                gender=gender,
+                relationship=relationship,
+                date_of_birth=date_of_birth,
+                national_id=national_id,
+                national_id_exp_date=national_id_exp_date,
+                marital_status=marital_status,
+                educational_level=educational_level,
+                educational_status=educational_status,
+                health_status=health_status,
+                disease_type=disease_type,
+                income_amount=income_amount,
+                income_source=income_source,
+                needs_type=needs_type,
+                educational_degree=educational_degree,
+                needs_description=needs_description,
+                beneficiary_id=beneficiary_obj
+            )
+            new_dependent.save()
 
-#         form = SupporterEntityForm(request.POST)
+        # In case of successful submission and valid form data
+        return JsonResponse({'redirect': '/confirmation', 'file_no': beneficiary_obj.file_no})
 
-#         # print(form.is_valid(),form.data)
+    elif request.method == 'GET':
+        return render(request, "main/index2.html")
 
-#         if form.is_valid():
-
-#             entity_obj = entity(
-#                 name=form.data.get("name"),
-#                 account=form.data.get("account"),
-#                 total_amount=form.data.get("amount"),
-#             )
-
-#             entity_obj.save()  # save the object in the database
-
-#             supporter_operation_obj = supporter_operation(
-#                 category=form.data.get("category"),
-#                 amount=form.data.get("amount"),
-#             )
-
-#             supporter_operation_obj.save()  # save the object in the database
-
-#             current_date = datetime.datetime.now()
-
-#             entity_supporter_operation_obj = entity_supporter_operation(
-#                 entity_id=entity_obj,
-#                 supporter_operation_id=supporter_operation_obj,
-#                 date=current_date,
-#                 status="0",
-#                 amount=form.data.get("amount"),
-#             )
-
-#             entity_supporter_operation_obj.save()  # save the object in the database
-
-#             return HttpResponseRedirect("/")
-#         else:
-#             print(form.errors)
-
-#     else:
-#         form = SupporterEntityForm()
-
-#         return render(request, "supporter_form(entity).html", {'form': form})
-
-#     return HttpResponseRedirect("/supporters/entities/new")
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)

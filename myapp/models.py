@@ -1,76 +1,15 @@
 from django.db import models
 from django.core.validators import RegexValidator
-
-# Create your models here.
-
-# Testing only
+from django.db.models import JSONField
+import datetime
 
 
 class TodoItem(models.Model):
     title = models.CharField(max_length=200)
     completed = models.BooleanField(default=False)
 
+
 #########################################################
-
-
-RELATIONSHIP = [("son", "ابن"),
-                ("daughter", "ابنة"),
-                ("brother", "أخ"),
-                ("sister", "أخت"),
-                ("husband/wife", "زوج/ـة"),
-                ("maternal aunt/maternal uncle", "خال/ـة"),
-                ("paternal aunt/paternal uncle", "عم/ـة"),
-                ("grandmother/grandfather", "جد/ـة"),]
-GENDER = [("M", "ذكر"),
-          ("F", "انثى")]
-CATEGORY = [("regular family", "أسرة عادية"),
-            ("orphan family", "أسرة أيتام"),
-            ("widowed family", "أسرة أرملة"),
-            ("prisoners family", "أسرة سجناء"),
-            ("divorced family", "أسرة مطلقة"),
-            ("individual", "فرد")]
-MARITAL_STATUS = [("married", "متزوج/ـة"),
-                  ("single", "أعزب/ـة"),
-                  ("widower", "أرمل/ـة"),
-                  ("divorced", "مطلقة"),
-                  ("deserted", "مهجورة")]
-EDUCATIONAL_STATUS = [("none", "لا يوجد"),
-                      ("primary", "ابتدائي"),
-                      ("middle", "متوسط"),
-                      ("secondary", "ثانوي"),
-                      ("university", "جامعي")]
-EDUCATIONAL_LEVEL = [("primary-1", "أول ابتدائي"),
-                     ("primary-2", "ثاني ابتدائي"),
-                     ("primary-3", "ثالث ابتدائي"),
-                     ("primary-4", "رابع ابتدائي"),
-                     ("primary-5", "خامس ابتدائي"),
-                     ("primary-6", "سادس ابتدائي"),
-                     ("middle-1", "اول متوسط"),
-                     ("middle-2", "ثاني متوسط"),
-                     ("middle-3", "ثالث متوسط"),
-                     ("secondary-1", "اول ثانوي"),
-                     ("secondary-2", "ثاني ثانوي"),
-                     ("secondary-3", "ثالث ثانوي"),
-                     ("university", "جامعي"),
-                     ("none", "لا يدرس")]
-HEALTH_STATUS = [("good", "جيدة"),
-                 ("not good", "غير جيدة")]
-WORK_STATUS = [("yes", "نعم"),
-               ("no", "لا")]
-INCOME_SOURCE = [("salary", "الراتب"),
-                 ("social development", "التأمينات الاجتماعية"),
-                 ("social security system", "الضمان الاجتماعي"),
-                 ("retired services", "مصلحة التقاعد"),
-                 ("citizen account", "حساب المواطن"),
-                 ("social security office", "التأهيل الشامل"),
-                 ("charity", "جمعية خيرية"),
-                 ("benefactor", "فاعل خير"),
-                 ("other", "اخرى")]
-NEEDS_TYPE = [("economic", "اقتصادي"),
-              ("healthy", "صحي"),
-              ("educational", "تعليمي"),
-              ("employment", "توظيف"),
-              ("sponsorship", "كفالة")]
 
 
 class entity(models.Model):
@@ -94,82 +33,144 @@ class supporter_operation(models.Model):
 
 
 class beneficiary(models.Model):
-    file_no = models.CharField(max_length=500, null=True)
-    first_name = models.CharField(max_length=55, default="")
-    middle_name = models.CharField(max_length=55, default="")
-    last_name = models.CharField(max_length=55, default="")
-    nationality = models.CharField(max_length=55)
-    gender = models.CharField(max_length=1, choices=GENDER, null=True)
+    file_no = models.CharField(max_length=512, null=True, blank=True)
+    first_name = models.CharField(max_length=64, default="")
+    second_name = models.CharField(max_length=64, default="")
+    last_name = models.CharField(max_length=64, default="")
+    nationality = models.CharField(max_length=64)
+    gender = models.CharField(max_length=5, null=True)
     date_of_birth = models.DateField()
     phone_number = models.CharField(max_length=15)
     email = models.EmailField()
     national_id = models.CharField(max_length=20)
     national_id_exp_date = models.DateField(null=True)
     # national address should be divided into multiple fields
-    national_address = models.CharField(max_length=255)
+    # national_address = models.CharField(max_length=255)  # Not included here
     # consider changing it
-    relationship = models.CharField(max_length=55)
-    is_qualified = models.IntegerField()
-    category = models.CharField(max_length=55, choices=CATEGORY)
-    marital_status = models.CharField(max_length=55, choices=MARITAL_STATUS)
-    educational_level = models.CharField(
-        max_length=55, choices=EDUCATIONAL_LEVEL, null=True)
-    health_status = models.CharField(
-        max_length=55, choices=HEALTH_STATUS, null=True)
-    disease_type = models.CharField(max_length=100, null=True)
-    work_status = models.CharField(
-        max_length=55, choices=WORK_STATUS, null=True)
-    employer = models.CharField(max_length=100, null=True)
+    # relationship = models.CharField(max_length=64)# Not included here
+    is_qualified = models.IntegerField(
+        default=0)  # Not included yet - dashboard
+    category = models.CharField(max_length=128)
+    marital_status = models.CharField(max_length=64)
+    educational_level = models.CharField(max_length=128, null=True)
+    health_status = models.CharField(max_length=64, null=True)
+    disease_type = models.CharField(max_length=128, null=True)
+    work_status = models.CharField(max_length=64, null=True)
+    employer = models.CharField(max_length=128, null=True)
     death_date_father_husband = models.DateField(null=True)
-    washing_place = models.CharField(max_length=55, null=True)
-    is_benefiting = models.BooleanField(default=False)
-    inquiries = models.CharField(max_length=500)
-    justifications = models.CharField(max_length=500)
-    signup_at = models.DateTimeField(auto_now_add=True, null=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    washing_place = models.CharField(max_length=64, null=True)
+    is_benefiting = models.BooleanField(
+        default=False)  # Not included yet - dashboard
+    # inquiries = models.CharField(max_length=512)# Not included here
+    # justifications = models.CharField(max_length=512)# Not included here
+    receivedAt = models.DateTimeField(auto_now_add=True, null=True)
+    reviewedAt = models.DateTimeField(
+        auto_now=True, null=True)  # Not included yet - dashboard
+    bank_type = models.CharField(max_length=64, null=True)
+    bank_iban = models.CharField(max_length=32, null=True)
+    family_issues = JSONField(default=list)
+    family_needs = JSONField(default=list)
 
     def __str__(self):
-        return "name: " + self.name + ", national_id:" + self.national_id
+        return "name: " + self.first_name + ", national_id:" + self.national_id
+
+    def save(self, category_seg, region_seg, *args, **kwargs):
+        if not self.file_no:
+            year = datetime.date.today().year
+            category_code = category_seg  # Replace with actual logic to determine category
+            region_code = region_seg  # Replace with actual logic to determine region
+            last_beneficiary = beneficiary.objects.filter(
+                file_no__startswith=f"{year}-{category_code}-{region_code}").order_by('file_no').last()
+
+            if last_beneficiary:
+                last_seq_number = int(last_beneficiary.file_no.split('-')[3])
+                seq_number = f"{last_seq_number + 1:06d}"
+            else:
+                seq_number = "000001"
+
+            check_digit = self.calculate_check_digit(
+                year, category_code, region_code, seq_number)  # Implement this method
+            self.file_no = f"{year}-{category_code}-{region_code}-{seq_number}-{check_digit}"
+
+        super(beneficiary, self).save(*args, **kwargs)
+
+    def calculate_check_digit(self, year, category_code, region_code, seq_number):
+        # Implement your logic to calculate the check digit
+        # This is a placeholder function
+        return 0
 
 
-class family(models.Model):
-    family_head = models.ForeignKey(beneficiary, on_delete=models.CASCADE)
-    count = models.IntegerField()
-    status = models.CharField(max_length=55, default=1)
-    justifications = models.CharField(max_length=500)
-    needs = models.TextField(max_length=500)
+class beneficiary_house(models.Model):
+    beneficiary_id = models.ForeignKey(beneficiary, on_delete=models.CASCADE)
+    building_number = models.CharField(max_length=64)
+    street_name = models.CharField(max_length=64)
+    neighborhood = models.CharField(max_length=64)
+    city = models.CharField(max_length=64)
+    postal_code = models.CharField(max_length=64)
+    additional_number = models.CharField(max_length=64)
+    unit = models.CharField(max_length=64)
+    location_url = models.CharField(max_length=1064)
+    housing_type = models.CharField(max_length=64)
+    housing_ownership = models.CharField(max_length=64)
+
+
+class beneficiary_income_expense(models.Model):
+    beneficiary_id = models.ForeignKey(beneficiary, on_delete=models.CASCADE)
+    salary_in = models.DecimalField(decimal_places=2, max_digits=15, default=0)
+    social_insurance_in = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    charity_in = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    social_warranty_in = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    pension_agency_in = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    citizen_account_in = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    benefactor_in = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    other_in = models.DecimalField(decimal_places=2, max_digits=15, default=0)
+    housing_rent_ex = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    electricity_bills_ex = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    water_bills_ex = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    transportation_ex = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    health_supplies_ex = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    food_supplies_ex = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    educational_supplies_ex = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    proven_debts_ex = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    other_ex = models.DecimalField(decimal_places=2, max_digits=15, default=0)
 
 
 class dependent(models.Model):
     first_name = models.CharField(max_length=55)
-    middle_name = models.CharField(max_length=55)
+    second_name = models.CharField(max_length=55)
     last_name = models.CharField(max_length=55)
-    gender = models.CharField(max_length=1, choices=GENDER, null=True)
-    relationship = models.CharField(max_length=55, choices=RELATIONSHIP)
-    date_of_birth = models.DateField()
+    gender = models.CharField(max_length=5, null=True)
+    relationship = models.CharField(max_length=64)
+    educational_status = models.CharField(max_length=128, null=True)
+    marital_status = models.CharField(max_length=64)
     national_id = models.CharField(max_length=20)
+    health_status = models.CharField(max_length=128, null=True)
+    income_amount = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    income_source = models.CharField(max_length=128)
+    needs_type = JSONField(default=list)
+    educational_degree = models.CharField(max_length=128, null=True)
+    date_of_birth = models.DateField()
     national_id_exp_date = models.DateField(null=True)
-    marital_status = models.CharField(max_length=55, choices=MARITAL_STATUS)
-    educational_level = models.CharField(
-        max_length=55, choices=EDUCATIONAL_LEVEL, null=True)
-    educational_status = models.CharField(
-        max_length=55, choices=EDUCATIONAL_STATUS, null=True)
-    health_status = models.CharField(
-        max_length=100, choices=HEALTH_STATUS, null=True)
-    disease_type = models.CharField(max_length=100, null=True)
-    total_income = models.IntegerField()
-    income_source = models.CharField(max_length=100, choices=INCOME_SOURCE)
-    needs_type = models.CharField(max_length=100, choices=NEEDS_TYPE)
     needs_description = models.TextField(max_length=300)
-    family_head_id = models.ForeignKey(family, on_delete=models.CASCADE)
-
-
-class orphan(models.Model):
-    name = models.CharField(max_length=55)
-    status = models.CharField(max_length=55, default=1)
-    justifications = models.CharField(max_length=500)
-    needs = models.TextField(max_length=500)
-    beneficiary_id = models.ForeignKey(beneficiary, on_delete=models.CASCADE)
+    educational_level = models.CharField(max_length=64, null=True)
+    disease_type = models.CharField(max_length=100, null=True)
+    beneficiary_id = models.ForeignKey(
+        beneficiary, on_delete=models.CASCADE, null=True)
 
 
 class individual_supporter_operation(models.Model):
@@ -188,11 +189,3 @@ class entity_supporter_operation(models.Model):
     supporter_operation_id = models.ForeignKey(
         supporter_operation, on_delete=models.CASCADE)
     entity_id = models.ForeignKey(entity, on_delete=models.CASCADE)
-
-
-class orphan_supporter_operation(models.Model):
-    status = models.CharField(max_length=55, default=1)
-    date = models.DateTimeField(auto_now_add=True)
-    supporter_operation_id = models.ForeignKey(
-        supporter_operation, on_delete=models.CASCADE)
-    orphan_id = models.ForeignKey(orphan, on_delete=models.CASCADE)
