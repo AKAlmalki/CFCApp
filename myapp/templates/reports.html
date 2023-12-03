@@ -1,15 +1,14 @@
-{% extends "dashboardbase.html" %} {% block title %} الصفحة الرئيسية {% endblock %}
+{% extends "dashboard/dbase.html" %} {% block title %} الصفحة الرئيسية {% endblock %}
 {% block content %}
-<div class="container">
+<div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
   
   <div class="mt-5">
-    {% comment %} action="/supporters/individuals/new" method="POST" {% endcomment %}
     <h2 class="pb-3">بناء التقارير</h2>
     <form action="/dashboard/reports" method="POST">
       {% csrf_token %}
       <div class="form-group pb-3 row">
         <div class="col-8">
-          <label for="beneficiary_name" class="form-label">اسم المستفيد</label>
+          <label for="beneficiary_name" class="form-label">الأسم الأول للمستفيد</label>
           <input type="search" class="form-control" id="beneficiary_name" placeholder="" name="beneficiary_name">
         </div>
         <div class="col">

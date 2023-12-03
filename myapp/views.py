@@ -146,7 +146,7 @@ def dashboard_reports(request):
 
         if beneficiary_name != "" and beneficiary_name is not None:
             beneficiary_arr = beneficiary_arr.filter(
-                name__icontains=beneficiary_name)
+                first_name__icontains=beneficiary_name)
 
         if national_id != "" and national_id is not None:
             beneficiary_arr = beneficiary_arr.filter(national_id=national_id)

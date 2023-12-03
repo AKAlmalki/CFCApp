@@ -39,11 +39,6 @@ urlpatterns = [
     # ),
     path(
         "dashboard/",
-        views.new_dashboard,
-        name="dashboard"
-    ),
-    path(
-        "dashboard2/",
         views.dashboard,
         name="dashboard2"
     ),

@@ -1,37 +1,187 @@
 {% extends "dashboard/dbase.html" %} {% block title %} الصفحة الرئيسية {% endblock %}
 {% block content %}
 {% load static %}
-<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-  <div class="p-5 my-4 rounded-3 has-bg-img" style="background-image: url('{% static '/imgs/bgimg1.jpg' %}')">
-      <h1 class="text-light">مرحبا, هنا صفحة الاحصائيات الرئيسية</h1>
-      <p class="lead text-light">In today's world internet is the most popular way of connecting with the people. At <a href="https://www.tutorialrepublic.com" class="text-success" target="_blank">tutorialrepublic.com</a> you will learn the essential web development technologies along with real life practice examples, so that you can create your own website to connect with the people around the world.</p>
-      {% comment %} <img class="bg-img" src="/static/imgs/bgimg1.jpg" /> {% endcomment %}
-  </div>
-  <div class="row column-gap-3 justify-content-md-center">
-      <div class="col col-lg-4 p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
-          <img src="{% static '/imgs/users-group.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
-          <h2 class="text-center">المستفيدين</h2>
-          <p class="text-center fs-2 text-success">{{ beneficiaries_num }}</p>
-      </div>
-      <div class="col-md-auto p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
-        <img src="{% static '/imgs/donation.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
-        <h2 class="text-center">عمليات التبرع</h2>
-        <p class="text-center fs-2 text-success">{{ supporter_operations_num }}</p>
+
+<div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+  <div class="col-md-12 ms-sm-auto col-lg-12">
+    <div class="p-5 my-4 rounded-3 has-bg-img" style="background-image: url('{% static '/imgs/bgimg1.jpg' %}')">
+        <h1 class="text-light">مرحبا {{user.username}}, هنا صفحة الاحصائيات الرئيسية</h1>
+        <p class="lead text-light">هنا يمكنك التحكم وإدارة جميع خدمات وحسابات المستفيدين</p>
+        {% comment %} <img class="bg-img" src="/static/imgs/bgimg1.jpg" /> {% endcomment %}
     </div>
-      <div class="col col-lg-4 p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
-        <img src="{% static '/imgs/entity.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
-        <h2 class="text-center">الجهات</h2>
-        <p class="text-center fs-2 text-success">{{ entities_num }}</p>
-       </div>
+    <div class="row column-gap-3 justify-content-md-center">
+        <div class="col col-lg-4 p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
+            <img src="{% static '/imgs/users-group.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
+            <h2 class="text-center">المستفيدين</h2>
+            <p class="text-center fs-2 text-success">{{ beneficiaries_num }}</p>
+        </div>
+        <div class="col-md-auto p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
+          <img src="{% static '/imgs/donation.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
+          <h2 class="text-center">عمليات التبرع</h2>
+          <p class="text-center fs-2 text-success">{{ supporter_operations_num }}</p>
+      </div>
+        <div class="col col-lg-4 p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
+          <img src="{% static '/imgs/entity.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
+          <h2 class="text-center">الجهات</h2>
+          <p class="text-center fs-2 text-success">{{ entities_num }}</p>
+         </div>
+    </div>
+    
+    {% comment %} <p>الصفحة الرئيسية للاحصائيات</p>
+    <form action="/name/" method="post">
+      {% csrf_token %}
+      {{ form }}
+      <label for="name">Your name: </label>
+      <input id="name" type="text" name="name" value="{{ current_name }}">
+      <input type="submit" value="OK">
+    </form> {% endcomment %}
   </div>
-  {% comment %} <p>الصفحة الرئيسية للاحصائيات</p>
-  <form action="/name/" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <label for="name">Your name: </label>
-    <input id="name" type="text" name="name" value="{{ current_name }}">
-    <input type="submit" value="OK">
-  </form> {% endcomment %}
-</main>
+
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">لوحة القيادة</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <div class="btn-group me-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary">مشاركة</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary">تصدير</button>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">
+        <svg class="bi"><use xlink:href="#calendar3"/></svg>
+        هذا الأسبوع
+      </button>
+    </div>
+  </div>
+
+  <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+
+  <h2>عنوان القسم</h2>
+  <div class="table-responsive small">
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">عنوان</th>
+          <th scope="col">عنوان</th>
+          <th scope="col">عنوان</th>
+          <th scope="col">عنوان</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1,001</td>
+          <td>بيانات</td>
+          <td>عشوائية</td>
+          <td>تثري</td>
+          <td>الجدول</td>
+        </tr>
+        <tr>
+          <td>1,002</td>
+          <td>تثري</td>
+          <td>مبهة</td>
+          <td>تصميم</td>
+          <td>تنسيق</td>
+        </tr>
+        <tr>
+          <td>1,003</td>
+          <td>عشوائية</td>
+          <td>غنية</td>
+          <td>قيمة</td>
+          <td>مفيدة</td>
+        </tr>
+        <tr>
+          <td>1,003</td>
+          <td>معلومات</td>
+          <td>تثري</td>
+          <td>توضيحية</td>
+          <td>عشوائية</td>
+        </tr>
+        <tr>
+          <td>1,004</td>
+          <td>الجدول</td>
+          <td>بيانات</td>
+          <td>تنسيق</td>
+          <td>قيمة</td>
+        </tr>
+        <tr>
+          <td>1,005</td>
+          <td>قيمة</td>
+          <td>مبهة</td>
+          <td>الجدول</td>
+          <td>تثري</td>
+        </tr>
+        <tr>
+          <td>1,006</td>
+          <td>قيمة</td>
+          <td>توضيحية</td>
+          <td>غنية</td>
+          <td>عشوائية</td>
+        </tr>
+        <tr>
+          <td>1,007</td>
+          <td>تثري</td>
+          <td>مفيدة</td>
+          <td>معلومات</td>
+          <td>مبهة</td>
+        </tr>
+        <tr>
+          <td>1,008</td>
+          <td>بيانات</td>
+          <td>عشوائية</td>
+          <td>تثري</td>
+          <td>الجدول</td>
+        </tr>
+        <tr>
+          <td>1,009</td>
+          <td>تثري</td>
+          <td>مبهة</td>
+          <td>تصميم</td>
+          <td>تنسيق</td>
+        </tr>
+        <tr>
+          <td>1,010</td>
+          <td>عشوائية</td>
+          <td>غنية</td>
+          <td>قيمة</td>
+          <td>مفيدة</td>
+        </tr>
+        <tr>
+          <td>1,011</td>
+          <td>معلومات</td>
+          <td>تثري</td>
+          <td>توضيحية</td>
+          <td>عشوائية</td>
+        </tr>
+        <tr>
+          <td>1,012</td>
+          <td>الجدول</td>
+          <td>تثري</td>
+          <td>تنسيق</td>
+          <td>قيمة</td>
+        </tr>
+        <tr>
+          <td>1,013</td>
+          <td>قيمة</td>
+          <td>مبهة</td>
+          <td>الجدول</td>
+          <td>تصميم</td>
+        </tr>
+        <tr>
+          <td>1,014</td>
+          <td>قيمة</td>
+          <td>توضيحية</td>
+          <td>غنية</td>
+          <td>عشوائية</td>
+        </tr>
+        <tr>
+          <td>1,015</td>
+          <td>بيانات</td>
+          <td>مفيدة</td>
+          <td>معلومات</td>
+          <td>الجدول</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
 {% endblock %}
