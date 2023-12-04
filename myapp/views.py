@@ -138,27 +138,32 @@ def dashboard_reports(request):
 
         beneficiary_arr = beneficiary.objects.all()
 
-        beneficiary_name = request.POST.get("beneficiary_name")
-        national_id = request.POST.get("national_id")
-        category = request.POST.get("category")
-        marital_status = request.POST.get("marital_status")
-        is_qualified = request.POST.get("is_qualified")
+        beneficiary_first_name = request.POST.get("beneficiary_first_name")
+        beneficiary_last_name = request.POST.get("beneficiary_last_name")
+        national_id = request.POST.get("beneficiary_national_id")
+        category = request.POST.get("beneficiary_category")
+        marital_status = request.POST.get("beneficiary_marital_status")
+        is_qualified = request.POST.get("beneficiary_is_qualified")
 
-        if beneficiary_name != "" and beneficiary_name is not None:
+        if beneficiary_first_name != "" and beneficiary_first_name is not None:
             beneficiary_arr = beneficiary_arr.filter(
-                first_name__icontains=beneficiary_name)
+                first_name__icontains=beneficiary_first_name)
+
+        if beneficiary_last_name != "" and beneficiary_last_name is not None:
+            beneficiary_arr = beneficiary_arr.filter(
+                last_name__icontains=beneficiary_last_name)
 
         if national_id != "" and national_id is not None:
             beneficiary_arr = beneficiary_arr.filter(national_id=national_id)
 
-        if category != "اختار..." and national_id is not None:
+        if category != "اختار..." and category is not None:
             beneficiary_arr = beneficiary_arr.filter(category=category)
 
-        if marital_status != "اختار..." and national_id is not None:
+        if marital_status != "اختار..." and marital_status is not None:
             beneficiary_arr = beneficiary_arr.filter(
                 marital_status=marital_status)
 
-        if is_qualified != "اختار..." and national_id is not None:
+        if is_qualified != "اختار..." and is_qualified is not None:
             if is_qualified == "مؤهل":
                 is_qualified = True
             else:
@@ -167,6 +172,15 @@ def dashboard_reports(request):
             beneficiary_arr = beneficiary_arr.filter(is_qualified=is_qualified)
 
         context = {
+            "beneficiaries_headers": [
+                "رقم الملف",
+                "الأسم الأول",
+                "الأسم الأخير",
+                "رقم الهوية",
+                "التصنيف",
+                "الحالة الاجتماعية",
+                "مؤهل؟"
+            ],
             "beneficiaries": beneficiary_arr
         }
 
@@ -174,6 +188,11 @@ def dashboard_reports(request):
 
     else:
         return render(request, "reports.html")
+
+
+@login_required(login_url="/login")
+def export_excel(request):
+    print()
 
 
 # This is for demonstration purposes only. In production, use CSRF protection.

@@ -53,6 +53,11 @@ urlpatterns = [
         name="reports"
     ),
     path(
+        'export_excel',
+        views.export_excel,
+        name="export_excel"
+    ),
+    path(
         "sign-up",
         views.sign_up,
         name="sign-up"

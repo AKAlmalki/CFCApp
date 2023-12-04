@@ -7,27 +7,31 @@
     <form action="/dashboard/reports" method="POST">
       {% csrf_token %}
       <div class="form-group pb-3 row">
-        <div class="col-8">
-          <label for="beneficiary_name" class="form-label">الأسم الأول للمستفيد</label>
-          <input type="search" class="form-control" id="beneficiary_name" placeholder="" name="beneficiary_name">
+        <div class="col-4">
+          <label for="id_beneficiary_first_name" class="form-label">الأسم الأول</label>
+          <input type="search" class="form-control" id="id_beneficiary_first_name" placeholder="" name="beneficiary_first_name">
+        </div>
+        <div class="col-4">
+          <label for="id_beneficiary_last_name" class="form-label">الأسم الأخير</label>
+          <input type="search" class="form-control" id="id_beneficiary_last_name" placeholder="" name="beneficiary_last_name">
         </div>
         <div class="col">
-          <label for="national_id" class="form-label">رقم الهوية</label>
-          <input type="text" class="form-control" id="national_id" placeholder="XXX-XXX-XXX-XXXX" name="national_id" min=0 >
+          <label for="id_beneficiary_national_id" class="form-label">رقم الهوية</label>
+          <input type="text" class="form-control" id="id_beneficiary_national_id" placeholder="XXX-XXX-XXX-XXXX" name="beneficiary_national_id" min=0 >
         </div>
       </div>
       <div class="form-group pb-3 row">
         <div class="col">
-          <label for="category" class="form-label">نوع الدعم</label>
-          <select id="category" class="form-select" name="category">
+          <label for="id_beneficiary_category" class="form-label">نوع الدعم</label>
+          <select id="id_beneficiary_category" class="form-select" name="beneficiary_category">
             <option selected>اختار...</option>
             <option>أسرة محتاجة</option>
             <option>أرملة</option>
           </select>
         </div>
         <div class="col">
-          <label for="marital_status" class="form-label">الحالة الاجتماعية</label>
-          <select id="marital_status" class="form-select" name="marital_status"> 
+          <label for="id_beneficiary_marital_status" class="form-label">الحالة الاجتماعية</label>
+          <select id="id_beneficiary_marital_status" class="form-select" name="beneficiary_marital_status"> 
             <option selected>اختار...</option>
             <option>متزوج-متزوجة</option>
             <option>مطلق-مطلقة</option>
@@ -35,8 +39,8 @@
           </select>
         </div>
         <div class="col">
-          <label for="is_qualified" class="form-label">استحقاقية الدعم</label>
-          <select id="category" class="form-select" name="is_qualified">
+          <label for="id_beneficiary_is_qualified" class="form-label">استحقاقية الدعم</label>
+          <select id="id_beneficiary_is_qualified" class="form-select" name="beneficiary_is_qualified">
             <option selected>اختار...</option>
             <option>مؤهل</option>
             <option>غير مؤهل</option>
@@ -44,39 +48,47 @@
         </div>
       </div>
       <button type="submit" class="btn btn-primary px-5 py-2">ابحث</button>
+      {% comment %} <button hrer="{% url 'export_excel' %}" class="btn btn-primary px-5 py-2">استخراج (اكسل)</button> {% endcomment %}
       <a href="/dashboard/reports" class="btn btn-secondary px-3 py-2">البدء من جديد</a>
     </form>
   </div>
 
   {% if beneficiaries %}
-  <div class="row mt-4">
-    <h3>النتائج</h3>
-    <hr />
-    <ul class="">
-      {% for beneficiary in beneficiaries %}
-        <li class="col">
-          <p>-الاسم: {{ beneficiary.name }}</p>
-          <p>-الجنسية: {{ beneficiary.nationality }}</p>
-          <p>-تاريخ الميلاد: {{ beneficiary.date_of_birth }}</p>
-          <p>-رقم الجوال: {{ beneficiary.phone_number }}</p>
-          {% if beneficiary.is_qualified == 0 %}
-            <p>-هل هو مؤهل؟: لا</p>
-          {% else %}
-            <p>-هل هو مؤهل؟: نعم</p>
-          {% endif %}
-          
-          <p>-الحالة الاجتماعية: {{ beneficiary.marital_status }}</p>
-          <p>-التصنيف: {{ beneficiary.category }}</p>
-          <p>-رقم الهوية: {{ beneficiary.national_id }}</p>
-        </li>
-        <hr />
-      {% endfor %}
-    </ul>
-  </div>
+  <hr>
+    <div class="col row-gap-3 justify-content-md-center">
+      <div class="col-md-auto p-1 pt-3 mt-4 bg-dark rounded-3 d-flex flex-column justify-content-center align-self-center">
+        <p class="text-light ms-2 fs-3">المستفيدين</p>
+        <table class="table table-success table-striped-columns mb-1">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              {% for header in beneficiaries_headers %}
+              <th scope="col">{{ header }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in beneficiaries %}
+            <tr>
+              <th scope="col">{{ row.id }}</th>
+              <td scope="col">{{ row.file_no }}</th>
+              <td scope="col">{{ row.first_name }}</th>
+              <td scope="col">{{ row.last_name }}</th>
+              <td scope="col">{{ row.national_id }}</th>
+              <td scope="col">{{ row.category }}</th>
+              <td scope="col">{{ row.marital_status }}</td>
+              {% if row.is_qualified == 0 %}
+              <td scope="col">لا</td>
+              {% else %}
+              <td scope="col">نعم</td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   {% else %}
   {% endif %}
 </div>
-
-
 {% endblock %}
-{% comment %} <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> {% endcomment %}
