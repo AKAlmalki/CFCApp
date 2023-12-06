@@ -126,16 +126,10 @@ def new_dashboard(request):
 @login_required(login_url="/login")
 def dashboard_requests(request):
     beneficiary_obj = beneficiary.objects.all()
-    entity_obj = entity.objects.all()
-    individual_obj = individual.objects.all()
 
     context = {
         "beneficiary_obj": beneficiary_obj,
-        "beneficiaries_headers": ['التصنيف', 'مؤهل؟', 'الاجراءات'],
-        "entity_obj": entity_obj,
-        "entities_headers": ['الأسم', 'المبلغ كامل'],
-        "individual_obj": individual_obj,
-        "individuals_headers": ['الأسم', 'المبلغ كامل']
+        "beneficiaries_headers": ['رقم الملف', 'الأسم الأول', 'الأسم الأخير', 'التصنيف', 'الحالة الصحية', 'تاريخ الإرسال', 'الحالة الاجتماعية', 'مؤهل؟', 'الاجراءات'],
     }
 
     return render(request, "requests.html", context)
