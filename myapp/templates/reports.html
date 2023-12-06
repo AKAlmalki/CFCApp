@@ -9,52 +9,53 @@
       <div class="form-group pb-3 row">
         <div class="col-4">
           <label for="id_beneficiary_first_name" class="form-label">الأسم الأول</label>
-          <input type="search" class="form-control" id="id_beneficiary_first_name" placeholder="" name="beneficiary_first_name">
+          <input type="search" class="form-control" id="id_beneficiary_first_name" placeholder="" name="beneficiary_first_name" {% if first_name %} value="{{ first_name }}" {% endif %}>
         </div>
         <div class="col-4">
           <label for="id_beneficiary_last_name" class="form-label">الأسم الأخير</label>
-          <input type="search" class="form-control" id="id_beneficiary_last_name" placeholder="" name="beneficiary_last_name">
+          <input type="search" class="form-control" id="id_beneficiary_last_name" placeholder="" name="beneficiary_last_name" {% if last_name %} value="{{ last_name }}" {% endif %}>
         </div>
         <div class="col">
           <label for="id_beneficiary_national_id" class="form-label">رقم الهوية</label>
-          <input type="text" class="form-control" id="id_beneficiary_national_id" placeholder="XXX-XXX-XXX-XXXX" name="beneficiary_national_id" min=0 >
+          <input type="text" class="form-control" id="id_beneficiary_national_id" placeholder="XXX-XXX-XXX-XXXX" name="beneficiary_national_id" min=0 {% if national_id %} value="{{ national_id }}" {% endif %}>
         </div>
       </div>
       <div class="form-group pb-3 row">
         <div class="col">
           <label for="id_beneficiary_category" class="form-label">نوع الدعم</label>
           <select id="id_beneficiary_category" class="form-select" name="beneficiary_category">
-            <option selected>اختار...</option>
-            <option>أسرة محتاجة</option>
-            <option>أرملة</option>
+            <option {% if category == "" %}selected{% endif %}>اختار...</option>
+            <option value="أسرة محتاجة" {% if category == "أسرة محتاجة" %}selected{% endif %}>أسرة محتاجة</option>
+            <option value="أرملة" {% if category == "أرملة" %}selected{% endif %}>أرملة</option>
           </select>
         </div>
         <div class="col">
           <label for="id_beneficiary_marital_status" class="form-label">الحالة الاجتماعية</label>
           <select id="id_beneficiary_marital_status" class="form-select" name="beneficiary_marital_status"> 
-            <option selected>اختار...</option>
-            <option>متزوج-متزوجة</option>
-            <option>مطلق-مطلقة</option>
-            <option>أرمل-أرملة</option>
+            <option {% if marital_status == "" %}selected{% endif %}>اختار...</option>
+            <option value="متزوج-متزوجة" {% if marital_status == "متزوج-متزوجة" %}selected{% endif %}>متزوج-متزوجة</option>
+            <option value="مطلق-مطلقة" {% if marital_status == "مطلق-مطلقة" %}selected{% endif %}>مطلق-مطلقة</option>
+            <option value="أرمل-أرملة" {% if marital_status == "أرمل-أرملة" %}selected{% endif %}>أرمل-أرملة</option>
           </select>
         </div>
         <div class="col">
           <label for="id_beneficiary_is_qualified" class="form-label">استحقاقية الدعم</label>
           <select id="id_beneficiary_is_qualified" class="form-select" name="beneficiary_is_qualified">
-            <option selected>اختار...</option>
-            <option>مؤهل</option>
-            <option>غير مؤهل</option>
+            <option {% if is_qualified == "" %}selected{% endif %}>اختار...</option>
+            <option value="مؤهل" {% if is_qualified == "مؤهل" %}selected{% endif %}>مؤهل</option>
+            <option value="غير مؤهل" {% if is_qualified == "غير مؤهل" %}selected{% endif %}>غير مؤهل</option>
           </select>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary px-5 py-2">ابحث</button>
-      {% comment %} <button hrer="{% url 'export_excel' %}" class="btn btn-primary px-5 py-2">استخراج (اكسل)</button> {% endcomment %}
+      <button type="submit" class="btn btn-success px-5 py-2">ابحث</button>
+      <a href="{% url 'export_excel' %}" class="btn btn-primary px-5 py-2">استخراج (اكسل)</a>
       <a href="/dashboard/reports" class="btn btn-secondary px-3 py-2">البدء من جديد</a>
     </form>
   </div>
 
-  {% if beneficiaries %}
   <hr>
+  {% if beneficiaries %}
+  
     <div class="col row-gap-3 justify-content-md-center">
       <div class="col-md-auto p-1 pt-3 mt-4 bg-dark rounded-3 d-flex flex-column justify-content-center align-self-center">
         <p class="text-light ms-2 fs-3">المستفيدين</p>

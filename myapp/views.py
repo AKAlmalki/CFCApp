@@ -11,9 +11,14 @@ from datetime import datetime
 import logging
 import os
 import json
+from openpyxl import Workbook
+from openpyxl.styles import *
+import decimal
 
 # Set up logging
 logger = logging.getLogger(__name__)
+
+# Utility functions =======================================
 
 
 def convert_to_date(date_str):
@@ -27,12 +32,25 @@ def convert_to_date(date_str):
         return None  # or raise an exception, depending on your requirement
 
 
+def is_valid_queryparam(param, type):
+    if type == 1:
+        return param != '' and param is not None
+    elif type == 2:
+        return param != "اختار..." and param is not None
+
+# View Handlers ==============================================
+
+
 def individual2test(request):
     return render(request, 'main/individual2.html')
 
 
 def individualtest(request):
     return render(request, 'main/individual.html')
+
+
+def test2(request):
+    return render(request, "main/index2.html")
 
 
 def home(request):
@@ -60,7 +78,11 @@ def sign_up(request):
     else:
         form = RegisterForm()
 
-    return render(request, "registration/sign_up.html", {"form": form})
+    context = {
+        "form": form
+    }
+
+    return render(request, "registration/sign_up.html", context)
 
 
 def signin(request):
@@ -81,28 +103,6 @@ def signin(request):
     return render(request, "registration/login.html")
 
 
-# def get_name(request):
-#     # if this is a POST request we need to process the form data
-
-#     if request.method == "POST":
-#         # create a form instance and populate it with data from the request:
-#         form = NameForm(request.POST)
-#         print(form.data.get('name'))
-#         # check whether it's valid:
-#         if form.is_valid():
-#             # process the data in form.cleaned_data as required
-#             # ...
-#             # redirect to a new URL:
-
-#             return HttpResponseRedirect("/")
-
-#     # if a GET (or any other method) we'll create a blank form
-#     else:
-#         form = NameForm()
-
-#     return render(request, "home.html", {"form": form})
-
-
 @login_required(login_url="/login")
 def dashboard(request):
     # insights for the dashboard
@@ -110,11 +110,16 @@ def dashboard(request):
     supporter_operations_num = supporter_operation.objects.count()
     entities_num = entity.objects.count()
 
-    return render(request, "dashboard.html", {"beneficiaries_num": beneficiaries_num, "supporter_operations_num": supporter_operations_num, "entities_num": entities_num})
+    context = {
+        "beneficiaries_num": beneficiaries_num,
+        "supporter_operations_num": supporter_operations_num,
+        "entities_num": entities_num
+    }
+
+    return render(request, "dashboard.html", context)
 
 
 def new_dashboard(request):
-
     return render(request, "dashboard/dashboard2.html")
 
 
@@ -124,11 +129,16 @@ def dashboard_requests(request):
     entity_obj = entity.objects.all()
     individual_obj = individual.objects.all()
 
-    return render(request, "requests.html", {"beneficiary_obj": beneficiary_obj, "beneficiaries_headers": ['التصنيف', 'مؤهل؟', 'الاجراءات'], "entity_obj": entity_obj, "entities_headers": ['الأسم', 'المبلغ كامل'], "individual_obj": individual_obj, "individuals_headers": ['الأسم', 'المبلغ كامل']})
+    context = {
+        "beneficiary_obj": beneficiary_obj,
+        "beneficiaries_headers": ['التصنيف', 'مؤهل؟', 'الاجراءات'],
+        "entity_obj": entity_obj,
+        "entities_headers": ['الأسم', 'المبلغ كامل'],
+        "individual_obj": individual_obj,
+        "individuals_headers": ['الأسم', 'المبلغ كامل']
+    }
 
-
-def test2(request):
-    return render(request, "main/index2.html")
+    return render(request, "requests.html", context)
 
 
 @login_required(login_url="/login")
@@ -136,8 +146,10 @@ def dashboard_reports(request):
 
     if request.method == "POST":
 
+        # Get beneficiary table data (all)
         beneficiary_arr = beneficiary.objects.all()
 
+        # Retrive form data
         beneficiary_first_name = request.POST.get("beneficiary_first_name")
         beneficiary_last_name = request.POST.get("beneficiary_last_name")
         national_id = request.POST.get("beneficiary_national_id")
@@ -145,25 +157,29 @@ def dashboard_reports(request):
         marital_status = request.POST.get("beneficiary_marital_status")
         is_qualified = request.POST.get("beneficiary_is_qualified")
 
-        if beneficiary_first_name != "" and beneficiary_first_name is not None:
+        # Validate query param
+        if is_valid_queryparam(beneficiary_first_name, type=1):
             beneficiary_arr = beneficiary_arr.filter(
                 first_name__icontains=beneficiary_first_name)
 
-        if beneficiary_last_name != "" and beneficiary_last_name is not None:
+        if is_valid_queryparam(beneficiary_last_name, type=1):
             beneficiary_arr = beneficiary_arr.filter(
                 last_name__icontains=beneficiary_last_name)
 
-        if national_id != "" and national_id is not None:
+        if is_valid_queryparam(national_id, type=1):
             beneficiary_arr = beneficiary_arr.filter(national_id=national_id)
 
-        if category != "اختار..." and category is not None:
+        if is_valid_queryparam(category, type=2):
             beneficiary_arr = beneficiary_arr.filter(category=category)
 
-        if marital_status != "اختار..." and marital_status is not None:
+        if is_valid_queryparam(marital_status, type=2):
             beneficiary_arr = beneficiary_arr.filter(
                 marital_status=marital_status)
 
-        if is_qualified != "اختار..." and is_qualified is not None:
+        # Keep the original value to be sent back in the response
+        is_qualified_val = is_qualified
+
+        if is_valid_queryparam(is_qualified, type=2):
             if is_qualified == "مؤهل":
                 is_qualified = True
             else:
@@ -181,7 +197,13 @@ def dashboard_reports(request):
                 "الحالة الاجتماعية",
                 "مؤهل؟"
             ],
-            "beneficiaries": beneficiary_arr
+            "beneficiaries": beneficiary_arr,
+            "first_name": beneficiary_first_name,
+            "last_name": beneficiary_last_name,
+            "national_id": national_id,
+            "category": category,
+            "marital_status": marital_status,
+            "is_qualified": is_qualified_val,
         }
 
         return render(request, "reports.html", context)
@@ -192,10 +214,193 @@ def dashboard_reports(request):
 
 @login_required(login_url="/login")
 def export_excel(request):
-    print()
 
+    # Get beneficiary table data (all)
+    beneficiary_arr = beneficiary.objects.all()
 
+    # Ensure data is in the session (request.session is used to retrieve the data included in the session)
+    if 'beneficiary_first_name' in request.session:
+        beneficiary_first_name = request.session["beneficiary_first_name"]
+    else:
+        beneficiary_first_name = None
+
+    if 'beneficiary_last_name' in request.session:
+        beneficiary_last_name = request.session["beneficiary_last_name"]
+    else:
+        beneficiary_last_name = None
+
+    if 'beneficiary_national_id' in request.session:
+        beneficiary_national_id = request.session["beneficiary_national_id"]
+    else:
+        beneficiary_national_id = None
+
+    if 'beneficiary_category' in request.session:
+        beneficiary_category = request.session["beneficiary_category"]
+    else:
+        beneficiary_category = None
+
+    if 'beneficiary_marital_status' in request.session:
+        beneficiary_marital_status = request.session["beneficiary_marital_status"]
+    else:
+        beneficiary_marital_status = None
+
+    if 'beneficiary_is_qualified' in request.session:
+        beneficiary_is_qualified = request.session["beneficiary_is_qualified"]
+    else:
+        beneficiary_is_qualified = None
+
+    # Validate query param
+    if is_valid_queryparam(beneficiary_first_name, type=1):
+        beneficiary_arr = beneficiary_arr.filter(
+            first_name__icontains=beneficiary_first_name)
+
+    if is_valid_queryparam(beneficiary_last_name, type=1):
+        beneficiary_arr = beneficiary_arr.filter(
+            last_name__icontains=beneficiary_last_name)
+
+    if is_valid_queryparam(beneficiary_national_id, type=1):
+        beneficiary_arr = beneficiary_arr.filter(
+            national_id=beneficiary_national_id)
+
+    if is_valid_queryparam(beneficiary_category, type=2):
+        beneficiary_arr = beneficiary_arr.filter(category=beneficiary_category)
+
+    if is_valid_queryparam(beneficiary_marital_status, type=2):
+        beneficiary_arr = beneficiary_arr.filter(
+            marital_status=beneficiary_marital_status)
+
+    if is_valid_queryparam(beneficiary_is_qualified, type=2):
+        if beneficiary_marital_status == "مؤهل":
+            beneficiary_marital_status = True
+        else:
+            beneficiary_marital_status = False
+
+        beneficiary_arr = beneficiary_arr.filter(
+            is_qualified=beneficiary_marital_status)
+
+    if beneficiary_first_name is None or beneficiary_first_name == '':
+        beneficiary_first_name = "الكل"
+    else:
+        beneficiary_first_name = beneficiary_first_name
+
+    if beneficiary_last_name is None or beneficiary_last_name == '':
+        beneficiary_last_name = "الكل"
+    else:
+        beneficiary_last_name = beneficiary_last_name
+
+    if beneficiary_national_id is None or beneficiary_national_id == '':
+        beneficiary_national_id = "الكل"
+    else:
+        beneficiary_national_id = beneficiary_national_id
+
+    if beneficiary_category is None or beneficiary_category == "اختار...":
+        beneficiary_category = "الكل"
+    else:
+        beneficiary_category = beneficiary_category
+
+    if beneficiary_marital_status is None or beneficiary_marital_status == "اختار...":
+        beneficiary_marital_status = "الكل"
+    else:
+        beneficiary_marital_status = beneficiary_marital_status
+
+    if beneficiary_is_qualified is None or beneficiary_is_qualified == "اختار...":
+        beneficiary_is_qualified = "الكل"
+    else:
+        beneficiary_is_qualified = beneficiary_is_qualified
+
+    # Let the browser know what type of file is included in the response
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+    # Name the file
+    response['Content-Disposition'] = 'attachment; filename="beneficiary' + \
+        str(datetime.now()) + '.xlsx"'
+
+    # Workbook object
+    workbook = Workbook()
+
+    worksheet = workbook.active
+
+    # Merge the first six rows which indicate the type of data included
+    worksheet.merge_cells('A1:H1')
+    worksheet.merge_cells('A2:H2')
+    worksheet.merge_cells('A3:H3')
+    worksheet.merge_cells('A4:H4')
+    worksheet.merge_cells('A5:H5')
+    worksheet.merge_cells('A6:H6')
+
+    # Style the first row
+    first_cell = worksheet['A1']
+    first_cell.value = "الأسم الأول: " + " " + beneficiary_first_name
+    first_cell.fill = PatternFill("solid", fgColor="246ba1")
+    first_cell.font = Font(bold=True, color="F7F6FA")
+    first_cell.alignment = Alignment(horizontal="center", vertical="center")
+
+    # Style the second row
+    second_cell = worksheet['A2']
+    second_cell.value = "الأسم الأخير: " + " " + beneficiary_last_name
+    second_cell.font = Font(bold=True, color="246ba1")
+    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+
+    # Style the third row
+    second_cell = worksheet['A3']
+    second_cell.value = "رقم الهوية: " + " " + beneficiary_national_id
+    second_cell.font = Font(bold=True, color="246ba1")
+    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+
+    # Style the forth row
+    second_cell = worksheet['A4']
+    second_cell.value = "التصنيف: " + " " + beneficiary_category
+    second_cell.font = Font(bold=True, color="246ba1")
+    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+
+    # Style the fifth row
+    second_cell = worksheet['A5']
+    second_cell.value = "الحالة الاجتماعية: " + " " + beneficiary_marital_status
+    second_cell.font = Font(bold=True, color="246ba1")
+    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+
+    # Style the sixth row
+    second_cell = worksheet['A6']
+    second_cell.value = "مؤهل أم لا: " + " " + beneficiary_is_qualified
+    second_cell.font = Font(bold=True, color="246ba1")
+    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+
+    worksheet.title = 'AA'
+
+    # Define the titles for columns
+    columns = ['#', 'رقم الملف', 'الأسم الأول',
+               'الأسم الأخير', 'رقم الهوية', 'التصنيف', 'الحالة الاجتماعية', 'مؤهل؟']
+    row_num = 7
+
+    # Assign the titles for each cell of the header
+    for col_num, column_title in enumerate(columns, 1):
+        cell = worksheet.cell(row=row_num, column=col_num)
+        cell.value = column_title
+        cell.fill = PatternFill("solid", fgColor="50C878")
+        cell.font = Font(bold=True, color="F7F6FA")
+        seventh_cell = worksheet['H7']
+        seventh_cell.alignment = Alignment(horizontal="right")
+
+    for beneficiaries in beneficiary_arr:
+        row_num += 1
+
+        # Define the data for each cell in the row
+        row = [beneficiaries.id, beneficiaries.file_no, beneficiaries.first_name,
+               beneficiaries.last_name, beneficiaries.national_id, beneficiaries.category, beneficiaries.marital_status, beneficiaries.is_qualified]
+
+        # Assign the data for each cell of the row
+        for col_num, cell_value in enumerate(row, 1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.value = cell_value
+            # if isinstance(cell_value, decimal.Decimal):
+            #     cell.number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+
+    workbook.save(response)
+    return response
 # This is for demonstration purposes only. In production, use CSRF protection.
+
+
 @csrf_exempt
 def beneficiary_indiv(request):
 
