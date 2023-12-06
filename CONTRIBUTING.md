@@ -1,4 +1,4 @@
-# Contributing to [Your Application Name]
+# Contributing to CFC App
 
 First off, thank you for considering contributing to [Your Application Name]. It's people like you that make [Your Application Name] such a great tool.
 
