@@ -1,43 +1,5 @@
-{% extends "dashboard/dbase.html" %} {% block title %} الصفحة الرئيسية {% endblock %}
-{% block content %}
-{% load static %}
-
-<div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-
-  <div class="col-md-12 ms-sm-auto col-lg-12">
-    <div class="p-5 my-4 rounded-3 has-bg-img" style="background-image: url('{% static '/imgs/bgimg1.jpg' %}')">
-        <h1 class="text-light">مرحبا {{user.username}}, هنا صفحة الاحصائيات الرئيسية</h1>
-        <p class="lead text-light">هنا يمكنك التحكم وإدارة جميع خدمات وحسابات المستفيدين</p>
-        {% comment %} <img class="bg-img" src="/static/imgs/bgimg1.jpg" /> {% endcomment %}
-    </div>
-    <div class="row column-gap-3 justify-content-md-center">
-        <div class="col col-lg-4 p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
-            <img src="{% static '/imgs/users-group.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
-            <h2 class="text-center">المستفيدين</h2>
-            <p class="text-center fs-2 text-success">{{ beneficiaries_num }}</p>
-        </div>
-        <div class="col-md-auto p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
-          <img src="{% static '/imgs/donation.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
-          <h2 class="text-center">عمليات التبرع</h2>
-          <p class="text-center fs-2 text-success">{{ supporter_operations_num }}</p>
-      </div>
-        <div class="col col-lg-4 p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
-          <img src="{% static '/imgs/entity.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
-          <h2 class="text-center">الجهات</h2>
-          <p class="text-center fs-2 text-success">{{ entities_num }}</p>
-         </div>
-    </div>
-    
-    {% comment %} <p>الصفحة الرئيسية للاحصائيات</p>
-    <form action="/name/" method="post">
-      {% csrf_token %}
-      {{ form }}
-      <label for="name">Your name: </label>
-      <input id="name" type="text" name="name" value="{{ current_name }}">
-      <input type="submit" value="OK">
-    </form> {% endcomment %}
-  </div>
-
+{% extends "dashboard/dbase.html" %} {% load static %} {% block content %} 
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">لوحة القيادة</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
@@ -182,6 +144,5 @@
       </tbody>
     </table>
   </div>
-</div>
-
+</main>
 {% endblock %}
