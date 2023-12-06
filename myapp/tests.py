@@ -16,7 +16,6 @@ class URLTests(TestCase):
         response = self.client.get(reverse('dashboard2'))
         self.assertEqual(response.status_code, 200)
 
-    # Add more URL tests...
 
 class ViewTests(TestCase):
     def setUp(self):
@@ -34,18 +33,15 @@ class ViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'dashboard/dashboard2.html')
 
-    # Add more view tests...
 
 class ModelTests(TestCase):
     def test_beneficiary_creation(self):
         beneficiary = Beneficiary.objects.create(
             first_name="John",
             last_name="Doe",
-            # Add other fields...
         )
         self.assertEqual(beneficiary.first_name, "John")
 
-    # Add more model tests...
 
 class FormTests(TestCase):
     def test_register_form(self):
