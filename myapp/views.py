@@ -151,6 +151,14 @@ def dashboard_reports(request):
         marital_status = request.POST.get("beneficiary_marital_status")
         is_qualified = request.POST.get("beneficiary_is_qualified")
 
+        # Passing the form data to the session data
+        request.session["beneficiary_first_name"] = beneficiary_first_name
+        request.session["beneficiary_last_name"] = beneficiary_last_name
+        request.session["beneficiary_national_id"] = national_id
+        request.session["beneficiary_category"] = category
+        request.session["beneficiary_marital_status"] = marital_status
+        request.session["beneficiary_is_qualified"] = is_qualified
+
         # Validate query param
         if is_valid_queryparam(beneficiary_first_name, type=1):
             beneficiary_arr = beneficiary_arr.filter(
