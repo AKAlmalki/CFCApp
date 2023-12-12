@@ -1,6 +1,6 @@
 {% extends "dashboard/dbase.html" %} {% block title %} الصفحة الرئيسية {% endblock %}
 {% block content %}
-<div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
   
   <div class="mt-5">
     <h2 class="pb-3">بناء التقارير</h2>
@@ -57,7 +57,7 @@
   {% if beneficiaries %}
   
     <div class="col row-gap-3 justify-content-md-center">
-      <div class="col-md-auto p-1 pt-3 mt-4 bg-dark rounded-3 d-flex flex-column justify-content-center align-self-center">
+      <div class="col-md-auto p-1 pt-3 mt-4 bg-dark rounded-3 d-flex flex-column justify-content-center align-self-center table-responsive text-nowrap">
         <p class="text-light ms-2 fs-3">المستفيدين</p>
         <table class="table table-success table-striped-columns mb-1">
           <thead>
@@ -91,5 +91,5 @@
     </div>
   {% else %}
   {% endif %}
-</div>
+  </main>
 {% endblock %}
