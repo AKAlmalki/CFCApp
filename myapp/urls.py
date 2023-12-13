@@ -23,6 +23,11 @@ urlpatterns = [
         name="beneficiary_new"
     ),
     path(
+        "beneficiary_details/<int:beneficiary_id>",
+        views.beneficiary_details,
+        name="beneficiary_details"
+    ),
+    path(
         "confirmation",
         views.confirmBeneficiaryRequestView,
         name="beneficiary_confirmation"

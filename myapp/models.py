@@ -72,7 +72,7 @@ class beneficiary(models.Model):
     family_needs = JSONField(default=list)
 
     def __str__(self):
-        return "name: " + self.first_name + ", national_id:" + self.national_id
+        return "file_no " + self.file_no + ", name: " + self.first_name + ", national_id:" + self.national_id
 
     def save(self, category_seg, region_seg, *args, **kwargs):
         if not self.file_no:
@@ -171,6 +171,9 @@ class dependent(models.Model):
     disease_type = models.CharField(max_length=100, null=True)
     beneficiary_id = models.ForeignKey(
         beneficiary, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return "first_name " + self.first_name + ", second_name: " + self.second_name + ", national_id:" + self.national_id
 
 
 class individual_supporter_operation(models.Model):

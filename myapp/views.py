@@ -345,28 +345,28 @@ def export_excel(request):
     second_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Style the third row
-    second_cell = worksheet['A3']
-    second_cell.value = "رقم الهوية: " + " " + beneficiary_national_id
-    second_cell.font = Font(bold=True, color="246ba1")
-    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+    third_cell = worksheet['A3']
+    third_cell.value = "رقم الهوية: " + " " + beneficiary_national_id
+    third_cell.font = Font(bold=True, color="246ba1")
+    third_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Style the forth row
-    second_cell = worksheet['A4']
-    second_cell.value = "التصنيف: " + " " + beneficiary_category
-    second_cell.font = Font(bold=True, color="246ba1")
-    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+    forth_cell = worksheet['A4']
+    forth_cell.value = "التصنيف: " + " " + beneficiary_category
+    forth_cell.font = Font(bold=True, color="246ba1")
+    forth_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Style the fifth row
-    second_cell = worksheet['A5']
-    second_cell.value = "الحالة الاجتماعية: " + " " + beneficiary_marital_status
-    second_cell.font = Font(bold=True, color="246ba1")
-    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+    fifth_cell = worksheet['A5']
+    fifth_cell.value = "الحالة الاجتماعية: " + " " + beneficiary_marital_status
+    fifth_cell.font = Font(bold=True, color="246ba1")
+    fifth_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Style the sixth row
-    second_cell = worksheet['A6']
-    second_cell.value = "مؤهل أم لا: " + " " + beneficiary_is_qualified
-    second_cell.font = Font(bold=True, color="246ba1")
-    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+    sixth_cell = worksheet['A6']
+    sixth_cell.value = "مؤهل أم لا: " + " " + beneficiary_is_qualified
+    sixth_cell.font = Font(bold=True, color="246ba1")
+    sixth_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     worksheet.title = 'AA'
 
@@ -623,3 +623,76 @@ def beneficiary_indiv(request):
 
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+def beneficiary_details(request, beneficiary_id):
+    if request.method == 'GET':
+        try:
+            beneficiary_obj = beneficiary.objects.get(id=beneficiary_id)
+
+            dependent_list = dependent.objects.filter(
+                beneficiary_id=beneficiary_id).all()
+
+            dependent_data = []
+
+            for dependent_obj in dependent_list:
+                dependent_data.append({
+                    'dependent_id': dependent_obj.id,
+                    'dependent_first_name': dependent_obj.first_name,
+                    'dependent_second_name': dependent_obj.second_name,
+                    'dependent_last_name': dependent_obj.last_name,
+                    'dependent_gender': dependent_obj.gender,
+                    'dependent_relationship': dependent_obj.relationship,
+                    'dependent_educational_status': dependent_obj.educational_status,
+                    'dependent_marital_status': dependent_obj.marital_status,
+                    'dependent_national_id': dependent_obj.national_id,
+                    'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                    'dependent_health_status': dependent_obj.health_status,
+                    'dependent_income_amount': dependent_obj.income_amount,
+                    'dependent_income_source': dependent_obj.income_source,
+                    'dependent_needs_type': dependent_obj.needs_type,
+                    'dependent_educational_degree': dependent_obj.educational_degree,
+                    'dependent_date_of_birth': dependent_obj.date_of_birth,
+                    'dependent_needs_description': dependent_obj.needs_description,
+                    'dependent_educational_level': dependent_obj.educational_level,
+                    'dependent_disease_type': dependent_obj.disease_type,
+                })
+
+            data = {
+                'id': beneficiary_obj.id,
+                'file_no': beneficiary_obj.file_no,
+                'first_name': beneficiary_obj.first_name,
+                'second_name': beneficiary_obj.second_name,
+                'last_name': beneficiary_obj.last_name,
+                'nationality': beneficiary_obj.nationality,
+                'gender': beneficiary_obj.gender,
+                'date_of_birth': beneficiary_obj.date_of_birth,
+                'phone_number': beneficiary_obj.phone_number,
+                'email': beneficiary_obj.email,
+                'national_id': beneficiary_obj.national_id,
+                'national_id_exp_date': beneficiary_obj.national_id_exp_date,
+                'is_qualified': beneficiary_obj.is_qualified,
+                'category': beneficiary_obj.category,
+                'marital_status': beneficiary_obj.marital_status,
+                'educational_level': beneficiary_obj.educational_level,
+                'health_status': beneficiary_obj.health_status,
+                'disease_type': beneficiary_obj.disease_type,
+                'work_status': beneficiary_obj.work_status,
+                'employer': beneficiary_obj.employer,
+                'death_date_father_husband': beneficiary_obj.death_date_father_husband,
+                'washing_place': beneficiary_obj.washing_place,
+                'is_benefiting': beneficiary_obj.is_benefiting,
+                'received_at': beneficiary_obj.receivedAt,
+                'reviewed_at': beneficiary_obj.reviewedAt,
+                'bank_type': beneficiary_obj.bank_type,
+                'bank_iban': beneficiary_obj.bank_iban,
+                'family_issues': beneficiary_obj.family_issues,
+                'family_needs': beneficiary_obj.family_needs,
+                'dependent_list': dependent_data
+            }
+            return JsonResponse(data)
+        except beneficiary.DoesNotExist:
+            return JsonResponse({'error': 'Beneficiary not found'}, status=404)
+
+    elif request.method == 'POST':
+        pass
