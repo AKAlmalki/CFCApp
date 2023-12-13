@@ -14,9 +14,14 @@ import json
 from openpyxl import Workbook
 from openpyxl.styles import *
 import decimal
+from django.core.paginator import Paginator
 
 # Set up logging
 logger = logging.getLogger(__name__)
+
+# Constants =======================================
+
+ITEM_PER_PAGE = 10
 
 # Utility functions =======================================
 
@@ -126,7 +131,9 @@ def new_dashboard(request):
 @login_required(login_url="/login")
 def dashboard_requests(request):
     beneficiary_obj = beneficiary.objects.all()
-
+    paginator = Paginator(beneficiary_obj, ITEM_PER_PAGE)
+    page_number = request.GET.get('page')
+    beneficiary_obj = paginator.get_page(page_number)
     context = {
         "beneficiary_obj": beneficiary_obj,
         "beneficiaries_headers": ['رقم الملف', 'الأسم الأول', 'الأسم الأخير', 'التصنيف', 'الحالة الصحية', 'تاريخ الإرسال', 'الحالة الاجتماعية', 'مؤهل؟', 'الاجراءات'],
