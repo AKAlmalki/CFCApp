@@ -637,6 +637,45 @@ def beneficiary_details(request, beneficiary_id):
         try:
             beneficiary_obj = beneficiary.objects.get(id=beneficiary_id)
 
+            beneficiary_housing_obj = beneficiary_house.objects.get(
+                beneficiary_id=beneficiary_id)
+
+            housing_data = {
+                'building_number': beneficiary_housing_obj.building_number,
+                'street_name': beneficiary_housing_obj.street_name,
+                'neighborhood': beneficiary_housing_obj.neighborhood,
+                'city': beneficiary_housing_obj.city,
+                'postal_code': beneficiary_housing_obj.postal_code,
+                'additional_number': beneficiary_housing_obj.additional_number,
+                'unit': beneficiary_housing_obj.unit,
+                'location_url': beneficiary_housing_obj.location_url,
+                'housing_type': beneficiary_housing_obj.housing_type,
+                'housing_ownership': beneficiary_housing_obj.housing_ownership
+            }
+
+            beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
+                beneficiary_id=beneficiary_id)
+
+            income_expense_data = {
+                'salary_in': beneficiary_income_expense_obj.salary_in,
+                'social_insurance_in': beneficiary_income_expense_obj.social_insurance_in,
+                'charity_in': beneficiary_income_expense_obj.charity_in,
+                'social_warranty_in': beneficiary_income_expense_obj.social_warranty_in,
+                'pension_agency_in': beneficiary_income_expense_obj.pension_agency_in,
+                'citizen_account_in': beneficiary_income_expense_obj.citizen_account_in,
+                'benefactor_in': beneficiary_income_expense_obj.benefactor_in,
+                'other_in': beneficiary_income_expense_obj.other_in,
+                'housing_rent_ex': beneficiary_income_expense_obj.housing_rent_ex,
+                'electricity_bills_ex': beneficiary_income_expense_obj.electricity_bills_ex,
+                'water_bills_ex': beneficiary_income_expense_obj.water_bills_ex,
+                'transportation_ex': beneficiary_income_expense_obj.transportation_ex,
+                'health_supplies_ex': beneficiary_income_expense_obj.health_supplies_ex,
+                'food_supplies_ex': beneficiary_income_expense_obj.food_supplies_ex,
+                'educational_supplies_ex': beneficiary_income_expense_obj.educational_supplies_ex,
+                'proven_debts_ex': beneficiary_income_expense_obj.proven_debts_ex,
+                'other_ex': beneficiary_income_expense_obj.other_ex
+            }
+
             dependent_list = dependent.objects.filter(
                 beneficiary_id=beneficiary_id).all()
 
@@ -695,7 +734,9 @@ def beneficiary_details(request, beneficiary_id):
                 'bank_iban': beneficiary_obj.bank_iban,
                 'family_issues': beneficiary_obj.family_issues,
                 'family_needs': beneficiary_obj.family_needs,
-                'dependent_list': dependent_data
+                'dependent_list': dependent_data,
+                'housing_info': housing_data,
+                'income_expenses_info': income_expense_data
             }
             return JsonResponse(data)
         except beneficiary.DoesNotExist:

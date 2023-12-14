@@ -65,7 +65,7 @@ class beneficiary(models.Model):
     # justifications = models.CharField(max_length=512)# Not included here
     receivedAt = models.DateTimeField(auto_now_add=True, null=True)
     reviewedAt = models.DateTimeField(
-        auto_now=True, null=True)  # Not included yet - dashboard
+        null=True)  # Not included yet - dashboard
     bank_type = models.CharField(max_length=64, null=True)
     bank_iban = models.CharField(max_length=32, null=True)
     family_issues = JSONField(default=list)
