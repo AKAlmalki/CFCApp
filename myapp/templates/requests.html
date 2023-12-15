@@ -680,7 +680,6 @@
                               </div>
                             </div>
                             
-                            
                           </div>
                           <hr>
 
@@ -689,6 +688,7 @@
 
                           <hr>
 
+                          <h4 class="fw-bold mt-4 mb-4">معلومات مُراجع الطلب</h4>
                           <div class="mb-3">
                             <h6 class="col form-label" for="id_modal_received_at">تاريخ الاستلام</h6>
                             <input type="datetime" class="form-control" id="id_modal_received_at" name="received_at" disabled readonly>
@@ -868,6 +868,11 @@
               document.getElementById('id_incomeinfo_citizen_account').value = data.income_expenses_info.citizen_account_in;
               document.getElementById('id_incomeinfo_benefactor').value = data.income_expenses_info.benefactor_in;
               document.getElementById('id_incomeinfo_other').value = data.income_expenses_info.other_in;
+              // Sum of all income
+              var total_in = parseFloat(data.income_expenses_info.salary_in) + parseFloat(data.income_expenses_info.social_insurance_in) + parseFloat(data.income_expenses_info.charity_in) + parseFloat(data.income_expenses_info.social_warranty_in) + parseFloat(data.income_expenses_info.pension_agency_in) + parseFloat(data.income_expenses_info.citizen_account_in) + parseFloat(data.income_expenses_info.benefactor_in) + parseFloat(data.income_expenses_info.other_in);
+              total_in = total_in.toFixed(2);
+              document.getElementById('id_incomeinfo_total').value = total_in;
+
               document.getElementById('id_expensesinfo_housing_rent').value = data.income_expenses_info.housing_rent_ex;
               document.getElementById('id_expensesinfo_electricity_bills').value = data.income_expenses_info.electricity_bills_ex;
               document.getElementById('id_expensesinfo_water_bills').value = data.income_expenses_info.water_bills_ex;
@@ -877,7 +882,11 @@
               document.getElementById('id_expensesinfo_educational_supplies').value = data.income_expenses_info.educational_supplies_ex;
               document.getElementById('id_expensesinfo_proven_debts').value = data.income_expenses_info.proven_debts_ex;
               document.getElementById('id_expensesinfo_other').value = data.income_expenses_info.other_ex;
-              
+              // Sum of all expenses
+              var total_ex = parseFloat(data.income_expenses_info.housing_rent_ex) + parseFloat(data.income_expenses_info.electricity_bills_ex) + parseFloat(data.income_expenses_info.water_bills_ex) + parseFloat(data.income_expenses_info.transportation_ex) + parseFloat(data.income_expenses_info.health_supplies_ex) + parseFloat(data.income_expenses_info.food_supplies_ex) + parseFloat(data.income_expenses_info.educational_supplies_ex) + parseFloat(data.income_expenses_info.proven_debts_ex) + parseFloat(data.income_expenses_info.other_ex);
+              total_ex = total_ex.toFixed(2);
+              document.getElementById('id_expensesinfo_total').value = total_ex;
+
 
               // Dependents Accordion data:
               const dependentsAccordion = document.getElementById('dependentsAccordion');
@@ -885,8 +894,8 @@
               // Check if there are dependents
               if (data.dependent_list && data.dependent_list.length > 0) {
                   const accordionHtml = `
-                    <h4 class="fw-bold">المرافقين</h4>
-                    <div class="accordion mt-3" id="dependentsAccordion">
+                    <h4 class="fw-bold mt-4 mb-4">المرافقين</h4>
+                    <div class="accordion" id="dependentsAccordion">
                       ${data.dependent_list.map((dependent, index) => `
                         <div class="accordion-item">
                           <h2 class="accordion-header" id="dependentHeading${index}">
