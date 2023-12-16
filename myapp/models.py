@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.db.models import JSONField
 import datetime
+from datetime import date
 
 
 class TodoItem(models.Model):
@@ -74,6 +75,7 @@ class beneficiary(models.Model):
     def __str__(self):
         return "file_no " + self.file_no + ", name: " + self.first_name + ", national_id:" + self.national_id
 
+    # Overwrite save() method to perform additional operations (calculate file_no)
     def save(self, category_seg, region_seg, *args, **kwargs):
         if not self.file_no:
             year = datetime.date.today().year
@@ -98,6 +100,12 @@ class beneficiary(models.Model):
         # Implement your logic to calculate the check digit
         # This is a placeholder function
         return 0
+
+    # Calculate age and make it a property (which will be always calculated when invoked)
+    @property
+    def age(self):
+        today = date.today()
+        return today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
 
 
 class beneficiary_house(models.Model):
@@ -130,6 +138,7 @@ class beneficiary_income_expense(models.Model):
     benefactor_in = models.DecimalField(
         decimal_places=2, max_digits=15, default=0)
     other_in = models.DecimalField(decimal_places=2, max_digits=15, default=0)
+    total_in = models.DecimalField(decimal_places=2, max_digits=15, default=0)
     housing_rent_ex = models.DecimalField(
         decimal_places=2, max_digits=15, default=0)
     electricity_bills_ex = models.DecimalField(
@@ -147,6 +156,9 @@ class beneficiary_income_expense(models.Model):
     proven_debts_ex = models.DecimalField(
         decimal_places=2, max_digits=15, default=0)
     other_ex = models.DecimalField(decimal_places=2, max_digits=15, default=0)
+    total_ex = models.DecimalField(decimal_places=2, max_digits=15, default=0)
+    in_ex_diff = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
 
 
 class dependent(models.Model):

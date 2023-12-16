@@ -1,58 +1,1578 @@
-{% extends "base.html" %} {% block content %}
-<div class="container mt-5 mb-4 p-5 my-4 bg-light rounded-3 ">
-  <h2 class="mb-4">تسجيل داعم (أفراد)</h2>
-  <form action="/supporters/individuals/new" method="POST">
-    {% csrf_token %}
-    <div class="row">
-      <p class="fs-4 mt-3">المعلومات الشخصية</p>
-      <div class="col mb-4">
-        <label for="name" class="form-label"
-          >الأسم الثلاثي</label
+{% extends "base.html" %} {% load static %} {% load humanize %} {% block head %}
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Include jQuery Validation Plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script src="{% static 'js/supporter_form(indiv).js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/supporter_form(indiv).css' %}" />
+<style type="text/css">
+  #housing_information,
+  #sponsorship_information,
+  #payment_and_submit_confirmation {
+    display: none;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mt-5 px-0 mb-4 p-5 rounded-3 ">
+  <h1 class="fw-bold">تقديم طلب كفالة</h1>
+  <div id="multi-step-form-container">
+    {% comment %} Progress Bar {% endcomment %}
+    <ul
+      class="form-stepper form-stepper-horizontal text-center justify-content-center px-0 ps-lg-3 ps-xl-5 ps-md-0 mx-auto pl-0 d-flex justify-content-center row row-cols-md-5 row-cols-3"
+    >
+      <!-- Step 1 -->
+      <li
+        class="form-stepper-active text-center form-stepper-list"
+        step="1"
+        id="form-list-1"
+      >
+        <a class="mx-2 text-decoration-none">
+          <span class="form-stepper-circle">
+            <span>1</span>
+          </span>
+          <div class="label">بيانات مقدم الطلب</div>
+        </a>
+      </li>
+      <!-- Step 2 -->
+      <li
+        class="form-stepper-unfinished text-center form-stepper-list"
+        step="2"
+        id="form-list-2"
+      >
+        <a class="mx-2 text-decoration-none">
+          <span class="form-stepper-circle text-muted">
+            <span>2</span>
+          </span>
+          <div class="label text-muted">بيانات السكن</div>
+        </a>
+      </li>
+      <!-- Step 3 -->
+      <li
+        class="form-stepper-unfinished text-center form-stepper-list"
+        step="3"
+        id="form-list-3"
+      >
+        <a class="mx-2 text-decoration-none">
+          <span class="form-stepper-circle text-muted">
+            <span>3</span>
+          </span>
+          <div class="label text-muted">
+            <p class="p-0 m-0">بيانات الدعم</p>
+          </div>
+        </a>
+      </li>
+      <!-- Step 4 -->
+      <li
+        class="form-stepper-unfinished text-center form-stepper-list"
+        step="4"
+        id="form-list-4"
+      >
+        <a class="mx-2 text-decoration-none">
+          <span class="form-stepper-circle text-muted">
+            <span>4</span>
+          </span>
+          <div class="label text-muted">الدفع وتأكيد الطلب</div>
+        </a>
+      </li>
+    </ul>
+
+    <form id="supporter_form" action="/supporters/individuals/new" method="POST" class="needs-validation">
+      {% csrf_token %}
+        <fieldset id="personal_information" class="form-step bg-light px-3 px-lg-5">
+          <legend class="fs-2 fw-bold mb-5">بيانات مقدم الطلب</legend>
+          <!-- Step 1 input fields -->
+          <div class="mt-3">
+          <div class="">
+            <div class="container">
+              <div class="row row-cols-md-2 row-cols-xl-4">
+                <div class="mb-4 form-group">
+                  <label for="id_personalinfo_first_name" class="form-label"
+                    >الاسم الأول<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="id_personalinfo_first_name"
+                    maxlength="55"
+                    required
+                    name="personalinfo_first_name"
+                  />
+                </div>
+                <div class="mb-4 form-group">
+                  <label for="id_personalinfo_second_name" class="form-label"
+                    >الاسم الثاني<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="id_personalinfo_second_name"
+                    maxlength="55"
+                    required
+                    name="personalinfo_second_name"
+                  />
+                </div>
+                <div class="mb-4 form-group">
+                  <label for="id_personalinfo_last_name" class="form-label"
+                    >الاسم الاخير<span style="color: red">*</span> (اسم
+                    العائلة)</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="id_personalinfo_last_name"
+                    maxlength="55"
+                    required
+                    name="personalinfo_last_name"
+                  />
+                </div>
+                <div class="mb-4 form-group">
+                  <label
+                    for="id_personalinfo_date_of_birth"
+                    class="form-label"
+                    >تاريخ الميلاد<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="id_personalinfo_date_of_birth"
+                    maxlength="55"
+                    required
+                    name="personalinfo_date_of_birth"
+                  />
+                </div>
+              </div>
+
+              <hr />
+
+              <div class="row row-cols-md-2 row-cols-xl-4">
+                <div class="mb-4 form-group">
+                  <label for="id_personalinfo_gender" class="form-label"
+                    >الجنس<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="personalinfo_gender"
+                    class="form-control"
+                    id="id_personalinfo_gender"
+                    required
+                  >
+                    <option value selected>---------</option>
+                    <option value="M">ذكر</option>
+                    <option value="F">انثى</option>
+                  </select>
+                </div>
+                <div class="mb-4 form-group">
+                  <label for="id_personalinfo_national_id" class="form-label"
+                    >رقم الهوية الوطنية \ الإقامة<span style="color: red"
+                      >*</span
+                    ></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="id_personalinfo_national_id"
+                    maxlength="20"
+                    name="personalinfo_national_id"
+                    required
+                  />
+                </div>
+                <div class="mb-4 form-group">
+                  <label
+                    for="id_personalinfo_national_id_exp_date"
+                    class="form-label"
+                    >تاريخ انتهاء الهوية \ الإقامة<span style="color: red"
+                      >*</span
+                    ></label
+                  >
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="id_personalinfo_national_id_exp_date"
+                    name="personalinfo_national_id_exp_date"
+                    required
+                  />
+                </div>
+                <div class="mb-4 form-group">
+                  <label for="id_personalinfo_nationality" class="form-label"
+                    >الجنسية<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="personalinfo_nationality"
+                    class="form-control"
+                    id="id_personalinfo_nationality"
+                  >
+                    <option value selected>إختر</option>
+                    <option value="السعودية">السعودية</option>
+                    <option value="أفغانستان">أفغانستان</option>
+                    <option value="ألبانيا">ألبانيا</option>
+                    <option value="الجزائر">الجزائر</option>
+                    <option value="أندورا">أندورا</option>
+                    <option value="أنغولا">أنغولا</option>
+                    <option value="أنتيغوا وباربودا">أنتيغوا وباربودا</option>
+                    <option value="الأرجنتين">الأرجنتين</option>
+                    <option value="أرمينيا">أرمينيا</option>
+                    <option value="أستراليا">أستراليا</option>
+                    <option value="النمسا">النمسا</option>
+                    <option value="أذربيجان">أذربيجان</option>
+                    <option value="البهاما">البهاما</option>
+                    <option value="البحرين">البحرين</option>
+                    <option value="بنغلاديش">بنغلاديش</option>
+                    <option value="باربادوس">باربادوس</option>
+                    <option value="بيلاروسيا">بيلاروسيا</option>
+                    <option value="بلجيكا">بلجيكا</option>
+                    <option value="بليز">بليز</option>
+                    <option value="بنين">بنين</option>
+                    <option value="بوتان">بوتان</option>
+                    <option value="بوليفيا">بوليفيا</option>
+                    <option value="البوسنة والهرسك ">البوسنة والهرسك</option>
+                    <option value="بوتسوانا">بوتسوانا</option>
+                    <option value="البرازيل">البرازيل</option>
+                    <option value="بروناي">بروناي</option>
+                    <option value="بلغاريا">بلغاريا</option>
+                    <option value="بوركينا فاسو ">بوركينا فاسو</option>
+                    <option value="بوروندي">بوروندي</option>
+                    <option value="كمبوديا">كمبوديا</option>
+                    <option value="الكاميرون">الكاميرون</option>
+                    <option value="كندا">كندا</option>
+                    <option value="الرأس الأخضر">الرأس الأخضر</option>
+                    <option value="جمهورية أفريقيا الوسطى ">
+                      جمهورية أفريقيا الوسطى
+                    </option>
+                    <option value="تشاد">تشاد</option>
+                    <option value="تشيلي">تشيلي</option>
+                    <option value="الصين">الصين</option>
+                    <option value="كولومبيا">كولومبيا</option>
+                    <option value="جزر القمر">جزر القمر</option>
+                    <option value="كوستاريكا">كوستاريكا</option>
+                    <option value="ساحل العاج">ساحل العاج</option>
+                    <option value="كرواتيا">كرواتيا</option>
+                    <option value="كوبا">كوبا</option>
+                    <option value="قبرص">قبرص</option>
+                    <option value="التشيك">التشيك</option>
+                    <option value="جمهورية الكونغو الديمقراطية">
+                      جمهورية الكونغو الديمقراطية
+                    </option>
+                    <option value="الدنمارك">الدنمارك</option>
+                    <option value="جيبوتي">جيبوتي</option>
+                    <option value="دومينيكا">دومينيكا</option>
+                    <option value="جمهورية الدومينيكان">
+                      جمهورية الدومينيكان
+                    </option>
+                    <option value="تيمور الشرقية ">تيمور الشرقية</option>
+                    <option value="الإكوادور">الإكوادور</option>
+                    <option value="مصر">مصر</option>
+                    <option value="السلفادور">السلفادور</option>
+                    <option value="غينيا الاستوائية">غينيا الاستوائية</option>
+                    <option value="إريتريا">إريتريا</option>
+                    <option value="إستونيا">إستونيا</option>
+                    <option value="إثيوبيا">إثيوبيا</option>
+                    <option value="فيجي">فيجي</option>
+                    <option value="فنلندا">فنلندا</option>
+                    <option value="فرنسا">فرنسا</option>
+                    <option value="الغابون">الغابون</option>
+                    <option value="غامبيا">غامبيا</option>
+                    <option value="جورجيا">جورجيا</option>
+                    <option value="ألمانيا">ألمانيا</option>
+                    <option value="غانا">غانا</option>
+                    <option value="اليونان">اليونان</option>
+                    <option value="جرينادا">جرينادا</option>
+                    <option value="غواتيمالا">غواتيمالا</option>
+                    <option value="غينيا">غينيا</option>
+                    <option value="غينيا بيساو">غينيا بيساو</option>
+                    <option value="غويانا">غويانا</option>
+                    <option value="هايتي">هايتي</option>
+                    <option value="هندوراس">هندوراس</option>
+                    <option value="المجر">المجر</option>
+                    <option value="آيسلندا">آيسلندا</option>
+                    <option value="الهند">الهند</option>
+                    <option value="إندونيسيا">إندونيسيا</option>
+                    <option value="إيران">إيران</option>
+                    <option value="العراق">العراق</option>
+                    <option value="جمهورية أيرلندا ">جمهورية أيرلندا</option>
+                    <option value="فلسطين">فلسطين</option>
+                    <option value="إيطاليا">إيطاليا</option>
+                    <option value="جامايكا">جامايكا</option>
+                    <option value="اليابان">اليابان</option>
+                    <option value="الأردن">الأردن</option>
+                    <option value="كازاخستان">كازاخستان</option>
+                    <option value="كينيا">كينيا</option>
+                    <option value="كيريباتي">كيريباتي</option>
+                    <option value="الكويت">الكويت</option>
+                    <option value="قرغيزستان">قرغيزستان</option>
+                    <option value="لاوس">لاوس</option>
+                    <option value="لاوس">لاوس</option>
+                    <option value="لاتفيا">لاتفيا</option>
+                    <option value="لبنان">لبنان</option>
+                    <option value="ليسوتو">ليسوتو</option>
+                    <option value="ليبيريا">ليبيريا</option>
+                    <option value="ليبيا">ليبيا</option>
+                    <option value="ليختنشتاين">ليختنشتاين</option>
+                    <option value="ليتوانيا">ليتوانيا</option>
+                    <option value="لوكسمبورغ">لوكسمبورغ</option>
+                    <option value="مدغشقر">مدغشقر</option>
+                    <option value="مالاوي">مالاوي</option>
+                    <option value="ماليزيا">ماليزيا</option>
+                    <option value="جزر المالديف">جزر المالديف</option>
+                    <option value="مالي">مالي</option>
+                    <option value="مالطا">مالطا</option>
+                    <option value="جزر مارشال">جزر مارشال</option>
+                    <option value="موريتانيا">موريتانيا</option>
+                    <option value="موريشيوس">موريشيوس</option>
+                    <option value="المكسيك">المكسيك</option>
+                    <option value="مايكرونيزيا">مايكرونيزيا</option>
+                    <option value="مولدوفا">مولدوفا</option>
+                    <option value="موناكو">موناكو</option>
+                    <option value="منغوليا">منغوليا</option>
+                    <option value="الجبل الأسود">الجبل الأسود</option>
+                    <option value="المغرب">المغرب</option>
+                    <option value="موزمبيق">موزمبيق</option>
+                    <option value="بورما">بورما</option>
+                    <option value="ناميبيا">ناميبيا</option>
+                    <option value="ناورو">ناورو</option>
+                    <option value="نيبال">نيبال</option>
+                    <option value="هولندا">هولندا</option>
+                    <option value="نيوزيلندا">نيوزيلندا</option>
+                    <option value="نيكاراجوا">نيكاراجوا</option>
+                    <option value="النيجر">النيجر</option>
+                    <option value="نيجيريا">نيجيريا</option>
+                    <option value="كوريا الشمالية ">كوريا الشمالية</option>
+                    <option value="النرويج">النرويج</option>
+                    <option value="سلطنة عمان">سلطنة عمان</option>
+                    <option value="باكستان">باكستان</option>
+                    <option value="بالاو">بالاو</option>
+                    <option value="بنما">بنما</option>
+                    <option value="بابوا غينيا الجديدة">
+                      بابوا غينيا الجديدة
+                    </option>
+                    <option value="باراغواي">باراغواي</option>
+                    <option value="بيرو">بيرو</option>
+                    <option value="الفلبين">الفلبين</option>
+                    <option value="بولندا">بولندا</option>
+                    <option value="البرتغال">البرتغال</option>
+                    <option value="قطر">قطر</option>
+                    <option value="جمهورية الكونغو">جمهورية الكونغو</option>
+                    <option value="جمهورية مقدونيا">جمهورية مقدونيا</option>
+                    <option value="رومانيا">رومانيا</option>
+                    <option value="روسيا">روسيا</option>
+                    <option value="رواندا">رواندا</option>
+                    <option value="سانت كيتس ونيفيس">سانت كيتس ونيفيس</option>
+                    <option value="سانت لوسيا">سانت لوسيا</option>
+                    <option value="سانت فنسينت والجرينادينز">
+                      سانت فنسينت والجرينادينز
+                    </option>
+                    <option value="ساموا">ساموا</option>
+                    <option value="سان مارينو">سان مارينو</option>
+                    <option value="ساو تومي وبرينسيب">
+                      ساو تومي وبرينسيب
+                    </option>
+                    <option value="السنغال">السنغال</option>
+                    <option value="صربيا">صربيا</option>
+                    <option value="سيشيل">سيشيل</option>
+                    <option value="سيراليون">سيراليون</option>
+                    <option value="سنغافورة">سنغافورة</option>
+                    <option value="سلوفاكيا">سلوفاكيا</option>
+                    <option value="سلوفينيا">سلوفينيا</option>
+                    <option value="جزر سليمان">جزر سليمان</option>
+                    <option value="الصومال">الصومال</option>
+                    <option value="جنوب أفريقيا">جنوب أفريقيا</option>
+                    <option value="كوريا الجنوبية">كوريا الجنوبية</option>
+                    <option value="جنوب السودان">جنوب السودان</option>
+                    <option value="إسبانيا">إسبانيا</option>
+                    <option value="سريلانكا">سريلانكا</option>
+                    <option value="السودان">السودان</option>
+                    <option value="سورينام">سورينام</option>
+                    <option value="سوازيلاند">سوازيلاند</option>
+                    <option value="السويد">السويد</option>
+                    <option value="سويسرا">سويسرا</option>
+                    <option value="سوريا">سوريا</option>
+                    <option value="طاجيكستان">طاجيكستان</option>
+                    <option value="تنزانيا">تنزانيا</option>
+                    <option value="تايلاند">تايلاند</option>
+                    <option value="توغو">توغو</option>
+                    <option value="تونجا">تونجا</option>
+                    <option value="ترينيداد وتوباغو">ترينيداد وتوباغو</option>
+                    <option value="تونس">تونس</option>
+                    <option value="تركيا">تركيا</option>
+                    <option value="تركمانستان">تركمانستان</option>
+                    <option value="توفالو">توفالو</option>
+                    <option value="أوغندا">أوغندا</option>
+                    <option value="أوكرانيا">أوكرانيا</option>
+                    <option value="الإمارات العربية المتحدة">
+                      الإمارات العربية المتحدة
+                    </option>
+                    <option value="المملكة المتحدة">المملكة المتحدة</option>
+                    <option value="الولايات المتحدة">الولايات المتحدة</option>
+                    <option value="أوروغواي">أوروغواي</option>
+                    <option value="أوزبكستان">أوزبكستان</option>
+                    <option value="فانواتو">فانواتو</option>
+                    <option value="فنزويلا">فنزويلا</option>
+                    <option value="فيتنام">فيتنام</option>
+                    <option value="اليمن">اليمن</option>
+                    <option value="زامبيا">زامبيا</option>
+                    <option value="زيمبابوي">زيمبابوي</option>
+                  </select>
+                </div>
+              </div>
+
+              <hr/>
+
+              <div class="row row-cols-md-2">
+                <div class="mb-4 form-group">
+                  <label
+                    for="id_personalinfo_marital_status"
+                    class="form-label"
+                    >الحالة الاجتماعية<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="personalinfo_marital_status"
+                    class="form-control"
+                    required
+                    id="id_personalinfo_marital_status"
+                    onchange="widowerCheck(this);"
+                  >
+                    <option value selected>---------</option>
+                    <option value="married">متزوج/ـة</option>
+                    <option value="single">أعزب/ـة</option>
+                    <option value="widower">أرمل/ـة</option>
+                    <option value="divorced">مطلقة</option>
+                    <option value="deserted">مهجورة</option>
+                  </select>
+                </div>
+                <div class="mb-4 form-group">
+                  <label
+                    for="id_personalinfo_educational_level"
+                    class="form-label"
+                    >المؤهل العلمي<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="personalinfo_educational_level"
+                    class="form-control"
+                    id="id_personalinfo_educational_level"
+                  >
+                    <option value="" selected>---------</option>
+                    <option value="ابتدائي">ابتدائي</option>
+                    <option value="متوسط">متوسط</option>
+                    <option value="ثانوي">ثانوي</option>
+                    <option value="جامعي">جامعي</option>
+                    <option value="ماجستر">ماجستر</option>
+                    <option value="دكتوراه">دكتوراه</option>
+                    <option value="لا يوجد">لا يدرس</option>
+                  </select>
+                </div>
+              </div>
+
+              <hr />
+
+              <div class="row row-cols-md-2">
+                <div class="mb-4 form-group">
+                  <label for="id_personalinfo_work_status" class="form-label"
+                    >هل تعمل؟<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="personalinfo_work_status"
+                    class="form-control"
+                    required
+                    id="id_personalinfo_work_status"
+                    onchange="workCheck(this);"
+                  >
+                    <option value="" selected>---------</option>
+                    <option value="yes">نعم</option>
+                    <option value="no">لا</option>
+                  </select>
+                </div>
+                <div
+                  class="mb-4 form-group"
+                  id="id_personalinfo_employer_group_info"
+                  style="display: none"
+                >
+                  <label for="id_personalinfo_employer" class="form-label"
+                    >جهة العمل<span style="color: red">*</span> (عند اختيار
+                    نعم)</label
+                  >
+                  <input
+                    type="text"
+                    name="personalinfo_employer"
+                    maxlength="100"
+                    class="form-control"
+                    id="id_personalinfo_employer"
+                  />
+                </div>
+              </div>
+
+              <hr />
+
+              <div class="row row-cols-md-2">
+                <div class="mb-4 form-group">
+                  <label for="id_personalinfo_phone_number" class="form-label"
+                    >رقم التواصل<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="tel"
+                    name="personalinfo_phone_number"
+                    class="form-control"
+                    required
+                    id="id_personalinfo_phone_number"
+                  />
+                </div>
+                <div class="mb-4 form-group">
+                  <label for="id_personalinfo_email" class="form-label"
+                    >البريد الالكتروني</label
+                  >
+                  <input
+                    type="email"
+                    name="personalinfo_email"
+                    maxlength="254"
+                    class="form-control"
+                    id="id_personalinfo_email"
+                  />
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <button
+            class="col-12 col-md-3 col-xl-2 button btn-navigate-form-step next"
+            type="button"
+            step_number="2"
+          >
+            التالي
+          </button>
+        </div>
+      </fieldset>
+
+      <fieldset
+          id="housing_information"
+          class="form-step bg-light px-3 px-lg-5"
         >
-        <input type="text" class="form-control" id="name" name="name" />
-      </div>
-      <div class="col mb-4">
-        <label for="account" class="form-label">الحساب البنكي</label>
-        <input type="text" class="form-control" id="account" name="account"/>
-      </div>
-    </div>
-    <hr class="mb-2"/>
-    <p class="fs-4 mt-3">تفاصيل الدعم</p>
-    <div class="row">
-      <div class="col">
-        <label for="category" class="form-label">نوع الدعم</label>
-        <select id="category" class="form-select" name="category">
-          <option selected>دعم عام</option>
-          <option>دعم يتيم</option>
-          <option>دعم أرمله-أرمل</option>
-          <option>دعم تعليمي</option>
-        </select>
-      </div>
-      <div class="col mb-4">
-        <label for="amount" class="form-label">القيمة (ريال سعودي)</label>
-        <input type="Number" min=0 class="form-control" id="amount" name="amount"/>
-      </div>
-    </div>
-    <hr class="mb-3"/>
+          <h2 class="fs-2 fw-bold mb-5">بيانات السكن</h2>
 
+          <!-- Step 3 input fields -->
+          <div class="mt-5">
+            <h4 class="font-normal">بيانات العنوان الوطني</h4>
+            <div class="row row-cols-md-2 row-cols-xl-4 mt-4">
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_houseinfo_building_number" class="form-label"
+                  >رقم المبنى<span style="color: red"
+                  >*</span
+                ></label
+                >
+                <input
+                  type="number"
+                  name="houseinfo_building_number"
+                  min="0"
+                  max="9999999"
+                  class="form-control"
+                  id="id_houseinfo_building_number"
+                />
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_houseinfo_street_name" class="form-label"
+                  >اسم الشارع<span style="color: red"
+                  >*</span
+                ></label
+                >
+                <input
+                  type="text"
+                  name="houseinfo_street_name"
+                  maxlength="50"
+                  class="form-control"
+                  id="id_houseinfo_street_name"
+                />
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_houseinfo_neighborhood" class="form-label"
+                  >الحي<span style="color: red"
+                  >*</span
+                ></label
+                >
+                <input
+                  type="text"
+                  name="houseinfo_neighborhood"
+                  maxlength="50"
+                  class="form-control"
+                  id="id_houseinfo_neighborhood"
+                />
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_houseinfo_city" class="form-label"
+                  >المدينة<span style="color: red"
+                  >*</span
+                ></label
+                >
+                <input
+                  type="text"
+                  name="houseinfo_city"
+                  maxlength="50"
+                  class="form-control"
+                  id="id_houseinfo_city"
+                />
+              </div>
+            </div>
+            <div class="row row-cols-md-2 row-cols-xl-4 mt-4">
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_houseinfo_postal_code" class="form-label"
+                  >الرمز البريدي<span style="color: red"
+                  >*</span
+                ></label
+                >
+                <input
+                  type="number"
+                  name="houseinfo_postal_code"
+                  min="0"
+                  max="9999999"
+                  class="form-control"
+                  id="id_houseinfo_postal_code"
+                />
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_houseinfo_additional_number" class="form-label"
+                  >الرقم الإضافي<span style="color: red"
+                  >*</span
+                ></label
+                >
+                <input
+                  type="number"
+                  name="houseinfo_additional_number"
+                  min="0"
+                  max="9999999"
+                  class="form-control"
+                  id="id_houseinfo_additional_number"
+                />
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_houseinfo_unit" class="form-label">الوحدة<span style="color: red"
+                  >*</span
+                ></label>
+                <input
+                  type="text"
+                  name="houseinfo_unit"
+                  maxlength="50"
+                  class="form-control"
+                  id="id_houseinfo_unit"
+                />
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_houseinfo_location_url" class="form-label"
+                  >رابط موقع المنزل (google maps)<span style="color: red"
+                  >*</span
+                ></label
+                >
+                <input
+                  type="url"
+                  name="houseinfo_location_url"
+                  maxlength="250"
+                  class="form-control"
+                  id="id_houseinfo_location_url"
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_houseinfo_housing_type" class="form-label"
+                  >نوع السكن<span style="color: red">*</span></label
+                >
+                <select
+                  name="houseinfo_housing_type"
+                  class="form-control"
+                  id="id_houseinfo_housing_type"
+                >
+                  <option value selected>---------</option>
+                  <option value="شعبي">شعبي</option>
+                  <option value="شقة">شقة</option>
+                  <option value="فيلا">فيلا</option>
+                  <option value="ملحق">ملحق</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_houseinfo_housing_ownership" class="form-label"
+                  >ملكية السكن<span style="color: red">*</span></label
+                >
+                <select
+                  name="houseinfo_housing_ownership"
+                  class="form-control"
+                  id="id_houseinfo_housing_ownership"
+                >
+                  <option value selected>---------</option>
+                  <option value="ملك">ملك</option>
+                  <option value="وقف">وقف</option>
+                  <option value="إيجار">إيجار</option>
+                </select>
+              </div>
+            </div>
 
-    <div class="form-check mb-4">
-      <input class="form-check-input" type="checkbox" id="gridCheck" />
-      <label class="form-check-label" for="gridCheck">
-        أوافق على مشاركة المعلومات المرسلة بواسطتي, وأوكد انها صحيحة تماما
-      </label>
-    </div>
-    <div class="row">
-      <div class="col">
-        <button type="submit" value="OK" class="btn btn-primary ps-5 pe-5 me-3">
-          إرسال
-        </button>
+          </div>
+          <div class="mt-3 d-flex column-gap-2 d-lg-block">
+            <button
+              class="col button btn-navigate-form-step previous"
+              type="button"
+              step_number="1"
+            >
+              السابق
+            </button>
+            <button
+              class="col button btn-navigate-form-step next"
+              type="button"
+              step_number="3"
+            >
+              التالي
+            </button>
+          </div>
+        </fieldset>
 
-        <button href="/supporters/individuals/new" class="btn btn-secondary ps-5 pe-5">
-          افراغ الاستبيان
-        </button>
-      </div>
-    </div>
-  </form>
+        <fieldset
+          id="sponsorship_information"
+          class="form-step bg-light px-3 px-lg-5"
+        >
+          <div class="row">
+            <h2 class="fs-2 fw-bold mb-5">بيانات الدعم</h2>
+
+            <!-- Step 3 input fields -->
+            <div class="">
+              <h4 class="font-normal mb-3">معلومات اليتيم/الأرملة</h4>
+
+              <div class="row">
+                <table class="table table-striped table-hover table-bordered">
+                  <thead>
+                    <tr>
+                      <th>اختار</th>
+                      {% for header in beneficiary_headers %}
+                        <th scope="col" class="col">{{ header }}</th>
+                      {% endfor %}
+                    </tr> 
+                  </thead>
+                  <tbody>
+                    {% for data in beneficiary_data %}
+                      <tr>
+                        <td><div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="" id="id_beneficiary_check{{data.id}}">
+                        </div></td>
+                        <th class="col">{{ data.file_no }}</th>
+                        <td class="col">{{ data.in_ex_diff }}</td>
+                        <td class="col">{{ data.age }}</td>
+                        <td class="col">{{ data.nationality }}</td>
+                      </tr>
+                    {% endfor %} 
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="row row-cols-md-1 row-cols-xl-3 mt-2">
+                <div class="mb-4 form-group">
+                  <label for="id_sponsorship_info_nationality" class="form-label"
+                    >الجنسية</label
+                  >
+                  <select
+                    name="sponsorship_info_nationality"
+                    class="form-control"
+                    id="id_sponsorship_info_nationality"
+                  >
+                    <option value selected>إختر</option>
+                    <option value="السعودية">السعودية</option>
+                    <option value="أفغانستان">أفغانستان</option>
+                    <option value="ألبانيا">ألبانيا</option>
+                    <option value="الجزائر">الجزائر</option>
+                    <option value="أندورا">أندورا</option>
+                    <option value="أنغولا">أنغولا</option>
+                    <option value="أنتيغوا وباربودا">أنتيغوا وباربودا</option>
+                    <option value="الأرجنتين">الأرجنتين</option>
+                    <option value="أرمينيا">أرمينيا</option>
+                    <option value="أستراليا">أستراليا</option>
+                    <option value="النمسا">النمسا</option>
+                    <option value="أذربيجان">أذربيجان</option>
+                    <option value="البهاما">البهاما</option>
+                    <option value="البحرين">البحرين</option>
+                    <option value="بنغلاديش">بنغلاديش</option>
+                    <option value="باربادوس">باربادوس</option>
+                    <option value="بيلاروسيا">بيلاروسيا</option>
+                    <option value="بلجيكا">بلجيكا</option>
+                    <option value="بليز">بليز</option>
+                    <option value="بنين">بنين</option>
+                    <option value="بوتان">بوتان</option>
+                    <option value="بوليفيا">بوليفيا</option>
+                    <option value="البوسنة والهرسك ">البوسنة والهرسك</option>
+                    <option value="بوتسوانا">بوتسوانا</option>
+                    <option value="البرازيل">البرازيل</option>
+                    <option value="بروناي">بروناي</option>
+                    <option value="بلغاريا">بلغاريا</option>
+                    <option value="بوركينا فاسو ">بوركينا فاسو</option>
+                    <option value="بوروندي">بوروندي</option>
+                    <option value="كمبوديا">كمبوديا</option>
+                    <option value="الكاميرون">الكاميرون</option>
+                    <option value="كندا">كندا</option>
+                    <option value="الرأس الأخضر">الرأس الأخضر</option>
+                    <option value="جمهورية أفريقيا الوسطى ">
+                      جمهورية أفريقيا الوسطى
+                    </option>
+                    <option value="تشاد">تشاد</option>
+                    <option value="تشيلي">تشيلي</option>
+                    <option value="الصين">الصين</option>
+                    <option value="كولومبيا">كولومبيا</option>
+                    <option value="جزر القمر">جزر القمر</option>
+                    <option value="كوستاريكا">كوستاريكا</option>
+                    <option value="ساحل العاج">ساحل العاج</option>
+                    <option value="كرواتيا">كرواتيا</option>
+                    <option value="كوبا">كوبا</option>
+                    <option value="قبرص">قبرص</option>
+                    <option value="التشيك">التشيك</option>
+                    <option value="جمهورية الكونغو الديمقراطية">
+                      جمهورية الكونغو الديمقراطية
+                    </option>
+                    <option value="الدنمارك">الدنمارك</option>
+                    <option value="جيبوتي">جيبوتي</option>
+                    <option value="دومينيكا">دومينيكا</option>
+                    <option value="جمهورية الدومينيكان">
+                      جمهورية الدومينيكان
+                    </option>
+                    <option value="تيمور الشرقية ">تيمور الشرقية</option>
+                    <option value="الإكوادور">الإكوادور</option>
+                    <option value="مصر">مصر</option>
+                    <option value="السلفادور">السلفادور</option>
+                    <option value="غينيا الاستوائية">غينيا الاستوائية</option>
+                    <option value="إريتريا">إريتريا</option>
+                    <option value="إستونيا">إستونيا</option>
+                    <option value="إثيوبيا">إثيوبيا</option>
+                    <option value="فيجي">فيجي</option>
+                    <option value="فنلندا">فنلندا</option>
+                    <option value="فرنسا">فرنسا</option>
+                    <option value="الغابون">الغابون</option>
+                    <option value="غامبيا">غامبيا</option>
+                    <option value="جورجيا">جورجيا</option>
+                    <option value="ألمانيا">ألمانيا</option>
+                    <option value="غانا">غانا</option>
+                    <option value="اليونان">اليونان</option>
+                    <option value="جرينادا">جرينادا</option>
+                    <option value="غواتيمالا">غواتيمالا</option>
+                    <option value="غينيا">غينيا</option>
+                    <option value="غينيا بيساو">غينيا بيساو</option>
+                    <option value="غويانا">غويانا</option>
+                    <option value="هايتي">هايتي</option>
+                    <option value="هندوراس">هندوراس</option>
+                    <option value="المجر">المجر</option>
+                    <option value="آيسلندا">آيسلندا</option>
+                    <option value="الهند">الهند</option>
+                    <option value="إندونيسيا">إندونيسيا</option>
+                    <option value="إيران">إيران</option>
+                    <option value="العراق">العراق</option>
+                    <option value="جمهورية أيرلندا ">جمهورية أيرلندا</option>
+                    <option value="فلسطين">فلسطين</option>
+                    <option value="إيطاليا">إيطاليا</option>
+                    <option value="جامايكا">جامايكا</option>
+                    <option value="اليابان">اليابان</option>
+                    <option value="الأردن">الأردن</option>
+                    <option value="كازاخستان">كازاخستان</option>
+                    <option value="كينيا">كينيا</option>
+                    <option value="كيريباتي">كيريباتي</option>
+                    <option value="الكويت">الكويت</option>
+                    <option value="قرغيزستان">قرغيزستان</option>
+                    <option value="لاوس">لاوس</option>
+                    <option value="لاوس">لاوس</option>
+                    <option value="لاتفيا">لاتفيا</option>
+                    <option value="لبنان">لبنان</option>
+                    <option value="ليسوتو">ليسوتو</option>
+                    <option value="ليبيريا">ليبيريا</option>
+                    <option value="ليبيا">ليبيا</option>
+                    <option value="ليختنشتاين">ليختنشتاين</option>
+                    <option value="ليتوانيا">ليتوانيا</option>
+                    <option value="لوكسمبورغ">لوكسمبورغ</option>
+                    <option value="مدغشقر">مدغشقر</option>
+                    <option value="مالاوي">مالاوي</option>
+                    <option value="ماليزيا">ماليزيا</option>
+                    <option value="جزر المالديف">جزر المالديف</option>
+                    <option value="مالي">مالي</option>
+                    <option value="مالطا">مالطا</option>
+                    <option value="جزر مارشال">جزر مارشال</option>
+                    <option value="موريتانيا">موريتانيا</option>
+                    <option value="موريشيوس">موريشيوس</option>
+                    <option value="المكسيك">المكسيك</option>
+                    <option value="مايكرونيزيا">مايكرونيزيا</option>
+                    <option value="مولدوفا">مولدوفا</option>
+                    <option value="موناكو">موناكو</option>
+                    <option value="منغوليا">منغوليا</option>
+                    <option value="الجبل الأسود">الجبل الأسود</option>
+                    <option value="المغرب">المغرب</option>
+                    <option value="موزمبيق">موزمبيق</option>
+                    <option value="بورما">بورما</option>
+                    <option value="ناميبيا">ناميبيا</option>
+                    <option value="ناورو">ناورو</option>
+                    <option value="نيبال">نيبال</option>
+                    <option value="هولندا">هولندا</option>
+                    <option value="نيوزيلندا">نيوزيلندا</option>
+                    <option value="نيكاراجوا">نيكاراجوا</option>
+                    <option value="النيجر">النيجر</option>
+                    <option value="نيجيريا">نيجيريا</option>
+                    <option value="كوريا الشمالية ">كوريا الشمالية</option>
+                    <option value="النرويج">النرويج</option>
+                    <option value="سلطنة عمان">سلطنة عمان</option>
+                    <option value="باكستان">باكستان</option>
+                    <option value="بالاو">بالاو</option>
+                    <option value="بنما">بنما</option>
+                    <option value="بابوا غينيا الجديدة">
+                      بابوا غينيا الجديدة
+                    </option>
+                    <option value="باراغواي">باراغواي</option>
+                    <option value="بيرو">بيرو</option>
+                    <option value="الفلبين">الفلبين</option>
+                    <option value="بولندا">بولندا</option>
+                    <option value="البرتغال">البرتغال</option>
+                    <option value="قطر">قطر</option>
+                    <option value="جمهورية الكونغو">جمهورية الكونغو</option>
+                    <option value="جمهورية مقدونيا">جمهورية مقدونيا</option>
+                    <option value="رومانيا">رومانيا</option>
+                    <option value="روسيا">روسيا</option>
+                    <option value="رواندا">رواندا</option>
+                    <option value="سانت كيتس ونيفيس">سانت كيتس ونيفيس</option>
+                    <option value="سانت لوسيا">سانت لوسيا</option>
+                    <option value="سانت فنسينت والجرينادينز">
+                      سانت فنسينت والجرينادينز
+                    </option>
+                    <option value="ساموا">ساموا</option>
+                    <option value="سان مارينو">سان مارينو</option>
+                    <option value="ساو تومي وبرينسيب">
+                      ساو تومي وبرينسيب
+                    </option>
+                    <option value="السنغال">السنغال</option>
+                    <option value="صربيا">صربيا</option>
+                    <option value="سيشيل">سيشيل</option>
+                    <option value="سيراليون">سيراليون</option>
+                    <option value="سنغافورة">سنغافورة</option>
+                    <option value="سلوفاكيا">سلوفاكيا</option>
+                    <option value="سلوفينيا">سلوفينيا</option>
+                    <option value="جزر سليمان">جزر سليمان</option>
+                    <option value="الصومال">الصومال</option>
+                    <option value="جنوب أفريقيا">جنوب أفريقيا</option>
+                    <option value="كوريا الجنوبية">كوريا الجنوبية</option>
+                    <option value="جنوب السودان">جنوب السودان</option>
+                    <option value="إسبانيا">إسبانيا</option>
+                    <option value="سريلانكا">سريلانكا</option>
+                    <option value="السودان">السودان</option>
+                    <option value="سورينام">سورينام</option>
+                    <option value="سوازيلاند">سوازيلاند</option>
+                    <option value="السويد">السويد</option>
+                    <option value="سويسرا">سويسرا</option>
+                    <option value="سوريا">سوريا</option>
+                    <option value="طاجيكستان">طاجيكستان</option>
+                    <option value="تنزانيا">تنزانيا</option>
+                    <option value="تايلاند">تايلاند</option>
+                    <option value="توغو">توغو</option>
+                    <option value="تونجا">تونجا</option>
+                    <option value="ترينيداد وتوباغو">ترينيداد وتوباغو</option>
+                    <option value="تونس">تونس</option>
+                    <option value="تركيا">تركيا</option>
+                    <option value="تركمانستان">تركمانستان</option>
+                    <option value="توفالو">توفالو</option>
+                    <option value="أوغندا">أوغندا</option>
+                    <option value="أوكرانيا">أوكرانيا</option>
+                    <option value="الإمارات العربية المتحدة">
+                      الإمارات العربية المتحدة
+                    </option>
+                    <option value="المملكة المتحدة">المملكة المتحدة</option>
+                    <option value="الولايات المتحدة">الولايات المتحدة</option>
+                    <option value="أوروغواي">أوروغواي</option>
+                    <option value="أوزبكستان">أوزبكستان</option>
+                    <option value="فانواتو">فانواتو</option>
+                    <option value="فنزويلا">فنزويلا</option>
+                    <option value="فيتنام">فيتنام</option>
+                    <option value="اليمن">اليمن</option>
+                    <option value="زامبيا">زامبيا</option>
+                    <option value="زيمبابوي">زيمبابوي</option>
+                  </select>
+                </div>
+                <div class="mb-4 form-group">
+                  <label for="id_sponsorship_info_age" class="form-label"
+                    >العمر</label
+                  >
+                  <input
+                    type="number"
+                    name="sponsorship_info_age"
+                    max="99"
+                    min="0"
+                    class="form-control"
+                    id="id_sponsorship_info_age"
+                  />
+                </div>
+                <div class="mb-4 form-group">
+                  <label for="id_sponsorship_info_duration" class="form-label"
+                    >مدة الدفع<span style="color: red"
+                    >*</span
+                  ></label
+                  >
+                  <select
+                    name="sponsorship_info_duration"
+                    class="form-control"
+                    id="id_sponsorship_info_duration"
+                  >
+                    <option value selected>---------</option>
+                    <option value="6 أشهر">6 أشهر</option>
+                    <option value="سنة كاملة">سنة كاملة</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="mb-4 form-check form-switch">
+                  <label 
+                    class="form-check-label" 
+                    for="id_sponsorship_info_status_notify"
+                  >
+                  استلام تقارير لليتيم/الأرملة بشكل دوري
+                  </label>
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    role="switch" 
+                    name="sponsorship_info_status_notify" 
+                    id="id_sponsorship_info_status_notify"
+                  >
+                </div>
+              </div>
+
+            </div>
+            <div class="mt-3 d-flex column-gap-2 d-lg-block">
+              <button
+                class="col button btn-navigate-form-step previous"
+                type="button"
+                step_number="2"
+              >
+                السابق
+              </button>
+              <button
+                class="col button btn-navigate-form-step next"
+                type="button"
+                step_number="4"
+              >
+                التالي
+              </button>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset id="payment_and_submit_confirmation" class="form-step bg-light px-3 px-lg-5">
+          <h2 class="fs-2 fw-bold mb-5">تقديم الطلب</h2>
+          <!-- Step 5 input fields -->
+          <div class="mt-3">
+            <div class="alert alert-primary" role="alert" id="checkboxError">
+              يرجى الموافقة على جميع الشروط قبل تقديم الطلب.
+            </div>
+            <ul class="list-group">
+              <li class="list-group-item d-flex gap-2">
+                <input
+                  class="form-check-input me-1"
+                  type="checkbox"
+                  value=""
+                  id="id_agreement1"
+                  name="agreement1"
+                />
+                <p class="form-check-label" for="id_agreement1">
+                  أتعهد بأن كافة البيانات والمعلومات سواء الفنية أو المالية أو
+                  القانونية وغيرها التي قدمتها في هذا الطلب جميعها صحيحة لا لبس
+                  فيها ولا تحريف ولا تحوير وتطابق صحيح الواقع والقانون.
+                </p>
+              </li>
+              <li class="list-group-item d-flex gap-2">
+                <input
+                  class="form-check-input me-1"
+                  type="checkbox"
+                  value=""
+                  id="id_agreement2"
+                  name="agreement2"
+                />
+                <p class="form-check-label" for="id_agreement2">
+                  أقر بالتزامي ومسؤوليتي الكاملة عن عدم صحة كل أو بعض هذه
+                  البيانات والمعلومات أو عن الخطأ أو النقص أو عدم الدقة.
+                </p>
+              </li>
+              <li class="list-group-item d-flex gap-2">
+                <input
+                  class="form-check-input me-1"
+                  type="checkbox"
+                  value=""
+                  id="id_agreement3"
+                  name="agreement3"
+                />
+                <p class="form-check-label" for="id_agreement3">
+                  أقبل النتائج المترتبة عن كافة هذه الأمور بما فيها استبعادي من
+                  الجمعية.
+                </p>
+              </li>
+              <li class="list-group-item d-flex gap-2">
+                <input
+                  class="form-check-input me-1"
+                  type="checkbox"
+                  value=""
+                  id="id_agreement4"
+                  name="agreement4"
+                />
+                <p class="form-check-label" for="id_agreement4">
+                  أوافق على قيام الجمعية في حال قبول طلبي بعمل بحث ميداني عن
+                  حالتي.
+                </p>
+              </li>
+            </ul>
+          </div>
+          <div class="mt-5 d-flex column-gap-2 d-lg-block">
+            <button
+              class="col button btn-navigate-form-step previous"
+              type="button"
+              step_number="3"
+            >
+              السابق
+            </button>
+            <button
+              class="col button submit-btn next"
+              id="submit-btn"
+              type="submit"
+            >
+              تقديم الطلب
+            </button>
+          </div>
+        </fieldset>
+    </form>
+  </div>
 </div>
+
+<script>
+  $(document).ready(function () {
+
+    const banks = [
+      {
+        samaCode: "55",
+        bankName: "Banque Saudi Fransi",
+        nameEn: "Banque Saudi Fransi",
+        nameAr: "السعودي الفرنسي",
+      },
+      {
+        name: "Alrajhi Bank",
+        samaCode: "80",
+        nameEn: "Alrajhi Bank",
+        nameAr: "الراجحي",
+      },
+      {
+        samaCode: "10",
+        bankName: "National Commercial Bank",
+        nameEn: "National Commertial Bank",
+        nameAr: "الأهلي السعودي",
+      },
+      {
+        samaCode: "45",
+        bankName: "Saudi British Bank",
+        nameEn: "SABB",
+        nameAr: "ساب",
+      },
+      {
+        samaCode: "20",
+        bankName: "Riyadh Bank",
+        nameEn: "Riyad Bank",
+        nameAr: "الرياض",
+      },
+      {
+        samaCode: "05",
+        bankName: "Alinma Bank",
+        nameEn: "AL Inma Bank",
+        nameAr: "الإنماء",
+      },
+      {
+        samaCode: "60",
+        bankName: "Bank AlJazira",
+        nameEn: "Bank Aljazerah",
+        nameAr: "الجزيرة",
+      },
+      {
+        samaCode: "15",
+        bankName: "Bank AlBilad ",
+        nameEn: "BANK ALBELAD",
+        nameAr: "البلاد",
+      },
+      {
+        samaCode: "30",
+        bankName: "Arab National Bank",
+        nameEn: "Arab National Bank",
+        nameAr: "العربي",
+      },
+    ];
+
+    /**
+     * validates IBAN
+     * @return {boolean}
+     */
+    function validateIBAN(iban) {
+      if (!iban) {
+        return false;
+      }
+
+      iban = iban.trim();
+
+      if (iban.length !== 24) {
+        return false;
+      }
+
+      if (!iban.startsWith("SA")) {
+        return false;
+      }
+
+      const bankCode = iban.substring(4, 6);
+
+      return banks.some((b) => b.samaCode === bankCode);
+    }
+
+    /**
+     * Returns the bank object
+     * @return {Object}
+     */
+    function getBankByIBAN(iban) {
+      if (!validateIBAN(iban)) return null;
+
+      const bankCode = iban.substring(4, 6);
+      const bank = banks.find((b) => b.samaCode === bankCode);
+      return bank ? bank.nameAr : null;
+    }
+
+    $("#id_beneficiaryinfo_iban").on("input", function () {
+      var iban = $(this).val();
+      var bankNameAr = getBankByIBAN(iban);
+
+      if (bankNameAr) {
+        $("#id_beneficiaryinfo_bank").val(bankNameAr).change();
+      } else {
+        $("#id_beneficiaryinfo_bank").val("").change(); // Reset to default if IBAN is invalid
+      }
+    });
+
+    /**
+     * Mark all form steps as unfinished.
+     */
+    document
+      .querySelectorAll(".form-stepper-list")
+      .forEach((formStepHeader) => {
+        formStepHeader.classList.add("form-stepper-unfinished");
+        formStepHeader.classList.remove(
+          "form-stepper-active",
+          "form-stepper-completed"
+        );
+      });
+    let stepNumber = 1;
+    /**
+     * Select the form step circle (progress bar).
+     */
+    const formStepCircle = document.querySelector(
+      'li[step="' + stepNumber + '"]'
+    );
+
+    /**
+     * Mark the current form step as active.
+     */
+    formStepCircle.classList.remove(
+      "form-stepper-unfinished",
+      "form-stepper-completed"
+    );
+    formStepCircle.classList.add("form-stepper-active");
+
+    
+    // Validator method for first, second, and last name fields in the form
+    $.validator.addMethod(
+      "nameRegex",
+      function (value, element) {
+        return (
+          this.optional(element) || /^[a-zA-Z0-9\u0621-\u064A]*$/i.test(value)
+        );
+      },
+      "يحتوي الأسم على حروف فقط."
+    );
+
+    $.validator.addMethod(
+      "fullNameRegex",
+      function (value, element) {
+        return (
+          this.optional(element) ||
+          /^[a-zA-Z\u0621-\u064A]+([ '-][a-zA-Z\u0621-\u064A]+)*$/i.test(value)
+        );
+      },
+      "يجب أن يتكون الاسم الكامل من الاسم الأول والأوسط والأخير."
+    );
+
+    // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
+    function validateSAID(id) {
+      let type = id.substr(0, 1);
+      let sum = 0;
+      const _idLength = 10;
+      const _type1 = "1";
+      const _type2 = "2";
+      id = id.trim();
+      if (
+        isNaN(parseInt(id)) ||
+        id.length !== _idLength ||
+        (type !== _type2 && type !== _type1)
+      ) {
+        return false;
+      }
+      for (let num = 0; num < 10; num++) {
+        const digit = Number(id[num]);
+        if (num % 2 === 0) {
+          const doubled = digit * 2;
+          const ZFOdd = `00${doubled}`.slice(-2);
+          sum += Number(ZFOdd[0]) + Number(ZFOdd[1]);
+        } else {
+          sum += digit;
+        }
+      }
+      return sum % 10 !== 0 ? false : true;
+    }
+
+    // Validator method for the national id (Iqama/Saudi)
+    $.validator.addMethod(
+      "nationalidRegex",
+      function (value, element) {
+        console.log(value, validateSAID(value));
+        return this.optional(element) || validateSAID(value);
+      },
+      "أدخل رقم هوية/إقامة صحيح."
+    );
+
+    // Validator method for the phone number [Saudi Arabia Only]
+    $.validator.addMethod(
+      "saudiPhoneRegex",
+      function (value, element) {
+        return (
+          this.optional(element) || /^(?:\+966\s?5\d{8}|05\d{8})$/i.test(value)
+        );
+      },
+      "الرجاء إدخال رقم جوال صحيح في المملكة العربية السعودية."
+    );
+
+    // Email address validator
+    $.validator.addMethod(
+      "emailRegex",
+      function (value, element) {
+        return (
+          this.optional(element) ||
+          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+        );
+      },
+      "الرجاء إدخال بريد إلكتروني صحيح."
+    );
+
+    // The below code will change the default validation messages
+    $.extend($.validator.messages, {
+      required: "هذا الحقل مطلوب.",
+      remote: "الرجاء اصلاح هذا الحقل.",
+      email: "الرجاء إدخال بريد الكتروني صالح.",
+      url: "الرجاء إدخال رابط صحيح وفعال.",
+      date: "الرجاء إدخال تاريخ صالح.",
+      dateISO: "الرجاء إدخال تاريخ صحيح (بصيغة ISO).",
+      number: "الرجاء إدخال رقم صحيح.",
+      digits: "الرجاء إدخال أرقام فقط.",
+      creditcard: "الرجاء إدخال رقم بطاقة ائتمان صالحة.",
+      equalTo: "رجاء أدخل نفس القيمة مره أخرى.",
+      accept: "الرجاء إدخال قيمة بإمتداد صحيح.",
+      maxlength: $.validator.format("الرجاء عدم إدخال أكثر من {0} أحرف."),
+      minlength: $.validator.format("الرجاء إدخال على الأقل {0} حروف."),
+      rangelength: $.validator.format(
+        "الرجاء إدخال قيمة طولها يكون من {0} إلى {1} أحرف."
+      ),
+      range: $.validator.format("الرجاء إدخال رقم بين {0} و {1}."),
+      max: $.validator.format(" الرجاء إدخال قيمة أقل من أو تساوي {0}."),
+      min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
+    });
+
+    // When ".next" button is clicked, the following function is executed
+    $(".next").click(function () {
+      var form = $("#supporter_form");
+      form.validate({
+        errorElement: "span",
+        errorClass: "help-block invalid-feedback",
+        highlight: function (element, errorClass, validClass) {
+          $(element).closest(".form-group").addClass("has-error");
+          //$(element).fadeOut(function() {
+          //  $(element).fadeIn();
+          //  });
+        },
+        unhighlight: function (element, errorClass, validClass) {
+          $(element).closest(".form-group").removeClass("has-error");
+        },
+        errorPlacement: function (error, element) {
+          // Check if the element is inside an input-group
+          if (element.parent(".input-group").length) {
+            // Place the error after the input-group
+            error.insertAfter(element.parent(".input-group"));
+          } else {
+            // Default placement for other elements
+            error.insertAfter(element);
+          }
+        },
+        focusInvalid: true,
+
+        // Adding the rules (validations) for each input in the form.
+        rules: {
+          personalinfo_first_name: {
+            required: false,
+            nameRegex: true,
+            minlength: 2,
+            maxlength: 20,
+          },
+          personalinfo_second_name: {
+            required: false,
+            nameRegex: true,
+            minlength: 2,
+            maxlength: 20,
+          },
+          personalinfo_last_name: {
+            required: false,
+            nameRegex: true,
+            minlength: 2,
+            maxlength: 20,
+          },
+          personalinfo_date_of_birth: {
+            required: false,
+            dateISO: true,
+          },
+          personalinfo_gender: {
+            required: false,
+          },
+          personalinfo_national_id: {
+            required: false,
+            nationalidRegex: true,
+          },
+          personalinfo_national_id_exp_date: {
+            required: false,
+            dateISO: true,
+          },
+          personalinfo_nationality: {
+            required: false,
+            maxlength: 30,
+          },
+          personalinfo_marital_status: {
+            required: false,
+          },
+          personalinfo_educational_level: {
+            required: false,
+          },
+          personalinfo_work_status: {
+            required: false,
+          },
+          personalinfo_employer: {
+            required: false,
+          },
+          personalinfo_phone_number: {
+            required: false,
+            saudiPhoneRegex: true,
+          },
+          personalinfo_email: {
+            //emailRegex: true,
+          },
+          // housing__information ---------
+          houseinfo_building_number: {
+            required: false,
+          },
+          houseinfo_street_name: {
+            required: false,
+          },
+          houseinfo_neighborhood: {
+            required: false,
+          },
+          houseinfo_city: {
+            required: false,
+          },
+          houseinfo_postal_code:{
+            required: false,
+          },
+          houseinfo_additional_number: {
+            required: false,
+          },
+          houseinfo_unit: {
+            required: false,
+          },
+          houseinfo_location_url: {
+            required: false,
+          },
+          houseinfo_housing_type: {
+            required: false,
+          },
+          houseinfo_housing_ownership: {
+            required: false,
+          },
+        },
+        messages: {
+          personalinfo_first_name: {
+            required: "هذا الحقل مطلوب.",
+          },
+        },
+      });
+
+      // In case of a valid form inputs, ".next" button will show the next step in the form
+      if (form.valid() === true) {
+        if ($("#personal_information").is(":visible")) {
+          current_fs = $("#personal_information");
+          next_fs = $("#housing_information"); // Proceed to the third stepas usual
+          
+        } else if ($("#housing_information").is(":visible")) {
+          current_fs = $("#housing_information");
+          next_fs = $("#sponsorship_information");
+
+        } else if ($("#sponsorship_information").is(":visible")) {
+          current_fs = $("#sponsorship_information");
+          next_fs = $("#payment_and_submit_confirmation");
+        }
+
+        next_fs.show();
+        current_fs.hide();
+      }
+    });
+
+    // When ".previous" button is clicked, the following function is called
+    $(".previous").click(function () {
+      if ($("#housing_information").is(":visible")) {
+        current_fs = $("#housing_information");
+        next_fs = $("#personal_information");
+      } else if ($("#sponsorship_information").is(":visible")) {
+        current_fs = $("#sponsorship_information");
+        next_fs = $("#housing_information"); 
+      } else if ($("#payment_and_submit_confirmation").is(":visible")) {
+        current_fs = $("#payment_and_submit_confirmation");
+        next_fs = $("#sponsorship_information");
+      }
+
+      next_fs.show();
+      current_fs.hide();
+    });
+
+    // Call updateFormStep if one of the selected elements is clicked
+    $(".next, .previous").click(function () {
+      updateFormStep();
+    });
+
+    function updateFormStep() {
+      // Check which div is visible and update form steps accordingly
+      if ($("#personal_information").is(":visible")) {
+        updateSteps(1);
+      } else if ($("#housing_information").is(":visible")) {
+        updateSteps(2);
+      } else if ($("#sponsorship_information").is(":visible")) {
+        updateSteps(3);
+      } else if ($("#payment_and_submit_confirmation").is(":visible")) {
+        updateSteps(4);
+      }
+    }
+
+    // Update the class names based on the currentStep
+    function updateSteps(currentStep) {
+      // Reset all steps
+      $(".form-stepper-list")
+        .removeClass("form-stepper-active form-stepper-completed")
+        .addClass("form-stepper-unfinished");
+
+      // Activate and complete relevant steps
+      for (let step = 1; step <= currentStep; step++) {
+        $(`li[step="${step}"]`)
+          .removeClass("form-stepper-unfinished")
+          .addClass(
+            step === currentStep
+              ? "form-stepper-active"
+              : "form-stepper-completed"
+          );
+      }
+    }
+
+  }); // (document).ready() end line
+</script>
 {% endblock %}

@@ -37,11 +37,11 @@ urlpatterns = [
     #     views.supporter_entity,
     #     name="supporter_entity"
     # ),
-    # path(
-    #     "supporters/individuals/new",
-    #     views.supporter_indiv,
-    #     name="supporter_indiv"
-    # ),
+    path(
+        "supporters/individuals/new",
+        views.supporter_indiv,
+        name="supporter_indiv"
+    ),
     path(
         "dashboard/",
         views.dashboard,

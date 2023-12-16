@@ -6,8 +6,9 @@ from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime
+from datetime import datetime, date
 import logging
 import os
 import json
@@ -411,6 +412,7 @@ def export_excel(request):
 
 
 @csrf_exempt
+@login_required(login_url="/login")
 def beneficiary_indiv(request):
 
     if request.method == 'POST':
@@ -510,25 +512,43 @@ def beneficiary_indiv(request):
         )
         beneficiary_house_obj.save()
 
-        # Accessing the data for beneficiary_income_expense
-        salary_in = data.get('incomeinfo_salary', None)
-        social_insurance_in = data.get('incomeinfo_social_insurance', None)
-        charity_in = data.get('incomeinfo_charity', None)
-        social_warranty_in = data.get('incomeinfo_social_warranty', None)
-        pension_agency_in = data.get('incomeinfo_pension_agency', None)
-        citizen_account_in = data.get('incomeinfo_citizen_account', None)
-        benefactor_in = data.get('incomeinfo_benefactor', None)
-        other_in = data.get('incomeinfo_other', None)
-        housing_rent_ex = data.get('expensesinfo_housing_rent', None)
-        electricity_bills_ex = data.get('expensesinfo_electricity_bills', None)
-        water_bills_ex = data.get('expensesinfo_water_bills', None)
-        transportation_ex = data.get('expensesinfo_transportation', None)
-        health_supplies_ex = data.get('expensesinfo_health_supplies', None)
-        food_supplies_ex = data.get('expensesinfo_food_supplies', None)
-        educational_supplies_ex = data.get(
-            'expensesinfo_educational_supplies', None)
-        proven_debts_ex = data.get('expensesinfo_proven_debts', None)
-        other_ex = data.get('expensesinfo_other', None)
+        # Accessing the data for beneficiary_income_expense, and converting str into float type
+        salary_in = float(data.get('incomeinfo_salary', None))
+        social_insurance_in = float(
+            data.get('incomeinfo_social_insurance', None))
+        charity_in = float(data.get('incomeinfo_charity', None))
+        social_warranty_in = float(
+            data.get('incomeinfo_social_warranty', None))
+        pension_agency_in = float(data.get('incomeinfo_pension_agency', None))
+        citizen_account_in = float(
+            data.get('incomeinfo_citizen_account', None))
+        benefactor_in = float(data.get('incomeinfo_benefactor', None))
+        other_in = float(data.get('incomeinfo_other', None))
+        housing_rent_ex = float(data.get('expensesinfo_housing_rent', None))
+        electricity_bills_ex = float(
+            data.get('expensesinfo_electricity_bills', None))
+        water_bills_ex = float(data.get('expensesinfo_water_bills', None))
+        transportation_ex = float(
+            data.get('expensesinfo_transportation', None))
+        health_supplies_ex = float(
+            data.get('expensesinfo_health_supplies', None))
+        food_supplies_ex = float(data.get('expensesinfo_food_supplies', None))
+        educational_supplies_ex = float(data.get(
+            'expensesinfo_educational_supplies', None))
+        proven_debts_ex = float(data.get('expensesinfo_proven_debts', None))
+        other_ex = float(data.get('expensesinfo_other', None))
+
+        # Calculate the total of income and expenses
+        total_in = float(salary_in + social_insurance_in + charity_in + social_warranty_in +
+                         pension_agency_in + citizen_account_in + benefactor_in + other_in)
+        total_in = round(total_in, 2)  # let 2 digits after the decimal point
+        total_ex = float(housing_rent_ex + electricity_bills_ex + water_bills_ex + transportation_ex +
+                         health_supplies_ex + food_supplies_ex +
+                         educational_supplies_ex + proven_debts_ex + other_ex)
+        total_ex = round(total_ex, 2)  # let 2 digits after the decimal point
+        # Calculate the percentage of the difference between income and expenses
+        in_ex_diff_percentage = (1 - (total_in / total_ex)) * 100
+        in_ex_diff_percentage = round(in_ex_diff_percentage, 2)
 
         beneficiary_income_expense_obj = beneficiary_income_expense(
             salary_in=salary_in,
@@ -539,6 +559,7 @@ def beneficiary_indiv(request):
             citizen_account_in=citizen_account_in,
             benefactor_in=benefactor_in,
             other_in=other_in,
+            total_in=total_in,
             housing_rent_ex=housing_rent_ex,
             electricity_bills_ex=electricity_bills_ex,
             water_bills_ex=water_bills_ex,
@@ -548,6 +569,8 @@ def beneficiary_indiv(request):
             educational_supplies_ex=educational_supplies_ex,
             proven_debts_ex=proven_debts_ex,
             other_ex=other_ex,
+            total_ex=total_ex,
+            in_ex_diff=in_ex_diff_percentage,
             beneficiary_id=beneficiary_obj,
         )
         beneficiary_income_expense_obj.save()
@@ -572,7 +595,6 @@ def beneficiary_indiv(request):
 
         # Now, you can iterate over the list of dependents
         for dep in dependents_list:
-            print(dep)  # This will print each dependent as a dictionary
             # Extract the data for each field
             first_name = dep.get('firstName', '')
             second_name = dep.get('secondName', '')
@@ -632,6 +654,7 @@ def beneficiary_indiv(request):
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
+@login_required(login_url="/login")
 def beneficiary_details(request, beneficiary_id):
     if request.method == 'GET':
         try:
@@ -744,3 +767,40 @@ def beneficiary_details(request, beneficiary_id):
 
     elif request.method == 'POST':
         pass
+
+
+def supporter_indiv(request):
+    if request.method == 'POST':
+        pass
+
+    elif request.method == 'GET':
+
+        beneficiary_obj = beneficiary.objects.all().order_by('id')
+
+        beneficiary_data = []
+
+        for beneficiary_indiv in beneficiary_obj:
+            # Retrieve beneficiary income and expenses information
+            try:
+                beneficiary_income_expenses_obj = beneficiary_income_expense.objects.get(
+                    beneficiary_id=beneficiary_indiv.id)
+            except ObjectDoesNotExist:
+                beneficiary_income_expenses_obj = None
+
+            # Collect the data and add them to the object
+            beneficiary_data.append({
+                'id': beneficiary_indiv.id,
+                'file_no': beneficiary_indiv.file_no,
+                # 'in_ex_diff': beneficiary_income_expenses_obj.in_ex_diff,
+                'age': beneficiary_indiv.age,
+                'nationality': beneficiary_indiv.nationality,
+            })
+
+        context = {
+            'beneficiary_headers': ['رقم الملف', 'نسبة الاحتياج', 'العمر', 'الجنسية'],
+            'beneficiary_data': beneficiary_data,
+        }
+        return render(request, "supporter_form(indiv).html", context)
+
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
