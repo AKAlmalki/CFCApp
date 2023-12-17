@@ -23,6 +23,8 @@ logger = logging.getLogger(__name__)
 # Constants =======================================
 
 IPP_DASHBOARD_REQUESTS = 10  # IPP stands for Item Per Page
+IPP_SUPPORTER_FORM = 8
+IPP_DASHBOARD_REPORTS = 10
 
 # Utility functions =======================================
 
@@ -196,6 +198,95 @@ def dashboard_reports(request):
                 is_qualified = False
 
             beneficiary_arr = beneficiary_arr.filter(is_qualified=is_qualified)
+
+        # Prepare pagination
+        paginator = Paginator(beneficiary_arr, IPP_DASHBOARD_REPORTS)
+        page_number = request.GET.get('page')
+        beneficiary_arr = paginator.get_page(page_number)
+
+        context = {
+            "beneficiaries_headers": [
+                "رقم الملف",
+                "الأسم الأول",
+                "الأسم الأخير",
+                "رقم الهوية",
+                "التصنيف",
+                "الحالة الاجتماعية",
+                "مؤهل؟"
+            ],
+            "beneficiaries": beneficiary_arr,
+            "first_name": beneficiary_first_name,
+            "last_name": beneficiary_last_name,
+            "national_id": national_id,
+            "category": category,
+            "marital_status": marital_status,
+            "is_qualified": is_qualified_val,
+        }
+
+        return render(request, "reports.html", context)
+
+    else:
+        return render(request, "reports.html")
+
+
+@login_required(login_url="/login")
+def dashboard_reports_post(request):
+
+    if request.method == "GET":
+
+        # Get beneficiary table data (all)
+        beneficiary_arr = beneficiary.objects.all()
+
+        # Retrive form data
+        beneficiary_first_name = request.GET.get("beneficiary_first_name")
+        beneficiary_last_name = request.GET.get("beneficiary_last_name")
+        national_id = request.GET.get("beneficiary_national_id")
+        category = request.GET.get("beneficiary_category")
+        marital_status = request.GET.get("beneficiary_marital_status")
+        is_qualified = request.GET.get("beneficiary_is_qualified")
+
+        # Passing the form data to the session data
+        request.session["beneficiary_first_name"] = beneficiary_first_name
+        request.session["beneficiary_last_name"] = beneficiary_last_name
+        request.session["beneficiary_national_id"] = national_id
+        request.session["beneficiary_category"] = category
+        request.session["beneficiary_marital_status"] = marital_status
+        request.session["beneficiary_is_qualified"] = is_qualified
+
+        # Validate query param
+        if is_valid_queryparam(beneficiary_first_name, type=1):
+            beneficiary_arr = beneficiary_arr.filter(
+                first_name__icontains=beneficiary_first_name)
+
+        if is_valid_queryparam(beneficiary_last_name, type=1):
+            beneficiary_arr = beneficiary_arr.filter(
+                last_name__icontains=beneficiary_last_name)
+
+        if is_valid_queryparam(national_id, type=1):
+            beneficiary_arr = beneficiary_arr.filter(national_id=national_id)
+
+        if is_valid_queryparam(category, type=2):
+            beneficiary_arr = beneficiary_arr.filter(category=category)
+
+        if is_valid_queryparam(marital_status, type=2):
+            beneficiary_arr = beneficiary_arr.filter(
+                marital_status=marital_status)
+
+        # Keep the original value to be sent back in the response
+        is_qualified_val = is_qualified
+
+        if is_valid_queryparam(is_qualified, type=2):
+            if is_qualified == "مؤهل":
+                is_qualified = True
+            else:
+                is_qualified = False
+
+            beneficiary_arr = beneficiary_arr.filter(is_qualified=is_qualified)
+
+        # Prepare pagination
+        paginator = Paginator(beneficiary_arr, IPP_DASHBOARD_REPORTS)
+        page_number = request.GET.get('page')
+        beneficiary_arr = paginator.get_page(page_number)
 
         context = {
             "beneficiaries_headers": [
@@ -770,7 +861,6 @@ def supporter_indiv(request):
                 beneficiary_income_expenses_obj = beneficiary_income_expense.objects.get(
                     beneficiary_id=beneficiary_indiv.id)
             except ObjectDoesNotExist:
-                print(beneficiary_indiv.id)
                 beneficiary_income_expenses_obj = None
 
             # Collect the data and add them to the object
@@ -781,6 +871,11 @@ def supporter_indiv(request):
                 'age': beneficiary_indiv.age,
                 'nationality': beneficiary_indiv.nationality,
             })
+
+        # Prepare pagination
+        paginator = Paginator(beneficiary_data, IPP_SUPPORTER_FORM)
+        page_number = request.GET.get('page')
+        beneficiary_data = paginator.get_page(page_number)
 
         context = {
             'beneficiary_headers': ['رقم الملف', 'نسبة الاحتياج', 'العمر', 'الجنسية'],

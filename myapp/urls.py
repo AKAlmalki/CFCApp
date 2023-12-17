@@ -58,6 +58,11 @@ urlpatterns = [
         name="reports"
     ),
     path(
+        "dashboard/reports/new",
+        views.dashboard_reports_post,
+        name="reports_post"
+    ),
+    path(
         'export_excel',
         views.export_excel,
         name="export_excel"

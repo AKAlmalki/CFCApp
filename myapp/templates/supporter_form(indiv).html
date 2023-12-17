@@ -565,23 +565,23 @@
                 </table>
                 <nav class="mt-3" aria-label="Page navigation example">
                   <ul class="pagination justify-content-center">
-                    {% if beneficiary_obj.has_previous %}
+                    {% if beneficiary_data.has_previous %}
                     <li class="page-item">
                       <a class="page-link" href="?page=1">الاول</a>
                     </li>
                     <li class="page-item">
-                      <a class="page-link" href="?page={{ beneficiary_obj.previous_page_number }}">السابق</a>
+                      <a class="page-link" href="?page={{ beneficiary_data.previous_page_number }}">السابق</a>
                     </li>
                     {% endif %}
           
-                    <li class="page-item disabled"><a class="page-link" >{{ beneficiary_obj.number }} من {{ beneficiary_obj.paginator.num_pages }}</a></li>
+                    <li class="page-item disabled"><a class="page-link" >{{ beneficiary_data.number }} من {{ beneficiary_data.paginator.num_pages }}</a></li>
           
-                    {% if beneficiary_obj.has_next %}
+                    {% if beneficiary_data.has_next %}
                     <li class="page-item">
-                      <a class="page-link" href="?page={{ beneficiary_obj.next_page_number }}">التالي</a>
+                      <a class="page-link" href="?page={{ beneficiary_data.next_page_number }}">التالي</a>
                     </li>
                     <li class="page-item">
-                      <a class="page-link" href="?page={{ beneficiary_obj.paginator.num_pages }}">الأخير</a>
+                      <a class="page-link" href="?page={{ beneficiary_data.paginator.num_pages }}">الأخير</a>
                     </li>
                     {% endif %}
                   </ul>
