@@ -6,7 +6,6 @@
 <script src="{% static 'js/supporter_form(indiv).js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/supporter_form(indiv).css' %}" />
 <style type="text/css">
-  #housing_information,
   #sponsorship_information,
   #payment_and_submit_confirmation {
     display: none;
@@ -43,7 +42,9 @@
           <span class="form-stepper-circle text-muted">
             <span>2</span>
           </span>
-          <div class="label text-muted">بيانات السكن</div>
+          <div class="label text-muted">
+            <p class="p-0 m-0">بيانات الدعم</p>
+          </div>
         </a>
       </li>
       <!-- Step 3 -->
@@ -55,21 +56,6 @@
         <a class="mx-2 text-decoration-none">
           <span class="form-stepper-circle text-muted">
             <span>3</span>
-          </span>
-          <div class="label text-muted">
-            <p class="p-0 m-0">بيانات الدعم</p>
-          </div>
-        </a>
-      </li>
-      <!-- Step 4 -->
-      <li
-        class="form-stepper-unfinished text-center form-stepper-list"
-        step="4"
-        id="form-list-4"
-      >
-        <a class="mx-2 text-decoration-none">
-          <span class="form-stepper-circle text-muted">
-            <span>4</span>
           </span>
           <div class="label text-muted">الدفع وتأكيد الطلب</div>
         </a>
@@ -542,185 +528,6 @@
         </div>
       </fieldset>
 
-      <fieldset
-          id="housing_information"
-          class="form-step bg-light px-3 px-lg-5"
-        >
-          <h2 class="fs-2 fw-bold mb-5">بيانات السكن</h2>
-
-          <!-- Step 3 input fields -->
-          <div class="mt-5">
-            <h4 class="font-normal">بيانات العنوان الوطني</h4>
-            <div class="row row-cols-md-2 row-cols-xl-4 mt-4">
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_houseinfo_building_number" class="form-label"
-                  >رقم المبنى<span style="color: red"
-                  >*</span
-                ></label
-                >
-                <input
-                  type="number"
-                  name="houseinfo_building_number"
-                  min="0"
-                  max="9999999"
-                  class="form-control"
-                  id="id_houseinfo_building_number"
-                />
-              </div>
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_houseinfo_street_name" class="form-label"
-                  >اسم الشارع<span style="color: red"
-                  >*</span
-                ></label
-                >
-                <input
-                  type="text"
-                  name="houseinfo_street_name"
-                  maxlength="50"
-                  class="form-control"
-                  id="id_houseinfo_street_name"
-                />
-              </div>
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_houseinfo_neighborhood" class="form-label"
-                  >الحي<span style="color: red"
-                  >*</span
-                ></label
-                >
-                <input
-                  type="text"
-                  name="houseinfo_neighborhood"
-                  maxlength="50"
-                  class="form-control"
-                  id="id_houseinfo_neighborhood"
-                />
-              </div>
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_houseinfo_city" class="form-label"
-                  >المدينة<span style="color: red"
-                  >*</span
-                ></label
-                >
-                <input
-                  type="text"
-                  name="houseinfo_city"
-                  maxlength="50"
-                  class="form-control"
-                  id="id_houseinfo_city"
-                />
-              </div>
-            </div>
-            <div class="row row-cols-md-2 row-cols-xl-4 mt-4">
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_houseinfo_postal_code" class="form-label"
-                  >الرمز البريدي<span style="color: red"
-                  >*</span
-                ></label
-                >
-                <input
-                  type="number"
-                  name="houseinfo_postal_code"
-                  min="0"
-                  max="9999999"
-                  class="form-control"
-                  id="id_houseinfo_postal_code"
-                />
-              </div>
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_houseinfo_additional_number" class="form-label"
-                  >الرقم الإضافي<span style="color: red"
-                  >*</span
-                ></label
-                >
-                <input
-                  type="number"
-                  name="houseinfo_additional_number"
-                  min="0"
-                  max="9999999"
-                  class="form-control"
-                  id="id_houseinfo_additional_number"
-                />
-              </div>
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_houseinfo_unit" class="form-label">الوحدة<span style="color: red"
-                  >*</span
-                ></label>
-                <input
-                  type="text"
-                  name="houseinfo_unit"
-                  maxlength="50"
-                  class="form-control"
-                  id="id_houseinfo_unit"
-                />
-              </div>
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_houseinfo_location_url" class="form-label"
-                  >رابط موقع المنزل (google maps)<span style="color: red"
-                  >*</span
-                ></label
-                >
-                <input
-                  type="url"
-                  name="houseinfo_location_url"
-                  maxlength="250"
-                  class="form-control"
-                  id="id_houseinfo_location_url"
-                />
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_houseinfo_housing_type" class="form-label"
-                  >نوع السكن<span style="color: red">*</span></label
-                >
-                <select
-                  name="houseinfo_housing_type"
-                  class="form-control"
-                  id="id_houseinfo_housing_type"
-                >
-                  <option value selected>---------</option>
-                  <option value="شعبي">شعبي</option>
-                  <option value="شقة">شقة</option>
-                  <option value="فيلا">فيلا</option>
-                  <option value="ملحق">ملحق</option>
-                </select>
-              </div>
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_houseinfo_housing_ownership" class="form-label"
-                  >ملكية السكن<span style="color: red">*</span></label
-                >
-                <select
-                  name="houseinfo_housing_ownership"
-                  class="form-control"
-                  id="id_houseinfo_housing_ownership"
-                >
-                  <option value selected>---------</option>
-                  <option value="ملك">ملك</option>
-                  <option value="وقف">وقف</option>
-                  <option value="إيجار">إيجار</option>
-                </select>
-              </div>
-            </div>
-
-          </div>
-          <div class="mt-3 d-flex column-gap-2 d-lg-block">
-            <button
-              class="col button btn-navigate-form-step previous"
-              type="button"
-              step_number="1"
-            >
-              السابق
-            </button>
-            <button
-              class="col button btn-navigate-form-step next"
-              type="button"
-              step_number="3"
-            >
-              التالي
-            </button>
-          </div>
-        </fieldset>
-
         <fieldset
           id="sponsorship_information"
           class="form-step bg-light px-3 px-lg-5"
@@ -1033,14 +840,14 @@
               <button
                 class="col button btn-navigate-form-step previous"
                 type="button"
-                step_number="2"
+                step_number="1"
               >
                 السابق
               </button>
               <button
                 class="col button btn-navigate-form-step next"
                 type="button"
-                step_number="4"
+                step_number="3"
               >
                 التالي
               </button>
@@ -1115,7 +922,7 @@
             <button
               class="col button btn-navigate-form-step previous"
               type="button"
-              step_number="3"
+              step_number="2"
             >
               السابق
             </button>
@@ -1460,37 +1267,6 @@
           personalinfo_email: {
             //emailRegex: true,
           },
-          // housing__information ---------
-          houseinfo_building_number: {
-            required: false,
-          },
-          houseinfo_street_name: {
-            required: false,
-          },
-          houseinfo_neighborhood: {
-            required: false,
-          },
-          houseinfo_city: {
-            required: false,
-          },
-          houseinfo_postal_code:{
-            required: false,
-          },
-          houseinfo_additional_number: {
-            required: false,
-          },
-          houseinfo_unit: {
-            required: false,
-          },
-          houseinfo_location_url: {
-            required: false,
-          },
-          houseinfo_housing_type: {
-            required: false,
-          },
-          houseinfo_housing_ownership: {
-            required: false,
-          },
         },
         messages: {
           personalinfo_first_name: {
@@ -1503,11 +1279,7 @@
       if (form.valid() === true) {
         if ($("#personal_information").is(":visible")) {
           current_fs = $("#personal_information");
-          next_fs = $("#housing_information"); // Proceed to the third stepas usual
-          
-        } else if ($("#housing_information").is(":visible")) {
-          current_fs = $("#housing_information");
-          next_fs = $("#sponsorship_information");
+          next_fs = $("#sponsorship_information"); // Proceed to the third stepas usual
 
         } else if ($("#sponsorship_information").is(":visible")) {
           current_fs = $("#sponsorship_information");
@@ -1521,12 +1293,9 @@
 
     // When ".previous" button is clicked, the following function is called
     $(".previous").click(function () {
-      if ($("#housing_information").is(":visible")) {
-        current_fs = $("#housing_information");
-        next_fs = $("#personal_information");
-      } else if ($("#sponsorship_information").is(":visible")) {
+      if ($("#sponsorship_information").is(":visible")) {
         current_fs = $("#sponsorship_information");
-        next_fs = $("#housing_information"); 
+        next_fs = $("#personal_information"); 
       } else if ($("#payment_and_submit_confirmation").is(":visible")) {
         current_fs = $("#payment_and_submit_confirmation");
         next_fs = $("#sponsorship_information");
@@ -1544,13 +1313,11 @@
     function updateFormStep() {
       // Check which div is visible and update form steps accordingly
       if ($("#personal_information").is(":visible")) {
-        updateSteps(1);
-      } else if ($("#housing_information").is(":visible")) {
-        updateSteps(2);
+        updateSteps(1);;
       } else if ($("#sponsorship_information").is(":visible")) {
-        updateSteps(3);
+        updateSteps(2);
       } else if ($("#payment_and_submit_confirmation").is(":visible")) {
-        updateSteps(4);
+        updateSteps(3);
       }
     }
 
