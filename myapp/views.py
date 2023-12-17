@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 # Constants =======================================
 
-ITEM_PER_PAGE = 10
+IPP_DASHBOARD_REQUESTS = 10  # IPP stands for Item Per Page
 
 # Utility functions =======================================
 
@@ -132,7 +132,7 @@ def new_dashboard(request):
 @login_required(login_url="/login")
 def dashboard_requests(request):
     beneficiary_obj = beneficiary.objects.all()
-    paginator = Paginator(beneficiary_obj, ITEM_PER_PAGE)
+    paginator = Paginator(beneficiary_obj, IPP_DASHBOARD_REQUESTS)
     page_number = request.GET.get('page')
     beneficiary_obj = paginator.get_page(page_number)
     context = {
@@ -538,18 +538,6 @@ def beneficiary_indiv(request):
         proven_debts_ex = float(data.get('expensesinfo_proven_debts', None))
         other_ex = float(data.get('expensesinfo_other', None))
 
-        # Calculate the total of income and expenses
-        total_in = float(salary_in + social_insurance_in + charity_in + social_warranty_in +
-                         pension_agency_in + citizen_account_in + benefactor_in + other_in)
-        total_in = round(total_in, 2)  # let 2 digits after the decimal point
-        total_ex = float(housing_rent_ex + electricity_bills_ex + water_bills_ex + transportation_ex +
-                         health_supplies_ex + food_supplies_ex +
-                         educational_supplies_ex + proven_debts_ex + other_ex)
-        total_ex = round(total_ex, 2)  # let 2 digits after the decimal point
-        # Calculate the percentage of the difference between income and expenses
-        in_ex_diff_percentage = (1 - (total_in / total_ex)) * 100
-        in_ex_diff_percentage = round(in_ex_diff_percentage, 2)
-
         beneficiary_income_expense_obj = beneficiary_income_expense(
             salary_in=salary_in,
             social_insurance_in=social_insurance_in,
@@ -559,7 +547,6 @@ def beneficiary_indiv(request):
             citizen_account_in=citizen_account_in,
             benefactor_in=benefactor_in,
             other_in=other_in,
-            total_in=total_in,
             housing_rent_ex=housing_rent_ex,
             electricity_bills_ex=electricity_bills_ex,
             water_bills_ex=water_bills_ex,
@@ -569,8 +556,6 @@ def beneficiary_indiv(request):
             educational_supplies_ex=educational_supplies_ex,
             proven_debts_ex=proven_debts_ex,
             other_ex=other_ex,
-            total_ex=total_ex,
-            in_ex_diff=in_ex_diff_percentage,
             beneficiary_id=beneficiary_obj,
         )
         beneficiary_income_expense_obj.save()
@@ -785,13 +770,14 @@ def supporter_indiv(request):
                 beneficiary_income_expenses_obj = beneficiary_income_expense.objects.get(
                     beneficiary_id=beneficiary_indiv.id)
             except ObjectDoesNotExist:
+                print(beneficiary_indiv.id)
                 beneficiary_income_expenses_obj = None
 
             # Collect the data and add them to the object
             beneficiary_data.append({
                 'id': beneficiary_indiv.id,
                 'file_no': beneficiary_indiv.file_no,
-                # 'in_ex_diff': beneficiary_income_expenses_obj.in_ex_diff,
+                'in_ex_diff': beneficiary_income_expenses_obj.in_ex_diff,
                 'age': beneficiary_indiv.age,
                 'nationality': beneficiary_indiv.nationality,
             })

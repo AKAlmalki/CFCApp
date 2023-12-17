@@ -1,6 +1,6 @@
 // Function to display input field only if specifc option is selected
 function widowerCheck(that) {
-  if (that.value == "widower") {
+  if (that.value == "أرمل/ـة") {
       document.getElementById("id_personalinfo_widower_group_info").style.display = "flex";
       document.getElementById("widower_hr").style.display = "block";
   } else {
@@ -34,7 +34,7 @@ function dependentEditInfoHealthCheck(that) {
   }
 
 function workCheck(that) {
-  if (that.value == "yes") {
+  if (that.value == "نعم") {
       document.getElementById("id_personalinfo_employer_group_info").style.display = "block";
   } else {
       document.getElementById("id_personalinfo_employer_group_info").style.display = "none";
@@ -42,7 +42,7 @@ function workCheck(that) {
 }
 
 function categoryCheck(that) {
-  if (that.value == "regular family") {
+  if (that.value == "أسرة عادية") {
 
         // Change the label for Beneficiary National ID
         document.getElementById("id_beneficiaryNationalIDTitle").textContent = "صورة الهوية الوطنية/الإقامة";
@@ -76,7 +76,7 @@ function categoryCheck(that) {
         document.getElementById("id_attachmentChildrenResponsibilityDeed_group_info_hr").style.display = "none";
 
 
-  } else if (that.value == "widowed family") {
+  } else if (that.value == "أسرة أرملة") {
 
         // Change the label for national ID
         document.getElementById("id_beneficiaryNationalIDTitle").textContent = "صورة الهوية الوطنية/الإقامة (الأرملة)";
@@ -108,7 +108,7 @@ function categoryCheck(that) {
         document.getElementById("id_attachmentDivorceDeed_group_info_hr").style.display = "none";
         document.getElementById("id_attachmentChildrenResponsibilityDeed_group_info_hr").style.display = "none";
 
-  } else if (that.value == "orphan family") {
+  } else if (that.value == "أسرة أيتام") {
 
         // Change the label for national ID
         document.getElementById("id_beneficiaryNationalIDTitle").textContent = "صورة الهوية الوطنية/الإقامة (الأرملة)";
@@ -140,7 +140,7 @@ function categoryCheck(that) {
         document.getElementById("id_attachmentDivorceDeed_group_info_hr").style.display = "none";
         document.getElementById("id_attachmentChildrenResponsibilityDeed_group_info_hr").style.display = "none";
 
-  } else if (that.value == "prisoners family") {
+  } else if (that.value == "أسرة سجناء") {
 
         // Change the label for national ID
         document.getElementById("id_beneficiaryNationalIDTitle").textContent = "صورة الهوية الوطنية/الإقامة";
@@ -172,7 +172,7 @@ function categoryCheck(that) {
         document.getElementById("id_attachmentDivorceDeed_group_info_hr").style.display = "none";
         document.getElementById("id_attachmentChildrenResponsibilityDeed_group_info_hr").style.display = "none";
 
-  } else if (that.value == "divorced family") {
+  } else if (that.value == "أسرة مطلقة") {
 
         // Change the label for national ID
         document.getElementById("id_beneficiaryNationalIDTitle").textContent = "صورة الهوية الوطنية/الإقامة";

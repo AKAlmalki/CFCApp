@@ -138,7 +138,6 @@ class beneficiary_income_expense(models.Model):
     benefactor_in = models.DecimalField(
         decimal_places=2, max_digits=15, default=0)
     other_in = models.DecimalField(decimal_places=2, max_digits=15, default=0)
-    total_in = models.DecimalField(decimal_places=2, max_digits=15, default=0)
     housing_rent_ex = models.DecimalField(
         decimal_places=2, max_digits=15, default=0)
     electricity_bills_ex = models.DecimalField(
@@ -156,9 +155,30 @@ class beneficiary_income_expense(models.Model):
     proven_debts_ex = models.DecimalField(
         decimal_places=2, max_digits=15, default=0)
     other_ex = models.DecimalField(decimal_places=2, max_digits=15, default=0)
-    total_ex = models.DecimalField(decimal_places=2, max_digits=15, default=0)
-    in_ex_diff = models.DecimalField(
-        decimal_places=2, max_digits=15, default=0)
+
+    @property
+    def total_in(self):
+        total_in = float(self.salary_in + self.social_insurance_in + self.charity_in + self.social_warranty_in +
+                         self.pension_agency_in + self.citizen_account_in + self.benefactor_in + self.other_in)
+        total_in = round(total_in, 2)  # let 2 digits after the decimal point
+        return total_in
+
+    @property
+    def total_ex(self):
+        total_ex = float(self.housing_rent_ex + self.electricity_bills_ex + self.water_bills_ex + self.transportation_ex +
+                         self.health_supplies_ex + self.food_supplies_ex + self.educational_supplies_ex + self.proven_debts_ex + self.other_ex)
+        total_ex = round(total_ex, 2)  # let 2 digits after the decimal point
+        return total_ex
+
+    @property
+    def in_ex_diff(self):
+        in_ex_diff_percentage = 0
+        if self.total_ex != 0:
+            in_ex_diff_percentage = (1 - (self.total_in / self.total_ex)) * 100
+        # let 2 digits after the decimal point
+        in_ex_diff_percentage = round(in_ex_diff_percentage, 2)
+
+        return in_ex_diff_percentage
 
 
 class dependent(models.Model):
