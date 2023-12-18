@@ -15,7 +15,7 @@ import json
 from openpyxl import Workbook
 from openpyxl.styles import *
 import decimal
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -45,6 +45,10 @@ def is_valid_queryparam(param, type):
         return param != '' and param is not None
     elif type == 2:
         return param != "اختار..." and param is not None
+
+
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 # View Handlers ==============================================
 
@@ -873,9 +877,9 @@ def supporter_indiv(request):
             })
 
         # Prepare pagination
-        paginator = Paginator(beneficiary_data, IPP_SUPPORTER_FORM)
-        page_number = request.GET.get('page')
-        beneficiary_data = paginator.get_page(page_number)
+        # paginator = Paginator(beneficiary_data, IPP_SUPPORTER_FORM)
+        # page_number = request.GET.get('page')
+        # beneficiary_data = paginator.get_page(page_number)
 
         context = {
             'beneficiary_headers': ['رقم الملف', 'نسبة الاحتياج', 'العمر', 'الجنسية'],
@@ -885,3 +889,28 @@ def supporter_indiv(request):
 
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+def supporter_test(request):
+
+    # Including only necessary part
+    beneficiaries = beneficiary.objects.all()
+    paginator = Paginator(beneficiaries, 6)
+    page = request.GET.get('page')
+    try:
+        beneficiaries = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        beneficiaries = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        beneficiaries = paginator.page(paginator.num_pages)
+
+    context = {
+        'beneficiaries': beneficiaries
+    }
+
+    if is_ajax(request=request):
+        return render(request, 'main/table.html', context)
+    # else
+    return render(request, 'main/individual2.html', context)

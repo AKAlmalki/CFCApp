@@ -5,6 +5,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script src="{% static 'js/supporter_form(indiv).js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/supporter_form(indiv).css' %}" />
+
+{% comment %} Data Table Requirements {% endcomment %}
+<link rel="stylesheet" href="{% static '/DataTables/datatables.css' %}" />
+<script src="{% static '/DataTables/datatables.js' %}"></script>
+
 <style type="text/css">
   #sponsorship_information,
   #payment_and_submit_confirmation {
@@ -540,7 +545,7 @@
               <h4 class="font-normal mb-3">معلومات اليتيم/الأرملة</h4>
 
               <div class="row">
-                <table class="table table-striped table-hover table-bordered">
+                <table id="beneficiaries_table" class="table table-striped table-hover table-bordered">
                   <thead>
                     <tr>
                       <th>اختار</th>
@@ -563,29 +568,6 @@
                     {% endfor %} 
                   </tbody>
                 </table>
-                <nav class="mt-3" aria-label="Page navigation example">
-                  <ul class="pagination justify-content-center">
-                    {% if beneficiary_data.has_previous %}
-                    <li class="page-item">
-                      <a class="page-link" href="?page=1">الاول</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href="?page={{ beneficiary_data.previous_page_number }}">السابق</a>
-                    </li>
-                    {% endif %}
-          
-                    <li class="page-item disabled"><a class="page-link" >{{ beneficiary_data.number }} من {{ beneficiary_data.paginator.num_pages }}</a></li>
-          
-                    {% if beneficiary_data.has_next %}
-                    <li class="page-item">
-                      <a class="page-link" href="?page={{ beneficiary_data.next_page_number }}">التالي</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href="?page={{ beneficiary_data.paginator.num_pages }}">الأخير</a>
-                    </li>
-                    {% endif %}
-                  </ul>
-                </nav>
               </div>
 
               <div class="row row-cols-md-1 row-cols-xl-3 mt-2">
@@ -1363,6 +1345,10 @@
       }
     }
 
+    
+
   }); // (document).ready() end line
+
+  new DataTable('#beneficiaries_table');
 </script>
 {% endblock %}
