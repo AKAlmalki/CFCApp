@@ -904,7 +904,7 @@
                   <tbody>
                     {% for data in beneficiary_data %}
                       <tr>
-                        <td><div class="form-check">
+                        <td><div class="form-check d-flex justify-content-center">
                           <input class="form-check-input" type="checkbox" value="" id="id_beneficiary_check{{data.id}}">
                         </div></td>
                         <th class="col">{{ data.id }}</th>
@@ -919,7 +919,9 @@
                 </table>
               </div>
 
-              <div class="row row-cols-md-1 row-cols-xl-3 mt-2">
+              <hr>
+
+              <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 mt-2">
                 <div class="mb-4 form-group">
                   <label for="id_sponsorship_info_duration" class="form-label"
                     >مدة الدعم<span style="color: red"
@@ -932,14 +934,34 @@
                     id="id_sponsorship_info_duration"
                   >
                     <option value selected>---------</option>
+                    <option value="3 أشهر">3 أشهر</option>
                     <option value="6 أشهر">6 أشهر</option>
                     <option value="سنة كاملة">سنة كاملة</option>
+                  </select>
+                </div>
+                <div class="mb-4 form-group">
+                  <label for="id_sponsorship_info_donation_type" class="form-label"
+                    >نوع الدعم<span style="color: red"
+                    >*</span
+                  ></label
+                  >
+                  <select
+                    name="sponsorship_info_donation_type"
+                    class="form-control"
+                    id="id_sponsorship_info_donation_type"
+                  >
+                    <option value selected>---------</option>
+                    <option value="مبلغ مقطوع (مقيد)">مبلغ مقطوع (مقيد)</option>
+                    <option value="مبلغ مقطوع (غير مقيد)">مبلغ مقطوع (غير مقيد)</option>
+                    <option value="كفالة أسرة">كفالة أسرة</option>
+                    <option value="كفالة يتيم">كفالة يتيم</option>
+                    <option value="كفالة أرملة">كفالة أرملة</option>
                   </select>
                 </div>
               </div>
 
               <div class="row">
-                <div class="mb-4 form-check form-switch">
+                <div class="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4 mb-4 form-check form-switch">
                   <label 
                     class="form-check-label" 
                     for="id_sponsorship_info_status_notify"
