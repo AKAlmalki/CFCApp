@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-
+<script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 <style type="text/css">
   #sponsorship_information,
   #payment_and_submit_confirmation {
@@ -1054,7 +1054,7 @@
                 </div>
                 <div class="col-6">
                 <button
-                  class="col-12 button btn-navigate-form-step next"
+                  class="col-12 button btn-navigate-form-step next next-table"
                   type="button"
                   step_number="3"
                 >
@@ -1592,8 +1592,6 @@
       }
     }
 
-    
-
   }); // (document).ready() end line
 
   // JS for age range input with MIN-MAX
@@ -1685,11 +1683,55 @@
     table.draw();
   });
 
-  // Table initialization
-  var table = $('#beneficiaries_table').DataTable( {
-    language: {
-      url: "{% static '/Arabic.json' %}"
-    },
+  var table = $('#beneficiaries_table').DataTable({
+        'language': {
+          url: "{% static '/Arabic.json' %}"
+        },
+        'columnDefs': [
+            {
+                'targets': 0, // Targeting the first column (checkbox column)
+                'checkboxes': {
+                    'selectRow': true
+                }
+            }
+        ],
+        'select': {
+            'style': 'multi'
+        }
+  });
+
+  // Event delegation to handle checkbox clicks
+  $('#beneficiaries_table tbody').on('click', 'input[type="checkbox"]', function() {
+    var row = $(this).closest('tr');
+    if ($(this).prop('checked')) {
+        row.addClass('selected');
+    } else {
+        row.removeClass('selected');
+    }
+  });
+
+  // Event delegation to handle row clicks
+  $('#beneficiaries_table tbody').on('click', 'tr', function() {
+    var checkbox = $(this).find('input[type="checkbox"]');
+    checkbox.prop('checked', !checkbox.prop('checked')); // Toggle checkbox state
+    table.row(this).select(!checkbox.prop('checked')); // Toggle row selection based on checkbox state
+    $(this).toggleClass('selected'); // Toggle selected class for the row
+  });
+
+  // Remove checkbox click event to prevent conflicts
+  $('#beneficiaries_table tbody').on('click', 'input[type="checkbox"]', function(e) {
+    e.stopPropagation(); // Prevent the row click event from firing
+  });
+
+  // Make the row selected whenever it is clicked
+  table.on('click', 'tbody tr', function (e) {
+    e.currentTarget.classList.toggle('selected');
+  });
+  
+  // Print an array of the selected rows
+  document.querySelector('.next-table').addEventListener('click', function () {
+      var selectedRows = table.rows('.selected').data().toArray();
+      console.log(selectedRows);
   });
 
   // Custom range filtering function
