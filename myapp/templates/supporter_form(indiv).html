@@ -7,8 +7,14 @@
 <link rel="stylesheet" href="{% static 'css/supporter_form(indiv).css' %}" />
 
 {% comment %} Data Table Requirements {% endcomment %}
-<link rel="stylesheet" href="{% static '/DataTables/datatables.css' %}" />
-<script src="{% static '/DataTables/datatables.js' %}"></script>
+{% comment %} Local {% endcomment %}
+{% comment %} <link rel="stylesheet" href="{% static '/DataTables/datatables.css' %}" />
+<script src="{% static '/DataTables/datatables.js' %}"></script> {% endcomment %}
+{% comment %} Online {% endcomment %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
 <style type="text/css">
   #sponsorship_information,
@@ -1349,6 +1355,10 @@
 
   }); // (document).ready() end line
 
-  new DataTable('#beneficiaries_table');
+  $('#beneficiaries_table').DataTable( {
+    language: {
+      url: "{% static '/Arabic.json' %}"
+    },
+  });
 </script>
 {% endblock %}
