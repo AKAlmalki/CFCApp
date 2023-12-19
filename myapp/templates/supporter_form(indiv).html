@@ -21,6 +21,70 @@
   #payment_and_submit_confirmation {
     display: none;
   }
+  {% comment %} CSS for age range input with MIN-MAX {% endcomment %}
+  .ageContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 500px;
+  }
+  .ageContainer input[type="number"] {
+    width: 50px;
+    height: 30px;
+    background: #fff;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 5px;
+  }
+  .ageContainer input[type="number"]::-webkit-outer-spin-button,
+  .ageContainer input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  .ageContainer .range-slider {
+    position: relative;
+    width: 400px;
+    height: 5px;
+    background: #ddd;
+    outline: none;
+    top: 1px;
+    margin: 10px;
+  }
+  .ageContainer .range-slider .progress {
+    left: 66%;
+    right: 8.5%;
+    height: 100%;
+    background: #0d6efd;
+    border-radius: 50px;
+    position: absolute;
+  }
+  .ageContainer .range-slider input[type="range"] {
+    position: absolute;
+    top: -8px;
+    left: -5px;
+    width: 101%;
+    -webkit-appearance: none;
+    pointer-events: none;
+    background: none;
+    outline: none;
+  }
+  .ageContainer .range-slider input::-webkit-slider-thumb {
+    pointer-events: auto;
+    -webkit-apparance: none;
+    width: 17px;
+    height: 17px;
+    background: #17a288;
+    border-radius: 50px;
+  }
+  div.dataTables_wrapper div.dt-row {
+    overflow-x: scroll;
+  }
+  div.dataTables_wrapper div.dataTables_filter label {
+
+  }
+
 </style>
 {% endblock %} {% block content %}
 <div class="container mt-5 px-0 mb-4 p-5 rounded-3 ">
@@ -551,7 +615,284 @@
               <h4 class="font-normal mb-3">معلومات اليتيم/الأرملة</h4>
 
               <div class="row">
-                <table id="beneficiaries_table" class="table table-striped table-hover table-bordered">
+                <div class="row">
+                  <div class="ageContainer mb-3 text-nowrap col">
+                    <div class="row">
+                      <label class="ms-2 me-0">العمر: </label>
+                    </div>
+                    <div class="min-value numberVal">
+                      <input id="minAge" type="number" min="0" max="150" value="12" disabled>
+                    </div>
+                    &nbsp; - 
+                    <div class="range-slider">
+                      <div class="progress"></div>
+                      <input type="range" class="range-min" min="0" max="150" value="12">
+                      <input type="range" class="range-min" min="0" max="150" value="50">
+                    </div>
+                    - &nbsp;
+                    <div class="max-value numberVal">
+                      <input id="maxAge" type="number" min="0" max="150" value="50" disabled>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row">
+                      <div class="col mb-4 form-group">
+                        <label for="id_sponsorship_info_nationality" class="form-label"
+                          >الجنسية</label
+                        >
+                        <select
+                          name="sponsorship_info_nationality"
+                          class="form-control form-control-sm"
+                          id="id_sponsorship_info_nationality"
+                        >
+                          <option value selected>الكل</option>
+                          <option value="السعودية">السعودية</option>
+                          <option value="أفغانستان">أفغانستان</option>
+                          <option value="ألبانيا">ألبانيا</option>
+                          <option value="الجزائر">الجزائر</option>
+                          <option value="أندورا">أندورا</option>
+                          <option value="أنغولا">أنغولا</option>
+                          <option value="أنتيغوا وباربودا">أنتيغوا وباربودا</option>
+                          <option value="الأرجنتين">الأرجنتين</option>
+                          <option value="أرمينيا">أرمينيا</option>
+                          <option value="أستراليا">أستراليا</option>
+                          <option value="النمسا">النمسا</option>
+                          <option value="أذربيجان">أذربيجان</option>
+                          <option value="البهاما">البهاما</option>
+                          <option value="البحرين">البحرين</option>
+                          <option value="بنغلاديش">بنغلاديش</option>
+                          <option value="باربادوس">باربادوس</option>
+                          <option value="بيلاروسيا">بيلاروسيا</option>
+                          <option value="بلجيكا">بلجيكا</option>
+                          <option value="بليز">بليز</option>
+                          <option value="بنين">بنين</option>
+                          <option value="بوتان">بوتان</option>
+                          <option value="بوليفيا">بوليفيا</option>
+                          <option value="البوسنة والهرسك ">البوسنة والهرسك</option>
+                          <option value="بوتسوانا">بوتسوانا</option>
+                          <option value="البرازيل">البرازيل</option>
+                          <option value="بروناي">بروناي</option>
+                          <option value="بلغاريا">بلغاريا</option>
+                          <option value="بوركينا فاسو ">بوركينا فاسو</option>
+                          <option value="بوروندي">بوروندي</option>
+                          <option value="كمبوديا">كمبوديا</option>
+                          <option value="الكاميرون">الكاميرون</option>
+                          <option value="كندا">كندا</option>
+                          <option value="الرأس الأخضر">الرأس الأخضر</option>
+                          <option value="جمهورية أفريقيا الوسطى ">
+                            جمهورية أفريقيا الوسطى
+                          </option>
+                          <option value="تشاد">تشاد</option>
+                          <option value="تشيلي">تشيلي</option>
+                          <option value="الصين">الصين</option>
+                          <option value="كولومبيا">كولومبيا</option>
+                          <option value="جزر القمر">جزر القمر</option>
+                          <option value="كوستاريكا">كوستاريكا</option>
+                          <option value="ساحل العاج">ساحل العاج</option>
+                          <option value="كرواتيا">كرواتيا</option>
+                          <option value="كوبا">كوبا</option>
+                          <option value="قبرص">قبرص</option>
+                          <option value="التشيك">التشيك</option>
+                          <option value="جمهورية الكونغو الديمقراطية">
+                            جمهورية الكونغو الديمقراطية
+                          </option>
+                          <option value="الدنمارك">الدنمارك</option>
+                          <option value="جيبوتي">جيبوتي</option>
+                          <option value="دومينيكا">دومينيكا</option>
+                          <option value="جمهورية الدومينيكان">
+                            جمهورية الدومينيكان
+                          </option>
+                          <option value="تيمور الشرقية ">تيمور الشرقية</option>
+                          <option value="الإكوادور">الإكوادور</option>
+                          <option value="مصر">مصر</option>
+                          <option value="السلفادور">السلفادور</option>
+                          <option value="غينيا الاستوائية">غينيا الاستوائية</option>
+                          <option value="إريتريا">إريتريا</option>
+                          <option value="إستونيا">إستونيا</option>
+                          <option value="إثيوبيا">إثيوبيا</option>
+                          <option value="فيجي">فيجي</option>
+                          <option value="فنلندا">فنلندا</option>
+                          <option value="فرنسا">فرنسا</option>
+                          <option value="الغابون">الغابون</option>
+                          <option value="غامبيا">غامبيا</option>
+                          <option value="جورجيا">جورجيا</option>
+                          <option value="ألمانيا">ألمانيا</option>
+                          <option value="غانا">غانا</option>
+                          <option value="اليونان">اليونان</option>
+                          <option value="جرينادا">جرينادا</option>
+                          <option value="غواتيمالا">غواتيمالا</option>
+                          <option value="غينيا">غينيا</option>
+                          <option value="غينيا بيساو">غينيا بيساو</option>
+                          <option value="غويانا">غويانا</option>
+                          <option value="هايتي">هايتي</option>
+                          <option value="هندوراس">هندوراس</option>
+                          <option value="المجر">المجر</option>
+                          <option value="آيسلندا">آيسلندا</option>
+                          <option value="الهند">الهند</option>
+                          <option value="إندونيسيا">إندونيسيا</option>
+                          <option value="إيران">إيران</option>
+                          <option value="العراق">العراق</option>
+                          <option value="جمهورية أيرلندا ">جمهورية أيرلندا</option>
+                          <option value="فلسطين">فلسطين</option>
+                          <option value="إيطاليا">إيطاليا</option>
+                          <option value="جامايكا">جامايكا</option>
+                          <option value="اليابان">اليابان</option>
+                          <option value="الأردن">الأردن</option>
+                          <option value="كازاخستان">كازاخستان</option>
+                          <option value="كينيا">كينيا</option>
+                          <option value="كيريباتي">كيريباتي</option>
+                          <option value="الكويت">الكويت</option>
+                          <option value="قرغيزستان">قرغيزستان</option>
+                          <option value="لاوس">لاوس</option>
+                          <option value="لاوس">لاوس</option>
+                          <option value="لاتفيا">لاتفيا</option>
+                          <option value="لبنان">لبنان</option>
+                          <option value="ليسوتو">ليسوتو</option>
+                          <option value="ليبيريا">ليبيريا</option>
+                          <option value="ليبيا">ليبيا</option>
+                          <option value="ليختنشتاين">ليختنشتاين</option>
+                          <option value="ليتوانيا">ليتوانيا</option>
+                          <option value="لوكسمبورغ">لوكسمبورغ</option>
+                          <option value="مدغشقر">مدغشقر</option>
+                          <option value="مالاوي">مالاوي</option>
+                          <option value="ماليزيا">ماليزيا</option>
+                          <option value="جزر المالديف">جزر المالديف</option>
+                          <option value="مالي">مالي</option>
+                          <option value="مالطا">مالطا</option>
+                          <option value="جزر مارشال">جزر مارشال</option>
+                          <option value="موريتانيا">موريتانيا</option>
+                          <option value="موريشيوس">موريشيوس</option>
+                          <option value="المكسيك">المكسيك</option>
+                          <option value="مايكرونيزيا">مايكرونيزيا</option>
+                          <option value="مولدوفا">مولدوفا</option>
+                          <option value="موناكو">موناكو</option>
+                          <option value="منغوليا">منغوليا</option>
+                          <option value="الجبل الأسود">الجبل الأسود</option>
+                          <option value="المغرب">المغرب</option>
+                          <option value="موزمبيق">موزمبيق</option>
+                          <option value="بورما">بورما</option>
+                          <option value="ناميبيا">ناميبيا</option>
+                          <option value="ناورو">ناورو</option>
+                          <option value="نيبال">نيبال</option>
+                          <option value="هولندا">هولندا</option>
+                          <option value="نيوزيلندا">نيوزيلندا</option>
+                          <option value="نيكاراجوا">نيكاراجوا</option>
+                          <option value="النيجر">النيجر</option>
+                          <option value="نيجيريا">نيجيريا</option>
+                          <option value="كوريا الشمالية ">كوريا الشمالية</option>
+                          <option value="النرويج">النرويج</option>
+                          <option value="سلطنة عمان">سلطنة عمان</option>
+                          <option value="باكستان">باكستان</option>
+                          <option value="بالاو">بالاو</option>
+                          <option value="بنما">بنما</option>
+                          <option value="بابوا غينيا الجديدة">
+                            بابوا غينيا الجديدة
+                          </option>
+                          <option value="باراغواي">باراغواي</option>
+                          <option value="بيرو">بيرو</option>
+                          <option value="الفلبين">الفلبين</option>
+                          <option value="بولندا">بولندا</option>
+                          <option value="البرتغال">البرتغال</option>
+                          <option value="قطر">قطر</option>
+                          <option value="جمهورية الكونغو">جمهورية الكونغو</option>
+                          <option value="جمهورية مقدونيا">جمهورية مقدونيا</option>
+                          <option value="رومانيا">رومانيا</option>
+                          <option value="روسيا">روسيا</option>
+                          <option value="رواندا">رواندا</option>
+                          <option value="سانت كيتس ونيفيس">سانت كيتس ونيفيس</option>
+                          <option value="سانت لوسيا">سانت لوسيا</option>
+                          <option value="سانت فنسينت والجرينادينز">
+                            سانت فنسينت والجرينادينز
+                          </option>
+                          <option value="ساموا">ساموا</option>
+                          <option value="سان مارينو">سان مارينو</option>
+                          <option value="ساو تومي وبرينسيب">
+                            ساو تومي وبرينسيب
+                          </option>
+                          <option value="السنغال">السنغال</option>
+                          <option value="صربيا">صربيا</option>
+                          <option value="سيشيل">سيشيل</option>
+                          <option value="سيراليون">سيراليون</option>
+                          <option value="سنغافورة">سنغافورة</option>
+                          <option value="سلوفاكيا">سلوفاكيا</option>
+                          <option value="سلوفينيا">سلوفينيا</option>
+                          <option value="جزر سليمان">جزر سليمان</option>
+                          <option value="الصومال">الصومال</option>
+                          <option value="جنوب أفريقيا">جنوب أفريقيا</option>
+                          <option value="كوريا الجنوبية">كوريا الجنوبية</option>
+                          <option value="جنوب السودان">جنوب السودان</option>
+                          <option value="إسبانيا">إسبانيا</option>
+                          <option value="سريلانكا">سريلانكا</option>
+                          <option value="السودان">السودان</option>
+                          <option value="سورينام">سورينام</option>
+                          <option value="سوازيلاند">سوازيلاند</option>
+                          <option value="السويد">السويد</option>
+                          <option value="سويسرا">سويسرا</option>
+                          <option value="سوريا">سوريا</option>
+                          <option value="طاجيكستان">طاجيكستان</option>
+                          <option value="تنزانيا">تنزانيا</option>
+                          <option value="تايلاند">تايلاند</option>
+                          <option value="توغو">توغو</option>
+                          <option value="تونجا">تونجا</option>
+                          <option value="ترينيداد وتوباغو">ترينيداد وتوباغو</option>
+                          <option value="تونس">تونس</option>
+                          <option value="تركيا">تركيا</option>
+                          <option value="تركمانستان">تركمانستان</option>
+                          <option value="توفالو">توفالو</option>
+                          <option value="أوغندا">أوغندا</option>
+                          <option value="أوكرانيا">أوكرانيا</option>
+                          <option value="الإمارات العربية المتحدة">
+                            الإمارات العربية المتحدة
+                          </option>
+                          <option value="المملكة المتحدة">المملكة المتحدة</option>
+                          <option value="الولايات المتحدة">الولايات المتحدة</option>
+                          <option value="أوروغواي">أوروغواي</option>
+                          <option value="أوزبكستان">أوزبكستان</option>
+                          <option value="فانواتو">فانواتو</option>
+                          <option value="فنزويلا">فنزويلا</option>
+                          <option value="فيتنام">فيتنام</option>
+                          <option value="اليمن">اليمن</option>
+                          <option value="زامبيا">زامبيا</option>
+                          <option value="زيمبابوي">زيمبابوي</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col mb-4 form-group">
+                      <label for="id_sponsorship_info_health_status" class="form-label"
+                        >الجنس</label
+                      >
+                      <select
+                        name="sponsorship_info_health_status"
+                        class="form-control form-control-sm"
+                        id="id_sponsorship_info_health_status"
+                      >
+                        <option value selected>الكل</option>
+                        <option value="غير جيدة">غير جيدة</option>
+                        <option value="جيدة">جيدة</option>
+                      </select>
+                    </div>
+                    <div class="col mb-4 form-group">
+                      <label for="id_sponsorship_info_gender" class="form-label"
+                        >الحالة الصحية</label
+                      >
+                      <select
+                        name="sponsorship_info_gender"
+                        class="form-control form-control-sm"
+                        id="id_sponsorship_info_gender"
+                      >
+                        <option value selected>الكل</option>
+                        <option value="ذكر">ذكر</option>
+                        <option value="انثى">انثى</option>
+                      </select>
+                    </div>
+                  </div>
+                  <hr>
+                </div>
+                
+                <table id="beneficiaries_table" class="table table-striped table-hover table-bordered text-nowrap">
                   <thead>
                     <tr>
                       <th>اختار</th>
@@ -566,8 +907,10 @@
                         <td><div class="form-check">
                           <input class="form-check-input" type="checkbox" value="" id="id_beneficiary_check{{data.id}}">
                         </div></td>
-                        <th class="col">{{ data.file_no }}</th>
+                        <th class="col">{{ data.id }}</th>
+                        <td class="col">{{ data.gender }}</td>
                         <td class="col">{{ data.in_ex_diff }}</td>
+                        <td class="col">{{ data.health_status }}</td>
                         <td class="col">{{ data.age }}</td>
                         <td class="col">{{ data.nationality }}</td>
                       </tr>
@@ -578,241 +921,8 @@
 
               <div class="row row-cols-md-1 row-cols-xl-3 mt-2">
                 <div class="mb-4 form-group">
-                  <label for="id_sponsorship_info_nationality" class="form-label"
-                    >الجنسية</label
-                  >
-                  <select
-                    name="sponsorship_info_nationality"
-                    class="form-control"
-                    id="id_sponsorship_info_nationality"
-                  >
-                    <option value selected>إختر</option>
-                    <option value="السعودية">السعودية</option>
-                    <option value="أفغانستان">أفغانستان</option>
-                    <option value="ألبانيا">ألبانيا</option>
-                    <option value="الجزائر">الجزائر</option>
-                    <option value="أندورا">أندورا</option>
-                    <option value="أنغولا">أنغولا</option>
-                    <option value="أنتيغوا وباربودا">أنتيغوا وباربودا</option>
-                    <option value="الأرجنتين">الأرجنتين</option>
-                    <option value="أرمينيا">أرمينيا</option>
-                    <option value="أستراليا">أستراليا</option>
-                    <option value="النمسا">النمسا</option>
-                    <option value="أذربيجان">أذربيجان</option>
-                    <option value="البهاما">البهاما</option>
-                    <option value="البحرين">البحرين</option>
-                    <option value="بنغلاديش">بنغلاديش</option>
-                    <option value="باربادوس">باربادوس</option>
-                    <option value="بيلاروسيا">بيلاروسيا</option>
-                    <option value="بلجيكا">بلجيكا</option>
-                    <option value="بليز">بليز</option>
-                    <option value="بنين">بنين</option>
-                    <option value="بوتان">بوتان</option>
-                    <option value="بوليفيا">بوليفيا</option>
-                    <option value="البوسنة والهرسك ">البوسنة والهرسك</option>
-                    <option value="بوتسوانا">بوتسوانا</option>
-                    <option value="البرازيل">البرازيل</option>
-                    <option value="بروناي">بروناي</option>
-                    <option value="بلغاريا">بلغاريا</option>
-                    <option value="بوركينا فاسو ">بوركينا فاسو</option>
-                    <option value="بوروندي">بوروندي</option>
-                    <option value="كمبوديا">كمبوديا</option>
-                    <option value="الكاميرون">الكاميرون</option>
-                    <option value="كندا">كندا</option>
-                    <option value="الرأس الأخضر">الرأس الأخضر</option>
-                    <option value="جمهورية أفريقيا الوسطى ">
-                      جمهورية أفريقيا الوسطى
-                    </option>
-                    <option value="تشاد">تشاد</option>
-                    <option value="تشيلي">تشيلي</option>
-                    <option value="الصين">الصين</option>
-                    <option value="كولومبيا">كولومبيا</option>
-                    <option value="جزر القمر">جزر القمر</option>
-                    <option value="كوستاريكا">كوستاريكا</option>
-                    <option value="ساحل العاج">ساحل العاج</option>
-                    <option value="كرواتيا">كرواتيا</option>
-                    <option value="كوبا">كوبا</option>
-                    <option value="قبرص">قبرص</option>
-                    <option value="التشيك">التشيك</option>
-                    <option value="جمهورية الكونغو الديمقراطية">
-                      جمهورية الكونغو الديمقراطية
-                    </option>
-                    <option value="الدنمارك">الدنمارك</option>
-                    <option value="جيبوتي">جيبوتي</option>
-                    <option value="دومينيكا">دومينيكا</option>
-                    <option value="جمهورية الدومينيكان">
-                      جمهورية الدومينيكان
-                    </option>
-                    <option value="تيمور الشرقية ">تيمور الشرقية</option>
-                    <option value="الإكوادور">الإكوادور</option>
-                    <option value="مصر">مصر</option>
-                    <option value="السلفادور">السلفادور</option>
-                    <option value="غينيا الاستوائية">غينيا الاستوائية</option>
-                    <option value="إريتريا">إريتريا</option>
-                    <option value="إستونيا">إستونيا</option>
-                    <option value="إثيوبيا">إثيوبيا</option>
-                    <option value="فيجي">فيجي</option>
-                    <option value="فنلندا">فنلندا</option>
-                    <option value="فرنسا">فرنسا</option>
-                    <option value="الغابون">الغابون</option>
-                    <option value="غامبيا">غامبيا</option>
-                    <option value="جورجيا">جورجيا</option>
-                    <option value="ألمانيا">ألمانيا</option>
-                    <option value="غانا">غانا</option>
-                    <option value="اليونان">اليونان</option>
-                    <option value="جرينادا">جرينادا</option>
-                    <option value="غواتيمالا">غواتيمالا</option>
-                    <option value="غينيا">غينيا</option>
-                    <option value="غينيا بيساو">غينيا بيساو</option>
-                    <option value="غويانا">غويانا</option>
-                    <option value="هايتي">هايتي</option>
-                    <option value="هندوراس">هندوراس</option>
-                    <option value="المجر">المجر</option>
-                    <option value="آيسلندا">آيسلندا</option>
-                    <option value="الهند">الهند</option>
-                    <option value="إندونيسيا">إندونيسيا</option>
-                    <option value="إيران">إيران</option>
-                    <option value="العراق">العراق</option>
-                    <option value="جمهورية أيرلندا ">جمهورية أيرلندا</option>
-                    <option value="فلسطين">فلسطين</option>
-                    <option value="إيطاليا">إيطاليا</option>
-                    <option value="جامايكا">جامايكا</option>
-                    <option value="اليابان">اليابان</option>
-                    <option value="الأردن">الأردن</option>
-                    <option value="كازاخستان">كازاخستان</option>
-                    <option value="كينيا">كينيا</option>
-                    <option value="كيريباتي">كيريباتي</option>
-                    <option value="الكويت">الكويت</option>
-                    <option value="قرغيزستان">قرغيزستان</option>
-                    <option value="لاوس">لاوس</option>
-                    <option value="لاوس">لاوس</option>
-                    <option value="لاتفيا">لاتفيا</option>
-                    <option value="لبنان">لبنان</option>
-                    <option value="ليسوتو">ليسوتو</option>
-                    <option value="ليبيريا">ليبيريا</option>
-                    <option value="ليبيا">ليبيا</option>
-                    <option value="ليختنشتاين">ليختنشتاين</option>
-                    <option value="ليتوانيا">ليتوانيا</option>
-                    <option value="لوكسمبورغ">لوكسمبورغ</option>
-                    <option value="مدغشقر">مدغشقر</option>
-                    <option value="مالاوي">مالاوي</option>
-                    <option value="ماليزيا">ماليزيا</option>
-                    <option value="جزر المالديف">جزر المالديف</option>
-                    <option value="مالي">مالي</option>
-                    <option value="مالطا">مالطا</option>
-                    <option value="جزر مارشال">جزر مارشال</option>
-                    <option value="موريتانيا">موريتانيا</option>
-                    <option value="موريشيوس">موريشيوس</option>
-                    <option value="المكسيك">المكسيك</option>
-                    <option value="مايكرونيزيا">مايكرونيزيا</option>
-                    <option value="مولدوفا">مولدوفا</option>
-                    <option value="موناكو">موناكو</option>
-                    <option value="منغوليا">منغوليا</option>
-                    <option value="الجبل الأسود">الجبل الأسود</option>
-                    <option value="المغرب">المغرب</option>
-                    <option value="موزمبيق">موزمبيق</option>
-                    <option value="بورما">بورما</option>
-                    <option value="ناميبيا">ناميبيا</option>
-                    <option value="ناورو">ناورو</option>
-                    <option value="نيبال">نيبال</option>
-                    <option value="هولندا">هولندا</option>
-                    <option value="نيوزيلندا">نيوزيلندا</option>
-                    <option value="نيكاراجوا">نيكاراجوا</option>
-                    <option value="النيجر">النيجر</option>
-                    <option value="نيجيريا">نيجيريا</option>
-                    <option value="كوريا الشمالية ">كوريا الشمالية</option>
-                    <option value="النرويج">النرويج</option>
-                    <option value="سلطنة عمان">سلطنة عمان</option>
-                    <option value="باكستان">باكستان</option>
-                    <option value="بالاو">بالاو</option>
-                    <option value="بنما">بنما</option>
-                    <option value="بابوا غينيا الجديدة">
-                      بابوا غينيا الجديدة
-                    </option>
-                    <option value="باراغواي">باراغواي</option>
-                    <option value="بيرو">بيرو</option>
-                    <option value="الفلبين">الفلبين</option>
-                    <option value="بولندا">بولندا</option>
-                    <option value="البرتغال">البرتغال</option>
-                    <option value="قطر">قطر</option>
-                    <option value="جمهورية الكونغو">جمهورية الكونغو</option>
-                    <option value="جمهورية مقدونيا">جمهورية مقدونيا</option>
-                    <option value="رومانيا">رومانيا</option>
-                    <option value="روسيا">روسيا</option>
-                    <option value="رواندا">رواندا</option>
-                    <option value="سانت كيتس ونيفيس">سانت كيتس ونيفيس</option>
-                    <option value="سانت لوسيا">سانت لوسيا</option>
-                    <option value="سانت فنسينت والجرينادينز">
-                      سانت فنسينت والجرينادينز
-                    </option>
-                    <option value="ساموا">ساموا</option>
-                    <option value="سان مارينو">سان مارينو</option>
-                    <option value="ساو تومي وبرينسيب">
-                      ساو تومي وبرينسيب
-                    </option>
-                    <option value="السنغال">السنغال</option>
-                    <option value="صربيا">صربيا</option>
-                    <option value="سيشيل">سيشيل</option>
-                    <option value="سيراليون">سيراليون</option>
-                    <option value="سنغافورة">سنغافورة</option>
-                    <option value="سلوفاكيا">سلوفاكيا</option>
-                    <option value="سلوفينيا">سلوفينيا</option>
-                    <option value="جزر سليمان">جزر سليمان</option>
-                    <option value="الصومال">الصومال</option>
-                    <option value="جنوب أفريقيا">جنوب أفريقيا</option>
-                    <option value="كوريا الجنوبية">كوريا الجنوبية</option>
-                    <option value="جنوب السودان">جنوب السودان</option>
-                    <option value="إسبانيا">إسبانيا</option>
-                    <option value="سريلانكا">سريلانكا</option>
-                    <option value="السودان">السودان</option>
-                    <option value="سورينام">سورينام</option>
-                    <option value="سوازيلاند">سوازيلاند</option>
-                    <option value="السويد">السويد</option>
-                    <option value="سويسرا">سويسرا</option>
-                    <option value="سوريا">سوريا</option>
-                    <option value="طاجيكستان">طاجيكستان</option>
-                    <option value="تنزانيا">تنزانيا</option>
-                    <option value="تايلاند">تايلاند</option>
-                    <option value="توغو">توغو</option>
-                    <option value="تونجا">تونجا</option>
-                    <option value="ترينيداد وتوباغو">ترينيداد وتوباغو</option>
-                    <option value="تونس">تونس</option>
-                    <option value="تركيا">تركيا</option>
-                    <option value="تركمانستان">تركمانستان</option>
-                    <option value="توفالو">توفالو</option>
-                    <option value="أوغندا">أوغندا</option>
-                    <option value="أوكرانيا">أوكرانيا</option>
-                    <option value="الإمارات العربية المتحدة">
-                      الإمارات العربية المتحدة
-                    </option>
-                    <option value="المملكة المتحدة">المملكة المتحدة</option>
-                    <option value="الولايات المتحدة">الولايات المتحدة</option>
-                    <option value="أوروغواي">أوروغواي</option>
-                    <option value="أوزبكستان">أوزبكستان</option>
-                    <option value="فانواتو">فانواتو</option>
-                    <option value="فنزويلا">فنزويلا</option>
-                    <option value="فيتنام">فيتنام</option>
-                    <option value="اليمن">اليمن</option>
-                    <option value="زامبيا">زامبيا</option>
-                    <option value="زيمبابوي">زيمبابوي</option>
-                  </select>
-                </div>
-                <div class="mb-4 form-group">
-                  <label for="id_sponsorship_info_age" class="form-label"
-                    >العمر</label
-                  >
-                  <input
-                    type="number"
-                    name="sponsorship_info_age"
-                    max="99"
-                    min="0"
-                    class="form-control"
-                    id="id_sponsorship_info_age"
-                  />
-                </div>
-                <div class="mb-4 form-group">
                   <label for="id_sponsorship_info_duration" class="form-label"
-                    >مدة الدفع<span style="color: red"
+                    >مدة الدعم<span style="color: red"
                     >*</span
                   ></label
                   >
@@ -1355,10 +1465,116 @@
 
   }); // (document).ready() end line
 
-  $('#beneficiaries_table').DataTable( {
+  // JS for age range input with MIN-MAX
+  const range = document.querySelectorAll('.range-slider input');
+  progress = document.querySelector('.range-slider .progress');
+  let gap = 0;
+  const inputValue = document.querySelectorAll('.numberVal input');
+
+  range.forEach(input => {
+    input.addEventListener('input', e =>{
+      let minrange = parseInt(range[0].value),
+      maxrange = parseInt(range[1].value);
+
+      if (maxrange - minrange < gap) {
+        if (e.target.className === "range-min"){
+          range[0].value = maxrange - gap;
+        }
+        else {
+          range[1].value = minrange + gap;
+        }
+      }
+      else {
+        progress.style.right = ((minrange / range[0].max) * 100)+ 1 + '%';
+        progress.style.left = (100 - (maxrange / range[1].max) * 100) - 1 + '%';
+        inputValue[0].value = minrange;
+        inputValue[1].value = maxrange;
+      }
+
+      // Changes to the inputs will trigger a redraw to update the table
+      // Trigger a redraw of the DataTable
+      table.draw();
+
+      console.log(inputValue[0].value, inputValue[1].value);
+    })
+  })
+  
+  // Custom range filtering function
+  DataTable.ext.search.push(function (settings, data, dataIndex) {
+      let min = parseInt(inputValue[0].value, 10);
+      let max = parseInt(inputValue[1].value, 10);
+      let age = parseFloat(data[5]) || 0; // use data for the age column
+  
+      if (
+          (isNaN(min) && isNaN(max)) ||
+          (isNaN(min) && age <= max) ||
+          (min <= age && isNaN(max)) ||
+          (min <= age && age <= max)
+      ) {
+          return true;
+      }
+  
+      return false;
+  });
+
+  // Variables for gender and nationality form-input
+  const genderEl = document.querySelector('#id_sponsorship_info_gender');
+  const nationalityEl = document.querySelector('#id_sponsorship_info_nationality');
+  const healthStatusEl = document.querySelector('#id_sponsorship_info_health_status');
+  
+  // Custom range filtering function
+  DataTable.ext.search.push(function (settings, data, dataIndex) {
+      let nationality = (data[6]) || 0; // use data for the age column
+  
+      if (nationalityEl.value === '' || nationality === nationalityEl.value) {
+          return true;
+      }
+      
+      return false;
+
+  });
+
+  nationalityEl.addEventListener('change', function () {
+    table.draw();
+  });
+
+  // Custom range filtering function
+  DataTable.ext.search.push(function (settings, data, dataIndex) {
+    let gender = (data[2]) || 0; // use data for the age column
+
+    if (genderEl.value === '' || gender === genderEl.value) {
+        return true;
+    }
+    
+    return false;
+
+  });
+
+  genderEl.addEventListener('change', function () {
+    table.draw();
+  });
+
+  // Table initialization
+  var table = $('#beneficiaries_table').DataTable( {
     language: {
       url: "{% static '/Arabic.json' %}"
     },
+  });
+
+  // Custom range filtering function
+  DataTable.ext.search.push(function (settings, data, dataIndex) {
+    let health_status = (data[4]) || 0; // use data for the age column
+
+    if (healthStatusEl.value === '' || health_status === healthStatusEl.value) {
+        return true;
+    }
+    
+    return false;
+
+  });
+
+  healthStatusEl.addEventListener('change', function () {
+    table.draw();
   });
 </script>
 {% endblock %}
