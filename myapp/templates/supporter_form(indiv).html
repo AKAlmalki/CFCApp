@@ -652,7 +652,7 @@
                 <div class="input-group mb-4" id="id_orphan_duration_group_info" style="display: none;">
                   <label for="id_charitychoice_orphan_donation_type" class="form-label col-12">مدة الدعم (ايتام)</label>
                   <span class="col-6 input-group-text" id="basic-addon1">
-                    <input id="id_charitychoice_orphan_donation_number" type="number" value="0" min="0" max="99" class="form-control form-control-sm">
+                    <input id="id_charitychoice_orphan_donation_number" type="number" value="0" min="0" max="99" class="form-control form-control-sm" name="charitychoice_orphan_donation_number">
                   </span>
                   <select id="id_charitychoice_orphan_donation_type" class="col-6 form-select form-select form-select-sm" name="charitychoice_orphan_donation_type"> 
                     <option selected>اختار...</option>
@@ -665,7 +665,7 @@
                 <div class="input-group mb-4" id="id_widower_duration_group_info" style="display: none;">
                   <label for="id_charitychoice_widower_donation_type" class="form-label col-12">مدة الدعم (ارامل)</label>
                   <span class="col-6 input-group-text" id="basic-addon1">
-                    <input id="id_charitychoice_widower_donation_number" type="number" value="0" min="0" max="99" class="form-control form-control-sm">
+                    <input id="id_charitychoice_widower_donation_number" type="number" value="0" min="0" max="99" class="form-control form-control-sm" name="charitychoice_widower_donation_number">
                   </span>
                   <select id="id_charitychoice_widower_donation_type" class="col-6 form-select form-select form-select-sm" name="charitychoice_widower_donation_type"> 
                     <option selected>اختار...</option>
@@ -1515,40 +1515,40 @@
         // Adding the rules (validations) for each input in the form.
         rules: {
           personalinfo_first_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_second_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_last_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_date_of_birth: {
-            required: false,
+            required: true,
             dateISO: true,
           },
           personalinfo_gender: {
-            required: false,
+            required: true,
           },
           personalinfo_national_id: {
-            required: false,
+            required: true,
             nationalidRegex: true,
           },
           personalinfo_national_id_exp_date: {
-            required: false,
+            required: true,
             dateISO: true,
           },
           personalinfo_nationality: {
-            required: false,
+            required: true,
             maxlength: 30,
           },
           personalinfo_marital_status: {
@@ -1561,15 +1561,44 @@
             required: false,
           },
           personalinfo_employer: {
-            required: false,
+            required: true,
           },
           personalinfo_phone_number: {
-            required: false,
+            required: true,
             saudiPhoneRegex: true,
           },
           personalinfo_email: {
-            //emailRegex: true,
+            required: true,
           },
+          // Sponsorship information ------------
+          charitychoice_orphan_number: {
+            required: true,
+          },
+          charitychoice_widower_number: {
+            required: true,
+          },
+          charitychoice_orphan_donation_number: {
+            required: true,
+          },
+          charitychoice_orphan_donation_type: {
+            required: true,
+          },
+          charitychoice_widower_donation_number: {
+            required: true,
+          },
+          charitychoice_widower_donation_type: {
+            required: true,
+          },
+          sponsorship_info_duration: {
+            required: true,
+          },
+          sponsorship_info_donation_type: {
+            required: true,
+          },
+          file_bank_transfer: {
+            required: true, // [Check why it doesn't work]
+          },
+          
         },
         messages: {
           personalinfo_first_name: {
