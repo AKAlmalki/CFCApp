@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.db.models import JSONField
 import datetime
+from datetime import date
 
 
 class TodoItem(models.Model):
@@ -65,15 +66,16 @@ class beneficiary(models.Model):
     # justifications = models.CharField(max_length=512)# Not included here
     receivedAt = models.DateTimeField(auto_now_add=True, null=True)
     reviewedAt = models.DateTimeField(
-        auto_now=True, null=True)  # Not included yet - dashboard
+        null=True)  # Not included yet - dashboard
     bank_type = models.CharField(max_length=64, null=True)
     bank_iban = models.CharField(max_length=32, null=True)
     family_issues = JSONField(default=list)
     family_needs = JSONField(default=list)
 
     def __str__(self):
-        return "name: " + self.first_name + ", national_id:" + self.national_id
+        return "file_no " + self.file_no + ", name: " + self.first_name + ", national_id:" + self.national_id
 
+    # Overwrite save() method to perform additional operations (calculate file_no)
     def save(self, category_seg, region_seg, *args, **kwargs):
         if not self.file_no:
             year = datetime.date.today().year
@@ -98,6 +100,12 @@ class beneficiary(models.Model):
         # Implement your logic to calculate the check digit
         # This is a placeholder function
         return 0
+
+    # Calculate age and make it a property (which will be always calculated when invoked)
+    @property
+    def age(self):
+        today = date.today()
+        return today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
 
 
 class beneficiary_house(models.Model):
@@ -148,6 +156,30 @@ class beneficiary_income_expense(models.Model):
         decimal_places=2, max_digits=15, default=0)
     other_ex = models.DecimalField(decimal_places=2, max_digits=15, default=0)
 
+    @property
+    def total_in(self):
+        total_in = float(self.salary_in + self.social_insurance_in + self.charity_in + self.social_warranty_in +
+                         self.pension_agency_in + self.citizen_account_in + self.benefactor_in + self.other_in)
+        total_in = round(total_in, 2)  # let 2 digits after the decimal point
+        return total_in
+
+    @property
+    def total_ex(self):
+        total_ex = float(self.housing_rent_ex + self.electricity_bills_ex + self.water_bills_ex + self.transportation_ex +
+                         self.health_supplies_ex + self.food_supplies_ex + self.educational_supplies_ex + self.proven_debts_ex + self.other_ex)
+        total_ex = round(total_ex, 2)  # let 2 digits after the decimal point
+        return total_ex
+
+    @property
+    def in_ex_diff(self):
+        in_ex_diff_percentage = 0
+        if self.total_ex != 0:
+            in_ex_diff_percentage = (1 - (self.total_in / self.total_ex)) * 100
+        # let 2 digits after the decimal point
+        in_ex_diff_percentage = round(in_ex_diff_percentage, 2)
+
+        return in_ex_diff_percentage
+
 
 class dependent(models.Model):
     first_name = models.CharField(max_length=55)
@@ -171,6 +203,9 @@ class dependent(models.Model):
     disease_type = models.CharField(max_length=100, null=True)
     beneficiary_id = models.ForeignKey(
         beneficiary, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return "first_name " + self.first_name + ", second_name: " + self.second_name + ", national_id:" + self.national_id
 
 
 class individual_supporter_operation(models.Model):

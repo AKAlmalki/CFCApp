@@ -6,17 +6,25 @@ from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime
+from datetime import datetime, date
 import logging
 import os
 import json
 from openpyxl import Workbook
 from openpyxl.styles import *
 import decimal
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 # Set up logging
 logger = logging.getLogger(__name__)
+
+# Constants =======================================
+
+IPP_DASHBOARD_REQUESTS = 10  # IPP stands for Item Per Page
+IPP_SUPPORTER_FORM = 8
+IPP_DASHBOARD_REPORTS = 10
 
 # Utility functions =======================================
 
@@ -37,6 +45,10 @@ def is_valid_queryparam(param, type):
         return param != '' and param is not None
     elif type == 2:
         return param != "اختار..." and param is not None
+
+
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 # View Handlers ==============================================
 
@@ -126,7 +138,9 @@ def new_dashboard(request):
 @login_required(login_url="/login")
 def dashboard_requests(request):
     beneficiary_obj = beneficiary.objects.all()
-
+    paginator = Paginator(beneficiary_obj, IPP_DASHBOARD_REQUESTS)
+    page_number = request.GET.get('page')
+    beneficiary_obj = paginator.get_page(page_number)
     context = {
         "beneficiary_obj": beneficiary_obj,
         "beneficiaries_headers": ['رقم الملف', 'الأسم الأول', 'الأسم الأخير', 'التصنيف', 'الحالة الصحية', 'تاريخ الإرسال', 'الحالة الاجتماعية', 'مؤهل؟', 'الاجراءات'],
@@ -150,6 +164,14 @@ def dashboard_reports(request):
         category = request.POST.get("beneficiary_category")
         marital_status = request.POST.get("beneficiary_marital_status")
         is_qualified = request.POST.get("beneficiary_is_qualified")
+
+        # Passing the form data to the session data
+        request.session["beneficiary_first_name"] = beneficiary_first_name
+        request.session["beneficiary_last_name"] = beneficiary_last_name
+        request.session["beneficiary_national_id"] = national_id
+        request.session["beneficiary_category"] = category
+        request.session["beneficiary_marital_status"] = marital_status
+        request.session["beneficiary_is_qualified"] = is_qualified
 
         # Validate query param
         if is_valid_queryparam(beneficiary_first_name, type=1):
@@ -180,6 +202,95 @@ def dashboard_reports(request):
                 is_qualified = False
 
             beneficiary_arr = beneficiary_arr.filter(is_qualified=is_qualified)
+
+        # Prepare pagination
+        paginator = Paginator(beneficiary_arr, IPP_DASHBOARD_REPORTS)
+        page_number = request.GET.get('page')
+        beneficiary_arr = paginator.get_page(page_number)
+
+        context = {
+            "beneficiaries_headers": [
+                "رقم الملف",
+                "الأسم الأول",
+                "الأسم الأخير",
+                "رقم الهوية",
+                "التصنيف",
+                "الحالة الاجتماعية",
+                "مؤهل؟"
+            ],
+            "beneficiaries": beneficiary_arr,
+            "first_name": beneficiary_first_name,
+            "last_name": beneficiary_last_name,
+            "national_id": national_id,
+            "category": category,
+            "marital_status": marital_status,
+            "is_qualified": is_qualified_val,
+        }
+
+        return render(request, "reports.html", context)
+
+    else:
+        return render(request, "reports.html")
+
+
+@login_required(login_url="/login")
+def dashboard_reports_post(request):
+
+    if request.method == "GET":
+
+        # Get beneficiary table data (all)
+        beneficiary_arr = beneficiary.objects.all()
+
+        # Retrive form data
+        beneficiary_first_name = request.GET.get("beneficiary_first_name")
+        beneficiary_last_name = request.GET.get("beneficiary_last_name")
+        national_id = request.GET.get("beneficiary_national_id")
+        category = request.GET.get("beneficiary_category")
+        marital_status = request.GET.get("beneficiary_marital_status")
+        is_qualified = request.GET.get("beneficiary_is_qualified")
+
+        # Passing the form data to the session data
+        request.session["beneficiary_first_name"] = beneficiary_first_name
+        request.session["beneficiary_last_name"] = beneficiary_last_name
+        request.session["beneficiary_national_id"] = national_id
+        request.session["beneficiary_category"] = category
+        request.session["beneficiary_marital_status"] = marital_status
+        request.session["beneficiary_is_qualified"] = is_qualified
+
+        # Validate query param
+        if is_valid_queryparam(beneficiary_first_name, type=1):
+            beneficiary_arr = beneficiary_arr.filter(
+                first_name__icontains=beneficiary_first_name)
+
+        if is_valid_queryparam(beneficiary_last_name, type=1):
+            beneficiary_arr = beneficiary_arr.filter(
+                last_name__icontains=beneficiary_last_name)
+
+        if is_valid_queryparam(national_id, type=1):
+            beneficiary_arr = beneficiary_arr.filter(national_id=national_id)
+
+        if is_valid_queryparam(category, type=2):
+            beneficiary_arr = beneficiary_arr.filter(category=category)
+
+        if is_valid_queryparam(marital_status, type=2):
+            beneficiary_arr = beneficiary_arr.filter(
+                marital_status=marital_status)
+
+        # Keep the original value to be sent back in the response
+        is_qualified_val = is_qualified
+
+        if is_valid_queryparam(is_qualified, type=2):
+            if is_qualified == "مؤهل":
+                is_qualified = True
+            else:
+                is_qualified = False
+
+            beneficiary_arr = beneficiary_arr.filter(is_qualified=is_qualified)
+
+        # Prepare pagination
+        paginator = Paginator(beneficiary_arr, IPP_DASHBOARD_REPORTS)
+        page_number = request.GET.get('page')
+        beneficiary_arr = paginator.get_page(page_number)
 
         context = {
             "beneficiaries_headers": [
@@ -337,28 +448,28 @@ def export_excel(request):
     second_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Style the third row
-    second_cell = worksheet['A3']
-    second_cell.value = "رقم الهوية: " + " " + beneficiary_national_id
-    second_cell.font = Font(bold=True, color="246ba1")
-    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+    third_cell = worksheet['A3']
+    third_cell.value = "رقم الهوية: " + " " + beneficiary_national_id
+    third_cell.font = Font(bold=True, color="246ba1")
+    third_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Style the forth row
-    second_cell = worksheet['A4']
-    second_cell.value = "التصنيف: " + " " + beneficiary_category
-    second_cell.font = Font(bold=True, color="246ba1")
-    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+    forth_cell = worksheet['A4']
+    forth_cell.value = "التصنيف: " + " " + beneficiary_category
+    forth_cell.font = Font(bold=True, color="246ba1")
+    forth_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Style the fifth row
-    second_cell = worksheet['A5']
-    second_cell.value = "الحالة الاجتماعية: " + " " + beneficiary_marital_status
-    second_cell.font = Font(bold=True, color="246ba1")
-    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+    fifth_cell = worksheet['A5']
+    fifth_cell.value = "الحالة الاجتماعية: " + " " + beneficiary_marital_status
+    fifth_cell.font = Font(bold=True, color="246ba1")
+    fifth_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Style the sixth row
-    second_cell = worksheet['A6']
-    second_cell.value = "مؤهل أم لا: " + " " + beneficiary_is_qualified
-    second_cell.font = Font(bold=True, color="246ba1")
-    second_cell.alignment = Alignment(horizontal="center", vertical="center")
+    sixth_cell = worksheet['A6']
+    sixth_cell.value = "مؤهل أم لا: " + " " + beneficiary_is_qualified
+    sixth_cell.font = Font(bold=True, color="246ba1")
+    sixth_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     worksheet.title = 'AA'
 
@@ -396,6 +507,7 @@ def export_excel(request):
 
 
 @csrf_exempt
+@login_required(login_url="/login")
 def beneficiary_indiv(request):
 
     if request.method == 'POST':
@@ -495,25 +607,31 @@ def beneficiary_indiv(request):
         )
         beneficiary_house_obj.save()
 
-        # Accessing the data for beneficiary_income_expense
-        salary_in = data.get('incomeinfo_salary', None)
-        social_insurance_in = data.get('incomeinfo_social_insurance', None)
-        charity_in = data.get('incomeinfo_charity', None)
-        social_warranty_in = data.get('incomeinfo_social_warranty', None)
-        pension_agency_in = data.get('incomeinfo_pension_agency', None)
-        citizen_account_in = data.get('incomeinfo_citizen_account', None)
-        benefactor_in = data.get('incomeinfo_benefactor', None)
-        other_in = data.get('incomeinfo_other', None)
-        housing_rent_ex = data.get('expensesinfo_housing_rent', None)
-        electricity_bills_ex = data.get('expensesinfo_electricity_bills', None)
-        water_bills_ex = data.get('expensesinfo_water_bills', None)
-        transportation_ex = data.get('expensesinfo_transportation', None)
-        health_supplies_ex = data.get('expensesinfo_health_supplies', None)
-        food_supplies_ex = data.get('expensesinfo_food_supplies', None)
-        educational_supplies_ex = data.get(
-            'expensesinfo_educational_supplies', None)
-        proven_debts_ex = data.get('expensesinfo_proven_debts', None)
-        other_ex = data.get('expensesinfo_other', None)
+        # Accessing the data for beneficiary_income_expense, and converting str into float type
+        salary_in = float(data.get('incomeinfo_salary', None))
+        social_insurance_in = float(
+            data.get('incomeinfo_social_insurance', None))
+        charity_in = float(data.get('incomeinfo_charity', None))
+        social_warranty_in = float(
+            data.get('incomeinfo_social_warranty', None))
+        pension_agency_in = float(data.get('incomeinfo_pension_agency', None))
+        citizen_account_in = float(
+            data.get('incomeinfo_citizen_account', None))
+        benefactor_in = float(data.get('incomeinfo_benefactor', None))
+        other_in = float(data.get('incomeinfo_other', None))
+        housing_rent_ex = float(data.get('expensesinfo_housing_rent', None))
+        electricity_bills_ex = float(
+            data.get('expensesinfo_electricity_bills', None))
+        water_bills_ex = float(data.get('expensesinfo_water_bills', None))
+        transportation_ex = float(
+            data.get('expensesinfo_transportation', None))
+        health_supplies_ex = float(
+            data.get('expensesinfo_health_supplies', None))
+        food_supplies_ex = float(data.get('expensesinfo_food_supplies', None))
+        educational_supplies_ex = float(data.get(
+            'expensesinfo_educational_supplies', None))
+        proven_debts_ex = float(data.get('expensesinfo_proven_debts', None))
+        other_ex = float(data.get('expensesinfo_other', None))
 
         beneficiary_income_expense_obj = beneficiary_income_expense(
             salary_in=salary_in,
@@ -557,7 +675,6 @@ def beneficiary_indiv(request):
 
         # Now, you can iterate over the list of dependents
         for dep in dependents_list:
-            print(dep)  # This will print each dependent as a dictionary
             # Extract the data for each field
             first_name = dep.get('firstName', '')
             second_name = dep.get('secondName', '')
@@ -615,3 +732,231 @@ def beneficiary_indiv(request):
 
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+@login_required(login_url="/login")
+def beneficiary_details(request, beneficiary_id):
+    if request.method == 'GET':
+        try:
+            beneficiary_obj = beneficiary.objects.get(id=beneficiary_id)
+
+            beneficiary_housing_obj = beneficiary_house.objects.get(
+                beneficiary_id=beneficiary_id)
+
+            housing_data = {
+                'building_number': beneficiary_housing_obj.building_number,
+                'street_name': beneficiary_housing_obj.street_name,
+                'neighborhood': beneficiary_housing_obj.neighborhood,
+                'city': beneficiary_housing_obj.city,
+                'postal_code': beneficiary_housing_obj.postal_code,
+                'additional_number': beneficiary_housing_obj.additional_number,
+                'unit': beneficiary_housing_obj.unit,
+                'location_url': beneficiary_housing_obj.location_url,
+                'housing_type': beneficiary_housing_obj.housing_type,
+                'housing_ownership': beneficiary_housing_obj.housing_ownership
+            }
+
+            beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
+                beneficiary_id=beneficiary_id)
+
+            income_expense_data = {
+                'salary_in': beneficiary_income_expense_obj.salary_in,
+                'social_insurance_in': beneficiary_income_expense_obj.social_insurance_in,
+                'charity_in': beneficiary_income_expense_obj.charity_in,
+                'social_warranty_in': beneficiary_income_expense_obj.social_warranty_in,
+                'pension_agency_in': beneficiary_income_expense_obj.pension_agency_in,
+                'citizen_account_in': beneficiary_income_expense_obj.citizen_account_in,
+                'benefactor_in': beneficiary_income_expense_obj.benefactor_in,
+                'other_in': beneficiary_income_expense_obj.other_in,
+                'housing_rent_ex': beneficiary_income_expense_obj.housing_rent_ex,
+                'electricity_bills_ex': beneficiary_income_expense_obj.electricity_bills_ex,
+                'water_bills_ex': beneficiary_income_expense_obj.water_bills_ex,
+                'transportation_ex': beneficiary_income_expense_obj.transportation_ex,
+                'health_supplies_ex': beneficiary_income_expense_obj.health_supplies_ex,
+                'food_supplies_ex': beneficiary_income_expense_obj.food_supplies_ex,
+                'educational_supplies_ex': beneficiary_income_expense_obj.educational_supplies_ex,
+                'proven_debts_ex': beneficiary_income_expense_obj.proven_debts_ex,
+                'other_ex': beneficiary_income_expense_obj.other_ex
+            }
+
+            dependent_list = dependent.objects.filter(
+                beneficiary_id=beneficiary_id).all()
+
+            dependent_data = []
+
+            for dependent_obj in dependent_list:
+                dependent_data.append({
+                    'dependent_id': dependent_obj.id,
+                    'dependent_first_name': dependent_obj.first_name,
+                    'dependent_second_name': dependent_obj.second_name,
+                    'dependent_last_name': dependent_obj.last_name,
+                    'dependent_gender': dependent_obj.gender,
+                    'dependent_relationship': dependent_obj.relationship,
+                    'dependent_educational_status': dependent_obj.educational_status,
+                    'dependent_marital_status': dependent_obj.marital_status,
+                    'dependent_national_id': dependent_obj.national_id,
+                    'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                    'dependent_health_status': dependent_obj.health_status,
+                    'dependent_income_amount': dependent_obj.income_amount,
+                    'dependent_income_source': dependent_obj.income_source,
+                    'dependent_needs_type': dependent_obj.needs_type,
+                    'dependent_educational_degree': dependent_obj.educational_degree,
+                    'dependent_date_of_birth': dependent_obj.date_of_birth,
+                    'dependent_needs_description': dependent_obj.needs_description,
+                    'dependent_educational_level': dependent_obj.educational_level,
+                    'dependent_disease_type': dependent_obj.disease_type,
+                })
+
+            data = {
+                'id': beneficiary_obj.id,
+                'file_no': beneficiary_obj.file_no,
+                'first_name': beneficiary_obj.first_name,
+                'second_name': beneficiary_obj.second_name,
+                'last_name': beneficiary_obj.last_name,
+                'nationality': beneficiary_obj.nationality,
+                'gender': beneficiary_obj.gender,
+                'date_of_birth': beneficiary_obj.date_of_birth,
+                'phone_number': beneficiary_obj.phone_number,
+                'email': beneficiary_obj.email,
+                'national_id': beneficiary_obj.national_id,
+                'national_id_exp_date': beneficiary_obj.national_id_exp_date,
+                'is_qualified': beneficiary_obj.is_qualified,
+                'category': beneficiary_obj.category,
+                'marital_status': beneficiary_obj.marital_status,
+                'educational_level': beneficiary_obj.educational_level,
+                'health_status': beneficiary_obj.health_status,
+                'disease_type': beneficiary_obj.disease_type,
+                'work_status': beneficiary_obj.work_status,
+                'employer': beneficiary_obj.employer,
+                'death_date_father_husband': beneficiary_obj.death_date_father_husband,
+                'washing_place': beneficiary_obj.washing_place,
+                'is_benefiting': beneficiary_obj.is_benefiting,
+                'received_at': beneficiary_obj.receivedAt,
+                'reviewed_at': beneficiary_obj.reviewedAt,
+                'bank_type': beneficiary_obj.bank_type,
+                'bank_iban': beneficiary_obj.bank_iban,
+                'family_issues': beneficiary_obj.family_issues,
+                'family_needs': beneficiary_obj.family_needs,
+                'dependent_list': dependent_data,
+                'housing_info': housing_data,
+                'income_expenses_info': income_expense_data
+            }
+            return JsonResponse(data)
+        except beneficiary.DoesNotExist:
+            return JsonResponse({'error': 'Beneficiary not found'}, status=404)
+
+    elif request.method == 'POST':
+        pass
+
+
+def supporter_indiv(request):
+
+    if request.method == 'GET':
+
+        beneficiary_obj = beneficiary.objects.all().order_by('id')
+
+        beneficiary_data = []
+
+        for beneficiary_indiv in beneficiary_obj:
+            # Retrieve beneficiary income and expenses information
+            try:
+                beneficiary_income_expenses_obj = beneficiary_income_expense.objects.get(
+                    beneficiary_id=beneficiary_indiv.id)
+            except ObjectDoesNotExist:
+                beneficiary_income_expenses_obj = None
+
+            # Collect the data and add them to the object
+            beneficiary_data.append({
+                'id': beneficiary_indiv.id,
+                'gender': beneficiary_indiv.gender,
+                'in_ex_diff': beneficiary_income_expenses_obj.in_ex_diff,
+                'health_status': beneficiary_indiv.health_status,
+                'age': beneficiary_indiv.age,
+                'nationality': beneficiary_indiv.nationality,
+            })
+
+        # Prepare pagination
+        # paginator = Paginator(beneficiary_data, IPP_SUPPORTER_FORM)
+        # page_number = request.GET.get('page')
+        # beneficiary_data = paginator.get_page(page_number)
+
+        context = {
+            'beneficiary_headers': ['#', 'الجنس', 'نسبة الاحتياج', 'الحالة الصحية', 'العمر', 'الجنسية'],
+            'beneficiary_data': beneficiary_data,
+        }
+        return render(request, "supporter_form(indiv).html", context)
+
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+@csrf_exempt
+@login_required(login_url="/login")
+def supporter_indiv_post(request):
+    if request.method == 'POST':
+        # Retrieve form data
+        # Get the data from the request
+        post_data = request.POST
+        files_data = request.FILES
+
+        choice0 = request.POST.get('beneficiaries_choice')
+        choice1 = request.POST.get('id_personal_choice')
+        choice2 = request.POST.get('id_charity_choice')
+        form_field1 = request.POST.get('charitychoice_orphan_number')
+        form_field2 = request.POST.get('charitychoice_widower_donation_type')
+        # ... retrieve other form fields as needed
+
+        # Retrieve selected rows' data
+        try:
+            selected_rows_data = json.loads(
+                request.POST.get('selectedRowsData'))
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format in selectedRowsData'}, status=400)
+
+        # Now you can access the data from form and selected rows
+        if choice0 == "id_personal_choice":
+            print("personal choice")
+        else:
+            print("charity choice")
+        print('Choice1: ', choice1)
+        print('Choice2: ', choice2)
+        print('Form field 1:', form_field1)
+        print('Form field 2:', form_field2)
+        print('Selected rows data:', selected_rows_data)
+
+        # Print or log the data
+        print("POST Data:", post_data)
+        print("Files Data:", files_data)
+
+        # Your processing logic here...
+
+        # Return a JSON response as needed
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+# just for testing
+def supporter_test(request):
+
+    # Including only necessary part
+    beneficiaries = beneficiary.objects.all()
+    paginator = Paginator(beneficiaries, 6)
+    page = request.GET.get('page')
+    try:
+        beneficiaries = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        beneficiaries = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        beneficiaries = paginator.page(paginator.num_pages)
+
+    context = {
+        'beneficiaries': beneficiaries
+    }
+
+    if is_ajax(request=request):
+        return render(request, 'main/table.html', context)
+    # else
+    return render(request, 'main/individual2.html', context)
