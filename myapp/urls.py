@@ -43,6 +43,11 @@ urlpatterns = [
         name="supporter_indiv"
     ),
     path(
+        "supporters/individuals/new_request",
+        views.supporter_indiv_post,
+        name="supporter_indiv_post"
+    ),
+    path(
         "supporters/individuals/test",
         views.supporter_test,
         name="supporter_indiv_test"

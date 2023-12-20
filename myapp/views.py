@@ -850,10 +850,8 @@ def beneficiary_details(request, beneficiary_id):
 
 
 def supporter_indiv(request):
-    if request.method == 'POST':
-        pass
 
-    elif request.method == 'GET':
+    if request.method == 'GET':
 
         beneficiary_obj = beneficiary.objects.all().order_by('id')
 
@@ -892,6 +890,53 @@ def supporter_indiv(request):
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
+@csrf_exempt
+@login_required(login_url="/login")
+def supporter_indiv_post(request):
+    if request.method == 'POST':
+        # Retrieve form data
+        # Get the data from the request
+        post_data = request.POST
+        files_data = request.FILES
+
+        choice0 = request.POST.get('beneficiaries_choice')
+        choice1 = request.POST.get('id_personal_choice')
+        choice2 = request.POST.get('id_charity_choice')
+        form_field1 = request.POST.get('charitychoice_orphan_number')
+        form_field2 = request.POST.get('charitychoice_widower_donation_type')
+        # ... retrieve other form fields as needed
+
+        # Retrieve selected rows' data
+        try:
+            selected_rows_data = json.loads(
+                request.POST.get('selectedRowsData'))
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format in selectedRowsData'}, status=400)
+
+        # Now you can access the data from form and selected rows
+        if choice0 == "id_personal_choice":
+            print("personal choice")
+        else:
+            print("charity choice")
+        print('Choice1: ', choice1)
+        print('Choice2: ', choice2)
+        print('Form field 1:', form_field1)
+        print('Form field 2:', form_field2)
+        print('Selected rows data:', selected_rows_data)
+
+        # Print or log the data
+        print("POST Data:", post_data)
+        print("Files Data:", files_data)
+
+        # Your processing logic here...
+
+        # Return a JSON response as needed
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+# just for testing
 def supporter_test(request):
 
     # Including only necessary part

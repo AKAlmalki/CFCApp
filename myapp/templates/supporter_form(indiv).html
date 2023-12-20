@@ -138,7 +138,13 @@
       </li>
     </ul>
 
-    <form id="supporter_form" action="/supporters/individuals/new" method="POST" class="needs-validation">
+    <form 
+      id="supporter_form" 
+      enctype="multipart/form-data" 
+      action="{% url 'supporter_indiv_post' %}" 
+      method="POST" 
+      class="needs-validation"
+    >
       {% csrf_token %}
         <fieldset id="personal_information" class="form-step bg-light px-3 px-lg-5">
           <legend class="fs-2 fw-bold mb-5">بيانات مقدم الطلب</legend>
@@ -218,8 +224,8 @@
                     required
                   >
                     <option value selected>---------</option>
-                    <option value="M">ذكر</option>
-                    <option value="F">انثى</option>
+                    <option value="ذكر">ذكر</option>
+                    <option value="انثى">انثى</option>
                   </select>
                 </div>
                 <div class="mb-4 form-group">
@@ -482,28 +488,27 @@
                   <label
                     for="id_personalinfo_marital_status"
                     class="form-label"
-                    >الحالة الاجتماعية<span style="color: red">*</span></label
+                    >الحالة الاجتماعية</label
                   >
                   <select
                     name="personalinfo_marital_status"
                     class="form-control"
                     required
                     id="id_personalinfo_marital_status"
-                    onchange="widowerCheck(this);"
                   >
                     <option value selected>---------</option>
-                    <option value="married">متزوج/ـة</option>
-                    <option value="single">أعزب/ـة</option>
-                    <option value="widower">أرمل/ـة</option>
-                    <option value="divorced">مطلقة</option>
-                    <option value="deserted">مهجورة</option>
+                    <option value="متزوج/ـة">متزوج/ـة</option>
+                    <option value="أعزب/ـة">أعزب/ـة</option>
+                    <option value="أرمل/ـة">أرمل/ـة</option>
+                    <option value="مطلقة">مطلقة</option>
+                    <option value="مهجورة">مهجورة</option>
                   </select>
                 </div>
                 <div class="mb-4 form-group">
                   <label
                     for="id_personalinfo_educational_level"
                     class="form-label"
-                    >المؤهل العلمي<span style="color: red">*</span></label
+                    >المؤهل العلمي</label
                   >
                   <select
                     name="personalinfo_educational_level"
@@ -527,7 +532,7 @@
               <div class="row row-cols-md-2">
                 <div class="mb-4 form-group">
                   <label for="id_personalinfo_work_status" class="form-label"
-                    >هل تعمل؟<span style="color: red">*</span></label
+                    >هل تعمل؟</label
                   >
                   <select
                     name="personalinfo_work_status"
@@ -537,8 +542,8 @@
                     onchange="workCheck(this);"
                   >
                     <option value="" selected>---------</option>
-                    <option value="yes">نعم</option>
-                    <option value="no">لا</option>
+                    <option value="نعم">نعم</option>
+                    <option value="لا">لا</option>
                   </select>
                 </div>
                 <div
@@ -577,7 +582,7 @@
                 </div>
                 <div class="mb-4 form-group">
                   <label for="id_personalinfo_email" class="form-label"
-                    >البريد الالكتروني</label
+                    >البريد الالكتروني<span style="color: red">*</span></label
                   >
                   <input
                     type="email"
@@ -636,15 +641,15 @@
                   <label for="id_charitychoice_orphan_number" class="form-label"
                     >عدد الايتام</label
                   >
-                  <input type="number" value=0 min="0" max="99" class="form-control" id="id_charitychoice_orphan_number" name="charitychoice_orphan_number"/>
+                  <input type="number" value=0 min="0" max="99" class="form-control" id="id_charitychoice_orphan_number" name="charitychoice_orphan_number" onchange="isThereOrphan(this);"/>
                 </div>
                 <div class="mb-4">
                   <label for="id_charitychoice_widower_number" class="form-label"
                     >عدد الارامل</label
                   >
-                  <input type="number" value="0" min="0" max="99" class="form-control" id="id_charitychoice_widower_number" name="charitychoice_orphan_number"/>
+                  <input type="number" value="0" min="0" max="99" class="form-control" id="id_charitychoice_widower_number" name="charitychoice_widower_number" onchange="isThereWidower(this);"/>
                 </div>
-                <div class="input-group mb-4">
+                <div class="input-group mb-4" id="id_orphan_duration_group_info" style="display: none;">
                   <label for="id_charitychoice_orphan_donation_type" class="form-label col-12">مدة الدعم (ايتام)</label>
                   <span class="col-6 input-group-text" id="basic-addon1">
                     <input id="id_charitychoice_orphan_donation_number" type="number" value="0" min="0" max="99" class="form-control form-control-sm">
@@ -657,7 +662,7 @@
                 </div>
               </div>
               <div class="row row-cols-lg-2">
-                <div class="input-group mb-4">
+                <div class="input-group mb-4" id="id_widower_duration_group_info" style="display: none;">
                   <label for="id_charitychoice_widower_donation_type" class="form-label col-12">مدة الدعم (ارامل)</label>
                   <span class="col-6 input-group-text" id="basic-addon1">
                     <input id="id_charitychoice_widower_donation_number" type="number" value="0" min="0" max="99" class="form-control form-control-sm">
@@ -1594,6 +1599,23 @@
 
   }); // (document).ready() end line
 
+  var table = $('#beneficiaries_table').DataTable({
+    'language': {
+      url: "{% static '/Arabic.json' %}"
+    },
+    'columnDefs': [
+        {
+            'targets': 0, // Targeting the first column (checkbox column)
+            'checkboxes': {
+                'selectRow': true
+            }
+        }
+    ],
+    'select': {
+        'style': 'multi'
+    }
+  });
+
   // JS for age range input with MIN-MAX
   const range = document.querySelectorAll('.range-slider input');
   progress = document.querySelector('.range-slider .progress');
@@ -1683,22 +1705,7 @@
     table.draw();
   });
 
-  var table = $('#beneficiaries_table').DataTable({
-        'language': {
-          url: "{% static '/Arabic.json' %}"
-        },
-        'columnDefs': [
-            {
-                'targets': 0, // Targeting the first column (checkbox column)
-                'checkboxes': {
-                    'selectRow': true
-                }
-            }
-        ],
-        'select': {
-            'style': 'multi'
-        }
-  });
+
 
   // Event delegation to handle checkbox clicks
   $('#beneficiaries_table tbody').on('click', 'input[type="checkbox"]', function() {
@@ -1816,5 +1823,50 @@
     "id_form_file_bank_transfer",
     "id_file_names_bank_transfer"
   );
+
+  // Handle form submission [not complete yet]
+  document.getElementById('supporter_form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+
+    // Find the selected rows in the DataTable
+    const selectedRows = $('#beneficiaries_table').DataTable().rows('.selected').data();
+
+    // Collect the data from the selected rows
+    const selectedRowsData = selectedRows.toArray();
+
+    // Increment total price by 300.0 for each selected row
+    const totalPriceInput = document.getElementById('id_sponsorship_info_total_price_1');
+    const currentTotalPrice = parseFloat(totalPriceInput.value) || 0.0;
+    const updatedTotalPrice = currentTotalPrice + (selectedRowsData.length * 300.0);
+
+    // Update the total price in the form data
+    formData.append('total_price', updatedTotalPrice);
+
+    // Find the selected radio button
+    const radioChoice = document.querySelector('input[name="beneficiaries_choice"]:checked');
+
+    // Append form data
+    formData.append('beneficiaries_choice', radioChoice ? radioChoice.id : '');
+
+    // Append selected rows' data
+    formData.append('selectedRowsData', JSON.stringify(selectedRowsData));
+
+    fetch('http://127.0.0.1:8000/supporters/individuals/new_request', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+        // Handle success, if needed
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        // Handle errors, if needed
+    });
+});
+
 </script>
 {% endblock %}
