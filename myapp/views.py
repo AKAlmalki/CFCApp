@@ -511,7 +511,19 @@ def export_excel(request):
 def beneficiary_indiv(request):
 
     if request.method == 'POST':
-        data = json.loads(request.body.decode('utf-8'))
+        # data = json.loads(request.body.decode('utf-8'))
+        data = request.POST
+        files = request.FILES
+        national_id_file = request.FILES.get('fileBeneficiaryNationalID', None)
+        dept_instrument_file = request.FILES.getlist(
+            'fileDeptInstrument')
+
+        print("\n\n1", data)
+        print("\n\n2", files)
+        print("\n\n3", national_id_file)
+        if dept_instrument_file:
+            print("\n\n4", dept_instrument_file)
+        # <QueryDict: {'dependent_info_needs_type': ['[]'], 'familyinfo_family_issues': ['["اقتصادية","توظيف"]'], 'familyinfo_needs_type': ['["حقائب مدرسية","سداد كهرباء","أجهزة كهربائية"]'], 'dependents-table': ['[]']}> <MultiValueDict: {'json_data': [<InMemoryUploadedFile: blob (application/json)>], 'file_input': [<InMemoryUploadedFile: البلاد.png (image/png)>]}>
 
         # Accessing the data for beneficiary
         first_name = data.get('personalinfo_first_name', None)
@@ -577,6 +589,7 @@ def beneficiary_indiv(request):
             bank_iban=bank_iban,
             family_issues=family_issues,
             family_needs=family_needs,
+            file_beneficiary_national_id=national_id_file,
         )
         beneficiary_obj.save(category_seg="CAT", region_seg="SA")
 
@@ -723,6 +736,14 @@ def beneficiary_indiv(request):
                 beneficiary_id=beneficiary_obj
             )
             new_dependent.save()
+
+        # handle file uploads
+        file_beneficiary_national_id = request.FILES.get(
+            'id_formFileBeneficiaryNationalID', None)
+        file1 = files.get('fileBeneficiaryNationalID', None)
+        # print(file_beneficiary_national_id, file1)
+
+        # print(data)
 
         # In case of successful submission and valid form data
         return JsonResponse({'redirect': '/confirmation', 'file_no': beneficiary_obj.file_no})

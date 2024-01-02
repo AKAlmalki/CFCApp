@@ -9,7 +9,72 @@ class TodoItem(models.Model):
     title = models.CharField(max_length=200)
     completed = models.BooleanField(default=False)
 
+# directory path functions
 
+
+def beneficiary_national_id_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_national_id/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_national_address_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_national_address/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_debt_instrument_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_debt_instrument/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_pension_social_insurance_inquiry_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_pension_social_insurance_inquiry/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_father_husband_death_certificate_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_father_husband_death_certificate/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_letter_from_prison_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_letter_from_prison/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_divorce_deed_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_divorce_deed/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_children_responsibility_deed_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_children_responsibility_deed/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_other_files_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_other_files/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_lease_contract_title_deed_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_lease_contract_title_deed/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_water_electricity_bills_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_water_electricity_bills/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_national_id_dependents_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_national_id_dependents/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_social_warranty_inquiry_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_social_warranty_inquiry/{1}".format(instance.national_id, filename)
 #########################################################
 
 
@@ -34,6 +99,7 @@ class supporter_operation(models.Model):
 
 
 class beneficiary(models.Model):
+    id = models.AutoField(primary_key=True)
     file_no = models.CharField(max_length=512, null=True, blank=True)
     first_name = models.CharField(max_length=64, default="")
     second_name = models.CharField(max_length=64, default="")
@@ -71,6 +137,33 @@ class beneficiary(models.Model):
     bank_iban = models.CharField(max_length=32, null=True)
     family_issues = JSONField(default=list)
     family_needs = JSONField(default=list)
+    # File fields
+    file_beneficiary_national_id = models.FileField(
+        upload_to=beneficiary_national_id_directory_path, blank=True, null=True)
+    file_beneficiary_national_address = models.FileField(
+        upload_to=beneficiary_national_address_directory_path, blank=True, null=True)
+    file_debt_instrument = models.FileField(
+        upload_to=beneficiary_debt_instrument_directory_path, blank=True, null=True)
+    file_pension_social_insurance_inquiry = models.FileField(
+        upload_to=beneficiary_pension_social_insurance_inquiry_directory_path, blank=True, null=True)
+    file_father_husband_death_certificate = models.FileField(
+        upload_to=beneficiary_father_husband_death_certificate_directory_path, blank=True, null=True)
+    file_letter_from_prison = models.FileField(
+        upload_to=beneficiary_letter_from_prison_directory_path, blank=True, null=True)
+    file_divorce_deed = models.FileField(
+        upload_to=beneficiary_divorce_deed_directory_path, blank=True, null=True)
+    file_children_responsibility_deed = models.FileField(
+        upload_to=beneficiary_children_responsibility_deed_directory_path, blank=True, null=True)
+    file_other_files = models.FileField(
+        upload_to=beneficiary_other_files_directory_path, blank=True, null=True)
+    file_lease_contract_title_deed = models.FileField(
+        upload_to=beneficiary_lease_contract_title_deed_directory_path, blank=True, null=True)
+    file_water_electricity_bills = models.FileField(
+        upload_to=beneficiary_water_electricity_bills_directory_path, blank=True, null=True)
+    file_national_id_dependents = models.FileField(
+        upload_to=beneficiary_national_id_dependents_directory_path, blank=True, null=True)
+    file_social_warranty_inquiry = models.FileField(
+        upload_to=beneficiary_social_warranty_inquiry_directory_path, blank=True, null=True)
 
     def __str__(self):
         return "file_no " + self.file_no + ", name: " + self.first_name + ", national_id:" + self.national_id

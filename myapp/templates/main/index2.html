@@ -2733,64 +2733,50 @@
       e.preventDefault();
   
       const formData = new FormData(this);
-      let jsonObject = {};
-  
-      // Iterate over all form fields
-      for (const [key, value] of formData.entries()) {
-          // Exclude checkboxes from being added directly
-          const formElement = document.getElementsByName(key)[0];
-          if(formElement && formElement.type !== 'checkbox') {
-              jsonObject[key] = value;
-          }
-      }
   
       // Collecting checkbox values
       let dependentNeedsType = [];
       document.querySelectorAll('#id_dependent_info_needs_type input[type=checkbox]').forEach((checkbox) => {
           if (checkbox.checked) {
-            dependentNeedsType.push(checkbox.value); // or checkbox.value if it has a meaningful value
+              dependentNeedsType.push(checkbox.value);
           }
       });
+      formData.append('dependent_info_needs_type', JSON.stringify(dependentNeedsType));
   
-      // Adding checkboxes to the JSON object
-      jsonObject['dependent_info_needs_type'] = dependentNeedsType;
-
       // Collecting checkbox values
       let familyIssue = [];
       document.querySelectorAll('#id_familyinfo_family_issues input[type=checkbox]').forEach((checkbox) => {
           if (checkbox.checked) {
-            familyIssue.push(checkbox.value); // or checkbox.value if it has a meaningful value
+              familyIssue.push(checkbox.value);
           }
       });
+      formData.append('familyinfo_family_issues', JSON.stringify(familyIssue));
   
-      // Adding checkboxes to the JSON object
-      jsonObject['familyinfo_family_issues'] = familyIssue;
-
       // Collecting checkbox values
       let familyNeedsType = [];
       document.querySelectorAll('#id_familyinfo_needs_type input[type=checkbox]').forEach((checkbox) => {
           if (checkbox.checked) {
-            familyNeedsType.push(checkbox.value); // or checkbox.value if it has a meaningful value
+              familyNeedsType.push(checkbox.value);
           }
       });
+      formData.append('familyinfo_needs_type', JSON.stringify(familyNeedsType));
   
-      // Adding checkboxes to the JSON object
-      jsonObject['familyinfo_needs_type'] = familyNeedsType;
-
-      // Adding information of the dependents table to the JSON object
-      jsonObject['dependents-table'] = getTableDataAsJSON();
+      // Adding information of the dependents table to the FormData
+      formData.append('dependents-table', getTableDataAsJSON());
+  
+      // Remove 'Content-Type' header to allow the browser to add it
+      // along with the correct 'boundary'
+      // delete options.headers['Content-Type'];
   
       fetch('http://127.0.0.1:8000/beneficiaries/new', {
           method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(jsonObject),
+          body: formData,
       })
       .then(response => response.json())
       .then(data => {
           if (data.redirect) {
-              window.location.href = data.redirect; // Redirects to the URL provided by server
+              // window.location.href = data.redirect;
+              console.log(data);
           } else {
               // Handle other responses
           }
