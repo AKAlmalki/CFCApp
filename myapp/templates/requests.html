@@ -942,15 +942,41 @@
 
                   if (data.attachments && data.attachments.length > 0) {
                       var attachmentsHtml = '<h4 class="fw-bold mt-4 mb-4">المرفقات</h4>';
-                      
-                      data.attachments.forEach(function (attachment, index) {
-                          attachmentsHtml += `
-                              <div class="mb-2">
-                                  <strong>ملف ${index + 1}:</strong>
-                                  <a href="${attachment.file}" target="_blank">عرض الملف</a>
+
+                          attachmentsHtml = `
+                              <div class="table-responsive">
+                                <table class="table">
+                                  <tr>
+                                    <th scope="col">نوع المرفق</th>
+                                    <th scope="col">اسم الملف</th>
+                                    <th scope="col">نوع الملف</th>
+                                    <th scope="col">الإجراءات</th>
+                                  </tr>
+                                   ${data.attachments.map((attachment, index) => `
+                                    <tr data-bs-toggle="tooltip" title="">
+                                      <td>
+                                        <span>
+                                          ${attachment.file_name}
+                                        </span>
+                                      </td>
+                                      <td>
+                                        <span>
+                                          ${attachment.attachment_type}
+                                        </span>
+                                      </td>
+                                      <td>${attachment.file_extension}</td>
+                                      <td>
+                                        <div class="d-flex align-items-center actions">
+                                          <div class="mb-2">
+                                            <a href="${attachment.file_path}" target="_blank" class="btn btn-primary">عرض الملف</a>
+                                        </div>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  `).join('')}
+                                </table>
                               </div>
-                          `;
-                      });
+                            `;
 
                       attachmentsContainer.innerHTML = attachmentsHtml;
                   } else {

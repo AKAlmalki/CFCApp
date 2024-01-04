@@ -29,6 +29,11 @@ IPP_DASHBOARD_REPORTS = 10
 # Utility functions =======================================
 
 
+def file_extension(value):
+    _, extension = os.path.splitext(value)
+    return extension.lower()
+
+
 def convert_to_date(date_str):
     if not date_str:
         return None  # or handle it as needed in your context
@@ -965,8 +970,44 @@ def beneficiary_details(request, beneficiary_id):
                 beneficiary_id=beneficiary_obj.id).all()
 
             for attachment in attachments_list:
+                # A variable that holds the attachment type in Arabic
+                attachment_type_ar = ""
+
+                if attachment.file_type == "national_id":
+                    attachment_type_ar = "صورة الهوية الوطنية/الإقامة"
+                elif attachment.file_type == "national_address":
+                    attachment_type_ar = "العنوان الوطني"
+                elif attachment.file_type == "dept_instrument":
+                    attachment_type_ar = "صك الدين"
+                elif attachment.file_type == "pension_social_insurance":
+                    attachment_type_ar = "مشهد التقاعد أو التأمينات الاجتماعية"
+                elif attachment.file_type == "father_husband_death_cert":
+                    attachment_type_ar = "شهادة الوفاة للزوج / الأب"
+                elif attachment.file_type == "letter_from_prison":
+                    attachment_type_ar = "خطاب من السجن"
+                elif attachment.file_type == "divorce_deed":
+                    attachment_type_ar = "صك الطلاق"
+                elif attachment.file_type == "children_responsibility_deed":
+                    attachment_type_ar = "صك إعالة الأبناء"
+                elif attachment.file_type == "other_files":
+                    attachment_type_ar = "مستندات أخرى"
+                elif attachment.file_type == "lease_contract_title_deed":
+                    attachment_type_ar = "عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية"
+                elif attachment.file_type == "water_or_electricity_bills":
+                    attachment_type_ar = "الفواتير (كهرباء - ماء)"
+                elif attachment.file_type == "dependent_national_id":
+                    attachment_type_ar = "صورة الهوية الوطنية/الإقامة للمرافقين"
+                elif attachment.file_type == "social_warranty_inquiry":
+                    attachment_type_ar = "مشهد الضمان الاجتماعي"
+                else:
+                    attachment_type_ar = attachment.file_type
+
                 beneficiary_attachment_list.append({
-                    'file': attachment.file_object.url,
+                    'file_path': attachment.file_object.url,
+                    'file_extension': file_extension(attachment.file_object.url),
+                    'file_name': attachment.filename(),
+                    'file_size': attachment.file_size,
+                    'attachment_type': attachment_type_ar,
                 })
             print("attachments: ", beneficiary_attachment_list)
 

@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.db.models import JSONField
 import datetime
 from datetime import date
+import os
 
 
 class TodoItem(models.Model):
@@ -191,6 +192,10 @@ class Beneficiary_attachment(models.Model):
     @property
     def file_size(self):
         return self.file_object.size
+
+    # Returns file name with its extension
+    def filename(self):
+        return os.path.basename(self.file_object.name)
 
 
 class beneficiary_house(models.Model):
