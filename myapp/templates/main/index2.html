@@ -1797,6 +1797,7 @@
                   type="file"
                   id="id_formFileBeneficiaryNationalID"
                   name="fileBeneficiaryNationalID"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                 />
               </div>
 
@@ -1823,6 +1824,7 @@
                   type="file"
                   id="id_formFileBeneficiaryNationalAddress"
                   name="fileBeneficiaryNationalAddress"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                 />
               </div>
 
@@ -1849,6 +1851,7 @@
                   type="file"
                   id="id_formFileDeptInstrument"
                   name="fileDeptInstrument"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                   multiple
                 />
               </div>
@@ -1884,6 +1887,7 @@
                   type="file"
                   id="id_formFilePensionOrSocialInsuranceInquiry"
                   name="filePensionOrSocialInsuranceInquiry"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                   multiple
                 />
               </div>
@@ -1918,6 +1922,7 @@
                   type="file"
                   id="id_formFileFatherOrHusbandDeathCertificate"
                   name="fileFatherOrHusbandDeathCertificate"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                 />
               </div>
 
@@ -1953,6 +1958,7 @@
                   type="file"
                   id="id_formFileLetterFromPrison"
                   name="fileLetterFromPrison"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                   multiple
                 />
               </div>
@@ -1987,6 +1993,7 @@
                   type="file"
                   id="id_formFileDivorceDeed"
                   name="fileDivorceDeed"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                 />
               </div>
 
@@ -2022,6 +2029,7 @@
                   type="file"
                   id="id_formFileChildrenResponsibilityDeed"
                   name="fileChildrenResponsibilityDeed"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                   multiple
                 />
               </div>
@@ -2049,6 +2057,7 @@
                   type="file"
                   id="id_formFileOther"
                   name="fileOther"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                   multiple
                 />
               </div>
@@ -2080,6 +2089,7 @@
                   type="file"
                   id="id_formFileLeaseContractOrTitleDeed"
                   name="fileLeaseContractOrTitleDeed"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                   multiple
                 />
               </div>
@@ -2107,6 +2117,7 @@
                   type="file"
                   id="id_formFileWaterOrElectricityBills"
                   name="fileWaterOrElectricityBills"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                   multiple
                 />
               </div>
@@ -2142,6 +2153,7 @@
                   type="file"
                   id="id_formFileNationalIDForBeneficiaryForDependents"
                   name="fileNationalIDForBeneficiaryDependents"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                   multiple
                 />
               </div>
@@ -2178,6 +2190,7 @@
                   type="file"
                   id="id_formFileSocialWarrantyInquiry"
                   name="fileSocialWarrantyInquiry"
+                  accept="application/pdf,image/png, image/jpg, image/jpeg"
                   multiple
                 />
               </div>
@@ -3346,6 +3359,10 @@
       "الرجاء إدخال بريد إلكتروني صحيح."
     );
 
+    $.validator.addMethod('filesize', function (value, element, param) {
+      return this.optional(element) || (element.files[0].size <= param * 1000000)
+    }, 'حجم الملف يجب أن يكون أقل من {0} MB');
+
     // The below code will change the default validation messages
     $.extend($.validator.messages, {
       required: "هذا الحقل مطلوب.",
@@ -3621,39 +3638,51 @@
           beneficiaryinfo_bank: {
             required: true,
           },
-          // attachments_information ---------
+          // attachments_information --------- // File rules are currently not working
           fileBeneficiaryNationalID: {
             required: true,
+            accept: "application/pdf, image/*",
+            filesize : 5, // here we are working with MB
           },
           fileNationalIDForBeneficiaryDependents: {
             required: true,
+            accept: "application/pdf, image/*",
           },
           fileBeneficiaryNationalAddress: {
             required: true,
+            accept: "application/pdf, image/*",
           },
           filePensionOrSocialInsuranceInquiry: {
             required: true,
+            accept: "application/pdf, image/*",
           },
           fileFatherOrHusbandDeathCertificate: {
             required: true,
+            accept: "application/pdf, image/*",
           },
           fileLetterFromPrison: {
             required: true,
+            accept: "application/pdf, image/*",
           },
           fileDivorceDeed: {
             required: true,
+            accept: "application/pdf, image/*",
           },
           fileChildrenResponsibilityDeed: {
             required: true,
+            accept: "application/pdf, image/*",
           },
           fileLeaseContractOrTitleDeed: {
             required: true,
+            accept: "application/pdf, image/*",
           },
           fileWaterOrElectricityBills: {
             required: true,
+            accept: "application/pdf, image/*",
           },
           fileSocialWarrantyInquiry: {
             required: true,
+            accept: "application/pdf, image/*",
           },
         },
         messages: {
