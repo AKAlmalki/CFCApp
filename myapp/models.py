@@ -16,6 +16,8 @@ def beneficiary_file_directory(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
     return "beneficiaries/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
 
+# all below methods must be removed (it is not needed anymore)
+
 
 def beneficiary_national_id_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
@@ -185,6 +187,10 @@ class Beneficiary_attachment(models.Model):
     file_type = models.CharField(max_length=256, null=True)
     file_object = models.FileField(
         upload_to=beneficiary_file_directory, blank=True, null=True)
+
+    @property
+    def file_size(self):
+        return self.file_object.size
 
 
 class beneficiary_house(models.Model):
