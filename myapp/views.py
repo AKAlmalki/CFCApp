@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, individual_supporter_operation, entity_supporter_operation
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Beneficiary_attachment, entity_supporter_operation
 from .forms import RegisterForm
 from django.db.models import Q
 from django.contrib import messages
@@ -511,19 +511,34 @@ def export_excel(request):
 def beneficiary_indiv(request):
 
     if request.method == 'POST':
-        # data = json.loads(request.body.decode('utf-8'))
         data = request.POST
         files = request.FILES
+
+        # Get all the attachments of beneficiary
         national_id_file = request.FILES.get('fileBeneficiaryNationalID', None)
-        dept_instrument_file = request.FILES.getlist(
-            'fileDeptInstrument')
+        national_address_file = request.FILES.get(
+            'fileBeneficiaryNationalAddress', None)
+        dept_instrument_file = request.FILES.getlist('fileDeptInstrument')
+        pension_social_insurance_file = request.FILES.getlist(
+            'filePensionOrSocialInsuranceInquiry')
+        father_husband_death_certificate_file = request.FILES.get(
+            'fileFatherOrHusbandDeathCertificate', None)
+        letter_from_prison_file = request.FILES.getlist('fileLetterFromPrison')
+        divorce_deed_file = request.FILES.get('fileDivorceDeed', None)
+        children_responsibility_deed_file = request.FILES.getlist(
+            'fileChildrenResponsibilityDeed')
+        other_files = request.FILES.getlist('fileOther')
+        lease_contract_or_title_deed_file = request.FILES.getlist(
+            'fileLeaseContractOrTitleDeed')
+        water_or_electricity_bills_file = request.FILES.getlist(
+            'fileWaterOrElectricityBills')
+        dependent_national_id_file = request.FILES.getlist(
+            'fileNationalIDForBeneficiaryDependents')
+        social_warranty_inquiry_file = request.FILES.getlist(
+            'fileSocialWarrantyInquiry')
 
         print("\n\n1", data)
         print("\n\n2", files)
-        print("\n\n3", national_id_file)
-        if dept_instrument_file:
-            print("\n\n4", dept_instrument_file)
-        # <QueryDict: {'dependent_info_needs_type': ['[]'], 'familyinfo_family_issues': ['["اقتصادية","توظيف"]'], 'familyinfo_needs_type': ['["حقائب مدرسية","سداد كهرباء","أجهزة كهربائية"]'], 'dependents-table': ['[]']}> <MultiValueDict: {'json_data': [<InMemoryUploadedFile: blob (application/json)>], 'file_input': [<InMemoryUploadedFile: البلاد.png (image/png)>]}>
 
         # Accessing the data for beneficiary
         first_name = data.get('personalinfo_first_name', None)
@@ -589,11 +604,127 @@ def beneficiary_indiv(request):
             bank_iban=bank_iban,
             family_issues=family_issues,
             family_needs=family_needs,
-            file_beneficiary_national_id=national_id_file,
+
         )
         beneficiary_obj.save(category_seg="CAT", region_seg="SA")
 
-        # Accessing the data for beneficiary_house
+        # Store attachments of beneficiary -------------------
+        # Store all file objects in a list
+        file_list = []
+
+        # Create beneficiary attachment for "national id"
+        if national_id_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="national_id",
+                file_object=national_id_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
+
+        # Create beneficiary attachment for "national address"
+        if national_address_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="national_address",
+                file_object=national_address_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
+
+        # Create beneficiary attachment for "dept instrument"
+        for file_obj in dept_instrument_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="dept_instrument",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "pension or social insurance"
+        for file_obj in pension_social_insurance_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="pension_social_insurance",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "father or husband death certificate"
+        if father_husband_death_certificate_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="father_husband_death_cert",
+                file_object=father_husband_death_certificate_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
+
+        # Create beneficiary attachment for "letter from prison"
+        for file_obj in letter_from_prison_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="letter_from_prison",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "Divorce Deed"
+        if divorce_deed_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="divorce_deed",
+                file_object=divorce_deed_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
+
+        # Create beneficiary attachment for "children responsibility deed"
+        for file_obj in children_responsibility_deed_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="children_responsibility_deed",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "other files"
+        for file_obj in other_files:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="other_files",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "lease contract or title deed"
+        for file_obj in lease_contract_or_title_deed_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="lease_contract_title_deed",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "water or electricity bills"
+        for file_obj in water_or_electricity_bills_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="water_or_electricity_bills",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "dependent national id"
+        for file_obj in dependent_national_id_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="dependent_national_id",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "social warranty inquiry"
+        for file_obj in social_warranty_inquiry_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="social_warranty_inquiry",
+                file_object=file_obj
+            ))
+
+        # instead of creating and saving each file separately, store them in a list, and save them all at once.
+        if file_list:
+            Beneficiary_attachment.objects.bulk_create(file_list)
+
+        # Accessing the data for beneficiary_house -----------------
         building_number = data.get('houseinfo_building_number', None)
         street_name = data.get('houseinfo_street_name', None)
         neighborhood = data.get('houseinfo_neighborhood', None)

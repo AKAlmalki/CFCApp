@@ -12,6 +12,11 @@ class TodoItem(models.Model):
 # directory path functions
 
 
+def beneficiary_file_directory(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
+
+
 def beneficiary_national_id_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
     return "beneficiaries/{0}/beneficiary_national_id/{1}".format(instance.national_id, filename)
@@ -137,33 +142,6 @@ class beneficiary(models.Model):
     bank_iban = models.CharField(max_length=32, null=True)
     family_issues = JSONField(default=list)
     family_needs = JSONField(default=list)
-    # File fields
-    file_beneficiary_national_id = models.FileField(
-        upload_to=beneficiary_national_id_directory_path, blank=True, null=True)
-    file_beneficiary_national_address = models.FileField(
-        upload_to=beneficiary_national_address_directory_path, blank=True, null=True)
-    file_debt_instrument = models.FileField(
-        upload_to=beneficiary_debt_instrument_directory_path, blank=True, null=True)
-    file_pension_social_insurance_inquiry = models.FileField(
-        upload_to=beneficiary_pension_social_insurance_inquiry_directory_path, blank=True, null=True)
-    file_father_husband_death_certificate = models.FileField(
-        upload_to=beneficiary_father_husband_death_certificate_directory_path, blank=True, null=True)
-    file_letter_from_prison = models.FileField(
-        upload_to=beneficiary_letter_from_prison_directory_path, blank=True, null=True)
-    file_divorce_deed = models.FileField(
-        upload_to=beneficiary_divorce_deed_directory_path, blank=True, null=True)
-    file_children_responsibility_deed = models.FileField(
-        upload_to=beneficiary_children_responsibility_deed_directory_path, blank=True, null=True)
-    file_other_files = models.FileField(
-        upload_to=beneficiary_other_files_directory_path, blank=True, null=True)
-    file_lease_contract_title_deed = models.FileField(
-        upload_to=beneficiary_lease_contract_title_deed_directory_path, blank=True, null=True)
-    file_water_electricity_bills = models.FileField(
-        upload_to=beneficiary_water_electricity_bills_directory_path, blank=True, null=True)
-    file_national_id_dependents = models.FileField(
-        upload_to=beneficiary_national_id_dependents_directory_path, blank=True, null=True)
-    file_social_warranty_inquiry = models.FileField(
-        upload_to=beneficiary_social_warranty_inquiry_directory_path, blank=True, null=True)
 
     def __str__(self):
         return "file_no " + self.file_no + ", name: " + self.first_name + ", national_id:" + self.national_id
@@ -199,6 +177,14 @@ class beneficiary(models.Model):
     def age(self):
         today = date.today()
         return today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
+
+
+class Beneficiary_attachment(models.Model):
+    db_table = "beneficiary_attachment"
+    beneficiary = models.ForeignKey(beneficiary, on_delete=models.CASCADE)
+    file_type = models.CharField(max_length=256, null=True)
+    file_object = models.FileField(
+        upload_to=beneficiary_file_directory, blank=True, null=True)
 
 
 class beneficiary_house(models.Model):
