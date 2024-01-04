@@ -959,6 +959,17 @@ def beneficiary_details(request, beneficiary_id):
                     'dependent_disease_type': dependent_obj.disease_type,
                 })
 
+            beneficiary_attachment_list = []
+
+            attachments_list = Beneficiary_attachment.objects.filter(
+                beneficiary_id=beneficiary_obj.id).all()
+
+            for attachment in attachments_list:
+                beneficiary_attachment_list.append({
+                    'file': attachment.file_object.url,
+                })
+            print("attachments: ", beneficiary_attachment_list)
+
             data = {
                 'id': beneficiary_obj.id,
                 'file_no': beneficiary_obj.file_no,
@@ -991,7 +1002,8 @@ def beneficiary_details(request, beneficiary_id):
                 'family_needs': beneficiary_obj.family_needs,
                 'dependent_list': dependent_data,
                 'housing_info': housing_data,
-                'income_expenses_info': income_expense_data
+                'income_expenses_info': income_expense_data,
+                'attachments': beneficiary_attachment_list
             }
             return JsonResponse(data)
         except beneficiary.DoesNotExist:
