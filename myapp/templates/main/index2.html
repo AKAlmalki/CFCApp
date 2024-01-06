@@ -1773,11 +1773,21 @@
           <h2 class="fs-2 fw-bold mb-5">المرفقات</h2>
           <!-- Step 4 input fields -->
           <div class="row mt-3">
+
+            <div
+              class="alert alert-warning mt-3"
+              role="alert"
+              id="checkboxError"
+            >
+              جميع المرفقات ادناه مطلوبة وهي إلزامية لإكمال الطلب
+            </div>
+
             <div class="col-12 col-lg-6 row-gap-3 mb-3 mt-2">
-              <div class="mb-4 row column-gap-4">
+
+              <div class="mb-4 row column-gap-4 fileInputContainer">
                 <div class="col d-flex flex-column">
                   <label class="form-label" id="id_beneficiaryNationalIDTitle"
-                    >صورة الهوية الوطنية/الإقامة</label
+                    >صورة الهوية الوطنية/الإقامة<span style="color: red">*</span></label
                   >
                   <div
                     class="col text-muted"
@@ -1803,9 +1813,9 @@
 
               <hr />
 
-              <div class="mb-4 row column-gap-4">
+              <div class="mb-4 row column-gap-4 fileInputContainer">
                 <div class="col d-flex flex-column">
-                  <label class="form-label">العنوان الوطني</label>
+                  <label class="form-label">العنوان الوطني<span style="color: red">*</span></label>
                   <div
                     class="col text-muted"
                     id="id_fileNamesNationalAddress"
@@ -1830,9 +1840,9 @@
 
               <hr />
 
-              <div class="mb-4 row column-gap-4">
+              <div class="mb-4 row column-gap-4 fileInputContainer">
                 <div class="col d-flex flex-column">
-                  <label class="form-label">صك الدين (في حال وجود دين)</label>
+                  <label class="form-label">صك الدين<span style="color: red">*</span> (في حال وجود دين)</label>
                   <div
                     class="col text-muted"
                     id="id_fileNamesDeptInstrument"
@@ -1859,7 +1869,7 @@
               <hr />
 
               <div
-                class="mb-4 row column-gap-4"
+                class="mb-4 row column-gap-4 fileInputContainer"
                 id="id_attachmentPensionOrSocialInsuranceInquiry_group_info"
                 style="display: none"
               >
@@ -1867,7 +1877,7 @@
                   <label
                     class="form-label"
                     id="id_PensionOrSocialInsuranceInquiryTitle"
-                    >مشهد التقاعد أو التأمينات الاجتماعية</label
+                    >مشهد التقاعد أو التأمينات الاجتماعية<span style="color: red">*</span></label
                   >
                   <div
                     class="col text-muted"
@@ -1898,12 +1908,12 @@
               />
 
               <div
-                class="mb-4 row column-gap-4"
+                class="mb-4 row column-gap-4 fileInputContainer"
                 id="id_attachmentFatherOrHusbandDeathCertificate_group_info"
                 style="display: none"
               >
                 <div class="col d-flex flex-column">
-                  <label class="form-label">شهادة الوفاة للزوج / الأب</label>
+                  <label class="form-label">شهادة الوفاة للزوج / الأب<span style="color: red">*</span></label>
                   <div
                     class="col text-muted"
                     id="id_fileNamesFatherOrHusbandDeathCertificate"
@@ -1932,13 +1942,13 @@
               />
 
               <div
-                class="mb-4 row column-gap-4"
+                class="mb-4 row column-gap-4 fileInputContainer"
                 id="id_attachmentLetterFromPrison_group_info"
                 style="display: none"
               >
                 <div class="col d-flex flex-column">
                   <label class="form-label"
-                    >خطاب من السجن (في حال أسرة سجين)</label
+                    >خطاب من السجن<span style="color: red">*</span> (في حال أسرة سجين)</label
                   >
                   <div
                     class="col text-muted"
@@ -1969,12 +1979,12 @@
               />
 
               <div
-                class="mb-4 row column-gap-4"
+                class="mb-4 row column-gap-4 fileInputContainer"
                 id="id_attachmentDivorceDeed_group_info"
                 style="display: none"
               >
                 <div class="col d-flex flex-column">
-                  <label class="form-label">صك الطلاق</label>
+                  <label class="form-label">صك الطلاق<span style="color: red">*</span></label>
                   <div
                     class="col text-muted"
                     id="id_fileNamesDivorceDeed"
@@ -2003,13 +2013,13 @@
               />
 
               <div
-                class="mb-4 row column-gap-4"
+                class="mb-4 row column-gap-4 fileInputContainer"
                 id="id_attachmentChildrenResponsibilityDeed_group_info"
                 style="display: none"
               >
                 <div class="col d-flex flex-column">
                   <label class="form-label"
-                    >صك إعالة الأبناء (في حال كانوا مرافقين)</label
+                    >صك إعالة الأبناء<span style="color: red">*</span> (في حال كانوا مرافقين)</label
                   >
                   <div
                     class="col text-muted"
@@ -2039,9 +2049,9 @@
                 style="display: none"
               />
 
-              <div class="mb-4 row column-gap-4">
+              <div class="mb-4 row column-gap-4 fileInputContainer">
                 <div class="col d-flex flex-column">
-                  <label class="form-label">إرفاق مستندات أخرى</label>
+                  <label class="form-label">إرفاق مستندات أخرى<span style="color: red">*</span></label>
                   <div class="col text-muted" id="id_fileNamesOther"></div>
                   <!--- Place of showing file names -->
                 </div>
@@ -2066,10 +2076,11 @@
             </div>
 
             <div class="col-12 col-lg-6 row-gap-3 mb-3 mt-2">
-              <div class="mb-4 row column-gap-4">
+
+              <div class="mb-4 row column-gap-4 fileInputContainer">
                 <div class="col d-flex flex-column">
                   <label class="form-label"
-                    >عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية</label
+                    >عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية<span style="color: red">*</span></label
                   >
                   <div
                     class="col text-muted"
@@ -2096,9 +2107,9 @@
 
               <hr />
 
-              <div class="mb-4 row column-gap-4">
+              <div class="mb-4 row column-gap-4 fileInputContainer">
                 <div class="col d-flex flex-column">
-                  <label class="form-label">الفواتير (كهرباء - ماء)</label>
+                  <label class="form-label">الفواتير<span style="color: red">*</span> (كهرباء - ماء)</label>
                   <div
                     class="col text-muted"
                     id="id_fileNamesWaterOrElectricityBills"
@@ -2125,7 +2136,7 @@
               <hr />
 
               <div
-                class="mb-4 row column-gap-4"
+                class="mb-4 row column-gap-4 fileInputContainer"
                 id="id_attachmentNationalIDForBeneficiaryForDependents_group_info"
                 style="display: none"
               >
@@ -2133,7 +2144,7 @@
                   <label
                     class="form-label"
                     id="id_NationalIDForBeneficiaryForDependentsTitle"
-                    >صورة الهوية الوطنية/الإقامة للمرافقين</label
+                    >صورة الهوية الوطنية/الإقامة للمرافقين<span style="color: red">*</span></label
                   >
                   <div
                     class="col text-muted"
@@ -2164,13 +2175,13 @@
               />
 
               <div
-                class="mb-4 row column-gap-4"
+                class="mb-4 row column-gap-4 fileInputContainer"
                 id="id_attachmentSocialWarrantyInquiry_group_info"
                 style="display: none"
               >
                 <div class="col d-flex flex-column">
                   <label class="form-label" id="id_SocialWarrantyInquiryTitle"
-                    >مشهد الضمان الاجتماعي</label
+                    >مشهد الضمان الاجتماعي<span style="color: red">*</span></label
                   >
                   <div
                     class="col text-muted"
@@ -3722,6 +3733,22 @@
           current_fs = $("#housing_income_need_information");
           next_fs = $("#attachments_information");
         } else if ($("#attachments_information").is(":visible")) {
+          // Check if all attachments have at least one file
+          var allAttachmentsValid = true;
+
+          // Iterate over visible div containers with file input fields
+          $('.fileInputContainer:visible input[type="file"]').each(function () {
+            if (this.files.length === 0) {
+                allAttachmentsValid = false;
+                return false; // Exit the loop early since we already found an invalid attachment
+            }
+          });
+
+          if (!allAttachmentsValid) {
+              alert("الرجاء إرفاق ملف واحد على الأقل لكل مرفق مطلوب قبل الانتقال إلى الخطوة التالية.");
+              return false;
+          }
+
           current_fs = $("#attachments_information");
           next_fs = $("#submit_confirmation");
         }
