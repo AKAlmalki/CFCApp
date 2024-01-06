@@ -45,16 +45,17 @@ function categoryCheck(that) {
   if (that.value == "أسرة عادية") {
 
         // Change the label for Beneficiary National ID
-        document.getElementById("id_beneficiaryNationalIDTitle").textContent = "صورة الهوية الوطنية/الإقامة";
+        document.getElementById("id_beneficiaryNationalIDTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة<span style="color: red">*</span>';
 
         // Change the label for  Beneficiary's Dependents National ID
-        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").textContent = "صورة الهوية الوطنية/الإقامة للمرافقين";
+        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة للمرافقين<span style="color: red">*</span>';
 
         // Change the label for Social Warrnaty Inquiry 
-        document.getElementById("id_SocialWarrantyInquiryTitle").textContent = "مشهد الضمان الاجتماعي";
+        document.getElementById("id_SocialWarrantyInquiryTitle").innerHTML = 'مشهد الضمان الاجتماعي<span style="color: red">*</span>';
+
 
         // Change the label for Pension Or Social Insurance Inquiry 
-        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").textContent = "مشهد التقاعد أو التأمينات الاجتماعية";
+        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").innerHTML = 'مشهد التقاعد أو التأمينات الاجتماعية<span style="color: red">*</span>';
         
 
         // Hide/Show files upload group for regular family
@@ -79,16 +80,16 @@ function categoryCheck(that) {
   } else if (that.value == "أسرة أرملة") {
 
         // Change the label for national ID
-        document.getElementById("id_beneficiaryNationalIDTitle").textContent = "صورة الهوية الوطنية/الإقامة (الأرملة)";
+        document.getElementById("id_beneficiaryNationalIDTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة<span style="color: red">*</span> (الأرملة)';
 
         // Change the label for  Beneficiary's Dependents National ID
-        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").textContent = "صورة الهوية الوطنية/الإقامة للمرافقين (الأيتام)";
+        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة للمرافقين<span style="color: red">*</span> (الأيتام)';
 
         // Change the label for Social Warrnaty Inquiry 
-        document.getElementById("id_SocialWarrantyInquiryTitle").textContent = "مشهد الضمان الاجتماعي (للأم إن وجد)";
+        document.getElementById("id_SocialWarrantyInquiryTitle").innerHTML = 'مشهد الضمان الاجتماعي<span style="color: red">*</span> (للأم إن وجد)';
 
         // Change the label for Pension Or Social Insurance Inquiry 
-        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").textContent = "مشهد التقاعد أو التأمينات الاجتماعية (للأم إن وجد)";
+        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").innerHTML = 'مشهد التقاعد أو التأمينات الاجتماعية<span style="color: red">*</span> (للأم إن وجد)';
 
         // Hide/Show files upload group for orphan family OR widowed family
         document.getElementById("id_attachmentNationalIDForBeneficiaryForDependents_group_info").style.display = "flex";
@@ -111,16 +112,16 @@ function categoryCheck(that) {
   } else if (that.value == "أسرة أيتام") {
 
         // Change the label for national ID
-        document.getElementById("id_beneficiaryNationalIDTitle").textContent = "صورة الهوية الوطنية/الإقامة (الأرملة)";
+        document.getElementById("id_beneficiaryNationalIDTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة<span style="color: red">*</span> (الأرملة)';
 
         // Change the label for  Beneficiary's Dependents National ID
-        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").textContent = "صورة الهوية الوطنية/الإقامة للمرافقين (الأيتام)";
+        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة للمرافقين<span style="color: red">*</span> (الأيتام)';
 
         // Change the label for Social Warrnaty Inquiry 
-        document.getElementById("id_SocialWarrantyInquiryTitle").textContent = "مشهد الضمان الاجتماعي (للأم إن وجد)";
+        document.getElementById("id_SocialWarrantyInquiryTitle").innerHTML = 'مشهد الضمان الاجتماعي<span style="color: red">*</span> (للأم إن وجد)';
 
         // Change the label for Pension Or Social Insurance Inquiry 
-        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").textContent = "مشهد التقاعد أو التأمينات الاجتماعية (للأم إن وجد)";
+        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").innerHTML = 'مشهد التقاعد أو التأمينات الاجتماعية<span style="color: red">*</span> (للأم إن وجد)';
 
         // Hide/Show files upload group for orphan family OR widowed family
         document.getElementById("id_attachmentNationalIDForBeneficiaryForDependents_group_info").style.display = "flex";
@@ -143,16 +144,16 @@ function categoryCheck(that) {
   } else if (that.value == "أسرة سجناء") {
 
         // Change the label for national ID
-        document.getElementById("id_beneficiaryNationalIDTitle").textContent = "صورة الهوية الوطنية/الإقامة";
+        document.getElementById("id_beneficiaryNationalIDTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة<span style="color: red">*</span>';
 
         // Change the label for  Beneficiary's Dependents National ID
-        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").textContent = "صورة الهوية الوطنية/الإقامة للمرافقين";
+        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة للمرافقين<span style="color: red">*</span>';
 
         // Change the label for Social Warrnaty Inquiry 
-        document.getElementById("id_SocialWarrantyInquiryTitle").textContent = "مشهد الضمان الاجتماعي (للأم إن وجد)";
+        document.getElementById("id_SocialWarrantyInquiryTitle").innerHTML = 'مشهد الضمان الاجتماعي<span style="color: red">*</span> (للأم إن وجد)';
 
         // Change the label for Pension Or Social Insurance Inquiry 
-        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").textContent = "مشهد التقاعد أو التأمينات الاجتماعية (للأم إن وجد)";
+        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").innerHTML = 'مشهد التقاعد أو التأمينات الاجتماعية<span style="color: red">*</span> (للأم إن وجد)';
 
         // Hide/Show files upload group for prisoners family
         document.getElementById("id_attachmentNationalIDForBeneficiaryForDependents_group_info").style.display = "flex";
@@ -175,16 +176,16 @@ function categoryCheck(that) {
   } else if (that.value == "أسرة مطلقة") {
 
         // Change the label for national ID
-        document.getElementById("id_beneficiaryNationalIDTitle").textContent = "صورة الهوية الوطنية/الإقامة";
+        document.getElementById("id_beneficiaryNationalIDTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة<span style="color: red">*</span>';
 
         // Change the label for  Beneficiary's Dependents National ID
-        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").textContent = "صورة الهوية الوطنية/الإقامة للمرافقين";
+        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة للمرافقين<span style="color: red">*</span>';
 
         // Change the label for Social Warrnaty Inquiry 
-        document.getElementById("id_SocialWarrantyInquiryTitle").textContent = "مشهد الضمان الاجتماعي";
+        document.getElementById("id_SocialWarrantyInquiryTitle").innerHTML = 'مشهد الضمان الاجتماعي<span style="color: red">*</span>';
 
         // Change the label for Pension Or Social Insurance Inquiry 
-        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").textContent = "مشهد التقاعد أو التأمينات الاجتماعية";
+        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").innerHTML = 'مشهد التقاعد أو التأمينات الاجتماعية<span style="color: red">*</span>';
         
 
         // Hide/Show files upload group for divorced family
@@ -208,16 +209,16 @@ function categoryCheck(that) {
   } else { // In case of "Individual" option
 
         // Change the label for national ID
-        document.getElementById("id_beneficiaryNationalIDTitle").textContent = "صورة الهوية الوطنية/الإقامة";
+        document.getElementById("id_beneficiaryNationalIDTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة<span style="color: red">*</span>';
 
         // Change the label for  Beneficiary's Dependents National ID
-        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").textContent = "صورة الهوية الوطنية/الإقامة للمرافقين";
+        document.getElementById("id_NationalIDForBeneficiaryForDependentsTitle").innerHTML = 'صورة الهوية الوطنية/الإقامة للمرافقين<span style="color: red">*</span>';
 
         // Change the label for Social Warrnaty Inquiry 
-        document.getElementById("id_SocialWarrantyInquiryTitle").textContent = "مشهد الضمان الاجتماعي";
+        document.getElementById("id_SocialWarrantyInquiryTitle").innerHTML = 'مشهد الضمان الاجتماعي<span style="color: red">*</span>';
 
         // Change the label for Pension Or Social Insurance Inquiry 
-        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").textContent = "مشهد التقاعد أو التأمينات الاجتماعية";
+        document.getElementById("id_PensionOrSocialInsuranceInquiryTitle").innerHTML = 'مشهد التقاعد أو التأمينات الاجتماعية<span style="color: red">*</span>';
 
         // Hide/Show files upload group for individual
         document.getElementById("id_attachmentNationalIDForBeneficiaryForDependents_group_info").style.display = "none";
