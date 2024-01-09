@@ -1722,8 +1722,6 @@
                   class="form-control"
                   id="id_beneficiaryinfo_iban"
                   placeholder=""
-                  value="SA"
-                  onclick="resetInputIban()"
                 />
               </div>
               <div class="col-md-6 mb-4 form-group">
@@ -1753,7 +1751,7 @@
                   <option value="باكستان الوطني">باكستان الوطني</option>
                   <option value="الأول">الأول</option>
                   <option value="السعودي للاستثمار">السعودي للاستثمار</option>
-                  <option value="زراعات">زراعات"</option>
+                  <option value="زراعات">زراعات</option>
                   <option value="أخرى">أخرى</option>
                 </select>
               </div>
@@ -3277,6 +3275,16 @@
       }
     });
 
+    // Validator method for the Saudi IBAN number
+    $.validator.addMethod(
+      "validateIBAN",
+      function (value, element) {
+        console.log(value, validateIBAN(value));
+        return this.optional(element) || validateIBAN(value);
+      },
+      "الرجاء إدخال رقم إيبان صحيح"
+    );
+
     // The Code segment to calculate the incomeinfo
 
     // Select all your input fields
@@ -3445,7 +3453,6 @@
     $.validator.addMethod(
       "nationalidRegex",
       function (value, element) {
-        console.log(value, validateSAID(value));
         return this.optional(element) || validateSAID(value);
       },
       "أدخل رقم هوية/إقامة صحيح."
@@ -3760,6 +3767,7 @@
           },
           beneficiaryinfo_iban: {
             required: true,
+            validateIBAN: true,
           },
           beneficiaryinfo_bank: {
             required: true,
