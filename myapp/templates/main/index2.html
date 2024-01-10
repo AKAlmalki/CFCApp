@@ -927,41 +927,21 @@
 
               <hr />
 
-              <div class="row">
-                <div class="col-md-6 mb-4 form-group">
-                  <label
-                    for="id_dependent_info_monthly_income"
-                    class="form-label"
-                    >دخل المرافق (شهريا)</label
-                  >
+              <h4 class="mb-4">مصادر الدخل</h4>
+              <div class="row row-cols-xl-3 justify-content-center">
+                <div class="col-md-4 mb-2 form-group">
+                  <label for="id_dependent_info_monthly_income" class="form-label">دخل المرافق (شهريا)</label>
                   <div class="input-group mb-3">
-                    <input
-                      type="number"
-                      name="dependent_info_monthly_income"
-                      max="9999999999999999"
-                      min="0"
-                      class="form-control"
-                      id="id_dependent_info_monthly_income"
-                    />
+                    <input type="number" name="dependent_info_monthly_income" max="9999999999999999" min="0" class="form-control" id="id_dependent_info_monthly_income" />
                     <span class="input-group-text" id="basic-addon1">ر.س.</span>
                   </div>
                 </div>
-                <div class="col-md-6 mb-4 form-group">
-                  <label
-                    for="id_dependent_info_income_source"
-                    class="form-label"
-                    >مصدر الدخل للمرافق</label
-                  >
-                  <select
-                    name="dependent_info_income_source"
-                    class="form-control"
-                    id="id_dependent_info_income_source"
-                  >
+                <div class="col-md-4 col-lg-5 mb-2 form-group">
+                  <label for="id_dependent_info_income_source" class="form-label">مصدر الدخل للمرافق</label>
+                  <select name="dependent_info_income_source" class="form-control" id="id_dependent_info_income_source">
                     <option value selected>---------</option>
                     <option value="الراتب">الراتب</option>
-                    <option value="التأمينات الاجتماعية">
-                      التأمينات الاجتماعية
-                    </option>
+                    <option value="التأمينات الاجتماعية">التأمينات الاجتماعية</option>
                     <option value="الضمان الاجتماعي">الضمان الاجتماعي</option>
                     <option value="مصلحة التقاعد">مصلحة التقاعد</option>
                     <option value="حساب المواطن">حساب المواطن</option>
@@ -971,7 +951,22 @@
                     <option value="اخرى">اخرى</option>
                   </select>
                 </div>
+                <div class="col-md-4 col-lg-3 mb-sm-5 mb-md-3 mb-3 mt-4 row justify-content-center align-items-center">
+                  <button type="button" class="btn btn-primary" onclick="addRowToIncomeTable()">إضافة مصدر الدخل</button>
+                </div>
               </div>
+              
+              {% comment %} Dependent Income Table {% endcomment %}
+              <table class="table table-striped table-hover mb-5" id="incomeTable">
+                <thead>
+                  <tr>
+                    <th scope="col">دخل المرافق (شهريا)</th>
+                    <th scope="col">مصدر الدخل للمرافق</th>
+                    <th scope="col">الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody id="incomeTableBody"></tbody>
+              </table>
 
               <hr />
 
@@ -4300,6 +4295,7 @@
       const convertedValue = convertToEnglishNumber(inputValue);
       event.target.value = convertedValue;
     });
+    
   });
 </script>
 {% endblock %}

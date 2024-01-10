@@ -276,3 +276,49 @@ function provenDebtValueCheck(that) {
       fileInput.required = false; // Remove the required attribute
   }
 }
+
+function addRowToIncomeTable() {
+  const monthlyIncome = document.getElementById('id_dependent_info_monthly_income').value;
+  const incomeSource = document.getElementById('id_dependent_info_income_source').value;
+
+  if (!monthlyIncome) {
+    alert('الرجاء إدخال قيم صحيحة لدخل المرافق.');
+    return;
+  }
+
+  if (incomeSource === '') {
+    alert('الرجاء إختيار مصدر الدخل للمرافق.');
+    return;
+  }
+
+  const tableBody = document.getElementById('incomeTableBody');
+  const newRow = tableBody.insertRow();
+
+  const cell1 = newRow.insertCell(0);
+  const cell2 = newRow.insertCell(1);
+  const cell4 = newRow.insertCell(2);
+
+  cell1.textContent = monthlyIncome + ' (ر.س.)';
+  cell2.textContent = incomeSource;
+
+
+  const deleteButton = document.createElement('button');
+  deleteButton.textContent = 'حذف';
+  deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
+  deleteButton.onclick = function () {
+    deleteRow(newRow);
+  };
+  cell4.appendChild(deleteButton);
+
+  // Clear input fields after successful addition
+  clearInputFields();
+}
+
+function deleteRow(row) {
+  document.getElementById('incomeTableBody').deleteRow(row.rowIndex);
+}
+
+function clearInputFields() {
+  document.getElementById("id_dependent_info_monthly_income").value = "";
+  document.getElementById("id_dependent_info_income_source").value = "";
+}
