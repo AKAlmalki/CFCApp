@@ -1054,12 +1054,14 @@
               <button
                 id="addChildButton"
                 type="button"
-                class="btn addChildBtn btn-success mb-5"
+                class="btn addChildBtn btn-success mb-4 mt-3 px-4 py-3"
               >
                 إضافة مرافق
               </button>
 
-              <h3>المرافقين</h3>
+              <hr class="mb-4">
+
+              <h3 class="mb-3">المرافقين</h3>
               <div class="table-responsive-xl">
                 <table
                   id="family-table"
@@ -3560,75 +3562,76 @@
         // Adding the rules (validations) for each input in the form.
         rules: {
           personalinfo_first_name: {
-            required: true,
+            required: false,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_second_name: {
-            required: true,
+            required: false,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_last_name: {
-            required: true,
+            required: false,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_date_of_birth: {
-            required: true,
+            required: false,
             dateISO: true,
           },
           personalinfo_gender: {
-            required: true,
+            required: false,
           },
           personalinfo_national_id: {
-            required: true,
+            required: false,
             nationalidRegex: true,
           },
           personalinfo_national_id_exp_date: {
-            required: true,
+            required: false,
             dateISO: true,
           },
           personalinfo_nationality: {
-            required: true,
+            required: false,
             maxlength: 30,
           },
           personalinfo_category: {
-            required: true,
+            required: false,
           },
           personalinfo_marital_status: {
-            required: true,
+            required: false,
           },
           personalinfo_educational_level: {
-            required: true,
+            required: false,
           },
           personalinfo_date_of_death_of_father_or_husband: {
-            required: true,
+            required: false,
             dateISO: true,
           },
           personalinfo_washing_place: {
             required: false,
           },
           personalinfo_health_status: {
-            required: true,
+            required: false,
           },
           personalinfo_disease_type: {
-            required: true,
+            required: false,
           },
           personalinfo_work_status: {
-            required: true,
+            required: false,
           },
           personalinfo_employer: {
-            required: true,
+            required: false,
           },
           personalinfo_phone_number: {
-            required: true,
+            required: false,
             saudiPhoneRegex: true,
           },
           personalinfo_email: {
+            required: false,
             //emailRegex: true,
           },
           // dependent_information ---------
@@ -4055,7 +4058,7 @@
 
 
         // Edit Button
-        var $editButton = $("<button>تعديل</button>")
+        var $editButton = $("<button>تفاصيل</button>")
           .addClass("edit btn btn-primary")
           .attr("data-bs-toggle", "modal")
           .attr("data-bs-target", "#editModal")
@@ -4210,23 +4213,27 @@
       $("#saveChanges").data("rowToEdit", $row);
     }
   
-
+    // Onclick function to save the changes made to the dependent info
     $("#saveChanges").click(function (event) {
       event.preventDefault();
   
       var $rowToEdit = $(this).data("rowToEdit");
+      var checkedValues = [];
   
       // Iterate over all inputs, selects, and textareas in the modal
       $("#editModal").find(".modal-body input, .modal-body select, .modal-body textarea").each(function () {
+          // Get the name of the input field in the edit modal
           var inputName = $(this).attr("name");
+          // Select the cell in the corresponding row of the dependent with data-attr as inputName
           var $cell = $rowToEdit.find('td[data-attr="' + inputName + '"]');
-  
+          
           if ($(this).attr('type') === 'checkbox') {
               // If it's a checkbox, gather all checked values with this name
-              var checkedValues = [];
               $('#editModal input[name="' + inputName + '"]:checked').each(function() {
                   checkedValues.push($(this).val());
               });
+              // Select the cell that holds the dependent needs type as a list
+              var $cell = $rowToEdit.find('td[data-attr="dependent_edit_info_needs_type"]');
               // Join the values with a comma and update the cell text
               $cell.text(checkedValues.join(','));
           } else {
