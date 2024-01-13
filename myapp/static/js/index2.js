@@ -277,7 +277,7 @@ function provenDebtValueCheck(that) {
   }
 }
 
-function addRowToIncomeTable() {
+function addRowToIncomeInfoTable() {
   const monthlyIncome = document.getElementById('id_dependent_info_monthly_income').value;
   const incomeSource = document.getElementById('id_dependent_info_income_source').value;
 
@@ -291,34 +291,130 @@ function addRowToIncomeTable() {
     return;
   }
 
-  const tableBody = document.getElementById('incomeTableBody');
+  const tableBody = document.getElementById('incomeInfoTableBody');
   const newRow = tableBody.insertRow();
 
   const cell1 = newRow.insertCell(0);
   const cell2 = newRow.insertCell(1);
-  const cell4 = newRow.insertCell(2);
+  const cell3 = newRow.insertCell(2);
 
-  cell1.textContent = monthlyIncome + ' (ر.س.)';
+  let monthlyIncomeVar = parseInt(monthlyIncome);
+
+  // Specifying options for formatting
+  const options = {
+    style: 'decimal',  // Other options: 'currency', 'percent', etc.
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  };
+  const monthlyIncomeFormatted = monthlyIncomeVar.toLocaleString('en-US', options);
+
+  cell1.textContent = monthlyIncomeFormatted;
   cell2.textContent = incomeSource;
 
 
   const deleteButton = document.createElement('button');
   deleteButton.textContent = 'حذف';
   deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
-  deleteButton.onclick = function () {
-    deleteRow(newRow);
+  deleteButton.onclick = function (event) {
+    deleteRowIncomeInfoTable(event, newRow);
   };
-  cell4.appendChild(deleteButton);
+  cell3.appendChild(deleteButton);
 
   // Clear input fields after successful addition
-  clearInputFields();
+  clearInputFieldsIncomeInfoTable();
 }
 
-function deleteRow(row) {
-  document.getElementById('incomeTableBody').deleteRow(row.rowIndex);
+
+function deleteRowIncomeInfoTable(event, row) {
+  event.preventDefault(); // Prevents the default behavior if applicable
+  const tableBody = document.getElementById('incomeInfoTableBody');
+
+  rowIndexValue = row.rowIndex - 1;
+
+  // Log the row index for debugging
+  //console.log('Deleting row at index:', rowIndexValue);
+
+  // Check if the row index is valid before attempting to delete
+  if (rowIndexValue >= 0 && rowIndexValue < tableBody.rows.length) {
+    tableBody.deleteRow(rowIndexValue);
+  } else {
+    //console.error('Invalid row index:', rowIndexValue);
+  }
 }
 
-function clearInputFields() {
+
+function clearInputFieldsIncomeInfoTable() {
   document.getElementById("id_dependent_info_monthly_income").value = "";
   document.getElementById("id_dependent_info_income_source").value = "";
+}
+
+
+function addRowToIncomeEditInfoTable() {
+  const monthlyIncome = document.getElementById('id_dependent_edit_info_monthly_income').value;
+  const incomeSource = document.getElementById('id_dependent_edit_info_income_source').value;
+
+  if (!monthlyIncome) {
+    alert('الرجاء إدخال قيم صحيحة لدخل المرافق.');
+    return;
+  }
+
+  if (incomeSource === '') {
+    alert('الرجاء إختيار مصدر الدخل للمرافق.');
+    return;
+  }
+
+  const tableBody = document.getElementById('incomeEditInfoTableBody');
+  const newRow = tableBody.insertRow();
+
+  const cell1 = newRow.insertCell(0);
+  const cell2 = newRow.insertCell(1);
+  const cell3 = newRow.insertCell(2);
+
+  let monthlyIncomeVar = parseInt(monthlyIncome);
+
+  // Specifying options for formatting
+  const options = {
+    style: 'decimal',  // Other options: 'currency', 'percent', etc.
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  };
+  const monthlyIncomeFormatted = monthlyIncomeVar.toLocaleString('en-US', options);
+
+  cell1.textContent = monthlyIncomeFormatted;
+  cell2.textContent = incomeSource;
+
+  const deleteButton = document.createElement('button');
+  deleteButton.textContent = 'حذف';
+  deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
+  deleteButton.onclick = function (event) {
+    deleteRowIncomeEditInfoTable(event, newRow);
+  };
+  cell3.appendChild(deleteButton);
+
+  // Clear input fields after successful addition
+  clearInputFieldsIncomeEditInfoTable();
+}
+
+
+function deleteRowIncomeEditInfoTable(event, row) {
+  event.preventDefault(); // Prevents the default behavior if applicable
+  const tableBody = document.getElementById('incomeEditInfoTableBody');
+
+  rowIndexValue = row.rowIndex - 1;
+
+  // Log the row index for debugging
+  //console.log('Deleting row at index:', rowIndexValue);
+
+  // Check if the row index is valid before attempting to delete
+  if (rowIndexValue >= 0 && rowIndexValue < tableBody.rows.length) {
+    tableBody.deleteRow(rowIndexValue);
+  } else {
+    //console.error('Invalid row index:', rowIndexValue);
+  }
+}
+
+
+function clearInputFieldsIncomeEditInfoTable() {
+  document.getElementById("id_dependent_edit_info_monthly_income").value = "";
+  document.getElementById("id_dependent_edit_info_income_source").value = "";
 }
