@@ -2991,9 +2991,27 @@
     // Check form validity on input change
     $modalForm.on("change keyup", function () {
       if ($modalForm.valid()) {
-        $saveChangesButton.prop("disabled", false);
+          $saveChangesButton.prop("disabled", false);
       } else {
-        $saveChangesButton.prop("disabled", true);
+          $saveChangesButton.prop("disabled", true);
+      }
+    });
+
+    // Add an event listener to the dependent income table
+    $("#incomeEditInfoTable").on("change keyup", function () {
+      if ($modalForm.valid()) {
+          $saveChangesButton.prop("disabled", false);
+      } else {
+          $saveChangesButton.prop("disabled", true);
+      }
+    });
+
+    // Additionally, you may want to trigger the event when the checkbox state changes
+    $("#incomeEditInfoTable").on("change", ":checkbox", function () {
+      if ($modalForm.valid()) {
+          $saveChangesButton.prop("disabled", false);
+      } else {
+          $saveChangesButton.prop("disabled", true);
       }
     });
 
@@ -3969,7 +3987,6 @@
       }
 
       let dependentIncomeJSON = getDependentIncomeTableDataAsJSON();
-      console.log(dependentIncomeJSON);
 
       // Collecting and storing dependent needs type values
       var dependentNeedsTypeArray = [];
@@ -4279,6 +4296,31 @@
   
       $("#saveChanges").data("rowToEdit", $row);
     }
+
+    // Collect dependent income information by looping over the income table
+    function getDependentIncomeTableDataAsJSON() {
+      // Create an array to store income information
+      var incomeInfoArray = [];
+
+      const dependentIncomeTable = document.getElementById('incomeEditInfoTable');
+      const dependentIncomeTableRows = document.querySelectorAll('#incomeEditInfoTable tr');
+
+      for (let i = 1; i < dependentIncomeTableRows.length; i++) {
+        const cells = dependentIncomeTableRows[i].getElementsByTagName('td');
+
+        // Create a JSON object to store income information
+        var incomeInfo = {
+          monthlyIncome: cells[0].innerText,
+          incomeSource: cells[1].innerText,
+        };
+
+        incomeInfoArray.push(incomeInfo);
+      }
+
+      return JSON.stringify(incomeInfoArray);
+    }
+
+    
   
     // Onclick function to save the changes made to the dependent info
     $("#saveChanges").click(function (event) {
@@ -4295,6 +4337,7 @@
           var $cell = $rowToEdit.find('td[data-attr="' + inputName + '"]');
           
           if ($(this).attr('type') === 'checkbox') {
+              console.log(inputName);
               // If it's a checkbox, gather all checked values with this name
               $('#editModal input[name="' + inputName + '"]:checked').each(function() {
                   checkedValues.push($(this).val());
@@ -4308,6 +4351,15 @@
               $cell.text($(this).val());
           }
       });
+
+      // Get dependent income information from incomeEditInfoTable
+      let dependentIncomeJSON = getDependentIncomeTableDataAsJSON();
+
+      // Select the corresponding cell
+      var $incomeTableCell = $rowToEdit.find('td[data-attr="dependent_edit_info_income_table_data"]');
+
+      // Update the cell text (value)
+      $incomeTableCell.text(dependentIncomeJSON);
   
       $("#editModal").modal("hide");
     });
