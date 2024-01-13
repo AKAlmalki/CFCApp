@@ -4269,8 +4269,6 @@
             incomeInfoArrayText = cellText;
             var incomeInfoArray = JSON.parse(incomeInfoArrayText) || [];
 
-            console.log(incomeInfoArray);
-
             // Add rows for each income information object in the array
             incomeInfoArray.forEach(function (incomeInfo) {
               var $incomeRow = $("<tr></tr>");
@@ -4337,7 +4335,6 @@
           var $cell = $rowToEdit.find('td[data-attr="' + inputName + '"]');
           
           if ($(this).attr('type') === 'checkbox') {
-              console.log(inputName);
               // If it's a checkbox, gather all checked values with this name
               $('#editModal input[name="' + inputName + '"]:checked').each(function() {
                   checkedValues.push($(this).val());
