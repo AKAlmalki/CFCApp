@@ -278,7 +278,7 @@ function provenDebtValueCheck(that) {
 }
 
 // Define the maximum number of rows that can be added to the IncomeInfoTable
-const maxRowsIncomeInfo = 5;
+const maxRowsIncomeInfo = 10;
 
 function addRowToIncomeInfoTable() {
   const monthlyIncome = document.getElementById('id_dependent_info_monthly_income').value;
@@ -501,7 +501,6 @@ function removeMaxRowErrorMessageEditInfoTable() {
     errorMessageElement.remove();
   }
 }
-
 
 
 function deleteRowIncomeEditInfoTable(event, row) {

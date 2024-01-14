@@ -2606,7 +2606,7 @@
                     </select>
                   </div>
                   <div class="col-md-4 col-lg-3 mb-sm-5 mb-md-3 mb-3 mt-4 row justify-content-center align-items-center" id="id_add_row_edit_income_table">
-                    <button type="button" class="btn btn-primary" onclick="addRowToIncomeEditInfoTable()">إضافة مصدر الدخل</button>
+                    <button type="button" class="btn btn-primary" id="id_add_row_income_edit_info" onclick="addRowToIncomeEditInfoTable()">إضافة مصدر الدخل</button>
                   </div>
                 </div>
                 
@@ -3001,6 +3001,7 @@
       // other options
     });
 
+
     // Check form validity on input change
     $modalForm.on("change keyup", function () {
       if ($modalForm.valid()) {
@@ -3010,8 +3011,10 @@
       }
     });
 
-    // Add an event listener to the dependent income table
-    $("#incomeEditInfoTable").on("change keyup", function () {
+
+
+    // Add an event listener to the dependent income table for add row btn
+    $("#id_add_row_income_edit_info").on("click", function () {
       if ($modalForm.valid()) {
           $saveChangesButton.prop("disabled", false);
       } else {
@@ -3019,14 +3022,16 @@
       }
     });
 
-    // Additionally, you may want to trigger the event when the checkbox state changes
-    $("#incomeEditInfoTable").on("change", ":checkbox", function () {
+
+    // Additionally, you may want to trigger the event when a row is removed from income table
+    $(".removeIncomeEditInfoRow").on("click", function () {
       if ($modalForm.valid()) {
           $saveChangesButton.prop("disabled", false);
       } else {
           $saveChangesButton.prop("disabled", true);
       }
     });
+
 
     const banks = [
       {
@@ -4287,9 +4292,11 @@
       }
     });
 
+
     $(".next, .previous, .nextDependent").click(function () {
       updateFormStep();
     });
+
 
     function updateFormStep() {
       // Check which div is visible and update form steps accordingly
@@ -4309,6 +4316,7 @@
       }
     }
 
+
     function updateSteps(currentStep) {
       // Reset all steps
       $(".form-stepper-list")
@@ -4326,6 +4334,7 @@
           );
       }
     }
+
 
     function populateEditModal($row) {
       // First, uncheck all checkboxes in the modal
@@ -4370,11 +4379,21 @@
               $incomeRow.append($("<td></td>").text(incomeInfo.incomeSource));
 
               // Add a delete button to each row
-              var $deleteButton = $("<button>حذف</button>").addClass('btn btn-danger btn-sm');
+              var $deleteButton = $("<button>حذف</button>").addClass('btn btn-danger btn-sm removeIncomeEditInfoRow');
               $deleteButton.on("click", function () {
                   // Handle the delete button click event here
                   // You can remove the corresponding row from the table or perform any other action
                   $incomeRow.remove();
+
+                  // Select save changes btn
+                  var $saveChangesButton = $("#saveChanges");
+                  var $modalForm = $("#editModalForm");
+
+                  if ($modalForm.valid()) {
+                      $saveChangesButton.prop("disabled", false);
+                  } else {
+                      $saveChangesButton.prop("disabled", true);
+                  }
               });
 
               // Append the delete button column to the row
@@ -4413,7 +4432,6 @@
     }
 
     
-  
     // Onclick function to save the changes made to the dependent info
     $("#saveChanges").click(function (event) {
       event.preventDefault();
@@ -4540,6 +4558,12 @@
     $('#editModal').on('hidden.bs.modal', function () {
       // Call the function to reset the input fields
       resetInputFields();
+
+      // Assuming your button has an ID "saveChanges"
+      var saveChangesButton = document.getElementById('saveChanges');
+
+      // Remove the 'disabled' attribute
+      saveChangesButton.setAttribute('disabled', 'disabled');
     });
 
 
@@ -4668,7 +4692,6 @@
     // Add event listener to the modal's shown event
     editModal._element.addEventListener('shown.bs.modal', handleModalShown);
 
-    
   });
 </script>
 {% endblock %}
