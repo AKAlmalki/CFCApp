@@ -2342,369 +2342,380 @@
         ></button>
       </div>
       <div class="modal-body bg-light">
-        <form
-          id="editModalForm"
-          name="editModalForm"
-          method="POST"
-          action="/handle_test2"
-          class="needs-validation"
-          novalidate
-        >
-          {% csrf_token %}
-          <div class="row row-cols-md-2 row-cols-xl-4">
-            <div class="col-md-6 mb-4 form-group">
-              <label for="id_dependent_edit_info_first_name" class="form-label"
-                >الأسم الأول<span style="color: red">*</span
+        <!-- Loading state content -->
+        <div id="loadingStateEditModal" style="display: none; text-align: center;">
+          <div class="spinner-border text-primary mt-5" role="status">
+            <span class="sr-only visually-hidden">Loading...</span>
+          </div>
+          <p>Loading...</p>
+        </div>
+
+        <!-- Actual modal content -->
+        <div id="editModalContent" style="display: none;">
+          <form
+            id="editModalForm"
+            name="editModalForm"
+            method="POST"
+            action="/handle_test2"
+            class="needs-validation"
+            novalidate
+          >
+            {% csrf_token %}
+            <div class="row row-cols-md-2 row-cols-xl-4">
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_dependent_edit_info_first_name" class="form-label"
+                  >الأسم الأول<span style="color: red">*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  id="id_dependent_edit_info_first_name"
+                  class="form-control"
+                  name="dependent_edit_info_first_name"
+                />
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_dependent_edit_info_second_name" class="form-label"
+                  >الأسم الثاني<span style="color: red">*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  id="id_dependent_edit_info_second_name"
+                  class="form-control"
+                  name="dependent_edit_info_second_name"
+                />
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_dependent_edit_info_last_name" class="form-label"
+                  >الأسم الأخير<span style="color: red">*</span
+                  ><span style="font-size: 0.9rem">
+                    (أسم العائلة)</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  id="id_dependent_edit_info_last_name"
+                  class="form-control"
+                  name="dependent_edit_info_last_name"
+                />
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label
+                  for="id_dependent_edit_info_date_of_birth"
+                  class="form-label"
+                  >تاريخ الميلاد<span style="color: red">*</span></label
+                >
+                <input
+                  type="date"
+                  class="form-control"
+                  id="id_dependent_edit_info_date_of_birth"
+                  maxlength="55"
+                  name="dependent_edit_info_date_of_birth"
+                />
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="row row-cols-md-2 row-cols-xl-3">
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_dependent_edit_info_gender" class="form-label"
+                  >الجنس<span style="color: red">*</span></label
+                >
+                <select
+                  name="dependent_edit_info_gender"
+                  class="form-control"
+                  id="id_dependent_edit_info_gender"
+                >
+                  <option value selected>---------</option>
+                  <option value="ذكر">ذكر</option>
+                  <option value="انثى">انثى</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_dependent_edit_info_relationship" class="form-label"
+                  >صلة القرابة<span style="color: red">*</span></label
+                >
+                <select
+                  name="dependent_edit_info_relationship"
+                  class="form-control"
+                  id="id_dependent_edit_info_relationship"
+                >
+                  <option value selected>---------</option>
+                  <option value="ابن">ابن</option>
+                  <option value="ابنة">ابنة</option>
+                  <option value="أخ">أخ</option>
+                  <option value="أخت">أخت</option>
+                  <option value="زوج/ـة">زوج/ـة</option>
+                  <option value="خال/ـة">خال/ـة</option>
+                  <option value="عم/ـة">عم/ـة</option>
+                  <option value="جد/ـة">جد/ـة</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label
+                  for="id_dependent_edit_info_marital_status"
+                  class="form-label"
+                  >الحالة الاجتماعية<span style="color: red">*</span></label
+                >
+                <select
+                  name="dependent_edit_info_marital_status"
+                  class="form-control"
+                  id="id_dependent_edit_info_marital_status"
+                >
+                  <option value selected>---------</option>
+                  <option value="طالب/ـة">طالب/ـة</option>
+                  <option value="طفل/ـة">طفل/ـة</option>
+                  <option value="ربة منزل">ربة منزل</option>
+                  <option value="متزوج/ـة">متزوج/ـة</option>
+                  <option value="أعزب/ـة">أعزب/ـة</option>
+                  <option value="أرملة/ـة">أرمل/ـة</option>
+                  <option value="مطلقة">مطلقة</option>
+                  <option value="مهجورة">مهجورة</option>
+                </select>
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="row row-cols-md-2">
+              <div class="col-md-6 mb-4 form-group">
+                <label
+                  for="id_dependent_edit_info_educational_status"
+                  class="form-label"
+                  >الحالة الدراسية<span style="color: red">*</span></label
+                >
+                <select
+                  name="dependent_edit_info_educational_status"
+                  class="form-control"
+                  id="id_dependent_edit_info_educational_status"
+                  onchange="educationalStatusEditInfoCheck(this);"
+                >
+                  <option value selected>---------</option>
+                  <option value="يدرس">يدرس</option>
+                  <option value="لا يدرس">لا يدرس</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-4 form-group" style="display: none;" id="id_dependent_edit_info_educational_level_group_info">
+                <label
+                  for="id_dependent_edit_info_educational_level"
+                  class="form-label"
+                  >المرحلة الدراسية<span style="color: red">*</span></label
+                >
+                <select
+                  name="dependent_edit_info_educational_level"
+                  class="form-control"
+                  id="id_dependent_edit_info_educational_level"
+                >
+                  <option value selected>---------</option>
+                  <option value="أول ابتدائي">أول ابتدائي</option>
+                  <option value="ثاني ابتدائي">ثاني ابتدائي</option>
+                  <option value="ثالث ابتدائي">ثالث ابتدائي</option>
+                  <option value="رابع ابتدائي">رابع ابتدائي</option>
+                  <option value="خامس ابتدائي">خامس ابتدائي</option>
+                  <option value="سادس ابتدائي">سادس ابتدائي</option>
+                  <option value="اول متوسط">اول متوسط</option>
+                  <option value="ثاني متوسط">ثاني متوسط</option>
+                  <option value="ثالث متوسط">ثالث متوسط</option>
+                  <option value="اول ثانوي">اول ثانوي</option>
+                  <option value="ثاني ثانوي">ثاني ثانوي</option>
+                  <option value="ثالث ثانوي">ثالث ثانوي</option>
+                  <option value="جامعي">جامعي</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-4 form-group" style="display: none;" id="id_dependent_edit_info_educational_degree_group_info">
+                <label
+                  for="id_dependent_edit_info_educational_degree"
+                  class="form-label"
+                  >المؤهل التعليمي<span style="color: red">*</span></label
+                >
+                <select
+                  name="dependent_edit_info_educational_degree"
+                  class="form-control"
+                  id="id_dependent_edit_info_educational_degree"
+                >
+                  <option value selected>---------</option>
+                  <option value="لا يوجد">لا يوجد</option>
+                  <option value="ابتدائي">ابتدائي</option>
+                  <option value="متوسط">متوسط</option>
+                  <option value="ثانوي">ثانوي</option>
+                  <option value="جامعي">جامعي</option>
+                </select>
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_dependent_edit_info_national_id" class="form-label"
+                  >رقم الهوية الوطنية \ الإقامة<span style="color: red"
+                  >*</span
                 ></label
-              >
-              <input
-                type="text"
-                id="id_dependent_edit_info_first_name"
-                class="form-control"
-                name="dependent_edit_info_first_name"
-              />
-            </div>
-            <div class="col-md-6 mb-4 form-group">
-              <label for="id_dependent_edit_info_second_name" class="form-label"
-                >الأسم الثاني<span style="color: red">*</span
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="id_dependent_edit_info_national_id"
+                  maxlength="20"
+                  name="dependent_edit_info_national_id"
+                />
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label
+                  for="id_dependent_edit_info_national_id_exp_date"
+                  class="form-label"
+                  >تاريخ انتهاء الهوية \ الإقامة<span style="color: red"
+                  >*</span
                 ></label
-              >
-              <input
-                type="text"
-                id="id_dependent_edit_info_second_name"
-                class="form-control"
-                name="dependent_edit_info_second_name"
-              />
+                >
+                <input
+                  type="date"
+                  class="form-control"
+                  id="id_dependent_edit_info_national_id_exp_date"
+                  name="dependent_edit_info_national_id_exp_date"
+                />
+              </div>
             </div>
-            <div class="col-md-6 mb-4 form-group">
-              <label for="id_dependent_edit_info_last_name" class="form-label"
-                >الأسم الأخير<span style="color: red">*</span
-                ><span style="font-size: 0.9rem">
-                  (أسم العائلة)</span
-                ></label
-              >
-              <input
-                type="text"
-                id="id_dependent_edit_info_last_name"
-                class="form-control"
-                name="dependent_edit_info_last_name"
-              />
-            </div>
-            <div class="col-md-6 mb-4 form-group">
-              <label
-                for="id_dependent_edit_info_date_of_birth"
-                class="form-label"
-                >تاريخ الميلاد<span style="color: red">*</span></label
-              >
-              <input
-                type="date"
-                class="form-control"
-                id="id_dependent_edit_info_date_of_birth"
-                maxlength="55"
-                name="dependent_edit_info_date_of_birth"
-              />
-            </div>
-          </div>
 
-          <hr>
+            <hr />
 
-          <div class="row row-cols-md-2 row-cols-xl-3">
-            <div class="col-md-6 mb-4 form-group">
-              <label for="id_dependent_edit_info_gender" class="form-label"
-                >الجنس<span style="color: red">*</span></label
-              >
-              <select
-                name="dependent_edit_info_gender"
-                class="form-control"
-                id="id_dependent_edit_info_gender"
-              >
-                <option value selected>---------</option>
-                <option value="ذكر">ذكر</option>
-                <option value="انثى">انثى</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-4 form-group">
-              <label for="id_dependent_edit_info_relationship" class="form-label"
-                >صلة القرابة<span style="color: red">*</span></label
-              >
-              <select
-                name="dependent_edit_info_relationship"
-                class="form-control"
-                id="id_dependent_edit_info_relationship"
-              >
-                <option value selected>---------</option>
-                <option value="ابن">ابن</option>
-                <option value="ابنة">ابنة</option>
-                <option value="أخ">أخ</option>
-                <option value="أخت">أخت</option>
-                <option value="زوج/ـة">زوج/ـة</option>
-                <option value="خال/ـة">خال/ـة</option>
-                <option value="عم/ـة">عم/ـة</option>
-                <option value="جد/ـة">جد/ـة</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-4 form-group">
-              <label
-                for="id_dependent_edit_info_marital_status"
-                class="form-label"
-                >الحالة الاجتماعية<span style="color: red">*</span></label
-              >
-              <select
-                name="dependent_edit_info_marital_status"
-                class="form-control"
-                id="id_dependent_edit_info_marital_status"
-              >
-                <option value selected>---------</option>
-                <option value="طالب/ـة">طالب/ـة</option>
-                <option value="طفل/ـة">طفل/ـة</option>
-                <option value="ربة منزل">ربة منزل</option>
-                <option value="متزوج/ـة">متزوج/ـة</option>
-                <option value="أعزب/ـة">أعزب/ـة</option>
-                <option value="أرملة/ـة">أرمل/ـة</option>
-                <option value="مطلقة">مطلقة</option>
-                <option value="مهجورة">مهجورة</option>
-              </select>
-            </div>
-          </div>
-
-          <hr />
-
-          <div class="row row-cols-md-2">
-            <div class="col-md-6 mb-4 form-group">
-              <label
-                for="id_dependent_edit_info_educational_status"
-                class="form-label"
-                >الحالة الدراسية<span style="color: red">*</span></label
-              >
-              <select
-                name="dependent_edit_info_educational_status"
-                class="form-control"
-                id="id_dependent_edit_info_educational_status"
-                onchange="educationalStatusEditInfoCheck(this);"
-              >
-                <option value selected>---------</option>
-                <option value="يدرس">يدرس</option>
-                <option value="لا يدرس">لا يدرس</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-4 form-group" style="display: none;" id="id_dependent_edit_info_educational_level_group_info">
-              <label
-                for="id_dependent_edit_info_educational_level"
-                class="form-label"
-                >المرحلة الدراسية<span style="color: red">*</span></label
-              >
-              <select
-                name="dependent_edit_info_educational_level"
-                class="form-control"
-                id="id_dependent_edit_info_educational_level"
-              >
-                <option value selected>---------</option>
-                <option value="أول ابتدائي">أول ابتدائي</option>
-                <option value="ثاني ابتدائي">ثاني ابتدائي</option>
-                <option value="ثالث ابتدائي">ثالث ابتدائي</option>
-                <option value="رابع ابتدائي">رابع ابتدائي</option>
-                <option value="خامس ابتدائي">خامس ابتدائي</option>
-                <option value="سادس ابتدائي">سادس ابتدائي</option>
-                <option value="اول متوسط">اول متوسط</option>
-                <option value="ثاني متوسط">ثاني متوسط</option>
-                <option value="ثالث متوسط">ثالث متوسط</option>
-                <option value="اول ثانوي">اول ثانوي</option>
-                <option value="ثاني ثانوي">ثاني ثانوي</option>
-                <option value="ثالث ثانوي">ثالث ثانوي</option>
-                <option value="جامعي">جامعي</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-4 form-group" style="display: none;" id="id_dependent_edit_info_educational_degree_group_info">
-              <label
-                for="id_dependent_edit_info_educational_degree"
-                class="form-label"
-                >المؤهل التعليمي<span style="color: red">*</span></label
-              >
-              <select
-                name="dependent_edit_info_educational_degree"
-                class="form-control"
-                id="id_dependent_edit_info_educational_degree"
-              >
-                <option value selected>---------</option>
-                <option value="لا يوجد">لا يوجد</option>
-                <option value="ابتدائي">ابتدائي</option>
-                <option value="متوسط">متوسط</option>
-                <option value="ثانوي">ثانوي</option>
-                <option value="جامعي">جامعي</option>
-              </select>
-            </div>
-          </div>
-
-          <hr />
-
-          <div class="row">
-            <div class="col-md-6 mb-4 form-group">
-              <label for="id_dependent_edit_info_national_id" class="form-label"
-                >رقم الهوية الوطنية \ الإقامة<span style="color: red"
-                >*</span
-              ></label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="id_dependent_edit_info_national_id"
-                maxlength="20"
-                name="dependent_edit_info_national_id"
-              />
-            </div>
-            <div class="col-md-6 mb-4 form-group">
-              <label
-                for="id_dependent_edit_info_national_id_exp_date"
-                class="form-label"
-                >تاريخ انتهاء الهوية \ الإقامة<span style="color: red"
-                >*</span
-              ></label
-              >
-              <input
-                type="date"
-                class="form-control"
-                id="id_dependent_edit_info_national_id_exp_date"
-                name="dependent_edit_info_national_id_exp_date"
-              />
-            </div>
-          </div>
-
-          <hr />
-
-          <h4 class="mb-4">مصادر الدخل</h4>
-              <div class="row row-cols-xl-3 justify-content-center">
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="id_dependent_edit_info_monthly_income" class="form-label">دخل المرافق (شهريا)</label>
-                  <div class="input-group mb-3">
-                    <input type="number" name="dependent_edit_info_monthly_income" max="9999999999999999" min="0" class="form-control" id="id_dependent_edit_info_monthly_income" />
-                    <span class="input-group-text" id="basic-addon1">ر.س.</span>
+            <h4 class="mb-4">مصادر الدخل</h4>
+                <div class="row row-cols-xl-3 justify-content-center">
+                  <div class="col-md-4 mb-2 form-group">
+                    <label for="id_dependent_edit_info_monthly_income" class="form-label">دخل المرافق (شهريا)</label>
+                    <div class="input-group mb-3">
+                      <input type="number" name="dependent_edit_info_monthly_income" max="9999999999999999" min="0" class="form-control" id="id_dependent_edit_info_monthly_income" />
+                      <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-lg-5 mb-2 form-group">
+                    <label for="id_dependent_edit_info_income_source" class="form-label">مصدر الدخل للمرافق</label>
+                    <select name="dependent_edit_info_income_source" class="form-control" id="id_dependent_edit_info_income_source">
+                      <option value selected>---------</option>
+                      <option value="الراتب">الراتب</option>
+                      <option value="التأمينات الاجتماعية">التأمينات الاجتماعية</option>
+                      <option value="الضمان الاجتماعي">الضمان الاجتماعي</option>
+                      <option value="مصلحة التقاعد">مصلحة التقاعد</option>
+                      <option value="حساب المواطن">حساب المواطن</option>
+                      <option value="التأهيل الشامل">التأهيل الشامل</option>
+                      <option value="جمعية خيرية">جمعية خيرية</option>
+                      <option value="فاعل خير">فاعل خير</option>
+                      <option value="اخرى">اخرى</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 col-lg-3 mb-sm-5 mb-md-3 mb-3 mt-4 row justify-content-center align-items-center" id="id_add_row_edit_income_table">
+                    <button type="button" class="btn btn-primary" onclick="addRowToIncomeEditInfoTable()">إضافة مصدر الدخل</button>
                   </div>
                 </div>
-                <div class="col-md-4 col-lg-5 mb-2 form-group">
-                  <label for="id_dependent_edit_info_income_source" class="form-label">مصدر الدخل للمرافق</label>
-                  <select name="dependent_edit_info_income_source" class="form-control" id="id_dependent_edit_info_income_source">
-                    <option value selected>---------</option>
-                    <option value="الراتب">الراتب</option>
-                    <option value="التأمينات الاجتماعية">التأمينات الاجتماعية</option>
-                    <option value="الضمان الاجتماعي">الضمان الاجتماعي</option>
-                    <option value="مصلحة التقاعد">مصلحة التقاعد</option>
-                    <option value="حساب المواطن">حساب المواطن</option>
-                    <option value="التأهيل الشامل">التأهيل الشامل</option>
-                    <option value="جمعية خيرية">جمعية خيرية</option>
-                    <option value="فاعل خير">فاعل خير</option>
-                    <option value="اخرى">اخرى</option>
-                  </select>
-                </div>
-                <div class="col-md-4 col-lg-3 mb-sm-5 mb-md-3 mb-3 mt-4 row justify-content-center align-items-center" id="id_add_row_edit_income_table">
-                  <button type="button" class="btn btn-primary" onclick="addRowToIncomeEditInfoTable()">إضافة مصدر الدخل</button>
-                </div>
-              </div>
-              
-              {% comment %} Dependent Income Table {% endcomment %}
-              <table class="table table-striped table-hover mb-5" id="incomeEditInfoTable">
-                <thead>
-                  <tr>
-                    <th scope="col">دخل المرافق الشهري (ر.س.)</th>
-                    <th scope="col">مصدر الدخل</th>
-                    <th scope="col">الإجراءات</th>
-                  </tr>
-                </thead>
-                <tbody id="incomeEditInfoTableBody"></tbody>
-              </table>
+                
+                {% comment %} Dependent Income Table {% endcomment %}
+                <table class="table table-striped table-hover mb-5" id="incomeEditInfoTable">
+                  <thead>
+                    <tr>
+                      <th scope="col">دخل المرافق الشهري (ر.س.)</th>
+                      <th scope="col">مصدر الدخل</th>
+                      <th scope="col">الإجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody id="incomeEditInfoTableBody"></tbody>
+                </table>
 
-          <hr />
+            <hr />
 
-          <div class="row">
-            <div class="col-md-6 mb-4 form-group">
-              <label
-                for="id_dependent_edit_info_health_status"
-                class="form-label"
-                >الحالة الصحية<span style="color: red"
-                >*</span
-              ></label
-              >
-              <select
-                name="dependent_edit_info_health_status"
-                class="form-control"
-                id="id_dependent_edit_info_health_status"
-                onchange="dependentEditInfoHealthCheck(this);"
-              >
-                <option value selected>---------</option>
-                <option value="جيدة">جيدة</option>
-                <option value="غير جيدة">غير جيدة</option>
-              </select>
-            </div>
-            <div
-              class="col-md-6 mb-4 form-group"
-              id="id_dependent_edit_info_disease_type_group_info"
-              style="display: none"
-            >
-              <label
-                for="id_dependent_edit_info_disease_type"
-                class="form-label"
-                >نوع المرض<span style="color: red"
-                >*</span
-              > (عند اختيار غير جيدة)</label
-              >
-              <input
-                type="text"
-                name="dependent_edit_info_disease_type"
-                maxlength="100"
-                class="form-control"
-                id="id_dependent_edit_info_disease_type"
-              />
-            </div>
-          </div>
-
-          <hr />
-
-          <div class="row">
-            <div class="col-md-12 mb-4 form-group">
-              <label class="form-label"
-                >نوع الاحتياج للمرافق<span style="color: red"
+            <div class="row">
+              <div class="col-md-6 mb-4 form-group">
+                <label
+                  for="id_dependent_edit_info_health_status"
+                  class="form-label"
+                  >الحالة الصحية<span style="color: red"
                   >*</span
-                > <span style="font-size: 0.9rem">
-                  (إختيار متعدد)</span
                 ></label
-              >
+                >
+                <select
+                  name="dependent_edit_info_health_status"
+                  class="form-control"
+                  id="id_dependent_edit_info_health_status"
+                  onchange="dependentEditInfoHealthCheck(this);"
+                >
+                  <option value selected>---------</option>
+                  <option value="جيدة">جيدة</option>
+                  <option value="غير جيدة">غير جيدة</option>
+                </select>
+              </div>
               <div
-                name="dependent_edit_info_needs_type"
-                class="d-grid gap-2"
-                style="grid-template-columns: 1fr 1fr 1fr;"
-                id="id_dependent_edit_info_needs_type"
+                class="col-md-6 mb-4 form-group"
+                id="id_dependent_edit_info_disease_type_group_info"
+                style="display: none"
               >
-                <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_economical" autocomplete="off" name="dependent_edit_info_needs_type_economical" value="اقتصادي">
-                <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_economical">اقتصادي</label>
-
-                <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_educational" autocomplete="off" name="dependent_edit_info_needs_type_educational" value="تعليمي">
-                <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_educational">تعليمي</label>
-
-                <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_employment" autocomplete="off" name="dependent_edit_info_needs_type_employment" value="توظيف">
-                <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_employment">توظيف</label>
-
-                <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_sponsorship" autocomplete="off" name="dependent_edit_info_needs_type_sponsorship" value="كفالة">
-                <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_sponsorship">كفالة</label>
-
-                <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_healthy" autocomplete="off" name="dependent_edit_info_needs_type_healthy" value="صحي">
-                <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_healthy">صحي</label>
+                <label
+                  for="id_dependent_edit_info_disease_type"
+                  class="form-label"
+                  >نوع المرض<span style="color: red"
+                  >*</span
+                > (عند اختيار غير جيدة)</label
+                >
+                <input
+                  type="text"
+                  name="dependent_edit_info_disease_type"
+                  maxlength="100"
+                  class="form-control"
+                  id="id_dependent_edit_info_disease_type"
+                />
               </div>
             </div>
-            <div class="col-md-12 mb-4 form-group">
-              <label
-                for="id_dependent_edit_info_needs_description"
-                class="form-label"
-                >وصف الاحتياج</label
-              >
-              <textarea
-                type="textarea"
-                class="form-control"
-                id="id_dependent_edit_info_needs_description"
-                name="dependent_edit_info_needs_description"
-                maxlength="2000"
-              ></textarea>
+
+            <hr />
+
+            <div class="row">
+              <div class="col-md-12 mb-4 form-group">
+                <label class="form-label"
+                  >نوع الاحتياج للمرافق<span style="color: red"
+                    >*</span
+                  > <span style="font-size: 0.9rem">
+                    (إختيار متعدد)</span
+                  ></label
+                >
+                <div
+                  name="dependent_edit_info_needs_type"
+                  class="d-grid gap-2"
+                  style="grid-template-columns: 1fr 1fr 1fr;"
+                  id="id_dependent_edit_info_needs_type"
+                >
+                  <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_economical" autocomplete="off" name="dependent_edit_info_needs_type_economical" value="اقتصادي">
+                  <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_economical">اقتصادي</label>
+
+                  <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_educational" autocomplete="off" name="dependent_edit_info_needs_type_educational" value="تعليمي">
+                  <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_educational">تعليمي</label>
+
+                  <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_employment" autocomplete="off" name="dependent_edit_info_needs_type_employment" value="توظيف">
+                  <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_employment">توظيف</label>
+
+                  <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_sponsorship" autocomplete="off" name="dependent_edit_info_needs_type_sponsorship" value="كفالة">
+                  <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_sponsorship">كفالة</label>
+
+                  <input type="checkbox" class="btn-check" id="id_dependent_edit_info_needs_type_healthy" autocomplete="off" name="dependent_edit_info_needs_type_healthy" value="صحي">
+                  <label class="btn btn-outline-primary" for="id_dependent_edit_info_needs_type_healthy">صحي</label>
+                </div>
+              </div>
+              <div class="col-md-12 mb-4 form-group">
+                <label
+                  for="id_dependent_edit_info_needs_description"
+                  class="form-label"
+                  >وصف الاحتياج</label
+                >
+                <textarea
+                  type="textarea"
+                  class="form-control"
+                  id="id_dependent_edit_info_needs_description"
+                  name="dependent_edit_info_needs_description"
+                  maxlength="2000"
+                ></textarea>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -4579,6 +4590,84 @@
       const convertedValue = convertToEnglishNumber(inputValue);
       event.target.value = convertedValue;
     });
+
+    // Function to handle the input event on the educational status dropdown
+    function handleEducationalStatusEditInput() {
+      // Get the selected value
+      var selectedValue = document.getElementById('id_dependent_edit_info_educational_status').value;
+      
+      // Get the elements representing educational level and degree sections
+      var educationalLevelGroup = document.getElementById('id_dependent_edit_info_educational_level_group_info');
+      var educationalDegreeGroup = document.getElementById('id_dependent_edit_info_educational_degree_group_info');
+
+      // Show or hide the sections based on the selected value
+      if (selectedValue === 'يدرس') {
+        // If يدرس is selected, show educational level and hide educational degree
+        educationalLevelGroup.style.display = 'block';
+        educationalDegreeGroup.style.display = 'none';
+      } else if (selectedValue === 'لا يدرس') {
+        // If لا يدرس is selected, show educational degree and hide educational level
+        educationalLevelGroup.style.display = 'none';
+        educationalDegreeGroup.style.display = 'block';
+      } else {
+        // If none is selected, hide both sections
+        educationalLevelGroup.style.display = 'none';
+        educationalDegreeGroup.style.display = 'none';
+      }
+    }
+
+    // Function to handle the input event on the educational status dropdown
+    function handleHealthStatusEditInput() {
+      // Get the selected value
+      var selectedValue = document.getElementById('id_dependent_edit_info_health_status').value;
+      
+      // Get the elements representing educational level and degree sections
+      var diseaseTypeGroup = document.getElementById('id_dependent_edit_info_disease_type_group_info');
+
+      // Show or hide the sections based on the selected value
+      if (selectedValue === 'جيدة') {
+        diseaseTypeGroup.style.display = 'none';
+      } else if (selectedValue === 'غير جيدة') {
+        diseaseTypeGroup.style.display = 'block';
+      } else {
+        // If none is selected, hide both sections
+        diseaseTypeGroup.style.display = 'none';
+      }
+    }
+
+    // Function to handle the modal's shown event
+    function handleModalShown() {
+      // Show loading state
+      document.getElementById('loadingStateEditModal').style.display = 'block';
+      document.getElementById('editModalContent').style.display = 'none';
+
+      // Simulate an asynchronous operation (replace this with your actual data retrieval logic)
+      setTimeout(function () {
+        // Hide loading state
+        document.getElementById('loadingStateEditModal').style.display = 'none';
+        // Show actual content
+        document.getElementById('editModalContent').style.display = 'block';
+        
+        // Call the function on the educational status dropdown to set the initial visibility
+        handleEducationalStatusEditInput.call(educationalStatusDropdown);
+        handleHealthStatusEditInput.call();
+      }, 2000); // Replace 2000 with the actual time it takes to load data
+      
+    }
+
+    // Add event listener to the educational status dropdown for the input event
+    var educationalStatusDropdown = document.getElementById('id_dependent_info_educational_status');
+    educationalStatusDropdown.addEventListener('input', handleEducationalStatusEditInput);
+
+    var healthStatusDropdown = document.getElementById('id_dependent_edit_info_health_status');
+    healthStatusDropdown.addEventListener('input', handleHealthStatusEditInput);
+
+    // Get the modal element
+    var editModal = new bootstrap.Modal(document.getElementById('editModal'));
+
+    // Add event listener to the modal's shown event
+    editModal._element.addEventListener('shown.bs.modal', handleModalShown);
+
     
   });
 </script>
