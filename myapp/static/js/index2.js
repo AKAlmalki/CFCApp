@@ -277,6 +277,9 @@ function provenDebtValueCheck(that) {
   }
 }
 
+// Define the maximum number of rows that can be added to the IncomeInfoTable
+const maxRowsIncomeInfo = 5;
+
 function addRowToIncomeInfoTable() {
   const monthlyIncome = document.getElementById('id_dependent_info_monthly_income').value;
   const incomeSource = document.getElementById('id_dependent_info_income_source').value;
@@ -292,6 +295,13 @@ function addRowToIncomeInfoTable() {
   }
 
   const tableBody = document.getElementById('incomeInfoTableBody');
+
+  // Check if the maximum number of rows has been reached
+  if (tableBody.rows.length >= maxRowsIncomeInfo) {
+    displayMaxRowErrorMessage('تم الوصول إلى الحد الأقصى لعدد مصادر الدخل. لا يمكن إضافة المزيد.', 5000);
+    return;
+  }
+
   const newRow = tableBody.insertRow();
 
   const cell1 = newRow.insertCell(0);
@@ -322,6 +332,48 @@ function addRowToIncomeInfoTable() {
 
   // Clear input fields after successful addition
   clearInputFieldsIncomeInfoTable();
+
+  // Remove the MaxRow error messsage after successful addition
+  removeMaxRowErrorMessage();
+}
+
+
+// Function to display an error message
+function displayMaxRowErrorMessage(message, duration) {
+  // Check if the error message element already exists
+  var errorMessageElement = document.getElementById('incomeTableErrorMessage');
+  
+  // If not, create a new element and append it to the page
+  if (!errorMessageElement) {
+    errorMessageElement = document.createElement('div');
+    errorMessageElement.id = 'incomeTableErrorMessage';
+    errorMessageElement.classList.add('alert', 'alert-danger');
+
+    // Get the parent node of the dependent income table
+    var parentElement = document.getElementById('id_add_row_income_table').parentNode;
+
+    // Insert the error message element at the top of the parent node
+    parentElement.insertBefore(errorMessageElement, parentElement.firstChild);
+
+    // Focus on the error message
+    errorMessageElement.focus();
+
+    // Remove the error message after a specified duration
+    //setTimeout(function () {
+    //  removeMaxRowErrorMessage();
+    //}, duration);
+  }
+
+  // Set the error message text
+  errorMessageElement.textContent = message;
+}
+
+// Function to remove the error message
+function removeMaxRowErrorMessage() {
+  var errorMessageElement = document.getElementById('incomeTableErrorMessage');
+  if (errorMessageElement) {
+    errorMessageElement.remove();
+  }
 }
 
 
@@ -364,6 +416,13 @@ function addRowToIncomeEditInfoTable() {
   }
 
   const tableBody = document.getElementById('incomeEditInfoTableBody');
+
+  // Check if the maximum number of rows has been reached
+  if (tableBody.rows.length >= maxRowsIncomeInfo) {
+    displayMaxRowErrorMessageEditInfoTable('تم الوصول إلى الحد الأقصى لعدد مصادر الدخل. لا يمكن إضافة المزيد.', 5000);
+    return;
+  }
+
   const newRow = tableBody.insertRow();
 
   const cell1 = newRow.insertCell(0);
@@ -393,7 +452,56 @@ function addRowToIncomeEditInfoTable() {
 
   // Clear input fields after successful addition
   clearInputFieldsIncomeEditInfoTable();
+
+  // Remove the MaxRow error messsage after successful addition
+  removeMaxRowErrorMessageEditInfoTable();
 }
+
+
+// Function to display an error message
+function displayMaxRowErrorMessageEditInfoTable(message, duration) {
+  // Check if the error message element already exists
+  var errorMessageElement = document.getElementById('editIncomeTableErrorMessage');
+  
+  // If not, create a new element and append it to the page
+  if (!errorMessageElement) {
+    errorMessageElement = document.createElement('div');
+    errorMessageElement.id = 'editIncomeTableErrorMessage';
+    errorMessageElement.classList.add('alert', 'alert-danger');
+
+    // Get the parent node of the dependent income table
+    var parentElement = document.getElementById('id_add_row_edit_income_table').parentNode;
+
+    // Insert the error message element at the top of the parent node
+    parentElement.insertBefore(errorMessageElement, parentElement.firstChild);
+
+    // Focus on the error message
+    errorMessageElement.focus();
+
+    // Remove the error message after a specified duration
+    setTimeout(function () {
+      removeMaxRowErrorMessageEditInfoTable();
+    }, duration);
+  }
+
+  // Listen for Bootstrap Modal events to remove the error message when the modal is closed
+  $('#editModal').on('hidden.bs.modal', function () {
+    removeMaxRowErrorMessageEditInfoTable();
+  });
+
+  // Set the error message text
+  errorMessageElement.textContent = message;
+}
+
+
+// Function to remove the error message
+function removeMaxRowErrorMessageEditInfoTable() {
+  var errorMessageElement = document.getElementById('editIncomeTableErrorMessage');
+  if (errorMessageElement) {
+    errorMessageElement.remove();
+  }
+}
+
 
 
 function deleteRowIncomeEditInfoTable(event, row) {
