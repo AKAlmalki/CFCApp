@@ -929,7 +929,7 @@
                   <div class="row">
                     <div class="col mb-4 form-group">
                       <label for="id_sponsorship_info_health_status" class="form-label"
-                        >الجنس</label
+                        >الحالة الصحية</label
                       >
                       <select
                         name="sponsorship_info_health_status"
@@ -943,7 +943,7 @@
                     </div>
                     <div class="col mb-4 form-group">
                       <label for="id_sponsorship_info_gender" class="form-label"
-                        >الحالة الصحية</label
+                        >الجنس</label
                       >
                       <select
                         name="sponsorship_info_gender"
@@ -1433,7 +1433,7 @@
     $.validator.addMethod(
       "nationalidRegex",
       function (value, element) {
-        console.log(value, validateSAID(value));
+        // console.log(value, validateSAID(value));
         return this.optional(element) || validateSAID(value);
       },
       "أدخل رقم هوية/إقامة صحيح."
@@ -1842,6 +1842,13 @@
       // Optional: Display an error message to the user
     }
   };
+
+  // Add an event listener to the form to prevent submission on Enter key press (or copy to clipboard)
+  document.getElementById('supporter_form').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
+  });
 
   // Function to update the names of the uploaded files for each file input
   function updateFileNamesDisplay(fileInputId, fileNamesDivId) {

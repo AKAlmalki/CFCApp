@@ -1069,7 +1069,6 @@ def supporter_indiv(request):
                     beneficiary_id=beneficiary_indiv.id)
             except ObjectDoesNotExist:
                 beneficiary_income_expenses_obj = None
-
             # Collect the data and add them to the object
             beneficiary_data.append({
                 'id': beneficiary_indiv.id,
