@@ -972,11 +972,12 @@
                     {% for data in beneficiary_data %}
                       <tr>
                         <td><div class="form-check d-flex justify-content-center">
-                          <input class="form-check-input" type="checkbox" value="" id="id_beneficiary_check{{data.id}}">
+                          <input class="form-check-input beneficiary-table-checkbox" type="checkbox" value="" id="id_beneficiary_check{{data.id}}">
                         </div></td>
                         <th class="col">{{ data.id }}</th>
                         <td class="col">{{ data.gender }}</td>
                         <td class="col">{{ data.in_ex_diff }}</td>
+                        <td class="col">{{ data.category }}</td>
                         <td class="col">{{ data.health_status }}</td>
                         <td class="col">{{ data.age }}</td>
                         <td class="col">{{ data.nationality }}</td>
@@ -1700,7 +1701,7 @@
   DataTable.ext.search.push(function (settings, data, dataIndex) {
       let min = parseInt(inputValue[0].value, 10);
       let max = parseInt(inputValue[1].value, 10);
-      let age = parseFloat(data[5]) || 0; // use data for the age column
+      let age = parseFloat(data[6]) || 0; // use data for the age column
   
       if (
           (isNaN(min) && isNaN(max)) ||
@@ -1721,7 +1722,7 @@
   
   // Custom range filtering function
   DataTable.ext.search.push(function (settings, data, dataIndex) {
-      let nationality = (data[6]) || 0; // use data for the age column
+      let nationality = (data[7]) || 0; // use data for the age column
   
       if (nationalityEl.value === '' || nationality === nationalityEl.value) {
           return true;
@@ -1735,9 +1736,9 @@
     table.draw();
   });
 
-  // Custom range filtering function
+  // Custom range filtering function (gender)
   DataTable.ext.search.push(function (settings, data, dataIndex) {
-    let gender = (data[2]) || 0; // use data for the age column
+    let gender = (data[2]) || 0; // use data for the gender column
 
     if (genderEl.value === '' || gender === genderEl.value) {
         return true;
@@ -1751,7 +1752,99 @@
     table.draw();
   });
 
+  // Get the total price input elements
+  const totalPriceInput1 = document.getElementById('id_sponsorship_info_total_price_1');
+  const totalPriceInput2 = document.getElementById('id_sponsorship_info_total_price_2');
 
+  // Calculate the total price for selected rows (Personal Choice)
+  function calculateTotalPricePersonalChoice() {
+    const selectedRows = table.rows({ selected: true }).data().toArray();
+    let totalPrice = 0;
+
+    selectedRows.forEach(rowData => {
+      let price = 0.00;
+      // In case of orphan family
+      if (rowData[4] == "أسرة أيتام") {
+        price = parseFloat(400);
+
+      // In case of widower family
+      } else if (rowData[4] == "أسرة أرملة") {
+        price = parseFloat(600);
+
+      // In case of other family categories
+      } else {
+        price = parseFloat(400);
+      }
+      totalPrice += price;
+    });
+
+    // Update the value of both total price input fields
+    totalPriceInput1.value = totalPrice.toFixed(2);
+    totalPriceInput2.value = totalPrice.toFixed(2);
+
+    // Display or use the total price as needed
+    console.log("Total Price for selected rows:", totalPrice);
+  }
+
+  // Listen for the 'select' and 'deselect' events and recalculate the total price
+  table.on('select deselect', function (e, dt, type, indexes) {
+    calculateTotalPricePersonalChoice();
+  });
+
+  // Calculate total price on every input on orphan number
+  $('#id_charitychoice_orphan_number').on('input', function() {
+    calculateTotalPriceCharityChoice();
+  })
+
+  // Calculate total price on every input on widower number
+  $('#id_charitychoice_widower_number').on('input', function() {
+    calculateTotalPriceCharityChoice();
+  })
+
+  // Calculate the total price function (Charity Choice)
+  function calculateTotalPriceCharityChoice() {
+    // Get the values of the number of orphans and widows
+    const orphanNumber = parseInt($('#id_charitychoice_orphan_number').val()) || 0;
+    const widowerNumber = parseInt($('#id_charitychoice_widower_number').val()) || 0;
+
+    // Your calculation logic based on the number of orphans and widows
+    const orphanPrice = 400;
+    const widowerPrice = 600;
+
+    // Calculate the total price for each sponsorship option
+    const orphanTotal = orphanNumber * orphanPrice;
+    const widowerTotal = widowerNumber * widowerPrice;
+
+    // Calculate the total price
+    const totalPrice = orphanTotal + widowerTotal;
+
+    // Update the total price input fields
+    $('#id_sponsorship_info_total_price_1').val(totalPrice.toFixed(2));
+    $('#id_sponsorship_info_total_price_2').val(totalPrice.toFixed(2));
+  }
+
+  // Add event listener to radio buttons
+  $('input[name="beneficiaries_choice"]').on('change', function() {
+    // Reset the total price when the option changes
+    resetAll();
+  });
+
+  // Reset the total price function
+  function resetAll() {
+    // Uncheck all selected rows in the DataTable
+    table.rows({ selected: true }).deselect();
+  
+    // Reset the orphan and widower number input values to zero
+    $('#id_charitychoice_orphan_number').val('0');
+    $('#id_charitychoice_widower_number').val('0');
+  
+    // Reset the total price fields to zero
+    $('#id_sponsorship_info_total_price_1').val('0.00');
+    $('#id_sponsorship_info_total_price_2').val('0.00');
+
+    // Uncheck all checkboxes in the table
+    $('.beneficiary-table-checkbox').prop('checked', false);
+  }
 
   // Event delegation to handle checkbox clicks
   $('#beneficiaries_table tbody').on('click', 'input[type="checkbox"]', function() {
@@ -1784,12 +1877,12 @@
   // Print an array of the selected rows
   document.querySelector('.next-table').addEventListener('click', function () {
       var selectedRows = table.rows('.selected').data().toArray();
-      console.log(selectedRows);
+      // console.log(selectedRows);
   });
 
   // Custom range filtering function
   DataTable.ext.search.push(function (settings, data, dataIndex) {
-    let health_status = (data[4]) || 0; // use data for the age column
+    let health_status = (data[5]) || 0; // use data for the age column
 
     if (healthStatusEl.value === '' || health_status === healthStatusEl.value) {
         return true;

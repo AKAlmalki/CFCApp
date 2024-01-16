@@ -1074,6 +1074,7 @@ def supporter_indiv(request):
                 'id': beneficiary_indiv.id,
                 'gender': beneficiary_indiv.gender,
                 'in_ex_diff': beneficiary_income_expenses_obj.in_ex_diff,
+                'category': beneficiary_indiv.category,
                 'health_status': beneficiary_indiv.health_status,
                 'age': beneficiary_indiv.age,
                 'nationality': beneficiary_indiv.nationality,
@@ -1085,7 +1086,7 @@ def supporter_indiv(request):
         # beneficiary_data = paginator.get_page(page_number)
 
         context = {
-            'beneficiary_headers': ['#', 'الجنس', 'نسبة الاحتياج', 'الحالة الصحية', 'العمر', 'الجنسية'],
+            'beneficiary_headers': ['#', 'الجنس', 'نسبة الاحتياج', 'التصنيف', 'الحالة الصحية', 'العمر', 'الجنسية'],
             'beneficiary_data': beneficiary_data,
         }
         return render(request, "supporter_form(indiv).html", context)
