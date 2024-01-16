@@ -10,6 +10,7 @@ __pycache__
 
 # Ignore static files
 staticfiles
+media/
 
 # Distribution / packaging
 .Python

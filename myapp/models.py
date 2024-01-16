@@ -3,13 +3,86 @@ from django.core.validators import RegexValidator
 from django.db.models import JSONField
 import datetime
 from datetime import date
+import os
 
 
 class TodoItem(models.Model):
     title = models.CharField(max_length=200)
     completed = models.BooleanField(default=False)
 
+# directory path functions
 
+
+def beneficiary_file_directory(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
+
+# all below methods must be removed (it is not needed anymore)
+
+
+def beneficiary_national_id_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_national_id/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_national_address_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_national_address/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_debt_instrument_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_debt_instrument/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_pension_social_insurance_inquiry_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_pension_social_insurance_inquiry/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_father_husband_death_certificate_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_father_husband_death_certificate/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_letter_from_prison_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_letter_from_prison/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_divorce_deed_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_divorce_deed/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_children_responsibility_deed_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_children_responsibility_deed/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_other_files_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_other_files/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_lease_contract_title_deed_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_lease_contract_title_deed/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_water_electricity_bills_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_water_electricity_bills/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_national_id_dependents_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_national_id_dependents/{1}".format(instance.national_id, filename)
+
+
+def beneficiary_social_warranty_inquiry_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/beneficiary_social_warranty_inquiry/{1}".format(instance.national_id, filename)
 #########################################################
 
 
@@ -34,6 +107,7 @@ class supporter_operation(models.Model):
 
 
 class beneficiary(models.Model):
+    id = models.AutoField(primary_key=True)
     file_no = models.CharField(max_length=512, null=True, blank=True)
     first_name = models.CharField(max_length=64, default="")
     second_name = models.CharField(max_length=64, default="")
@@ -106,6 +180,22 @@ class beneficiary(models.Model):
     def age(self):
         today = date.today()
         return today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
+
+
+class Beneficiary_attachment(models.Model):
+    db_table = "beneficiary_attachment"
+    beneficiary = models.ForeignKey(beneficiary, on_delete=models.CASCADE)
+    file_type = models.CharField(max_length=256, null=True)
+    file_object = models.FileField(
+        upload_to=beneficiary_file_directory, blank=True, null=True)
+
+    @property
+    def file_size(self):
+        return self.file_object.size
+
+    # Returns file name with its extension
+    def filename(self):
+        return os.path.basename(self.file_object.name)
 
 
 class beneficiary_house(models.Model):

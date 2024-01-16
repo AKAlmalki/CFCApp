@@ -16,6 +16,7 @@
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
 <style type="text/css">
   #sponsorship_information,
   #payment_and_submit_confirmation {
@@ -619,6 +620,13 @@
             <div class="alert alert-primary" role="alert">
               يمكنك اختيار المستفيدين بنفسك من خلال اختيار "اختار بنفسك"
             </div>
+            <div class="alert alert-warning" role="alert">
+              تكاليف الدعم
+              <ul class="mb-1 mt-1">
+                <li>يتيم 400 ر.س./شهر</li>
+                <li>أرملة 600 ر.س./شهر</li>
+              </ul>
+            </div>
             <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 mt-2">
               <div class="form-check d-flex justify-content-start gap-5 ms-4">
                 <input class="form-check-input" type="radio" name="beneficiaries_choice" id="id_charity_choice" checked>
@@ -929,7 +937,7 @@
                   <div class="row">
                     <div class="col mb-4 form-group">
                       <label for="id_sponsorship_info_health_status" class="form-label"
-                        >الجنس</label
+                        >الحالة الصحية</label
                       >
                       <select
                         name="sponsorship_info_health_status"
@@ -943,7 +951,7 @@
                     </div>
                     <div class="col mb-4 form-group">
                       <label for="id_sponsorship_info_gender" class="form-label"
-                        >الحالة الصحية</label
+                        >الجنس</label
                       >
                       <select
                         name="sponsorship_info_gender"
@@ -957,6 +965,10 @@
                     </div>
                   </div>
                   <hr>
+                </div>
+
+                <div class="col mb-4 mt-2 alert alert-warning" role="alert">
+                  <p class="mb-0"><span class="fw-bold text-danger">توضيح: </span>ما هي نسبة الاحتياج؟ هي نسبة الفرق بين الدخل والمصروفات للشخص, وكل ما كانت أعلى, كان احتياجه أكثر. </p>
                 </div>
                 
                 <table id="beneficiaries_table" class="table table-striped table-hover table-bordered text-nowrap">
@@ -972,11 +984,12 @@
                     {% for data in beneficiary_data %}
                       <tr>
                         <td><div class="form-check d-flex justify-content-center">
-                          <input class="form-check-input" type="checkbox" value="" id="id_beneficiary_check{{data.id}}">
+                          <input class="form-check-input beneficiary-table-checkbox" type="checkbox" value="" id="id_beneficiary_check{{data.id}}">
                         </div></td>
                         <th class="col">{{ data.id }}</th>
                         <td class="col">{{ data.gender }}</td>
-                        <td class="col">{{ data.in_ex_diff }}</td>
+                        <td class="col">%{{ data.in_ex_diff }}</td>
+                        <td class="col">{{ data.category }}</td>
                         <td class="col">{{ data.health_status }}</td>
                         <td class="col">{{ data.age }}</td>
                         <td class="col">{{ data.nationality }}</td>
@@ -1001,6 +1014,7 @@
                     id="id_sponsorship_info_duration"
                   >
                     <option value selected>---------</option>
+                    <option value="شهر واحد">شهر واحد</option>
                     <option value="3 أشهر">3 أشهر</option>
                     <option value="6 أشهر">6 أشهر</option>
                     <option value="سنة كاملة">سنة كاملة</option>
@@ -1433,7 +1447,7 @@
     $.validator.addMethod(
       "nationalidRegex",
       function (value, element) {
-        console.log(value, validateSAID(value));
+        // console.log(value, validateSAID(value));
         return this.optional(element) || validateSAID(value);
       },
       "أدخل رقم هوية/إقامة صحيح."
@@ -1569,34 +1583,20 @@
           },
           personalinfo_email: {
             required: true,
+            emailRegex: true,
           },
-          // Sponsorship information ------------
-          charitychoice_orphan_number: {
-            required: true,
-          },
+          // donation info ---------------
           charitychoice_widower_number: {
             required: true,
           },
-          charitychoice_orphan_donation_number: {
-            required: true,
-          },
-          charitychoice_orphan_donation_type: {
-            required: true,
-          },
-          charitychoice_widower_donation_number: {
-            required: true,
-          },
-          charitychoice_widower_donation_type: {
-            required: true,
-          },
-          sponsorship_info_duration: {
+          charitychoice_orphan_number: {
             required: true,
           },
           sponsorship_info_donation_type: {
             required: true,
           },
-          file_bank_transfer: {
-            required: true, // [Check why it doesn't work]
+          sponsorship_info_duration: {
+            required: true,
           },
           
         },
@@ -1729,7 +1729,7 @@
   DataTable.ext.search.push(function (settings, data, dataIndex) {
       let min = parseInt(inputValue[0].value, 10);
       let max = parseInt(inputValue[1].value, 10);
-      let age = parseFloat(data[5]) || 0; // use data for the age column
+      let age = parseFloat(data[6]) || 0; // use data for the age column
   
       if (
           (isNaN(min) && isNaN(max)) ||
@@ -1750,7 +1750,7 @@
   
   // Custom range filtering function
   DataTable.ext.search.push(function (settings, data, dataIndex) {
-      let nationality = (data[6]) || 0; // use data for the age column
+      let nationality = (data[7]) || 0; // use data for the age column
   
       if (nationalityEl.value === '' || nationality === nationalityEl.value) {
           return true;
@@ -1764,9 +1764,9 @@
     table.draw();
   });
 
-  // Custom range filtering function
+  // Custom range filtering function (gender)
   DataTable.ext.search.push(function (settings, data, dataIndex) {
-    let gender = (data[2]) || 0; // use data for the age column
+    let gender = (data[2]) || 0; // use data for the gender column
 
     if (genderEl.value === '' || gender === genderEl.value) {
         return true;
@@ -1780,7 +1780,158 @@
     table.draw();
   });
 
+  // Get the total price input elements
+  const totalPriceInput1 = document.getElementById('id_sponsorship_info_total_price_1');
+  const totalPriceInput2 = document.getElementById('id_sponsorship_info_total_price_2');
 
+  // Calculate the total price for selected rows (Personal Choice)
+  function calculateTotalPricePersonalChoice() {
+    const selectedRows = table.rows({ selected: true }).data().toArray();
+    let totalPrice = 0;
+
+    const durationFactor = {
+      "": 0,
+      "شهر واحد": 1,
+      "3 أشهر": 3,
+      "6 أشهر": 6,
+      "سنة كاملة": 12,
+    };
+
+    selectedRows.forEach(rowData => {
+      let price = 0.00;
+      // In case of orphan family
+      if (rowData[4] == "أسرة أيتام") {
+        price = parseFloat(400);
+
+      // In case of widower family
+      } else if (rowData[4] == "أسرة أرملة") {
+        price = parseFloat(600);
+
+      // In case of other family categories
+      } else {
+        price = parseFloat(400);
+      }
+
+      // Multiply the price by the duration factor
+      price *= durationFactor[$('#id_sponsorship_info_duration').val()];
+
+      totalPrice += price;
+    });
+
+    // Update the value of both total price input fields
+    totalPriceInput1.value = totalPrice.toFixed(2);
+    totalPriceInput2.value = totalPrice.toFixed(2);
+
+    // Display or use the total price as needed
+    console.log("Total Price for selected rows:", totalPrice);
+  }
+
+  // Listen for the 'select' and 'deselect' events and recalculate the total price
+  table.on('select deselect', function (e, dt, type, indexes) {
+    calculateTotalPricePersonalChoice();
+  });
+
+  // Add event listener to the duration dropdown
+  $('#id_sponsorship_info_duration').on('change', function () {
+    // Recalculate the total price when the duration changes
+    calculateTotalPricePersonalChoice();
+  });
+
+  // Calculate total price on every input on orphan number
+  $('#id_charitychoice_orphan_number').on('input', function() {
+    calculateTotalPriceCharityChoice();
+  })
+
+  // Calculate total price on every input on widower number
+  $('#id_charitychoice_widower_number').on('input', function() {
+    calculateTotalPriceCharityChoice();
+  })
+
+  // Add event listener to the duration dropdowns
+  $('#id_charitychoice_orphan_donation_type, #id_charitychoice_widower_donation_type, #id_charitychoice_orphan_donation_number, #id_charitychoice_widower_donation_number').on('change', function () {
+    // Recalculate the total price when the duration changes
+    calculateTotalPriceCharityChoice();
+  });
+
+
+  // Calculate the total price function (Charity Choice)
+  function calculateTotalPriceCharityChoice() {
+    // Get the values of the number of orphans and widows
+    const orphanNumber = parseInt($('#id_charitychoice_orphan_number').val()) || 0;
+    const widowerNumber = parseInt($('#id_charitychoice_widower_number').val()) || 0;
+
+    // Your calculation logic based on the number of orphans and widows
+    const orphanPrice = 400;
+    const widowerPrice = 600;
+
+    // Get the selected duration for orphans
+    const orphanDurationNumber = parseInt($('#id_charitychoice_orphan_donation_number').val()) || 0;
+    const orphanDurationType = $('#id_charitychoice_orphan_donation_type').val();
+
+    // Get the selected duration for widows
+    const widowerDurationNumber = parseInt($('#id_charitychoice_widower_donation_number').val()) || 0;
+    const widowerDurationType = $('#id_charitychoice_widower_donation_type').val();
+
+    // Calculate the total price for each sponsorship option
+    const orphanTotal = orphanNumber > 0 ? orphanNumber * orphanPrice * getDurationFactor(orphanDurationType, orphanDurationNumber) : 0;
+    const widowerTotal = widowerNumber > 0 ? widowerNumber * widowerPrice * getDurationFactor(widowerDurationType, widowerDurationNumber) : 0;
+
+    console.log(getDurationFactor(orphanDurationType, orphanDurationNumber), getDurationFactor(widowerDurationType, widowerDurationNumber));
+
+    console.log(orphanTotal, widowerTotal);
+
+    // Calculate the total price
+    const totalPrice = orphanTotal + widowerTotal;
+
+    // Update the total price input fields
+    $('#id_sponsorship_info_total_price_1').val(totalPrice.toFixed(2));
+    $('#id_sponsorship_info_total_price_2').val(totalPrice.toFixed(2));
+  }
+
+  // Helper function to get the duration factor
+  function getDurationFactor(durationType, durationNumber) {
+    const durationFactors = {
+      "سنة": 12,
+      "شهر": 1,
+      // Add more duration types and their factors as needed
+    };
+
+    return durationFactors[durationType] * durationNumber;
+  }
+
+  // Add event listener to radio buttons
+  $('input[name="beneficiaries_choice"]').on('change', function() {
+    // Reset the total price when the option changes
+    resetAll();
+  });
+
+  // Reset the total price function
+  function resetAll() {
+    // Uncheck all selected rows in the DataTable
+    table.rows({ selected: true }).deselect();
+  
+    // Reset the orphan and widower number input values to zero
+    $('#id_charitychoice_orphan_number').val('0');
+    $('#id_charitychoice_widower_number').val('0');
+  
+    // Reset the total price fields to zero
+    $('#id_sponsorship_info_total_price_1').val('0.00');
+    $('#id_sponsorship_info_total_price_2').val('0.00');
+
+    // Reset the duration type and number
+    $('#id_sponsorship_info_duration').val('');
+    $('#id_sponsorship_info_donation_type').val('');
+
+    // Uncheck all checkboxes in the table
+    $('.beneficiary-table-checkbox').prop('checked', false);
+
+    // Reset the duration-related input fields to their default values
+    $('#id_charitychoice_orphan_donation_number').val('0');
+    $('#id_charitychoice_orphan_donation_type').val('اختار...');
+
+    $('#id_charitychoice_widower_donation_number').val('0');
+    $('#id_charitychoice_widower_donation_type').val('اختار...');
+  }
 
   // Event delegation to handle checkbox clicks
   $('#beneficiaries_table tbody').on('click', 'input[type="checkbox"]', function() {
@@ -1813,12 +1964,12 @@
   // Print an array of the selected rows
   document.querySelector('.next-table').addEventListener('click', function () {
       var selectedRows = table.rows('.selected').data().toArray();
-      console.log(selectedRows);
+      // console.log(selectedRows);
   });
 
   // Custom range filtering function
   DataTable.ext.search.push(function (settings, data, dataIndex) {
-    let health_status = (data[4]) || 0; // use data for the age column
+    let health_status = (data[5]) || 0; // use data for the age column
 
     if (healthStatusEl.value === '' || health_status === healthStatusEl.value) {
         return true;
@@ -1872,6 +2023,13 @@
     }
   };
 
+  // Add an event listener to the form to prevent submission on Enter key press (or copy to clipboard)
+  document.getElementById('supporter_form').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
+  });
+
   // Function to update the names of the uploaded files for each file input
   function updateFileNamesDisplay(fileInputId, fileNamesDivId) {
     var fileInput = document.getElementById(fileInputId);
@@ -1898,6 +2056,11 @@
     "id_form_file_bank_transfer",
     "id_file_names_bank_transfer"
   );
+
+  var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+  var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+    return new bootstrap.Popover(popoverTriggerEl)
+  })
 
   // Handle form submission [not complete yet]
   document.getElementById('supporter_form').addEventListener('submit', function(event) {
