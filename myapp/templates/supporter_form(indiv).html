@@ -1529,40 +1529,40 @@
         // Adding the rules (validations) for each input in the form.
         rules: {
           personalinfo_first_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_second_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_last_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_date_of_birth: {
-            required: false,
+            required: true,
             dateISO: true,
           },
           personalinfo_gender: {
-            required: false,
+            required: true,
           },
           personalinfo_national_id: {
-            required: false,
+            required: true,
             nationalidRegex: true,
           },
           personalinfo_national_id_exp_date: {
-            required: false,
+            required: true,
             dateISO: true,
           },
           personalinfo_nationality: {
-            required: false,
+            required: true,
             maxlength: 30,
           },
           personalinfo_marital_status: {
@@ -1575,14 +1575,28 @@
             required: false,
           },
           personalinfo_employer: {
-            required: false,
+            required: true,
           },
           personalinfo_phone_number: {
-            required: false,
+            required: true,
             saudiPhoneRegex: true,
           },
           personalinfo_email: {
-            //emailRegex: true,
+            required: true,
+            emailRegex: true,
+          },
+          // donation info ---------------
+          charitychoice_widower_number: {
+            required: true,
+          },
+          charitychoice_orphan_number: {
+            required: true,
+          },
+          sponsorship_info_donation_type: {
+            required: true,
+          },
+          sponsorship_info_duration: {
+            required: true,
           },
         },
         messages: {

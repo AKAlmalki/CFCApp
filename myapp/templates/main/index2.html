@@ -658,7 +658,7 @@
                   </div>
                   <div class="col-md-6 mb-4 form-group">
                     <label for="id_personalinfo_email" class="form-label"
-                      >البريد الالكتروني</label
+                      >البريد الالكتروني<span style="color: red">*</span></label
                     >
                     <input
                       type="email"
@@ -666,6 +666,7 @@
                       maxlength="254"
                       class="form-control"
                       id="id_personalinfo_email"
+                      required
                     />
                   </div>
                 </div>
@@ -3595,76 +3596,76 @@
         // Adding the rules (validations) for each input in the form.
         rules: {
           personalinfo_first_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_second_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_last_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_date_of_birth: {
-            required: false,
+            required: true,
             dateISO: true,
           },
           personalinfo_gender: {
-            required: false,
+            required: true,
           },
           personalinfo_national_id: {
-            required: false,
+            required: true,
             nationalidRegex: true,
           },
           personalinfo_national_id_exp_date: {
-            required: false,
+            required: true,
             dateISO: true,
           },
           personalinfo_nationality: {
-            required: false,
+            required: true,
             maxlength: 30,
           },
           personalinfo_category: {
-            required: false,
+            required: true,
           },
           personalinfo_marital_status: {
-            required: false,
+            required: true,
           },
           personalinfo_educational_level: {
-            required: false,
+            required: true,
           },
           personalinfo_date_of_death_of_father_or_husband: {
-            required: false,
+            required: true,
             dateISO: true,
           },
           personalinfo_washing_place: {
             required: false,
           },
           personalinfo_health_status: {
-            required: false,
+            required: true,
           },
           personalinfo_disease_type: {
-            required: false,
+            required: true,
           },
           personalinfo_work_status: {
-            required: false,
+            required: true,
           },
           personalinfo_employer: {
-            required: false,
+            required: true,
           },
           personalinfo_phone_number: {
-            required: false,
+            required: true,
             saudiPhoneRegex: true,
           },
           personalinfo_email: {
-            required: false,
+            required: true,
             //emailRegex: true,
           },
           // dependent_information ---------
