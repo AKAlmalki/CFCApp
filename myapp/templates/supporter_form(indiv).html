@@ -1909,6 +1909,13 @@
 
     // Uncheck all checkboxes in the table
     $('.beneficiary-table-checkbox').prop('checked', false);
+
+    // Reset the duration-related input fields to their default values
+    $('#id_charitychoice_orphan_donation_number').val('0');
+    $('#id_charitychoice_orphan_donation_type').val('اختار...');
+
+    $('#id_charitychoice_widower_donation_number').val('0');
+    $('#id_charitychoice_widower_donation_type').val('اختار...');
   }
 
   // Event delegation to handle checkbox clicks
