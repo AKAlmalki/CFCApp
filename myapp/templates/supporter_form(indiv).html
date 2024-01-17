@@ -2062,6 +2062,28 @@
     return new bootstrap.Popover(popoverTriggerEl)
   })
 
+  // Function to convert non-English numbers to English numbers
+  function convertToEnglishNumber(input) {
+    const easternArabicNumerals = '٠١٢٣٤٥٦٧٨٩';
+    const englishNumerals = '0123456789';
+
+    for (let i = 0; i < easternArabicNumerals.length; i++) {
+        const regex = new RegExp(easternArabicNumerals[i], 'g');
+        input = input.replace(regex, englishNumerals[i]);
+    }
+
+    return input;
+  }
+
+
+  // Event listener for input field 'iben number'
+  document.getElementById('id_personalinfo_national_id').addEventListener('input', function (event) {
+    const inputValue = event.target.value;
+    const convertedValue = convertToEnglishNumber(inputValue);
+    event.target.value = convertedValue;
+  });
+
+
   // Handle form submission [not complete yet]
   document.getElementById('supporter_form').addEventListener('submit', function(event) {
     event.preventDefault();
