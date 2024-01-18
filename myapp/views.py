@@ -852,7 +852,7 @@ def beneficiary_indiv(request):
             educational_level = dep.get('educationalLevel', None)
             disease_type = dep.get('diseaseType', None)
             dependent_income_table = json.loads(
-                dep.get('depedentIncomeTable', []))
+                dep.get('dependentIncomeTable', []))
             print("\n\ndependent_income_table", dependent_income_table, "\n\n")
 
             # Create a new dependent object and save it to the database
@@ -968,6 +968,21 @@ def beneficiary_details(request, beneficiary_id):
             dependent_data = []
 
             for dependent_obj in dependent_list:
+
+                # Initialize dependent income list with every dependent
+                dependent_income_data = []
+
+                # Retrieve the dependent income infomration
+                dependent_income_list = Dependent_income.objects.filter(
+                    dependent=dependent_obj).all()
+
+                # Add the data into the dependent income list
+                for dependent_income_obj in dependent_income_list:
+                    dependent_income_data.append({
+                        'income_source': dependent_income_obj.source,
+                        'income_amount': dependent_income_obj.amount,
+                    })
+
                 dependent_data.append({
                     'dependent_id': dependent_obj.id,
                     'dependent_first_name': dependent_obj.first_name,
@@ -986,6 +1001,7 @@ def beneficiary_details(request, beneficiary_id):
                     'dependent_needs_description': dependent_obj.needs_description,
                     'dependent_educational_level': dependent_obj.educational_level,
                     'dependent_disease_type': dependent_obj.disease_type,
+                    'dependent_income_data': dependent_income_data,
                 })
 
             beneficiary_attachment_list = []
@@ -1033,7 +1049,7 @@ def beneficiary_details(request, beneficiary_id):
                     'file_size': attachment.file_size,
                     'attachment_type': attachment_type_ar,
                 })
-            print("attachments: ", beneficiary_attachment_list)
+            # print("attachments: ", beneficiary_attachment_list)
 
             data = {
                 'id': beneficiary_obj.id,

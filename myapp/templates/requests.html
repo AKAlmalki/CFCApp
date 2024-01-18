@@ -916,25 +916,107 @@
                           </h2>
                           <div id="dependentCollapse${index}" class="accordion-collapse collapse" aria-labelledby="dependentHeading${index}">
                             <div class="accordion-body">
-                              
+
                               <div class="row row-cols-lg-2 row-cols-xl-4">
                                 <div class="mb-3">
-                                  <h6 class="col form-label" for="id_dependent_id">رقم المرافق</h6>
-                                  <input type="text" class="form-control" id="id_dependent_id" name="dependent_id" value="${dependent.dependent_id}" disabled readonly>
+                                  <h6 class="col form-label" for="id_dependent_id${index}">رقم المرافق</h6>
+                                  <input type="text" class="form-control" id="id_dependent_id${index}" name="dependent_id" value="${dependent.dependent_id}" disabled readonly>
                                 </div>
                                 <div class="mb-3">
-                                  <h6 class="col form-label" for="id_modal_first_name">الأسم الأول</h6>
-                                  <input type="text" class="form-control" id="id_modal_first_name" name="first_name" disabled readonly>
+                                  <h6 class="col form-label" for="id_dependent_first_name${index}">الأسم الأول</h6>
+                                  <input type="text" class="form-control" id="id_dependent_first_name${index}" name="dependent_first_name" value="${dependent.dependent_first_name}" disabled readonly>
                                 </div>
                                 <div class="mb-3">
-                                  <h6 class="col form-label" for="id_modal_second_name">الأسم الثاني</h6>
-                                  <input type="text" class="form-control" id="id_modal_second_name" name="second_name" disabled readonly>
+                                  <h6 class="col form-label" for="id_dependent_second_name${index}">الأسم الثاني</h6>
+                                  <input type="text" class="form-control" id="id_dependent_second_name${index}" name="dependent_second_name" value="${dependent.dependent_second_name}" disabled readonly>
                                 </div>
                                 <div class="mb-3">
-                                  <h6 class="col form-label" for="id_modal_last_name">الأسم الأخير</h6>
-                                  <input type="text" class="form-control" id="id_modal_last_name" name="last_name" disabled readonly>
+                                  <h6 class="col form-label" for="id_dependent_last_name${index}">الأسم الأخير</h6>
+                                  <input type="text" class="form-control" id="id_dependent_last_name${index}" name="dependent_last_name" value="${dependent.dependent_last_name}" disabled readonly>
                                 </div>
                               </div>
+
+                              <div class="row row-cols-lg-2 row-cols-xl-4">
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_gender${index}">الجنس</h6>
+                                  <input type="text" class="form-control" id="id_dependent_gender${index}" name="dependent_gender" value="${dependent.dependent_gender}" disabled readonly>
+                                </div>
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_relationship${index}">صلة القرابة</h6>
+                                  <input type="text" class="form-control" id="id_dependent_relationship${index}" name="dependent_relationship" value="${dependent.dependent_relationship}" disabled readonly>
+                                </div>
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_marital_status${index}">الحالة الاجتماعية</h6>
+                                  <input type="text" class="form-control" id="id_dependent_marital_status${index}" name="dependent_marital_status" value="${dependent.dependent_marital_status}" disabled readonly>
+                                </div>
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_educational_status${index}">الحالة الدراسية</h6>
+                                  <input type="text" class="form-control" id="id_dependent_educational_status${index}" name="dependent_educational_status" value="${dependent.dependent_educational_status}" disabled readonly>
+                                </div>
+                              </div>
+
+                              <div class="row row-cols-lg-2 row-cols-xl-4">
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_educational_level${index}">المرحلة الدراسية</h6>
+                                  <input type="text" class="form-control" id="id_dependent_educational_level${index}" name="dependent_educational_level" value="${dependent.dependent_educational_level}" disabled readonly>
+                                </div>
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_educational_degree${index}">المؤهل التعليمي</h6>
+                                  <input type="text" class="form-control" id="id_dependent_educational_degree${index}" name="dependent_educational_degree" value="${dependent.dependent_educational_degree}" disabled readonly>
+                                </div>
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_relationship${index}">الحالة الصحية</h6>
+                                  <input type="text" class="form-control" id="id_dependent_relationship${index}" name="dependent_relationship" value="${dependent.dependent_health_status}" disabled readonly>
+                                </div>
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_marital_status${index}">نوع المرض</h6>
+                                  <input type="text" class="form-control" id="id_dependent_marital_status${index}" name="dependent_marital_status" value="${dependent.dependent_disease_type}" disabled readonly>
+                                </div>
+                              </div>
+
+                              <div class="row row-cols-lg-2">
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_national_id${index}">رقم الهوية الوطنية / الإقامة</h6>
+                                  <input type="text" class="form-control" id="id_dependent_national_id${index}" name="dependent_national_id" value="${dependent.dependent_national_id}" disabled readonly>
+                                </div>
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_national_id_exp_date${index}">تاريخ انتهاء الهوية / الإقامة</h6>
+                                  <input type="text" class="form-control" id="id_dependent_national_id_exp_date${index}" name="dependent_national_id_exp_date" value="${dependent.dependent_national_id_exp_date}" disabled readonly>
+                                </div>
+                              </div>
+
+                              <div class="row row-cols-lg-2 row-cols-xl-3">
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_date_of_birth${index}">تاريخ الميلاد</h6>
+                                  <input type="text" class="form-control" id="id_dependent_date_of_birth${index}" name="dependent_date_of_birth" value="${dependent.dependent_date_of_birth}" disabled readonly>
+                                </div>
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_needs_description${index}">وصف الاحتياج</h6>
+                                  <input type="text" class="form-control" id="id_dependent_needs_description${index}" name="dependent_needs_description" value="${dependent.dependent_needs_description}" disabled readonly>
+                                </div>
+                                <div class="mb-3">
+                                  <h6 class="col form-label" for="id_dependent_educational_status${index}">نوع الاحتياج</h6>
+                                  <input type="text" class="form-control" id="id_dependent_educational_status${index}" name="dependent_educational_status" value="${dependent.dependent_needs_type}" disabled readonly>
+                                </div>
+                              </div>
+
+                              <!-- Display dependent income data as a table -->
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th>مصدر الدخل</th>
+                                    <th>قيمة الدخل</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  ${dependent.dependent_income_data.map((income, incomeIndex) => `
+                                    <tr key="${incomeIndex}">
+                                      <td>${income.income_source}</td>
+                                      <td>${income.income_amount}</td>
+                                    </tr>
+                                  `).join('')}
+                                </tbody>
+                              </table>
 
                             </div>
                           </div>
