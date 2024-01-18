@@ -10,7 +10,7 @@ function widowerCheck(that) {
   }
 }
 */
-
+// Check if the user work or not, display or hide the following field
 function workCheck(that) {
   if (that.value == "نعم") {
       document.getElementById("id_personalinfo_employer_group_info").style.display = "block";
@@ -19,23 +19,27 @@ function workCheck(that) {
   }
 }
 
-function isThereOrphan(that) {
-  var orphanNum = parseInt(that.value); // Convert the value to a number
+// If the value of this field become empty, it reset back the value to zero
+function isThereWidower(inputField) {
+  // Get the value of the input field
+  var value = inputField.value.trim();
 
-  if (orphanNum > 0) {
-    document.getElementById("id_orphan_duration_group_info").style.display = "flex"; // Set the file input as required
-  } else {
-    document.getElementById("id_orphan_duration_group_info").style.display = "none"; // Remove the required attribute
+  // Check if the value is empty or blank
+  if (value === "" || isNaN(value)) {
+    // If empty or not a number, set it back to zero
+    inputField.value = "0";
   }
 }
 
-function isThereWidower(that) {
-  var widowerNum = parseInt(that.value); // Convert the value to a number
+  // If the value of this field become empty, it reset back the value to zero
+function isThereOrphan(inputField) {
+  // Get the value of the input field
+  var value = inputField.value.trim();
 
-  if (widowerNum > 0) {
-    document.getElementById("id_widower_duration_group_info").style.display = "flex"; // Set the file input as required
-  } else {
-    document.getElementById("id_widower_duration_group_info").style.display = "none"; // Remove the required attribute
+  // Check if the value is empty or blank
+  if (value === "" || isNaN(value)) {
+    // If empty or not a number, set it back to zero
+    inputField.value = "0";
   }
 }
 
