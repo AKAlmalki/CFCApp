@@ -12,6 +12,7 @@ from datetime import datetime, date
 import logging
 import os
 import json
+from decimal import Decimal
 from openpyxl import Workbook
 from openpyxl.styles import *
 import decimal
@@ -850,7 +851,9 @@ def beneficiary_indiv(request):
             needs_description = dep.get('needsDescription', '')
             educational_level = dep.get('educationalLevel', None)
             disease_type = dep.get('diseaseType', None)
-            dependent_income_table = dep.get('dependentIncomeTable', [])
+            dependent_income_table = json.loads(
+                dep.get('depedentIncomeTable', []))
+            print("\n\ndependent_income_table", dependent_income_table, "\n\n")
 
             # Create a new dependent object and save it to the database
             new_dependent = dependent(
@@ -879,8 +882,9 @@ def beneficiary_indiv(request):
             dependent_file_list = []
 
             for entry in dependent_income_table:
-                # Extract the data for each field
-                monthly_income = entry.get('monthlyIncome', '')
+                # Extract the monthly income and remove commas
+                monthly_income_str = entry.get('monthlyIncome', '')
+                monthly_income = Decimal(monthly_income_str.replace(',', ''))
                 income_source = entry.get('incomeSource', '')
 
                 # Initialize dependent income list
