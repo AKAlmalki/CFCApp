@@ -981,9 +981,29 @@
                         <option value="انثى">انثى</option>
                       </select>
                     </div>
+                    <div class="col-md-6 mb-4 form-group">
+                      <label for="id_sponsorship_info_category" class="form-label"
+                        >التصنيف الرئيسي</label
+                      >
+                      <select
+                        name="sponsorship_info_category"
+                        class="form-select form-select-sm"
+                        required
+                        id="id_sponsorship_info_category"
+                      >
+                        <option value selected>الكل</option>
+                        <option value="أسرة عادية">أسرة عادية</option>
+                        <option value="أسرة أيتام">أسرة أيتام</option>
+                        <option value="أسرة أرملة">أسرة أرملة</option>
+                        <option value="أسرة سجناء">أسرة سجناء</option>
+                        <option value="أسرة مطلقة">أسرة مطلقة</option>
+                        <option value="فرد">فرد</option>
+                      </select>
+                    </div>
                   </div>
-                  <hr>
                 </div>
+
+                <hr>
 
                 <div class="col mb-4 mt-2 alert alert-warning" role="alert">
                   <p class="mb-0"><span class="fw-bold text-danger">توضيح: </span>ما هي نسبة الاحتياج؟ هي نسبة الفرق بين الدخل والمصروفات للشخص, وكل ما كانت أعلى, كان احتياجه أكثر. </p>
@@ -1790,10 +1810,11 @@
   const genderEl = document.querySelector('#id_sponsorship_info_gender');
   const nationalityEl = document.querySelector('#id_sponsorship_info_nationality');
   const healthStatusEl = document.querySelector('#id_sponsorship_info_health_status');
+  const categoryEl = document.querySelector('#id_sponsorship_info_category');
   
-  // Custom range filtering function
+  // Custom range filtering function (Nationality)
   DataTable.ext.search.push(function (settings, data, dataIndex) {
-      let nationality = (data[7]) || 0; // use data for the age column
+      let nationality = (data[7]) || 0; // use data for the nationality column
   
       if (nationalityEl.value === '' || nationality === nationalityEl.value) {
           return true;
@@ -2000,19 +2021,33 @@
       // console.log(selectedRows);
   });
 
-  // Custom range filtering function
+  // Custom range filtering function (health status)
   DataTable.ext.search.push(function (settings, data, dataIndex) {
-    let health_status = (data[5]) || 0; // use data for the age column
+    let health_status = (data[5]) || 0; // use data for the health status column
 
     if (healthStatusEl.value === '' || health_status === healthStatusEl.value) {
         return true;
     }
     
     return false;
-
   });
 
   healthStatusEl.addEventListener('change', function () {
+    table.draw();
+  });
+
+  // Custom range filtering function (category)
+  DataTable.ext.search.push(function (settings, data, dataIndex) {
+    let category = (data[4]) || 0; // use data for the category column
+
+    if (categoryEl.value === '' || category === categoryEl.value) {
+        return true;
+    }
+    
+    return false;
+  });
+
+  categoryEl.addEventListener('change', function () {
     table.draw();
   });
 
