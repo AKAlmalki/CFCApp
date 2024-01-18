@@ -1612,7 +1612,7 @@
             required: false,
           },
           personalinfo_employer: {
-            required: false,
+            required: true,
           },
           personalinfo_phone_number: {
             required: true,
@@ -2180,7 +2180,7 @@
     // Append selected rows' data
     formData.append('selectedRowsData', JSON.stringify(selectedRowsData));
 
-    fetch('https://port433.link/supporters/individuals/new_request', {
+    fetch('https://127.0.0.1:8000/supporters/individuals/new_request', {
         method: 'POST',
         body: formData,
     })
