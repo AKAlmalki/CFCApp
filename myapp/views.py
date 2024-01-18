@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Beneficiary_attachment, entity_supporter_operation
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Dependent_income, Beneficiary_attachment, entity_supporter_operation
 from .forms import RegisterForm
 from django.db.models import Q
 from django.contrib import messages
@@ -815,6 +815,8 @@ def beneficiary_indiv(request):
 
         dependent_table = data.get('dependents-table', None)
 
+        print("\n\n\n", dependent_table)
+
         # Parse the JSON string into a Python object
         try:
             dependents_list = json.loads(dependent_table)
@@ -823,6 +825,8 @@ def beneficiary_indiv(request):
             dependents_list = []
 
         # Now, you can iterate over the list of dependents
+        print(dependents_list)
+
         for dep in dependents_list:
             # Extract the data for each field
             first_name = dep.get('firstName', '')
@@ -834,8 +838,6 @@ def beneficiary_indiv(request):
             marital_status = dep.get('martialStatus', '')
             national_id = dep.get('nationalID', '')
             health_status = dep.get('healthStatus', None)
-            income_amount = dep.get('incomeAmount', 0)
-            income_source = dep.get('incomeSource', '')
             needs_type = dep.get('needsType', '')
             educational_degree = dep.get('educationalDegree', '')
             date_of_birth = dep.get('dateOfBitrh', None)
@@ -848,6 +850,7 @@ def beneficiary_indiv(request):
             needs_description = dep.get('needsDescription', '')
             educational_level = dep.get('educationalLevel', None)
             disease_type = dep.get('diseaseType', None)
+            dependent_income_table = dep.get('dependentIncomeTable', [])
 
             # Create a new dependent object and save it to the database
             new_dependent = dependent(
@@ -864,14 +867,33 @@ def beneficiary_indiv(request):
                 educational_status=educational_status,
                 health_status=health_status,
                 disease_type=disease_type,
-                income_amount=income_amount,
-                income_source=income_source,
                 needs_type=needs_type,
                 educational_degree=educational_degree,
                 needs_description=needs_description,
                 beneficiary_id=beneficiary_obj
             )
             new_dependent.save()
+
+            # Store list of income for dependent -------------------
+            # Store all file objects in a list
+            dependent_file_list = []
+
+            for entry in dependent_income_table:
+                # Extract the data for each field
+                monthly_income = entry.get('monthlyIncome', '')
+                income_source = entry.get('incomeSource', '')
+
+                # Initialize dependent income list
+                dependent_income_obj = Dependent_income(
+                    source=income_source,
+                    amount=monthly_income,
+                    dependent=new_dependent
+                )
+                dependent_file_list.append(dependent_income_obj)
+
+            # Save dependent income objects
+            if dependent_file_list:
+                Dependent_income.objects.bulk_create(dependent_file_list)
 
         # handle file uploads
         file_beneficiary_national_id = request.FILES.get(
@@ -954,8 +976,6 @@ def beneficiary_details(request, beneficiary_id):
                     'dependent_national_id': dependent_obj.national_id,
                     'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
                     'dependent_health_status': dependent_obj.health_status,
-                    'dependent_income_amount': dependent_obj.income_amount,
-                    'dependent_income_source': dependent_obj.income_source,
                     'dependent_needs_type': dependent_obj.needs_type,
                     'dependent_educational_degree': dependent_obj.educational_degree,
                     'dependent_date_of_birth': dependent_obj.date_of_birth,
@@ -1104,12 +1124,9 @@ def supporter_indiv_post(request):
         post_data = request.POST
         files_data = request.FILES
 
-        choice0 = request.POST.get('beneficiaries_choice')
-        choice1 = request.POST.get('id_personal_choice')
-        choice2 = request.POST.get('id_charity_choice')
-        form_field1 = request.POST.get('charitychoice_orphan_number')
-        form_field2 = request.POST.get('charitychoice_widower_donation_type')
         # ... retrieve other form fields as needed
+        # This field represent user option either to let the selection for the charity or do it by himself
+        beneficiary_choice = request.POST.get('beneficiaries_choice')
 
         # Retrieve selected rows' data
         try:
@@ -1119,21 +1136,16 @@ def supporter_indiv_post(request):
             return JsonResponse({'error': 'Invalid JSON format in selectedRowsData'}, status=400)
 
         # Now you can access the data from form and selected rows
-        if choice0 == "id_personal_choice":
+        if beneficiary_choice == "id_personal_choice":
             print("personal choice")
         else:
             print("charity choice")
-        print('Choice1: ', choice1)
-        print('Choice2: ', choice2)
-        print('Form field 1:', form_field1)
-        print('Form field 2:', form_field2)
+
         print('Selected rows data:', selected_rows_data)
 
         # Print or log the data
         print("POST Data:", post_data)
         print("Files Data:", files_data)
-
-        # Your processing logic here...
 
         # Return a JSON response as needed
         return JsonResponse({'success': True})

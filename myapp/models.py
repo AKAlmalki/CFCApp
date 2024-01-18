@@ -17,6 +17,11 @@ def beneficiary_file_directory(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
     return "beneficiaries/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
 
+
+# def dependent_file_directory(instance, filename):
+#     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+#     return "dependents/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
+
 # all below methods must be removed (it is not needed anymore)
 
 
@@ -281,9 +286,6 @@ class dependent(models.Model):
     marital_status = models.CharField(max_length=64)
     national_id = models.CharField(max_length=20)
     health_status = models.CharField(max_length=128, null=True)
-    income_amount = models.DecimalField(
-        decimal_places=2, max_digits=15, default=0)
-    income_source = models.CharField(max_length=128)
     needs_type = JSONField(default=list)
     educational_degree = models.CharField(max_length=128, null=True)
     date_of_birth = models.DateField()
@@ -296,6 +298,29 @@ class dependent(models.Model):
 
     def __str__(self):
         return "first_name " + self.first_name + ", second_name: " + self.second_name + ", national_id:" + self.national_id
+
+
+class Dependent_income(models.Model):
+    db_table = "dependent_income"
+    dependent = models.ForeignKey(dependent, on_delete=models.CASCADE)
+    source = models.CharField(max_length=128, null=True)
+    amount = models.DecimalField(decimal_places=2, max_digits=15, default=0)
+
+
+# class Dependent_income_attachment(models.Model):
+#     db_table = "dependent_income_attachment"
+#     dependent_income = models.ForeignKey(Dependent_income, on_delete=models.CASCADE)
+#     file_type = models.CharField(max_length=256, null=True)
+#     file_object = models.FileField(
+#         upload_to=dependent_file_directory, blank=True, null=True)
+
+#     @property
+#     def file_size(self):
+#         return self.file_object.size
+
+#     # Returns file name with its extension
+#     def filename(self):
+#         return os.path.basename(self.file_object.name)
 
 
 class individual_supporter_operation(models.Model):

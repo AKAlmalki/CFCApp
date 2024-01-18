@@ -2165,11 +2165,10 @@
 
     // Increment total price by 300.0 for each selected row
     const totalPriceInput = document.getElementById('id_sponsorship_info_total_price_1');
-    const currentTotalPrice = parseFloat(totalPriceInput.value) || 0.0;
-    const updatedTotalPrice = currentTotalPrice + (selectedRowsData.length * 300.0);
+    const currentTotalPrice = parseFloat(totalPriceInput.value);
 
     // Update the total price in the form data
-    formData.append('total_price', updatedTotalPrice);
+    formData.append('total_price', currentTotalPrice);
 
     // Find the selected radio button
     const radioChoice = document.querySelector('input[name="beneficiaries_choice"]:checked');
@@ -2180,13 +2179,13 @@
     // Append selected rows' data
     formData.append('selectedRowsData', JSON.stringify(selectedRowsData));
 
-    fetch('https://127.0.0.1:8000/supporters/individuals/new_request', {
+    fetch('http://127.0.0.1:8000/supporters/individuals/new_request', {
         method: 'POST',
         body: formData,
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Success:', data);
+        console.log('Success:', data, formData);
         // Handle success, if needed
     })
     .catch((error) => {
