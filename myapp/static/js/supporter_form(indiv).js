@@ -29,6 +29,21 @@ function isThereWidower(inputField) {
     // If empty or not a number, set it back to zero
     inputField.value = "0";
   }
+
+  // Get the value of the orphan number input field
+  var widowerNumber = parseInt(inputField.value);
+
+  // Get the container element
+  var widowerDurationContainer = document.getElementById("id_widower_duration_group_info");
+
+  // Check if the orphan number is more than 0
+  if (widowerNumber > 0) {
+    // Display the orphan duration container
+    widowerDurationContainer.style.display = "block";
+  } else {
+    // Hide the orphan duration container
+    widowerDurationContainer.style.display = "none";
+  }
 }
 
   // If the value of this field become empty, it reset back the value to zero
@@ -40,6 +55,21 @@ function isThereOrphan(inputField) {
   if (value === "" || isNaN(value)) {
     // If empty or not a number, set it back to zero
     inputField.value = "0";
+  }
+
+  // Get the value of the orphan number input field
+  var orphanNumber = parseInt(inputField.value);
+
+  // Get the container element
+  var orphanDurationContainer = document.getElementById("id_orphan_duration_group_info");
+
+  // Check if the orphan number is more than 0
+  if (orphanNumber > 0) {
+    // Display the orphan duration container
+    orphanDurationContainer.style.display = "block";
+  } else {
+    // Hide the orphan duration container
+    orphanDurationContainer.style.display = "none";
   }
 }
 

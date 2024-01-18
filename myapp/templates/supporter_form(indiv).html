@@ -654,7 +654,7 @@
                       عدد الايتام</label>
                     <input type="number" value=0 min="0" max="99" class="form-control" id="id_charitychoice_orphan_number" name="charitychoice_orphan_number" onchange="isThereOrphan(this);"/>
                   </div>
-                  <div class="mb-4 form-group" id="id_orphan_duration_group_info">
+                  <div class="mb-4 form-group" id="id_orphan_duration_group_info" style="display: none;">
                     <label for="id_charitychoice_orphan_donation_type" class="form-label col-12"
                       >مدة الدعم (ايتام)<span style="color: red"
                       >*</span
@@ -680,7 +680,7 @@
                     >
                     <input type="number" value="0" min="0" max="99" class="form-control" id="id_charitychoice_widower_number" name="charitychoice_widower_number" onchange="isThereWidower(this);"/>
                   </div>
-                  <div class="mb-4 form-group" id="id_widower_duration_group_info">
+                  <div class="mb-4 form-group" id="id_widower_duration_group_info" style="display: none;">
                     <label for="id_charitychoice_widower_donation_type" class="form-label col-12"
                       >مدة الدعم (ارامل)<span style="color: red"
                       >*</span
@@ -1566,40 +1566,40 @@
         // Adding the rules (validations) for each input in the form.
         rules: {
           personalinfo_first_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_second_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_last_name: {
-            required: false,
+            required: true,
             nameRegex: true,
             minlength: 2,
             maxlength: 20,
           },
           personalinfo_date_of_birth: {
-            required: false,
+            required: true,
             dateISO: true,
           },
           personalinfo_gender: {
-            required: false,
+            required: true,
           },
           personalinfo_national_id: {
-            required: false,
+            required: true,
             nationalidRegex: true,
           },
           personalinfo_national_id_exp_date: {
-            required: false,
+            required: true,
             dateISO: true,
           },
           personalinfo_nationality: {
-            required: false,
+            required: true,
             maxlength: 30,
           },
           personalinfo_marital_status: {
@@ -1615,11 +1615,11 @@
             required: false,
           },
           personalinfo_phone_number: {
-            required: false,
+            required: true,
             saudiPhoneRegex: true,
           },
           personalinfo_email: {
-            required: false,
+            required: true,
             emailRegex: true,
           },
           // donation info ---------------
@@ -1630,16 +1630,16 @@
             required: false,
           },
           charitychoice_orphan_donation_type: {
-            required: false,
+            required: true,
           },
           charitychoice_widower_donation_type: {
-            required: false,
+            required: true,
           },
           sponsorship_info_donation_type: {
-            required: false,
+            required: true,
           },
           sponsorship_info_duration: {
-            required: false,
+            required: true,
           },
           sponsorship_info_was_sponsor_check: {
             required: true,
