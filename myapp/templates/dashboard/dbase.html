@@ -241,10 +241,10 @@
                 <svg class="bi"><use xlink:href="#file-earmark"/></svg>
                 الطلبات
               </button>
-              <div class="collapse" id="dashboard-requests">
+              <div class="collapse {% if request.path == '/dashboard/requests' or request.path == '/dashboard/sponsors' %}show{% endif %}" id="dashboard-requests">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                  <li><a href="#" class="nav-link d-flex align-items-center gap-2 link-dark rounded">الكفلاء</a></li>
-                  <li><a href="/dashboard/requests" class="nav-link d-flex align-items-center gap-2 link-dark rounded">المستفيدين</a></li>
+                  <li><a href="#" class="{% if request.path == '/dashboard/sponsors' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% endif %} nav-link">الكفلاء</a></li>
+                  <li><a href="/dashboard/requests" class="{% if request.path == '/dashboard/requests' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% endif %} nav-link">المستفيدين</a></li>
                 </ul>
               </div>
             </li>
