@@ -847,7 +847,7 @@ def beneficiary_indiv(request):
             national_id_exp_date = dep.get(
                 'nationalIDExpDate', None)
             if national_id_exp_date is not None:
-                date_of_birth = convert_to_date(national_id_exp_date)
+                national_id_exp_date = convert_to_date(national_id_exp_date)
             needs_description = dep.get('needsDescription', '')
             educational_level = dep.get('educationalLevel', None)
             disease_type = dep.get('diseaseType', None)
