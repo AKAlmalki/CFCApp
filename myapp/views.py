@@ -853,7 +853,6 @@ def beneficiary_indiv(request):
             disease_type = dep.get('diseaseType', None)
             dependent_income_table = json.loads(
                 dep.get('dependentIncomeTable', []))
-            print("\n\ndependent_income_table", dependent_income_table, "\n\n")
 
             # Create a new dependent object and save it to the database
             new_dependent = dependent(
