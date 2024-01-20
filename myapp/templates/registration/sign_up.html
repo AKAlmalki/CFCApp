@@ -315,7 +315,23 @@
                 <label for="id_email" class="form-label"
                   >البريد الالكتروني:</label
                 >
-                <input type="email" name="email" class="form-control text-start" maxlength="320" id="id_email">
+                <input type="email" placeholder="you@example.com" name="email" class="form-control text-start" maxlength="320" id="id_email">
+              </div>
+              <div class="col mb-3 form-group">
+                <label for="id_phonenumber" class="form-label"
+                  >رقم الجوال:</label
+                >
+                <div class="input-group mb-1">
+                  <input
+                    type="number"
+                    name="phonenumber"
+                    class="form-control"
+                    id="id_phonenumber"
+                    placeholder="5XXXXXXXX"
+                  />
+                  <span class="input-group-text" id="basic-addon1">966+</span>
+                </div>
+                <div class="form-text" id="basic-addon4">يبدا رقم الجوال بدون الصفر, مثال (512345678)</div>
               </div>
               <div class="col mb-3">
                 <label for="id_password1" class="form-label"
@@ -367,10 +383,10 @@
           "saudiPhoneRegex",
           function (value, element) {
             return (
-              this.optional(element) || /^(?:\+966\s?5\d{8}|05\d{8})$/i.test(value)
+              this.optional(element) || /^(5\d{8})$/i.test(value)
             );
           },
-          "الرجاء إدخال رقم جوال صحيح في المملكة العربية السعودية."
+          "الرجاء إدخال رقم جوال صحيح يبدأ برقم 5 وبطول 9 ارقام."
         );
 
         // Email address validator
@@ -473,8 +489,9 @@
                 required: true,
                 maxlength: 30,
               },
-              phone_number: {
+              phonenumber: {
                 required: true,
+
                 saudiPhoneRegex: true,
               },
               email: {
