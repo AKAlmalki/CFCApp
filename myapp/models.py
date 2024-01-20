@@ -322,17 +322,40 @@ class Dependent_income(models.Model):
 #     def filename(self):
 #         return os.path.basename(self.file_object.name)
 
+class Individual_supporter(models.Model):
+    db_table = "individual_supporter"
+    first_name = models.CharField(max_length=55)
+    second_name = models.CharField(max_length=55)
+    last_name = models.CharField(max_length=55)
+    date_of_birth = models.DateField()
+    gender = models.CharField(max_length=5, null=True)
+    national_id = models.CharField(max_length=20)
+    national_id_exp_date = models.DateField(null=True)
+    nationality = models.CharField(max_length=64)
+    marital_status = models.CharField(max_length=64)
+    educational_level = models.CharField(max_length=128, null=True)
+    work_status = models.CharField(max_length=64, null=True)
+    employer = models.CharField(max_length=128, null=True)
+    phone_number = models.CharField(max_length=15)
+    email = models.EmailField()
 
-class individual_supporter_operation(models.Model):
-    status = models.CharField(max_length=55, default=1)
-    amount = models.DecimalField(decimal_places=2, max_digits=55, default=0)
-    date = models.DateTimeField(auto_now_add=True)
-    supporter_operation_id = models.ForeignKey(
-        supporter_operation, on_delete=models.CASCADE)
-    individual_id = models.ForeignKey(individual, on_delete=models.CASCADE)
+    orphan_number = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
 
 
-class entity_supporter_operation(models.Model):
+# A table that link between the beneficiary and the supporter which represents the support operation
+class Individual_supporter_beneficiary_sponsorship(models.Model):
+    db_table = "individual_supporter_beneficiary_sponsorship"
+    created_at = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(decimal_places=2, max_digits=15, default=0)
+    beneficiary = models.ForeignKey(
+        beneficiary, on_delete=models.CASCADE)
+    individual_supporter = models.ForeignKey(
+        Individual_supporter, on_delete=models.CASCADE)
+
+
+class Entity_supporter_operation(models.Model):
+    db_table = "entity_supporter_operation"
     status = models.CharField(max_length=55, default=1)
     amount = models.DecimalField(decimal_places=2, max_digits=55, default=0)
     date = models.DateTimeField(auto_now_add=True)

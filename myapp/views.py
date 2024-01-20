@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Dependent_income, Beneficiary_attachment, entity_supporter_operation
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Dependent_income, Beneficiary_attachment, Entity_supporter_operation, Individual_supporter_beneficiary_sponsorship, Individual_supporter
 from .forms import RegisterForm
 from django.db.models import Q
 from django.contrib import messages
@@ -85,22 +85,25 @@ def confirmBeneficiaryRequestView(request):
 
 def sign_up(request):
     if request.method == 'POST':
+        print(request.POST)
 
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            # consider the case when the user already exists
-            # if User.objects.filter(username=form.cleaned_data.username).exists():
-            user = form.save()
-            login(request, user)
-            return redirect('/home')
+        # form = RegisterForm(request.POST)
+        # if form.is_valid():
+        # consider the case when the user already exists
+        # if User.objects.filter(username=form.cleaned_data.username).exists():
+        # user = form.save()
+        # login(request, user)
+        # return redirect('/home')
+        pass
     else:
-        form = RegisterForm()
+        # form = RegisterForm()
 
-    context = {
-        "form": form
-    }
+        # context = {
+        #     "form": form
+        pass
+    # }
 
-    return render(request, "registration/sign_up.html", context)
+    return render(request, "registration/sign_up.html")
 
 
 def signin(request):
@@ -1093,6 +1096,7 @@ def beneficiary_details(request, beneficiary_id):
         pass
 
 
+@login_required(login_url="/login")
 def supporter_indiv(request):
 
     if request.method == 'GET':
@@ -1138,6 +1142,7 @@ def supporter_indiv(request):
 @login_required(login_url="/login")
 def supporter_indiv_post(request):
     if request.method == 'POST':
+
         # Retrieve form data
         # Get the data from the request
         post_data = request.POST
