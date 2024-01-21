@@ -5,6 +5,7 @@ from .models import dependent, beneficiary, beneficiary_house, beneficiary_incom
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth import login, logout, authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -130,11 +131,29 @@ def signin(request):
 
         username = request.POST.get("username")
         password = request.POST.get("password")
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
+
+        # Authenticate user with username and password
+        user_auth = authenticate(username=username, password=password)
+        # Get user info from the db
+        user_db = CustomUser.objects.filter(username=username).first()
+
+        if user_db is not None:
+            # Check whether user password is correct
+            check_pass = check_password(password, user_db.password)
+            # Check if user is active
+            is_user_active = user_db.is_active
+
+        if user_auth is not None:
+            login(request, user_auth)
             messages.success(request, "تم تسجيل الدخول بنجاح")
             return redirect("home")
+
+        # In case of user account is not activated
+        elif user_db is not None and check_pass and is_user_active is False:
+            print("user is found but his/her account is not activated yet")
+            messages.error(
+                request, "لم يتم تفعيل حسابك بعد! رجاء التأكد من بريدك الإلكتروني.")
+            return redirect("login")
         else:
             messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
             return redirect("login")
