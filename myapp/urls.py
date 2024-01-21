@@ -94,4 +94,9 @@ urlpatterns = [
         views.logout_user,
         name="logout"
     ),
+    path(
+        "validate_email/",
+        views.validate_email,
+        name="validate_email"
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

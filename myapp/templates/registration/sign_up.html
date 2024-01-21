@@ -357,6 +357,9 @@
     <script>
       $(document).ready(function () {
 
+        // Retrieve the CSRF token from the page
+        var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
+
         // Validator method for username
         $.validator.addMethod(
           "usernameRegex",
@@ -497,6 +500,17 @@
               email: {
                 required: true,
                 emailRegex: true,
+                remote: {
+                  url: '/validate_email/',
+                  type: 'post',
+                  data: {
+                    email: function() {
+                      return $('#id_email').val();
+                    },
+                    csrfmiddlewaretoken: csrfToken,  // Include CSRF token
+                  },
+                },
+                
               },
             },
             messages: {
@@ -508,6 +522,9 @@
               },
               password2: {
                 equalTo: "كلمة المرور غير متطابقة"
+              },
+              email: {
+                remote: "البريد الالكتروني مستخدم بالفعل!"
               },
             },
           });
