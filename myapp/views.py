@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Dependent_income, Beneficiary_attachment, Entity_supporter_operation, Individual_supporter_beneficiary_sponsorship, Individual_supporter
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Dependent_income, Beneficiary_attachment, Entity_supporter_operation, Individual_supporter_beneficiary_sponsorship, Individual_supporter, CustomUser
 # from .forms import CustomUserCreationForm
 from django.db.models import Q
 from django.contrib import messages
@@ -85,23 +85,42 @@ def confirmBeneficiaryRequestView(request):
 
 def sign_up(request):
     if request.method == 'POST':
-        print(request.POST)
 
-        # form = RegisterForm(request.POST)
-        # if form.is_valid():
-        # consider the case when the user already exists
-        # if User.objects.filter(username=form.cleaned_data.username).exists():
-        # user = form.save()
+        # Retrieve request data
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        date_of_birth = request.POST['date_of_birth']
+        gender = request.POST['gender']
+        nationality = request.POST['nationality']
+        username = request.POST['username']
+        email = request.POST['email']
+        phonenumber = request.POST['phonenumber']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+
+        # Make a new user object
+        new_user = CustomUser.objects.create_user(
+            username=username,
+            email=email,
+            password=password1,
+            first_name=first_name,
+            last_name=last_name,
+            gender=gender,
+            nationality=nationality,
+            phonenumber=phonenumber,
+            date_of_birth=date_of_birth,
+        )
+
+        # Make the user not active until it is confirmed by the link sent to the email
+        new_user.is_active = False
+
+        messages.success(
+            request, "تم إنشاء حسابك بنجاح! رجاء راجع الايميل الالكتروني الخاص بك لتأكيد الايميل وتفعيل حسابك.")
+        return redirect('/login')
+
         # login(request, user)
         # return redirect('/home')
         pass
-    else:
-        # form = RegisterForm()
-
-        # context = {
-        #     "form": form
-        pass
-    # }
 
     return render(request, "registration/sign_up.html")
 
