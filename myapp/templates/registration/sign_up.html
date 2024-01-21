@@ -473,6 +473,16 @@
                 minlength: 3,
                 maxlength: 15,
                 required: true,
+                remote: {
+                  url: '/sign-up/validate_username/',
+                  type: 'post',
+                  data: {
+                    username: function() {
+                      return $('#id_username').val();
+                    },
+                    csrfmiddlewaretoken: csrfToken,  // Include CSRF token
+                  },
+                },
               },
               password1: {
                 required: true,
@@ -501,7 +511,7 @@
                 required: true,
                 emailRegex: true,
                 remote: {
-                  url: '/validate_email/',
+                  url: '/sign-up/validate_email/',
                   type: 'post',
                   data: {
                     email: function() {
@@ -515,7 +525,8 @@
             },
             messages: {
               username: {
-                usernameRegex: "اسم المستخدم يتكون من حروف انجليزية وارقام فقط."
+                usernameRegex: "اسم المستخدم يتكون من حروف انجليزية وارقام فقط.",
+                remote: "اسم المستخدم تم استخدامه بالفعل!",
               },
               first_name: {
                 required: "هذا الحقل مطلوب.",
@@ -524,7 +535,7 @@
                 equalTo: "كلمة المرور غير متطابقة"
               },
               email: {
-                remote: "البريد الالكتروني مستخدم بالفعل!"
+                remote: "البريد الالكتروني تم استخدامه بالفعل!"
               },
             },
           });

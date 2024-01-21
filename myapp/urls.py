@@ -95,8 +95,18 @@ urlpatterns = [
         name="logout"
     ),
     path(
-        "validate_email/",
+        "sign-up/validate_email/",
         views.validate_email,
         name="validate_email"
+    ),
+    path(
+        "sign-up/validate_username/",
+        views.validate_username,
+        name="validate_username"
+    ),
+    path(
+        "sign-up/validate_phonenumber/",
+        views.validate_phonenumber,
+        name="validate_phonenumber"
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

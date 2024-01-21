@@ -185,6 +185,40 @@ def validate_email(request):
         return HttpResponse(data)
 
 
+def validate_username(request):
+
+    username = request.POST.get('username', None)
+
+    if username is None:
+        return HttpResponse("true")
+    else:
+
+        data = not CustomUser.objects.filter(username__exact=username).exists()
+        if data is True:
+            data = "true"
+        else:
+            data = "false"
+
+        return HttpResponse(data)
+
+
+def validate_phonenumber(request):
+
+    email = request.POST.get('email', None)
+
+    if email is None:
+        return HttpResponse("true")
+    else:
+
+        data = not CustomUser.objects.filter(email__iexact=email).exists()
+        if data is True:
+            data = "true"
+        else:
+            data = "false"
+
+        return HttpResponse(data)
+
+
 @login_required(login_url="/login")
 def dashboard(request):
     # insights for the dashboard
