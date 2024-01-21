@@ -64,7 +64,7 @@
           <div class="navbar-nav">
             {% if user.is_authenticated %}
             <p class="nav-item fs-5 text-white mt-2 me-3">مرحبا {{user.username}}</p>
-            <a href="/logout" class="nav-item nav-link mt-1">تسجيل الخروج</a>
+            <a href="{% url 'logout' %}" class="nav-item nav-link mt-1">تسجيل الخروج</a>
             {% else %}
             <a href="/sign-up" class="nav-item nav-link">تسجيل جديد</a>
             <a href="/login" class="nav-item nav-link">تسجيل الدخول</a>

@@ -145,7 +145,7 @@ def signin(request):
 
         if user_auth is not None:
             login(request, user_auth)
-            messages.success(request, "تم تسجيل الدخول بنجاح")
+            # messages.success(request, "تم تسجيل الدخول بنجاح")
             return redirect("home")
 
         # In case of user account is not activated
@@ -159,6 +159,13 @@ def signin(request):
             return redirect("login")
 
     return render(request, "registration/login.html")
+
+
+@login_required(login_url="/login")
+def logout_user(request):
+
+    logout(request)
+    return redirect("home")
 
 
 @login_required(login_url="/login")

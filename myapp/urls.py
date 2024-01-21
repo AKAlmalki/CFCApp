@@ -89,4 +89,9 @@ urlpatterns = [
         views.signin,
         name="login"
     ),
+    path(
+        "logout/",
+        views.logout_user,
+        name="logout"
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
