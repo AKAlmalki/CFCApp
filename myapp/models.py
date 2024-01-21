@@ -369,6 +369,7 @@ class CustomUser(AbstractUser):
     date_of_birth = models.DateField(null=True)
     gender = models.CharField(max_length=5, null=True)
     phonenumber = models.CharField(max_length=15, null=True, unique=True)
+    last_updated = models.DateField(null=True)
     # add additional field in here
 
     def __str__(self):
