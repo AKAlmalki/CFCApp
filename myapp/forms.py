@@ -1,7 +1,7 @@
 from django import forms
 from .models import beneficiary, individual, dependent
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import CustomUser
 
 
 # class NameForm(forms.Form):
@@ -19,7 +19,7 @@ from django.contrib.auth.models import User
 #     amount = forms.IntegerField(label="amount")
 
 
-class RegisterForm(UserCreationForm):
+class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(label="البريد الإلكتروني", required=True, widget=forms.EmailInput(
         attrs={'class': 'form-control'}))
     username = forms.CharField(label="اسم المستخدم", widget=forms.TextInput(
@@ -30,5 +30,16 @@ class RegisterForm(UserCreationForm):
         label="تأكيد كلمة المرور", widget=forms.PasswordInput(render_value=True, attrs={'class': 'form-control mb-3'}))
 
     class Meta:
-        model = User
-        fields = ["username", "email", "password1", "password2"]
+        model = CustomUser
+        fields = ["username", "email", "password1", "password2",
+                  "gender", "date_of_birth", "phonenumber"]
+
+
+class CustomUserChangeForm(UserChangeForm):
+    password2 = forms.CharField(
+        label="تأكيد كلمة المرور", widget=forms.PasswordInput(render_value=True, attrs={'class': 'form-control mb-3'}))
+
+    class Meta:
+        model = CustomUser
+        fields = ["username", "email", "password", "password2",
+                  "gender", "date_of_birth", "phonenumber"]

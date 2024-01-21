@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db.models import JSONField
 import datetime
@@ -303,7 +304,7 @@ class dependent(models.Model):
 class Dependent_income(models.Model):
     db_table = "dependent_income"
     dependent = models.ForeignKey(dependent, on_delete=models.CASCADE)
-    source = models.CharField(max_length=128, null=True)
+    source = models.CharField(max_length=128, null=True, blank=True)
     amount = models.DecimalField(decimal_places=2, max_digits=15, default=0)
 
 
@@ -362,3 +363,13 @@ class Entity_supporter_operation(models.Model):
     supporter_operation_id = models.ForeignKey(
         supporter_operation, on_delete=models.CASCADE)
     entity_id = models.ForeignKey(entity, on_delete=models.CASCADE)
+
+
+class CustomUser(AbstractUser):
+    date_of_birth = models.DateField(null=True)
+    gender = models.CharField(max_length=5, null=True)
+    phonenumber = models.CharField(max_length=15, null=True, unique=True)
+    # add additional field in here
+
+    def __str__(self):
+        return self.username

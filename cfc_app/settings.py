@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'myapp',
-    'bootstrap5',
     'formtools',
     'crispy_forms',
     'widget_tweaks'
@@ -166,3 +165,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = "/home"
 
 LOGOUT_REDIRECT_URL = "/home"
+
+AUTH_USER_MODEL = 'myapp.CustomUser'

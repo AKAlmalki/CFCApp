@@ -43,13 +43,13 @@
       <div class="card mt-5 mb-4 p-5 my-4 bg-light rounded-3" style="width: 35rem;">
         <img class="img-fluid rounded-3 card-img-top" src="{% static '/imgs/logo-c-1.png' %}" alt="Girl in a jacket">
         <div class="card-body">
-          <h2 class="card-title fw-bold mb-4 mt-4 text-center">أنشئ حسابك</h2>
+          <h2 class="card-title fw-bold mb-5 mt-4 text-center">أنشئ حسابك</h2>
           <div class="col">
             
             <form method="post" id="sign-up-form">
               {% csrf_token %}
               {% comment %} {{form}} {% endcomment %}
-              <div class="row">
+              <div class="row row-cols-1 row-cols-sm-2">
                 <div class="col mb-3">
                   <label for="id_first_name" class="form-label"
                     >الأسم الأول:</label
@@ -63,7 +63,7 @@
                   <input type="text" name="last_name" class="form-control" autofocus id="id_last_name">
                 </div>
               </div>
-              <div class="row">
+              <div class="row row-cols-1 row-cols-sm-2">
                 <div class="col mb-3">
                   <label for="id_date_of_birth" class="form-label"
                     >تاريخ الميلاد:</label
@@ -347,7 +347,7 @@
               </div>
               
               <button type="submit" class="w-100 btn btn-lg btn-primary mt-3" id="sign_up_btn">تسجيل جديد</button>
-              <p class="mt-4 text-center">لديك حساب بالفعل؟ سجل دخولك من <a href="/login">هنا</a>!</p>
+              <p class="mt-4 text-center">لديك حساب بالفعل؟ <a href="/login">تسجيل الدخول</a></p>
             </form>
           </div>
         </div>
