@@ -109,10 +109,9 @@ def sign_up(request):
             nationality=nationality,
             phonenumber=phonenumber,
             date_of_birth=date_of_birth,
+            # Make the user not active until it is confirmed by the link sent to the email
+            is_active=False,
         )
-
-        # Make the user not active until it is confirmed by the link sent to the email
-        new_user.is_active = False
 
         messages.success(
             request, "تم إنشاء حسابك بنجاح! رجاء راجع الايميل الالكتروني الخاص بك لتأكيد الايميل وتفعيل حسابك.")

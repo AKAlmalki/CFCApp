@@ -371,6 +371,7 @@ class CustomUser(AbstractUser):
     phonenumber = models.CharField(max_length=15, null=True, unique=True)
     last_updated = models.DateField(null=True)
     nationality = models.CharField(max_length=64, null=True)
+    email = models.EmailField(unique=True)  # Override the email field
     # add additional field in here
 
     def __str__(self):
