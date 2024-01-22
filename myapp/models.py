@@ -92,6 +92,20 @@ def beneficiary_social_warranty_inquiry_directory_path(instance, filename):
 #########################################################
 
 
+# Adjust the original user modal to have other fields
+class CustomUser(AbstractUser):
+    date_of_birth = models.DateField(null=True)
+    gender = models.CharField(max_length=5, null=True)
+    phonenumber = models.CharField(max_length=15, null=True, unique=True)
+    last_updated = models.DateField(null=True)
+    nationality = models.CharField(max_length=64, null=True)
+    email = models.EmailField(unique=True)  # Override the email field
+    # add additional field in here
+
+    def __str__(self):
+        return self.username
+
+
 class entity(models.Model):
     name = models.CharField(max_length=55)
     account = models.CharField(max_length=55, null=True)
@@ -110,10 +124,6 @@ class supporter_operation(models.Model):
     amount = models.DecimalField(decimal_places=2, max_digits=55, default=0)
     category = models.CharField(max_length=55)
     # entity_id = models.ForeignKey(entity, on_delete=models.CASCADE)
-
-
-class beneficiary_request(models.Model):
-    pass
 
 
 class beneficiary(models.Model):
@@ -155,6 +165,7 @@ class beneficiary(models.Model):
     bank_iban = models.CharField(max_length=32, null=True)
     family_issues = JSONField(default=list)
     family_needs = JSONField(default=list)
+    last_updated = models.DateTimeField(null=True)
 
     def __str__(self):
         return "file_no " + self.file_no + ", name: " + self.first_name + ", national_id:" + self.national_id
@@ -281,6 +292,17 @@ class beneficiary_income_expense(models.Model):
         return in_ex_diff_percentage
 
 
+class beneficiary_request(models.Model):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='requested_beneficiary_set')
+    beneficiary = models.ForeignKey(beneficiary, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_by = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='reviewed_beneficiary_set')
+    comment = models.CharField(max_length=512)
+
+
 class dependent(models.Model):
     first_name = models.CharField(max_length=55)
     second_name = models.CharField(max_length=55)
@@ -367,17 +389,3 @@ class Entity_supporter_operation(models.Model):
     supporter_operation_id = models.ForeignKey(
         supporter_operation, on_delete=models.CASCADE)
     entity_id = models.ForeignKey(entity, on_delete=models.CASCADE)
-
-
-# Adjust the original user modal to have other fields
-class CustomUser(AbstractUser):
-    date_of_birth = models.DateField(null=True)
-    gender = models.CharField(max_length=5, null=True)
-    phonenumber = models.CharField(max_length=15, null=True, unique=True)
-    last_updated = models.DateField(null=True)
-    nationality = models.CharField(max_length=64, null=True)
-    email = models.EmailField(unique=True)  # Override the email field
-    # add additional field in here
-
-    def __str__(self):
-        return self.username
