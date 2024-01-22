@@ -1,0 +1,134 @@
+{% extends 'base.html' %}{% load static %}{% load humanize %}{% block title %}الطلبات{% endblock %}{% block content %}
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container mt-3">
+  <div class="row flex-lg-nowrap">
+
+    <div class="col-12 col-lg-auto mb-3">
+      <div class="card p-3">
+        <div class="e-navlist e-navlist--active-bg">
+          <ul class="nav nav d-flex align-items-start flex-lg-column">
+            <li class="nav-item"><a class="nav-link link-body-emphasis px-2 active" href="{% url 'beneficiary_profile' username=user.username %}"><i class="fa fa-fw fa-bar-chart mr-1"></i><span>  نظرة عامة</span></a></li>
+            <li class="nav-item"><a class="nav-link link-body-emphasis text-dark px-2" href="{% url 'beneficiary_requests' username=user.username %}"><i class="fa fa-fw fa-th mr-1"></i><span>  الطلبات</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="row">
+        <div class="col mb-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="e-profile">
+                <div class="row">
+                  <h2>الطلبات</h2>
+                </div>
+                <hr>
+                <div class="row">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col"># رقم الطلب</th>
+                        <th scope="col">اسم المستخدم</th>
+                        <th scope="col">المستفيد</th>
+                        <th scope="col">الحالة</th>
+                        <th scope="col">التعليقات</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for request in beneficiary_requests %}
+                        {% comment %} <tr data-bs-toggle="collapse" data-bs-target="#details{{ request.id }}" class="accordion-toggle">
+                          <td>{{ request.id }}</td>
+                          <td>{{ request.user }}</td>
+                          <td>{{ request.beneficiary.id }}</td>
+                          {% if request.status == "waiting" %}<td class="col"><p class="badge text-bg-warning">انتظار</p></td>{% else %}<td>{{ request.status }}</td>{% endif %}
+                          {% if request.comment %}
+                          <td>{{ request.comment }}</td>
+                          {% else %}
+                          <td>----</td>
+                          {% endif %}
+                        </tr> {% endcomment %}
+                        <tr>
+                          <td colspan="5">
+                            <div class="accordion" id="accordion{{ request.id }}">
+                              <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne{{ request.id }}" aria-expanded="true" aria-controls="collapseOne{{ request.id }}">
+                                    {{ request.id }}
+                                  </button>
+                                </h2>
+                                <div id="collapseOne{{ request.id }}" class="accordion-collapse collapse show" data-bs-parent="#accordion{{ request.id }}">
+                                  <div class="accordion-body">
+                                    <div class="row row-cols-md-2">
+                                      <div class="mb-3">
+                                        <h6 class="col form-label" for="id_user_id">رقم الحساب</h6>
+                                        <input type="text" class="form-control" id="id_user_id" name="user_id" disabled readonly value="{{ request.user }}">
+                                      </div>
+                                      <div class="mb-3">
+                                        <h6 class="col form-label" for="id_beneficiary_id">رقم المستفيد</h6>
+                                        <input type="text" class="form-control" id="id_beneficiary_id" name="beneficiary_id" disabled readonly value="{{ request.beneficiary.id }}">
+                                      </div>
+                                    </div>
+                                    <div class="row row-cols-md-2">
+                                      <div class="mb-3">
+                                        <h6 class="col form-label" for="id_status">الحالة</h6>
+                                        {% if request.status == "waiting" %}<input type="text" class="form-control" id="id_status" name="status" disabled readonly value="{{ request.status }}">
+                                        {% else %}
+                                        <input type="text" class="form-control" id="id_status123" name="status" disabled readonly value="----">
+                                        {% endif %}
+                                      </div>
+                                      {% if request.comment %}
+                                      <div class="mb-3">
+                                        <h6 class="col form-label" for="id_comment">التعليقات</h6>
+                                        <input type="text" class="form-control" id="id_comment" name="comment" disabled readonly value="{{ request.comment }}">
+                                      </div>
+                                      {% endif %}
+                                    </div>
+                                    {% if request.reviewed_by %}
+                                      <div class="mb-3">
+                                        <h6 class="col form-label" for="id_reviewed_by"> المٌراجع</h6>
+                                        <input type="text" class="form-control" id="id_reviewed_by" name="reviewed_by" disabled readonly value="{{ request.comreviewed_byment }}">
+                                      </div>
+                                      {% endif %}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-3 mb-3">
+
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="px-xl-3">
+                <a class="btn btn-block btn-secondary" href="{% url 'logout' %}">
+                  <i class="fa fa-sign-out"></i>
+                  <span>تسجيل الخروج</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title font-weight-bold">الدعم والمساعدة</h6>
+              <p class="card-text text-muted">تواصل معنا في أي وقت, سنكون سعداء بمساعدتك.</p>
+              <button type="button" class="btn btn-primary">تواصل معنا</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

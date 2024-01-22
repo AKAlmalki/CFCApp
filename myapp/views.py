@@ -1438,3 +1438,32 @@ def beneficiary_profile(request, username):
         return redirect('home')
 
     return render(request, 'beneficiary_profile.html', context)
+
+
+@login_required(login_url='/login')
+def beneficiary_requests(request, username):
+
+    # Get the logged-in user
+    logged_in_user = request.user
+
+    context = {}
+    try:
+        # Retrieve the user whose profile is being requested
+        user = CustomUser.objects.get(username=username)
+
+        # Check if the logged-in user matches the requested user
+        if logged_in_user != user:
+            messages.error(request, "ليس لديك الصلاحية اللازمة!")
+            return redirect('home')
+
+        beneficiary_requests = Beneficiary_request.objects.filter(
+            user=user.id).all()
+        context = {
+            'user_info': user,
+            'beneficiary_requests': beneficiary_requests,
+        }
+    except ObjectDoesNotExist:
+        messages.error(request, "المستخدم غير موجود!")
+        return redirect('home')
+
+    return render(request, 'beneficiary_requests.html', context)
