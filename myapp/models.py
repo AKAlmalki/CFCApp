@@ -297,11 +297,11 @@ class Beneficiary_request(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name='requested_beneficiary_set')
     beneficiary = models.ForeignKey(beneficiary, on_delete=models.CASCADE)
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=55)
     created_at = models.DateTimeField(auto_now_add=True)
     reviewed_by = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name='reviewed_beneficiary_set')
-    comment = models.CharField(max_length=512)
+        CustomUser, on_delete=models.CASCADE, related_name='reviewed_beneficiary_set', null=True)
+    comment = models.CharField(max_length=512, null=True)
 
 
 class dependent(models.Model):

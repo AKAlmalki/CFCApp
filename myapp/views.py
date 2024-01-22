@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Dependent_income, Beneficiary_attachment, Entity_supporter_operation, Individual_supporter_beneficiary_sponsorship, Individual_supporter, CustomUser
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Dependent_income, Beneficiary_attachment, Entity_supporter_operation, Individual_supporter_beneficiary_sponsorship, Individual_supporter, CustomUser, Beneficiary_request
 # from .forms import CustomUserCreationForm
 from django.db.models import Q
 from django.contrib import messages
@@ -1108,13 +1108,17 @@ def beneficiary_indiv(request):
             if dependent_file_list:
                 Dependent_income.objects.bulk_create(dependent_file_list)
 
-        # handle file uploads
-        file_beneficiary_national_id = request.FILES.get(
-            'id_formFileBeneficiaryNationalID', None)
-        file1 = files.get('fileBeneficiaryNationalID', None)
-        # print(file_beneficiary_national_id, file1)
+        # Create Beneficiary_request object in the DB
 
-        # print(data)
+        # Retrieve the object for the logged in user
+        logged_in_user = request.user
+
+        beneficiary_new_request = Beneficiary_request(
+            user=logged_in_user,
+            beneficiary=beneficiary_obj,
+            status="waiting",
+        )
+        beneficiary_new_request.save()
 
         # In case of successful submission and valid form data
         return JsonResponse({'redirect': '/confirmation', 'file_no': beneficiary_obj.file_no})
