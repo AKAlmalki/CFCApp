@@ -45,7 +45,8 @@
         <img class="img-fluid rounded-3 card-img-top" src="{% static '/imgs/logo-c-1.png' %}" alt="Girl in a jacket">
         </a>
         <div class="card-body">
-          <h2 class="card-title fw-bold mb-5 mt-4 text-center">إعادة ارسال رسالة التأكيد</h2>
+          <h2 class="card-title fw-bold mb-3 mt-4 text-center">تفعيل الحساب</h2>
+          <p class="text-center text-muted mb-3">أدخل البريد الالكتروني الخاص بحسابك  لإعادة إرسال رسالة تفعيل الحساب ولتأكيد البريد الالكتروني</p>
           <div class="col">
             
             {% if messages %}
@@ -90,7 +91,7 @@
                 <input type="email" placeholder="you@example.com" name="email" class="form-control text-start" maxlength="320" id="id_email">
               </div>
               
-              <button type="submit" class="w-100 btn btn-lg btn-primary mt-3" id="reactivate_btn">تفعيل الحساب</button>
+              <button type="submit" class="w-100 btn btn-lg btn-primary mt-3" id="reactivate_btn">تأكيد البريد الالكتروني</button>
               <p class="mt-4 text-center">ليس لديك حساب؟ <a href="/sign-up">تسجيل حساب جديد</a></p>
             </form>
           </div>
