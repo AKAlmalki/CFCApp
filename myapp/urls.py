@@ -79,6 +79,18 @@ urlpatterns = [
         views.export_excel,
         name="export_excel"
     ),
+
+    path(
+        'beneficiaries/<str:username>/requests/',
+        views.export_excel,
+        name="beneficiary_request"
+    ),
+    path(
+        'beneficiaries/<str:username>/requests/<int:req_id>/',
+        views.export_excel,
+        name="beneficiary_request_details"
+    ),
+
     path(
         "sign-up",
         views.sign_up,
