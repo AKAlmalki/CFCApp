@@ -292,7 +292,8 @@ class beneficiary_income_expense(models.Model):
         return in_ex_diff_percentage
 
 
-class beneficiary_request(models.Model):
+class Beneficiary_request(models.Model):
+    db_table = "beneficiary_request"
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name='requested_beneficiary_set')
     beneficiary = models.ForeignKey(beneficiary, on_delete=models.CASCADE)
