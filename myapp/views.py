@@ -26,6 +26,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from .tokens import generate_token
+from django.contrib.auth.tokens import default_token_generator
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -178,8 +179,65 @@ def activate(request, uidb64, token):
         return render(request, 'activation_failed.html')
 
 
-def signin(request):
+def resend_activation_email_view(request):
 
+    if request.method == 'POST':
+        email = request.POST.get("email")
+
+        try:
+            myuser = CustomUser.objects.get(email__iexact=email)
+
+            if myuser is not None and myuser.is_active is False:
+                messages.success(
+                    request, "تم إعادة إرسال رسالة التأكيد بنجاح.")
+                request.session['username'] = myuser.username
+                return redirect('resend_activation_email')
+            else:
+                messages.error(request, "الحساب مفعل لهذا البريد الالكتروني.")
+                return redirect('resend_activation_email_view')
+
+        except ObjectDoesNotExist:
+            messages.error(request, "البريد الإلكتروني غير موجود")
+            return redirect('resend_activation_email_view')
+
+    return render(request, "resend_activation_email.html")
+
+
+def resend_activation_email(request):
+
+    try:
+        session_username = request.session['username']
+        user = CustomUser.objects.get(username=session_username)
+
+        if not user.is_active:
+            current_site = get_current_site(request)
+            email_subject = "تفعيل حسابك في جمعية الاصدقاء"
+
+            message = render_to_string('email_confirmation.html', {
+                'name': user.first_name,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': generate_token.make_token(user),
+            })
+
+            email = EmailMessage(
+                email_subject,
+                message,
+                settings.EMAIL_HOST_USER,
+                [user.email],
+            )
+
+            email.fail_silently = True
+            email.send()
+        else:
+            messages.warning(request, "الحساب مفعل بالفعل.")
+    except CustomUser.DoesNotExist:
+        messages.error(request, "المستخدم غير موجود.")
+
+    return redirect('login')  # Change 'login' to your desired URL
+
+
+def signin(request):
     if request.method == 'POST':
 
         username = request.POST.get("username")
@@ -203,9 +261,9 @@ def signin(request):
 
         # In case of user account is not activated
         elif user_db is not None and check_pass and is_user_active is False:
-            print("user is found but his/her account is not activated yet")
+
             messages.error(
-                request, "لم يتم تفعيل حسابك بعد! رجاء التأكد من بريدك الإلكتروني.")
+                request, "لم يتم تفعيل حسابك بعد! رجاء التأكد من بريدك الإلكتروني.", extra_tags='activation_email')
             return redirect("login")
         else:
             messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")

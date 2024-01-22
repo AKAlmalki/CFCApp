@@ -110,8 +110,18 @@ urlpatterns = [
         name="validate_phonenumber"
     ),
     path(
-        "activate/<uidb64>/<token>'",
+        "activate/<uidb64>/<token>/",
         views.activate,
         name="activate"
+    ),
+    path(
+        'resend-activation/',
+        views.resend_activation_email,
+        name='resend_activation_email'
+    ),
+    path(
+        'resend-activation-email/',
+        views.resend_activation_email_view,
+        name="resend_activation_email_view"
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

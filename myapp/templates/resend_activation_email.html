@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>تسجيل الدخول</title>
+    <title>إعادة تفعيل الحساب</title>
     {% comment %} Bootstrp CSS {% endcomment %} {% comment %} {% load bootstrap5
     %} {% endcomment %} {% comment %} {% bootstrap_css %} {% endcomment %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.rtl.min.css' %}" />
@@ -45,7 +45,7 @@
         <img class="img-fluid rounded-3 card-img-top" src="{% static '/imgs/logo-c-1.png' %}" alt="Girl in a jacket">
         </a>
         <div class="card-body">
-          <h2 class="card-title fw-bold mb-5 mt-4 text-center">تسجيل الدخول</h2>
+          <h2 class="card-title fw-bold mb-5 mt-4 text-center">إعادة ارسال رسالة التأكيد</h2>
           <div class="col">
             
             {% if messages %}
@@ -70,43 +70,27 @@
       
               {% for message in messages %}
                 
-                <div class="alert alert-{% if message.tags == "error" %}danger{% elif "activation_email" in message.extra_tags %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show d-flex align-items-center" role="alert">
+                <div class="alert alert-{% if message.tags == "error" %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show d-flex align-items-center" role="alert">
                   <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Info:" width="16" height="16"><use xlink:href="#info-fill"/></svg>
                   <div>
-                    <div>
-                      {% if "activation_email" in message.extra_tags %}<p>{% endif %}{{ message }} {% if "activation_email" in message.extra_tags %}
-                      <a href="{% url 'resend_activation_email_view' %}">اضغط هنا</a> لإعادة إرسال رسالة التفعيل.</p>
-                      {% endif %}
-                    </div>
+                      {{ message }}
                   </div>
                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
               {% endfor %}
             {% endif %}
 
-            <form method="post" id="sign-in-form">
+            <form method="post" id="reactivate-account-form">
               {% csrf_token %}
               {% comment %} {{form}} {% endcomment %}
               <div class="col mb-3">
-                <label for="id_username" class="form-label"
-                  >اسم المستخدم</label
-                >
-                <input type="text" name="username" class="form-control" autofocus id="id_username">
-              </div>
-              {% comment %} <div class="col mb-3">
                 <label for="id_email" class="form-label"
                   >البريد الالكتروني</label
                 >
                 <input type="email" placeholder="you@example.com" name="email" class="form-control text-start" maxlength="320" id="id_email">
-              </div> {% endcomment %}
-              <div class="col mb-3">
-                <label for="id_password" class="form-label"
-                  >كلمة المرور</label
-                >
-                <input type="password" name="password" class="form-control" id="id_password">
               </div>
               
-              <button type="submit" class="w-100 btn btn-lg btn-primary mt-3" id="sign_in_btn">تسجيل الدخول</button>
+              <button type="submit" class="w-100 btn btn-lg btn-primary mt-3" id="reactivate_btn">تفعيل الحساب</button>
               <p class="mt-4 text-center">ليس لديك حساب؟ <a href="/sign-up">تسجيل حساب جديد</a></p>
             </form>
           </div>
@@ -119,38 +103,6 @@
 
         // Retrieve the CSRF token from the page
         var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
-
-        // Validator method for username
-        $.validator.addMethod(
-          "usernameRegex",
-          function (value, element) {
-            return (
-              this.optional(element) || /^[a-zA-Z0-9_]{2,20}$/i.test(value)
-            );
-          },
-        );
-
-        // Validator method for first, second, and last name fields in the form
-        $.validator.addMethod(
-          "nameRegex",
-          function (value, element) {
-            return (
-              this.optional(element) || /^[a-zA-Z0-9\u0621-\u064A]*$/i.test(value)
-            );
-          },
-          "يحتوي الأسم على حروف فقط."
-        );
-
-        // Validator method for the phone number [Saudi Arabia Only]
-        $.validator.addMethod(
-          "saudiPhoneRegex",
-          function (value, element) {
-            return (
-              this.optional(element) || /^(5\d{8})$/i.test(value)
-            );
-          },
-          "الرجاء إدخال رقم جوال صحيح يبدأ برقم 5 وبطول 9 ارقام."
-        );
 
         // Email address validator
         $.validator.addMethod(
@@ -188,8 +140,8 @@
         });
 
         // When ".next" button is clicked, the following function is executed
-        $("#sign_in_btn").click(function () {
-          var form = $("#sign-in-form");
+        $("#reactivate_btn").click(function () {
+          var form = $("#reactivate-account-form");
 
           form.validate({
             errorElement: "span",
@@ -214,19 +166,6 @@
 
             // Adding the rules (validations) for each input in the form.
             rules: {
-              username: {
-                usernameRegex: true,
-                minlength: 3,
-                maxlength: 15,
-                required: true,
-              },
-              password: {
-                required: true,
-              },
-              phonenumber: {
-                required: true,
-                saudiPhoneRegex: true,
-              },
               email: {
                 required: true,
                 emailRegex: true,
@@ -234,7 +173,7 @@
             },
             messages: {
               username: {
-                usernameRegex: "اسم المستخدم يتكون من حروف انجليزية وارقام فقط.",
+                // usernameRegex: "اسم المستخدم يتكون من حروف انجليزية وارقام فقط.",
               },
             },
           });
