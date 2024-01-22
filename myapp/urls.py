@@ -57,7 +57,7 @@ urlpatterns = [
     path(
         "dashboard/",
         views.dashboard,
-        name="dashboard2"
+        name="dashboard"
     ),
     path(
         "dashboard/requests",
