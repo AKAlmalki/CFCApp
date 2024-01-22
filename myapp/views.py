@@ -27,6 +27,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from .tokens import generate_token
 from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import get_object_or_404
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -1412,9 +1413,19 @@ def supporter_test(request):
 @login_required(login_url='/login')
 def beneficiary_profile(request, username):
 
+    # Get the logged-in user
+    logged_in_user = request.user
+
     context = {}
     try:
+        # Retrieve the user whose profile is being requested
         user = CustomUser.objects.get(username=username)
+
+        # Check if the logged-in user matches the requested user
+        if logged_in_user != user:
+            messages.error(request, "ليس لديك الصلاحية اللازمة!")
+            return redirect('home')
+
         context = {
             'user_info': user,
         }

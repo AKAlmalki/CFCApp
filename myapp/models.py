@@ -112,6 +112,10 @@ class supporter_operation(models.Model):
     # entity_id = models.ForeignKey(entity, on_delete=models.CASCADE)
 
 
+class beneficiary_request(models.Model):
+    pass
+
+
 class beneficiary(models.Model):
     id = models.AutoField(primary_key=True)
     file_no = models.CharField(max_length=512, null=True, blank=True)
@@ -365,6 +369,7 @@ class Entity_supporter_operation(models.Model):
     entity_id = models.ForeignKey(entity, on_delete=models.CASCADE)
 
 
+# Adjust the original user modal to have other fields
 class CustomUser(AbstractUser):
     date_of_birth = models.DateField(null=True)
     gender = models.CharField(max_length=5, null=True)

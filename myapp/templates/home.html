@@ -17,6 +17,35 @@
   </div>
 </div>
 <div class="container">
+  {% if messages %}
+  <script>
+    // Execute the following JavaScript code when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show the modal when there are messages
+      var modal = new bootstrap.Modal(document.getElementById('errorModal'));
+      modal.show();
+    });
+  </script>
+  {% endif %}
+
+  {% for message in messages %}
+  <div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">خطأ</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ message }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
   <div class="p-5 my-4 bg-light rounded-3">
       <h1 class="mb-3">الصندوق التنموي للأيتام لحياة كريمة</h1>
       <p class="lead">استثمر معنا لأخرتك وشارك بتأمين حياة أحد الأسر   المحتاجة أو الارامل <a href="https://www.tutorialrepublic.com" class="text-success" target="_blank">من هنا</a> ابدا بملئ طلب كفالة أو دعم مادي او غير عيني (أثاث أدوات مكتبية) للأيتام والمحتاجين</p>
