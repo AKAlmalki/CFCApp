@@ -109,4 +109,9 @@ urlpatterns = [
         views.validate_phonenumber,
         name="validate_phonenumber"
     ),
+    path(
+        "activate/<uidb64>/<token>'",
+        views.activate,
+        name="activate"
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

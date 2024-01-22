@@ -1,0 +1,11 @@
+{% autoescape off %}
+
+اهلا بك في جمعية اصدقاء المجتمع
+
+اهلا {{ name }}!
+
+الرجاء تأكيد البريد الالكتروني عن طريق زيارة الرابط التالي:
+
+رابط التأكيد: http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+
+{% endautoescape %}

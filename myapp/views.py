@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import login, logout, authenticate
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, date
@@ -18,6 +19,13 @@ from openpyxl import Workbook
 from openpyxl.styles import *
 import decimal
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.core.mail import send_mail, EmailMessage
+from cfc_app import settings
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from .tokens import generate_token
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -115,14 +123,64 @@ def sign_up(request):
         )
 
         messages.success(
-            request, "تم إنشاء حسابك بنجاح! رجاء راجع الايميل الالكتروني الخاص بك لتأكيد الايميل وتفعيل حسابك.")
+            request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
+
+        # Welcome email
+        subject = "أهلا بك في جمعية أصدقاء المجتمع!"
+        message = f'\nالسلام عليكم {new_user.first_name}\n\nنرحب بك بحرارة في جمعية أصدقاء المجتمع, حيث تلتقي القلوب الرحيمة لبناء جسر من العطاء والأمل. نشعر بسعادة كبيرة لأنك قررت أن تكون جزءًا من مسيرتنا الإنسانية\n\nنحن هنا لتحفيز الخير وتشجيع العطاء, ومن خلال انضمامك إلينا, نزداد قوة وإمكانية لنقدم المساعدة والدعم لأولئك الذين هم في أمس الحاجة لها. سوف تجد في جمعية أصدقاء المجتمع فرصًا رائعة للمشاركة في المشاريع الإنسانية وتغيير حياة الناس بشكل إيجابي.\n\nندعوك لاستكشاف موقعنا والتعرف على الأنشطة المختلفة والفرص التطوعية المتاحة لك. نحن متأكدون أن تجربتك معنا ستكون مميزة وملهمة.\n\nفي حال كانت لديك أي أسئلة أو تحتاج إلى المساعدة, فلا تتردد في التواصل معنا عبر المنصة وطرق التواصل الموضحة فيها.\n\nشكرا لك مره أخرى على انضمامك إلينا, ونتطلع إلى العمل المشترك لبناء عالم أفضل.\n\nمع أطيب التحيات,\nفريق جمعية أصدقاء المجتمع'
+        from_email = settings.EMAIL_HOST_USER
+        to_list = [new_user.email]
+        send_mail(subject, message, from_email, to_list, fail_silently=True)
+
+        # Email address Confirmation Email
+        current_site = get_current_site(request)
+        email_subject = "تفعيل الحساب"
+
+        print(new_user.first_name,
+              current_site.domain,
+              urlsafe_base64_encode(force_bytes(new_user.pk)),
+              generate_token.make_token(new_user))
+
+        message2 = render_to_string('email_confirmation.html', {
+            'name': new_user.first_name,
+            'domain': current_site.domain,
+            'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
+            'token': generate_token.make_token(new_user),
+        })
+        email = EmailMessage(
+            email_subject,
+            message2,
+            settings.EMAIL_HOST_USER,
+            [new_user.email],
+        )
+
+        email.fail_silently = True
+        email.send()
+
         return redirect('/login')
 
-        # login(request, user)
-        # return redirect('/home')
-        pass
-
     return render(request, "registration/sign_up.html")
+
+
+def activate(request, uidb64, token):
+
+    print(uidb64, token)
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        myuser = CustomUser.objects.get(pk=uid)
+
+    except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+        print("User doesn't exist")
+        myuser = None
+
+    if myuser is not None and generate_token.check_token(myuser, token):
+        myuser.is_active = True
+        myuser.save()
+        login(request, myuser)
+        return redirect('home')
+    else:
+        return render(request, 'activation_failed.html')
 
 
 def signin(request):
