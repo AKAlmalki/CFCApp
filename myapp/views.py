@@ -1407,3 +1407,19 @@ def supporter_test(request):
         return render(request, 'main/table.html', context)
     # else
     return render(request, 'main/individual2.html', context)
+
+
+@login_required(login_url='/login')
+def beneficiary_profile(request, username):
+
+    context = {}
+    try:
+        user = CustomUser.objects.get(username=username)
+        context = {
+            'user_info': user,
+        }
+    except ObjectDoesNotExist:
+        messages.error(request, "المستخدم غير موجود!")
+        return redirect('home')
+
+    return render(request, 'beneficiary_profile.html', context)

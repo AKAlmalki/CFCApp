@@ -81,9 +81,9 @@ urlpatterns = [
     ),
 
     path(
-        'beneficiaries/<str:username>/requests/',
-        views.export_excel,
-        name="beneficiary_request"
+        'beneficiaries/<str:username>/',
+        views.beneficiary_profile,
+        name="beneficiary_profile"
     ),
     path(
         'beneficiaries/<str:username>/requests/<int:req_id>/',

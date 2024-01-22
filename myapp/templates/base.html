@@ -87,7 +87,8 @@
                     </svg><p class="d-inline">   {{ user.username }}</p> 
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#">الطلبات</a></li>
+                    <li><a class="dropdown-item" href="{% url 'beneficiary_profile' username=user.username %}">الملف الشخصي</a></li>
+                    <li><a class="dropdown-item" href="{% url 'beneficiary_profile' username=user.username %}">الطلبات</a></li>
                     <li><a class="dropdown-item" href="{% url 'logout' %}">تسجيل الخروج</a></li>
                   </ul>
                 </li>
