@@ -55,7 +55,6 @@
                     <thead>
                       <tr>
                         <th scope="col"># رقم الطلب</th>
-                        <th scope="col">اسم المستخدم</th>
                         <th scope="col">المستفيد</th>
                         <th scope="col">الحالة</th>
                         <th scope="col">التعليقات</th>
@@ -67,8 +66,7 @@
                       {% for request in beneficiary_requests %}
                         <tr>
                           <td class="col" scope="col">{{ request.id }}</td>
-                          <td class="col" scope="col">{{ request.user.username }}</td>
-                          <td class="col" scope="col">{{ request.beneficiary.first_name }}</td>
+                          <td class="col" scope="col">{{ request.beneficiary.first_name }} {{ request.beneficiary.last_name }}</td>
                           <td class="col" scope="col">
                             {% if request.status == "waiting" %}
                             <span class="badge text-bg-warning">انتظار</span>

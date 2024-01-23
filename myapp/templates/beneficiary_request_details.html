@@ -640,19 +640,19 @@
         <div class="attachment_info">
           <h3 class="mt-4 mb-4">المرفقات</h3>
           <div>
-            {% if attachments %}
+            {% if beneficiary_attachments %}
             <div class="table-responsive">
               <table class="table">
                 <thead>
                   <tr>
-                    <th scope="col">نوع المرفق</th>
                     <th scope="col">اسم الملف</th>
+                    <th scope="col">نوع المرفق</th>
                     <th scope="col">نوع الملف</th>
                     <th scope="col">الإجراءات</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {% for attachment in attachments %}
+                  {% for attachment in beneficiary_attachments %}
                   <tr data-bs-toggle="tooltip" title="">
                     <td>
                       <span>
@@ -668,7 +668,7 @@
                     <td>
                       <div class="d-flex align-items-center actions">
                         <div class="mb-2">
-                          <a href="${attachment.file_path}" target="_blank" class="btn btn-primary">عرض الملف</a>
+                          <a href="{{ attachment.file_path }}" target="_blank" class="btn btn-primary">عرض الملف</a>
                       </div>
                       </div>
                     </td>
@@ -680,6 +680,131 @@
             {% else %}
             <p>لا يوجد مرفقات </p>
             {% endif %}
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="dependents">
+          <h3 class="mt-4 mb-4">المرافقين</h3>
+          <div>
+            <div class="accordion" id="dependentsAccordion">
+              {% for dependent in dependent_list %}
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="dependentHeading{{ dependent.dependent_id }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dependentCollapse{{ dependent.dependent_id }}" aria-expanded="false" aria-controls="dependentCollapse{{ dependent.dependent_id }}">
+                      {{ dependent.dependent_first_name }} {{ dependent.dependent_second_name }} {{ dependent.dependent_last_name }}
+                    </button>
+                  </h2>
+                  <div id="dependentCollapse{{ dependent.dependent_id }}" class="accordion-collapse collapse" aria-labelledby="dependentHeading{{ dependent.dependent_id }}">
+                    <div class="accordion-body">
+
+                      <div class="row row-cols-lg-2 row-cols-xl-4">
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_id{{ dependent.dependent_id }}">رقم المرافق</h6>
+                          <input type="text" class="form-control" id="id_dependent_id{{ dependent.dependent_id }}" name="dependent_id" value="{{ dependent.dependent_id }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_first_name{{ dependent.dependent_id }}">الأسم الأول</h6>
+                          <input type="text" class="form-control" id="id_dependent_first_name{{ dependent.dependent_id }}" name="dependent_first_name" value="{{ dependent.dependent_first_name }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_second_name{{ dependent.dependent_id }}">الأسم الثاني</h6>
+                          <input type="text" class="form-control" id="id_dependent_second_name{{ dependent.dependent_id }}" name="dependent_second_name" value="{{ dependent.dependent_second_name }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_last_name{{ dependent.dependent_id }}">الأسم الأخير</h6>
+                          <input type="text" class="form-control" id="id_dependent_last_name{{ dependent.dependent_id }}" name="dependent_last_name" value="{{ dependent.dependent_last_name }}" disabled readonly>
+                        </div>
+                      </div>
+
+                      <div class="row row-cols-lg-2 row-cols-xl-4">
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_gender{{ dependent.dependent_id }}">الجنس</h6>
+                          <input type="text" class="form-control" id="id_dependent_gender{{ dependent.dependent_id }}" name="dependent_gender" value="{{ dependent.dependent_gender }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_relationship{{ dependent.dependent_id }}">صلة القرابة</h6>
+                          <input type="text" class="form-control" id="id_dependent_relationship{{ dependent.dependent_id }}" name="dependent_relationship" value="{{ dependent.dependent_relationship }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_marital_status{{ dependent.dependent_id }}">الحالة الاجتماعية</h6>
+                          <input type="text" class="form-control" id="id_dependent_marital_status{{ dependent.dependent_id }}" name="dependent_marital_status" value="{{ dependent.dependent_marital_status }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_educational_status{{ dependent.dependent_id }}">الحالة الدراسية</h6>
+                          <input type="text" class="form-control" id="id_dependent_educational_status{{ dependent.dependent_id }}" name="dependent_educational_status" value="{{ dependent.dependent_educational_status }}" disabled readonly>
+                        </div>
+                      </div>
+
+                      <div class="row row-cols-lg-2 row-cols-xl-4">
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_educational_level{{ dependent.dependent_id }}">المرحلة الدراسية</h6>
+                          <input type="text" class="form-control" id="id_dependent_educational_level{{dependent.dependent_id }}" name="dependent_educational_level" value="{{dependent.dependent_educational_level }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_educational_degree{{ dependent.dependent_id }}">المؤهل التعليمي</h6>
+                          <input type="text" class="form-control" id="id_dependent_educational_degree{{ dependent.dependent_id }}" name="dependent_educational_degree" value="{{ dependent.dependent_educational_degree }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_health_status{{ dependent.dependent_id }}">الحالة الصحية</h6>
+                          <input type="text" class="form-control" id="id_dependent_health_status{{ dependent.dependent_id }}" name="dependent_health_status" value="{{ dependent.dependent_health_status }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_disease_type{{ dependent.dependent_id }}">نوع المرض</h6>
+                          <input type="text" class="form-control" id="id_dependent_disease_type{{ dependent.dependent_id }}" name="dependent_disease_type" value="{{ dependent.dependent_disease_type }}" disabled readonly>
+                        </div>
+                      </div>
+
+                      <div class="row row-cols-lg-2">
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_national_id{{ dependent.dependent_id }}">رقم الهوية الوطنية / الإقامة</h6>
+                          <input type="text" class="form-control" id="id_dependent_national_id{{ dependent.dependent_id }}" name="dependent_national_id" value="{{ dependent.dependent_national_id }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_national_id_exp_date{{ dependent.dependent_id }}">تاريخ انتهاء الهوية / الإقامة</h6>
+                          <input type="text" class="form-control" id="id_dependent_national_id_exp_date{{ dependent.dependent_id }}" name="dependent_national_id_exp_date" value="{{ dependent.dependent_national_id_exp_date }}" disabled readonly>
+                        </div>
+                      </div>
+
+                      <div class="row row-cols-lg-2 row-cols-xl-3">
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_date_of_birth{{ dependent.dependent_id }}">تاريخ الميلاد</h6>
+                          <input type="text" class="form-control" id="id_dependent_date_of_birth{{ dependent.dependent_id }}" name="dependent_date_of_birth" value="{{ dependent.dependent_date_of_birth }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_needs_description{{ dependent.dependent_id }}">وصف الاحتياج</h6>
+                          <input type="text" class="form-control" id="id_dependent_needs_description{{ dependent.dependent_id }}" name="dependent_needs_description" value="{{ dependent.dependent_needs_description }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_needs_type{{ dependent.dependent_id }}">نوع الاحتياج</h6>
+                          <input type="text" class="form-control" id="id_dependent_needs_type{{ dependent.dependent_id }}" name="dependent_needs_type" value="{{ dependent.dependent_needs_type }}" disabled readonly>
+                        </div>
+                      </div>
+
+                      <!-- Display dependent income data as a table -->
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>مصدر الدخل</th>
+                            <th>قيمة الدخل</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for income in dependent.dependent_income_data %}
+                            <tr key="{{ income.id }}">
+                              <td>{{ income.income_source }}</td>
+                              <td>{{ income.income_amount }}</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
           </div>
         </div>
     </div> <!-- end line card body -->
