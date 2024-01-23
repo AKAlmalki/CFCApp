@@ -90,6 +90,11 @@ urlpatterns = [
         name="beneficiary_requests"
     ),
     path(
+        'beneficiaries/<str:username>/requests/<int:request_id>/',
+        views.beneficiary_requests_details,
+        name="beneficiary_requests_details"
+    ),
+    path(
         "sign-up",
         views.sign_up,
         name="sign-up"

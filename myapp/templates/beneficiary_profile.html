@@ -7,7 +7,7 @@
       <div class="card p-3">
         <div class="e-navlist e-navlist--active-bg">
           <ul class="nav nav d-flex align-items-start flex-lg-column">
-            <li class="nav-item"><a class="nav-link link-body-emphasis px-2 active" href="{% url 'beneficiary_profile' username=user.username %}"><i class="fa fa-fw fa-bar-chart mr-1"></i><span>  نظرة عامة</span></a></li>
+            <li class="nav-item"><a class="nav-link link-body-emphasis px-2 active" href="{% url 'beneficiary_profile' username=user.username %}"><i class="fa fa-fw fa-bar-chart mr-1"></i><span class="fw-bold text-success">  نظرة عامة</span></a></li>
             <li class="nav-item"><a class="nav-link link-body-emphasis text-dark px-2" href="{% url 'beneficiary_requests' username=user.username %}"><i class="fa fa-fw fa-th mr-1"></i><span>  الطلبات</span></a></li>
             {% comment %} <li class="nav-item"><a class="nav-link link-body-emphasis text-dark px-2" href="#" target="__blank"><i class="fa fa-fw fa-cog mr-1"></i><span>  الاعدادات</span></a></li> {% endcomment %}
           </ul>
