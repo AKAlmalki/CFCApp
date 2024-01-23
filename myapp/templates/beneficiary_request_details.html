@@ -1,0 +1,813 @@
+{% extends 'base.html' %}{% load static %}{% load humanize %}{% block title %}تفاصيل الطلب{% endblock %}{% block content %}
+<div class="container mt-5">
+  <div class="nav-breadcrumb mb-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">الصفحة الرئيسية</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'beneficiary_requests' username=user.username %}">الطلبات</a></li>
+        <li class="breadcrumb-item active" aria-current="page">تفاصيل الطلب</li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title fw-bold">تفاصيل الطلب</h2>
+        <hr>
+        <div class="personal_info">
+          <h3 class="mt-4 mb-4">المعلومات الشخصية</h3>
+          <div class="row row-cols-lg-2 row-cols-xl-4">
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_file_no">رقم الملف</h6>
+              <input type="text" class="form-control" id="id_file_no" name="file_no" value="{{ beneficiary.file_no }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_first_name">الأسم الأول</h6>
+              <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ beneficiary.first_name }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_second_name">الأسم الثاني</h6>
+              <input type="text" class="form-control" id="id_second_name" name="second_name" value="{{ beneficiary.second_name }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_last_name">الأسم الأخير</h6>
+              <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ beneficiary.last_name }}" disabled readonly>
+            </div>
+          </div>
+
+          <div class="row row-cols-lg-2 row-cols-xl-4">
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_gender">الجنس</h6>
+              <input type="text" class="form-control" id="id_gender" name="gender" value="{{ beneficiary.gender }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_date_of_birth">تاريخ الميلاد</h6>
+              <input type="text" class="form-control" id="id_date_of_birth" name="date_of_birth" value="{{ beneficiary.date_of_birth }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_phone_number">رقم الجوال</h6>
+              <input type="text" class="form-control" id="id_phone_number" name="phone_number" value="{{ beneficiary.phone_number }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_email">الايميل الالكتروني</h6>
+              <input type="email" class="form-control" id="id_email" name="email" value="{{ beneficiary.email }}" disabled readonly>
+            </div>
+          </div>
+
+          <div class="row row-cols-md-1 row-cols-xl-3">
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_nationality">الجنسية</h6>
+              <input type="text" class="form-control" id="id_nationality" name="nationality" value="{{ beneficiary.nationality }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_national_id">رقم الهوية/الإقامة</h6>
+              <input type="text" class="form-control" id="id_national_id" name="national_id" value="{{ beneficiary.national_id }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة</h6>
+              <input type="text" class="form-control" id="id_national_id_exp_date" name="national_id_exp_date" value="{{ beneficiary.national_id_exp_date }}" disabled readonly>
+            </div>
+          </div>
+
+          <div class="row row-cols-md-1 row-cols-lg-3">
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_category">التصنيف الرئيسي</h6>
+              <input type="text" class="form-control" id="id_category" name="category" value="{{ beneficiary.category }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_marital_status">الحالة الاجتماعية</h6>
+              <input type="text" class="form-control" id="id_marital_status" name="marital_status" value="{{ beneficiary.marital_status }}" disabled readonly>
+            </div>
+
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_educational_level">المستوى التعليمي</h6>
+              <input type="text" class="form-control" id="id_educational_level" name="educational_level" value="{{ beneficiary.educational_level }}" disabled readonly>
+            </div>
+          </div>
+
+          <div class="row row-cols-lg-2 row-cols-xl-4">
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_health_status">الحالة الصحية</h6>
+              <input type="text" class="form-control" id="id_health_status" name="health_status" value="{{ beneficiary.health_status }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_disease_type">نوع المرض</h6>
+              <input type="text" class="form-control" id="id_disease_type" name="disease_type" value="{% if beneficiary.disease_type %}{{ beneficiary.disease_type }}{% else %}----{% endif %}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_work_status">هل يعمل؟</h6>
+              <input type="text" class="form-control" id="id_work_status" name="work_status" value="{{ beneficiary.work_status }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_employer">جهة العمل</h6>
+              <input type="text" class="form-control" id="id_employer" name="employer" value="{% if beneficiary.employer %}{{ beneficiary.employer }}{% else %}----{% endif %}" disabled readonly>
+            </div>
+          </div>
+
+          <div class="row row-cols-lg-2">
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_death_date_father_husband">تاريخ وفاة الأب/الزوج</h6>
+              <input type="text" class="form-control" id="id_death_date_father_husband" name="death_date_father_husband" value="{% if beneficiary.death_date_father_husband %}{{ beneficiary.death_date_father_husband }}{% else %}----{% endif %}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_washing_place">المغسلة التي تم التجهيز فيها</h6>
+              <input type="text" class="form-control" id="id_washing_place" name="washing_place" value="{% if beneficiary.washing_place %}{{ beneficiary.washing_place }}{% else %}----{% endif %}" disabled readonly>
+            </div>
+          </div>
+          
+          <div class="row row-cols-lg-2">
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_bank_type">أسم البنك</h6>
+              <input type="text" class="form-control" id="id_bank_type" name="bank_type" value="{{ beneficiary.bank_type }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_bank_iban">رقم الإيبان</h6>
+              <input type="text" class="form-control" id="id_bank_iban" name="bank_iban" value="{{ beneficiary.bank_iban }}" disabled readonly>
+            </div>
+          </div>
+
+          <div class="row row-cols-xl-2">
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_family_issues">المشاكل التي تعاني منها الأسرة</h6>
+              <input type="text" class="form-control" id="id_family_issues" name="family_issues" value="{{ beneficiary.family_issues }}" disabled readonly>
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_family_needs">احتياجات الأسرة</h6>
+              <input type="text" class="form-control" id="id_family_needs" name="family_needs" value="{{ beneficiary.family_needs }}" disabled readonly>
+            </div>
+          </div>
+        </div> <!-- end line personal info -->
+
+        <hr>
+
+        <div class="housing_info">
+          <h3 class="mt-4 mb-4">معلومات السكن</h3>
+          <div class="row row-cols-lg-2 row-cols-xl-4">
+            <div class="mb-3 form-group">
+              <label for="id_houseinfo_building_number" class="form-label"
+                >رقم المبنى</label>
+              <input
+                type="number"
+                name="houseinfo_building_number"
+                min="0"
+                max="9999999"
+                class="form-control text-start"
+                id="id_houseinfo_building_number"
+                value="{{ beneficiary_house.building_number }}"
+                disabled readonly
+              />
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_houseinfo_street_name" class="form-label"
+                >اسم الشارع</label>
+              <input
+                type="text"
+                name="houseinfo_street_name"
+                maxlength="50"
+                class="form-control"
+                id="id_houseinfo_street_name"
+                value="{{ beneficiary_house.street_name }}"
+                disabled readonly
+              />
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_houseinfo_neighborhood" class="form-label"
+                >الحي</label>
+              <input
+                type="text"
+                name="houseinfo_neighborhood"
+                maxlength="50"
+                class="form-control"
+                id="id_houseinfo_neighborhood"
+                value="{{ beneficiary_house.neighborhood }}"
+                disabled readonly
+              />
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_houseinfo_city" class="form-label"
+                >المدينة</label>
+              <input
+                type="text"
+                name="houseinfo_city"
+                maxlength="50"
+                class="form-control"
+                id="id_houseinfo_city"
+                value="{{ beneficiary_house.city }}"
+                disabled readonly
+              />
+            </div>
+          </div>
+
+          <div class="row row-cols-lg-3">
+            <div class="mb-3 form-group">
+              <label for="id_houseinfo_postal_code" class="form-label"
+                >الرمز البريدي</label>
+              <input
+                type="number"
+                name="houseinfo_postal_code"
+                min="0"
+                max="9999999"
+                class="form-control"
+                id="id_houseinfo_postal_code"
+                value="{{ beneficiary_house.postal_code }}"
+                disabled readonly
+              />
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_houseinfo_additional_number" class="form-label"
+                >الرقم الإضافي</label>
+              <input
+                type="number"
+                name="houseinfo_additional_number"
+                min="0"
+                max="9999999"
+                class="form-control text-start"
+                id="id_houseinfo_additional_number"
+                value="{{ beneficiary_house.additional_number }}"
+                disabled readonly
+              />
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_houseinfo_unit" class="form-label">الوحدة</label>
+              <input
+                type="text"
+                name="houseinfo_unit"
+                maxlength="50"
+                class="form-control"
+                id="id_houseinfo_unit"
+                value="{{ beneficiary_house.unit }}"
+                disabled readonly
+              />
+            </div>
+          </div>
+
+          <div class="row row-cols-xl-3">
+            <div class="mb-3 form-group">
+              <label for="id_houseinfo_location_url" class="form-label"
+                >رابط موقع المنزل (google maps)</label>
+              <input
+                type="url"
+                name="houseinfo_location_url"
+                maxlength="250"
+                class="form-control"
+                id="id_houseinfo_location_url"
+                value="{{ beneficiary_house.location_url }}"
+                disabled readonly
+              />
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_houseinfo_housing_type" class="form-label"
+                >نوع السكن</label>
+              <input
+                type="text"
+                name="houseinfo_housing_type"
+                class="form-control"
+                id="id_houseinfo_housing_type"
+                value="{{ beneficiary_house.housing_type }}"
+                disabled readonly
+              />
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_houseinfo_housing_ownership" class="form-label"
+                >ملكية السكن</label>
+              <input
+                type="text"
+                name="houseinfo_housing_ownership"
+                class="form-control"
+                id="id_houseinfo_housing_ownership"
+                value="{{ beneficiary_house.housing_ownership }}"
+                disabled readonly
+              />
+            </div>
+          </div>
+
+        </div>
+        
+        <hr>
+
+        <div class="income_expenses_info">
+          <h3 class="mb-5 mt-4">معلومات مصادر الدخل والمصروفات</h3>
+          <h4 class="mt-2 mb-3">مصادر دخل رب الأسرة (شهريًا)</h4>
+          <div class="row row-cols-lg-2 row-cols-xl-4 mt-4">
+            <div class="mb-3 form-group">
+              <label for="id_incomeinfo_salary" class="form-label"
+                >الراتب</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="incomeinfo_salary"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_incomeinfo_salary"
+                  value="{{ beneficiary_income_expense.salary_in }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_incomeinfo_social_insurance" class="form-label"
+                >التأمينات الاجتماعية</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="incomeinfo_social_insurance"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_incomeinfo_social_insurance"
+                  value="{{ beneficiary_income_expense.social_insurance_in }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_incomeinfo_charity" class="form-label"
+                >جمعيات خيرية</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="incomeinfo_charity"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_incomeinfo_charity"
+                  value="{{ beneficiary_income_expense.charity_in }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_incomeinfo_social_warranty" class="form-label"
+                >الضمان الاجتماعي</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="incomeinfo_social_warranty"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_incomeinfo_social_warranty"
+                  value="{{ beneficiary_income_expense.social_warranty_in }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row row-cols-lg-2 row-cols-xl-4">
+            <div class="mb-3 form-group">
+              <label for="id_incomeinfo_pension_agency" class="form-label"
+                >مصلحة التقاعد</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="incomeinfo_pension_agency"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_incomeinfo_pension_agency"
+                  value="{{ beneficiary_income_expense.pension_agency_in }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_incomeinfo_citizen_account" class="form-label"
+                >حساب المواطن</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="incomeinfo_citizen_account"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_incomeinfo_citizen_account"
+                  value="{{ beneficiary_income_expense.citizen_account_in }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_incomeinfo_benefactor" class="form-label"
+                >فاعل خير</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="incomeinfo_benefactor"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_incomeinfo_benefactor"
+                  value="{{ beneficiary_income_expense.benefactor_in }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_incomeinfo_other" class="form-label">أخرى</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="incomeinfo_other"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_incomeinfo_other"
+                  value="{{ beneficiary_income_expense.other_in }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="mb-3 form-group">
+              <label for="id_incomeinfo_total" class="form-label"
+                >إجمالي الدخل</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="incomeinfo_total"
+                  min="0.00"
+                  max="99999999.00"
+                  step="0.01"
+                  class="form-control"
+                  id="id_incomeinfo_total"
+                  value="{{ beneficiary_income_expense.total_in }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+          </div>
+
+          <h4 class="mt-4 mb-3">مصروفات الأسرة (شهريًا)</h4>
+          <div class="row row-cols-lg-2 row-cols-xl-4 mt-4">
+            <div class="mb-3 form-group">
+              <label for="id_expensesinfo_housing_rent" class="form-label"
+                >إيجار السكن</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="expensesinfo_housing_rent"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_expensesinfo_housing_rent"
+                  value="{{ beneficiary_income_expense.housing_rent_ex }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label
+                for="id_expensesinfo_electricity_bills"
+                class="form-label"
+                >فواتير كهرباء</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="expensesinfo_electricity_bills"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_expensesinfo_electricity_bills"
+                  value="{{ beneficiary_income_expense.electricity_bills_ex }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_expensesinfo_water_bills" class="form-label"
+                >فواتير ماء</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="expensesinfo_water_bills"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_expensesinfo_water_bills"
+                  value="{{ beneficiary_income_expense.water_bills_ex }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_expensesinfo_transportation" class="form-label"
+                >مواصلات</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="expensesinfo_transportation"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_expensesinfo_transportation"
+                  value="{{ beneficiary_income_expense.transportation_ex }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row row-cols-lg-2 row-cols-xl-4">
+            <div class="mb-3 form-group">
+              <label for="id_expensesinfo_health_supplies" class="form-label"
+                >مستلزمات صحية</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="expensesinfo_health_supplies"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_expensesinfo_health_supplies"
+                  value="{{ beneficiary_income_expense.health_supplies_ex }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_expensesinfo_food_supplies" class="form-label"
+                >مستلزمات غذائية</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="expensesinfo_food_supplies"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_expensesinfo_food_supplies"
+                  value="{{ beneficiary_income_expense.food_supplies_ex }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label
+                for="id_expensesinfo_educational_supplies"
+                class="form-label"
+                >مستلزمات دراسية</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="expensesinfo_educational_supplies"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_expensesinfo_educational_supplies"
+                  value="{{ beneficiary_income_expense.educational_supplies_ex }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_expensesinfo_proven_debts" class="form-label"
+                >ديون مثبتة</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="expensesinfo_proven_debts"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_expensesinfo_proven_debts"
+                  value="{{ beneficiary_income_expense.proven_debts_ex }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row row-cols-lg-2">
+            <div class="mb-3 form-group">
+              <label for="id_expensesinfo_other" class="form-label"
+                >أخرى</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="expensesinfo_other"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_expensesinfo_other"
+                  value="{{ beneficiary_income_expense.other_ex }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+            <div class="mb-3 form-group">
+              <label for="id_expensesinfo_total" class="form-label"
+                >إجمالي المصروفات</label>
+              <div class="input-group mb-3">
+                <input
+                  type="number"
+                  name="expensesinfo_total"
+                  min="0.00"
+                  max="99999999.00"
+                  class="form-control"
+                  id="id_expensesinfo_total"
+                  value="{{ beneficiary_income_expense.total_ex }}"
+                  disabled readonly
+                />
+                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="dependents">
+          <h3 class="mt-4 mb-4">المرافقين</h3>
+          <div>
+            <div class="accordion" id="dependentsAccordion">
+              {% for dependent in dependent_list %}
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="dependentHeading{{ dependent.dependent_id }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dependentCollapse{{ dependent.dependent_id }}" aria-expanded="false" aria-controls="dependentCollapse{{ dependent.dependent_id }}">
+                      {{ dependent.dependent_first_name }} {{ dependent.dependent_second_name }} {{ dependent.dependent_last_name }}
+                    </button>
+                  </h2>
+                  <div id="dependentCollapse{{ dependent.dependent_id }}" class="accordion-collapse collapse" aria-labelledby="dependentHeading{{ dependent.dependent_id }}">
+                    <div class="accordion-body">
+
+                      <div class="row row-cols-lg-2 row-cols-xl-4">
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_id{{ dependent.dependent_id }}">رقم المرافق</h6>
+                          <input type="text" class="form-control" id="id_dependent_id{{ dependent.dependent_id }}" name="dependent_id" value="{{ dependent.dependent_id }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_first_name{{ dependent.dependent_id }}">الأسم الأول</h6>
+                          <input type="text" class="form-control" id="id_dependent_first_name{{ dependent.dependent_id }}" name="dependent_first_name" value="{{ dependent.dependent_first_name }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_second_name{{ dependent.dependent_id }}">الأسم الثاني</h6>
+                          <input type="text" class="form-control" id="id_dependent_second_name{{ dependent.dependent_id }}" name="dependent_second_name" value="{{ dependent.dependent_second_name }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_last_name{{ dependent.dependent_id }}">الأسم الأخير</h6>
+                          <input type="text" class="form-control" id="id_dependent_last_name{{ dependent.dependent_id }}" name="dependent_last_name" value="{{ dependent.dependent_last_name }}" disabled readonly>
+                        </div>
+                      </div>
+
+                      <div class="row row-cols-lg-2 row-cols-xl-4">
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_gender{{ dependent.dependent_id }}">الجنس</h6>
+                          <input type="text" class="form-control" id="id_dependent_gender{{ dependent.dependent_id }}" name="dependent_gender" value="{{ dependent.dependent_gender }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_relationship{{ dependent.dependent_id }}">صلة القرابة</h6>
+                          <input type="text" class="form-control" id="id_dependent_relationship{{ dependent.dependent_id }}" name="dependent_relationship" value="{{ dependent.dependent_relationship }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_marital_status{{ dependent.dependent_id }}">الحالة الاجتماعية</h6>
+                          <input type="text" class="form-control" id="id_dependent_marital_status{{ dependent.dependent_id }}" name="dependent_marital_status" value="{{ dependent.dependent_marital_status }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_educational_status{{ dependent.dependent_id }}">الحالة الدراسية</h6>
+                          <input type="text" class="form-control" id="id_dependent_educational_status{{ dependent.dependent_id }}" name="dependent_educational_status" value="{{ dependent.dependent_educational_status }}" disabled readonly>
+                        </div>
+                      </div>
+
+                      <div class="row row-cols-lg-2 row-cols-xl-4">
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_educational_level{{ dependent.dependent_id }}">المرحلة الدراسية</h6>
+                          <input type="text" class="form-control" id="id_dependent_educational_level{{dependent.dependent_id }}" name="dependent_educational_level" value="{{dependent.dependent_educational_level }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_educational_degree{{ dependent.dependent_id }}">المؤهل التعليمي</h6>
+                          <input type="text" class="form-control" id="id_dependent_educational_degree{{ dependent.dependent_id }}" name="dependent_educational_degree" value="{{ dependent.dependent_educational_degree }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_health_status{{ dependent.dependent_id }}">الحالة الصحية</h6>
+                          <input type="text" class="form-control" id="id_dependent_health_status{{ dependent.dependent_id }}" name="dependent_health_status" value="{{ dependent.dependent_health_status }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_disease_type{{ dependent.dependent_id }}">نوع المرض</h6>
+                          <input type="text" class="form-control" id="id_dependent_disease_type{{ dependent.dependent_id }}" name="dependent_disease_type" value="{{ dependent.dependent_disease_type }}" disabled readonly>
+                        </div>
+                      </div>
+
+                      <div class="row row-cols-lg-2">
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_national_id{{ dependent.dependent_id }}">رقم الهوية الوطنية / الإقامة</h6>
+                          <input type="text" class="form-control" id="id_dependent_national_id{{ dependent.dependent_id }}" name="dependent_national_id" value="{{ dependent.dependent_national_id }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_national_id_exp_date{{ dependent.dependent_id }}">تاريخ انتهاء الهوية / الإقامة</h6>
+                          <input type="text" class="form-control" id="id_dependent_national_id_exp_date{{ dependent.dependent_id }}" name="dependent_national_id_exp_date" value="{{ dependent.dependent_national_id_exp_date }}" disabled readonly>
+                        </div>
+                      </div>
+
+                      <div class="row row-cols-lg-2 row-cols-xl-3">
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_date_of_birth{{ dependent.dependent_id }}">تاريخ الميلاد</h6>
+                          <input type="text" class="form-control" id="id_dependent_date_of_birth{{ dependent.dependent_id }}" name="dependent_date_of_birth" value="{{ dependent.dependent_date_of_birth }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_needs_description{{ dependent.dependent_id }}">وصف الاحتياج</h6>
+                          <input type="text" class="form-control" id="id_dependent_needs_description{{ dependent.dependent_id }}" name="dependent_needs_description" value="{{ dependent.dependent_needs_description }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_needs_type{{ dependent.dependent_id }}">نوع الاحتياج</h6>
+                          <input type="text" class="form-control" id="id_dependent_needs_type{{ dependent.dependent_id }}" name="dependent_needs_type" value="{{ dependent.dependent_needs_type }}" disabled readonly>
+                        </div>
+                      </div>
+
+                      <!-- Display dependent income data as a table -->
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>مصدر الدخل</th>
+                            <th>قيمة الدخل</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for income in dependent.dependent_income_data %}
+                            <tr key="{{ income.id }}">
+                              <td>{{ income.income_source }}</td>
+                              <td>{{ income.income_amount }}</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="attachment_info">
+          <h3 class="mt-4 mb-4">المرفقات</h3>
+          <div>
+            {% if beneficiary_attachments %}
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">اسم الملف</th>
+                    <th scope="col">نوع المرفق</th>
+                    <th scope="col">نوع الملف</th>
+                    <th scope="col">الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for attachment in beneficiary_attachments %}
+                  <tr data-bs-toggle="tooltip" title="">
+                    <td>
+                      <span>
+                        {{ attachment.file_name }}
+                      </span>
+                    </td>
+                    <td>
+                      <span>
+                        {{ attachment.attachment_type }}
+                      </span>
+                    </td>
+                    <td>{{ attachment.file_extension }}</td>
+                    <td>
+                      <div class="d-flex align-items-center actions">
+                        <div class="mb-2">
+                          <a href="{{ attachment.file_path }}" target="_blank" class="btn btn-primary">عرض الملف</a>
+                      </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <p>لا يوجد مرفقات </p>
+            {% endif %}
+          </div>
+        </div>
+    </div> <!-- end line card body -->
+  </div> <!-- end line card -->
+</div> <!-- end line container -->
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db.models import JSONField
 import datetime
@@ -16,6 +17,11 @@ class TodoItem(models.Model):
 def beneficiary_file_directory(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
     return "beneficiaries/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
+
+
+# def dependent_file_directory(instance, filename):
+#     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+#     return "dependents/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
 
 # all below methods must be removed (it is not needed anymore)
 
@@ -86,6 +92,20 @@ def beneficiary_social_warranty_inquiry_directory_path(instance, filename):
 #########################################################
 
 
+# Adjust the original user modal to have other fields
+class CustomUser(AbstractUser):
+    date_of_birth = models.DateField(null=True)
+    gender = models.CharField(max_length=5, null=True)
+    phonenumber = models.CharField(max_length=15, null=True, unique=True)
+    last_updated = models.DateField(null=True)
+    nationality = models.CharField(max_length=64, null=True)
+    email = models.EmailField(unique=True)  # Override the email field
+    # add additional field in here
+
+    def __str__(self):
+        return self.username
+
+
 class entity(models.Model):
     name = models.CharField(max_length=55)
     account = models.CharField(max_length=55, null=True)
@@ -145,6 +165,8 @@ class beneficiary(models.Model):
     bank_iban = models.CharField(max_length=32, null=True)
     family_issues = JSONField(default=list)
     family_needs = JSONField(default=list)
+    last_updated = models.DateTimeField(null=True)
+    status = models.CharField(max_length=55, null=True)
 
     def __str__(self):
         return "file_no " + self.file_no + ", name: " + self.first_name + ", national_id:" + self.national_id
@@ -271,6 +293,18 @@ class beneficiary_income_expense(models.Model):
         return in_ex_diff_percentage
 
 
+class Beneficiary_request(models.Model):
+    db_table = "beneficiary_request"
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='requested_beneficiary_set')
+    beneficiary = models.ForeignKey(beneficiary, on_delete=models.CASCADE)
+    status = models.CharField(max_length=55)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_by = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='reviewed_beneficiary_set', null=True)
+    comment = models.CharField(max_length=512, null=True)
+
+
 class dependent(models.Model):
     first_name = models.CharField(max_length=55)
     second_name = models.CharField(max_length=55)
@@ -281,9 +315,6 @@ class dependent(models.Model):
     marital_status = models.CharField(max_length=64)
     national_id = models.CharField(max_length=20)
     health_status = models.CharField(max_length=128, null=True)
-    income_amount = models.DecimalField(
-        decimal_places=2, max_digits=15, default=0)
-    income_source = models.CharField(max_length=128)
     needs_type = JSONField(default=list)
     educational_degree = models.CharField(max_length=128, null=True)
     date_of_birth = models.DateField()
@@ -298,16 +329,62 @@ class dependent(models.Model):
         return "first_name " + self.first_name + ", second_name: " + self.second_name + ", national_id:" + self.national_id
 
 
-class individual_supporter_operation(models.Model):
-    status = models.CharField(max_length=55, default=1)
-    amount = models.DecimalField(decimal_places=2, max_digits=55, default=0)
-    date = models.DateTimeField(auto_now_add=True)
-    supporter_operation_id = models.ForeignKey(
-        supporter_operation, on_delete=models.CASCADE)
-    individual_id = models.ForeignKey(individual, on_delete=models.CASCADE)
+class Dependent_income(models.Model):
+    db_table = "dependent_income"
+    dependent = models.ForeignKey(dependent, on_delete=models.CASCADE)
+    source = models.CharField(max_length=128, null=True, blank=True)
+    amount = models.DecimalField(decimal_places=2, max_digits=15, default=0)
 
 
-class entity_supporter_operation(models.Model):
+# class Dependent_income_attachment(models.Model):
+#     db_table = "dependent_income_attachment"
+#     dependent_income = models.ForeignKey(Dependent_income, on_delete=models.CASCADE)
+#     file_type = models.CharField(max_length=256, null=True)
+#     file_object = models.FileField(
+#         upload_to=dependent_file_directory, blank=True, null=True)
+
+#     @property
+#     def file_size(self):
+#         return self.file_object.size
+
+#     # Returns file name with its extension
+#     def filename(self):
+#         return os.path.basename(self.file_object.name)
+
+class Individual_supporter(models.Model):
+    db_table = "individual_supporter"
+    first_name = models.CharField(max_length=55)
+    second_name = models.CharField(max_length=55)
+    last_name = models.CharField(max_length=55)
+    date_of_birth = models.DateField()
+    gender = models.CharField(max_length=5, null=True)
+    national_id = models.CharField(max_length=20)
+    national_id_exp_date = models.DateField(null=True)
+    nationality = models.CharField(max_length=64)
+    marital_status = models.CharField(max_length=64)
+    educational_level = models.CharField(max_length=128, null=True)
+    work_status = models.CharField(max_length=64, null=True)
+    employer = models.CharField(max_length=128, null=True)
+    phone_number = models.CharField(max_length=15)
+    email = models.EmailField()
+
+    orphan_number = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+
+
+# A table that link between the beneficiary and the supporter which represents the support operation
+class Individual_supporter_beneficiary_sponsorship(models.Model):
+    db_table = "individual_supporter_beneficiary_sponsorship"
+    created_at = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(decimal_places=2, max_digits=15, default=0)
+    beneficiary = models.ForeignKey(
+        beneficiary, on_delete=models.CASCADE)
+    individual_supporter = models.ForeignKey(
+        Individual_supporter, on_delete=models.CASCADE)
+
+
+class Entity_supporter_operation(models.Model):
+    db_table = "entity_supporter_operation"
     status = models.CharField(max_length=55, default=1)
     amount = models.DecimalField(decimal_places=2, max_digits=55, default=0)
     date = models.DateTimeField(auto_now_add=True)

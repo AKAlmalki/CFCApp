@@ -2754,15 +2754,14 @@
                 martialStatus: cells[6].innerText,
                 nationalID: cells[7].innerText,
                 healthStatus: cells[8].innerText,
-                incomeAmount: cells[9].innerText,
-                incomeSource: cells[10].innerText,
-                needsType: cells[11].innerText,
-                educationalDegree: cells[12].innerText,
-                dateOfBitrh: cells[13].innerText,
-                nationalIDExpDate: cells[14].innerText,
-                needsDescription: cells[15].innerText,
-                educationalLevel: cells[16].innerText,
-                diseaseType: cells[17].innerText,
+                dependentIncomeTable: cells[9].innerText,
+                needsType: cells[10].innerText,
+                educationalDegree: cells[11].innerText,
+                dateOfBitrh: cells[12].innerText,
+                nationalIDExpDate: cells[13].innerText,
+                needsDescription: cells[14].innerText,
+                educationalLevel: cells[15].innerText,
+                diseaseType: cells[16].innerText,
             };
             dependentsData.push(dependent);
         }
@@ -2813,15 +2812,15 @@
       // along with the correct 'boundary'
       // delete options.headers['Content-Type'];
   
-      fetch('https://port433.link/beneficiaries/new', {
+      fetch('http://127.0.0.1:8000/beneficiaries/new', {
           method: 'POST',
           body: formData,
       })
       .then(response => response.json())
       .then(data => {
           if (data.redirect) {
-              // window.location.href = data.redirect;
-              console.log(data);
+              window.location.href = data.redirect;
+              // console.log(data);
           } else {
               // Handle other responses
           }

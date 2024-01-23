@@ -1,21 +1,33 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Beneficiary_attachment, entity_supporter_operation
-from .forms import RegisterForm
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Dependent_income, Beneficiary_attachment, Entity_supporter_operation, Individual_supporter_beneficiary_sponsorship, Individual_supporter, CustomUser, Beneficiary_request
+# from .forms import CustomUserCreationForm
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth import login, logout, authenticate
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, date
 import logging
 import os
 import json
+from decimal import Decimal
 from openpyxl import Workbook
 from openpyxl.styles import *
 import decimal
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.core.mail import send_mail, EmailMessage
+from cfc_app import settings
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from .tokens import generate_token
+from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import get_object_or_404
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -85,39 +97,238 @@ def confirmBeneficiaryRequestView(request):
 def sign_up(request):
     if request.method == 'POST':
 
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            # consider the case when the user already exists
-            # if User.objects.filter(username=form.cleaned_data.username).exists():
-            user = form.save()
-            login(request, user)
-            return redirect('/home')
+        # Retrieve request data
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        date_of_birth = request.POST['date_of_birth']
+        gender = request.POST['gender']
+        nationality = request.POST['nationality']
+        username = request.POST['username']
+        email = request.POST['email']
+        phonenumber = request.POST['phonenumber']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+
+        # Make a new user object
+        new_user = CustomUser.objects.create_user(
+            username=username,
+            email=email,
+            password=password1,
+            first_name=first_name,
+            last_name=last_name,
+            gender=gender,
+            nationality=nationality,
+            phonenumber=phonenumber,
+            date_of_birth=date_of_birth,
+            # Make the user not active until it is confirmed by the link sent to the email
+            is_active=False,
+        )
+
+        messages.success(
+            request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
+
+        # Welcome email
+        subject = "أهلا بك في جمعية أصدقاء المجتمع!"
+        message = f'\nالسلام عليكم {new_user.first_name}\n\nنرحب بك بحرارة في جمعية أصدقاء المجتمع, حيث تلتقي القلوب الرحيمة لبناء جسر من العطاء والأمل. نشعر بسعادة كبيرة لأنك قررت أن تكون جزءًا من مسيرتنا الإنسانية\n\nنحن هنا لتحفيز الخير وتشجيع العطاء, ومن خلال انضمامك إلينا, نزداد قوة وإمكانية لنقدم المساعدة والدعم لأولئك الذين هم في أمس الحاجة لها. سوف تجد في جمعية أصدقاء المجتمع فرصًا رائعة للمشاركة في المشاريع الإنسانية وتغيير حياة الناس بشكل إيجابي.\n\nندعوك لاستكشاف موقعنا والتعرف على الأنشطة المختلفة والفرص التطوعية المتاحة لك. نحن متأكدون أن تجربتك معنا ستكون مميزة وملهمة.\n\nفي حال كانت لديك أي أسئلة أو تحتاج إلى المساعدة, فلا تتردد في التواصل معنا عبر المنصة وطرق التواصل الموضحة فيها.\n\nشكرا لك مره أخرى على انضمامك إلينا, ونتطلع إلى العمل المشترك لبناء عالم أفضل.\n\nمع أطيب التحيات,\nفريق جمعية أصدقاء المجتمع'
+        from_email = settings.EMAIL_HOST_USER
+        to_list = [new_user.email]
+        send_mail(subject, message, from_email, to_list, fail_silently=True)
+
+        # Email address Confirmation Email
+        current_site = get_current_site(request)
+        email_subject = "تفعيل حسابك في جمعية الاصدقاء"
+
+        message2 = render_to_string('email_confirmation.html', {
+            'name': new_user.first_name,
+            'domain': current_site.domain,
+            'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
+            'token': generate_token.make_token(new_user),
+        })
+        email = EmailMessage(
+            email_subject,
+            message2,
+            settings.EMAIL_HOST_USER,
+            [new_user.email],
+        )
+
+        email.fail_silently = True
+        email.send()
+
+        return redirect('/login')
+
+    return render(request, "registration/sign_up.html")
+
+
+def activate(request, uidb64, token):
+
+    print(uidb64, token)
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        myuser = CustomUser.objects.get(pk=uid)
+
+    except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+        print("User doesn't exist")
+        myuser = None
+
+    if myuser is not None and generate_token.check_token(myuser, token):
+        myuser.is_active = True
+        myuser.save()
+        login(request, myuser)
+        return redirect('home')
     else:
-        form = RegisterForm()
+        return render(request, 'activation_failed.html')
 
-    context = {
-        "form": form
-    }
 
-    return render(request, "registration/sign_up.html", context)
+def resend_activation_email_view(request):
+
+    if request.method == 'POST':
+        email = request.POST.get("email")
+
+        try:
+            myuser = CustomUser.objects.get(email__iexact=email)
+
+            if myuser is not None and myuser.is_active is False:
+                messages.success(
+                    request, "تم إعادة إرسال رسالة التأكيد بنجاح.")
+                request.session['username'] = myuser.username
+                return redirect('resend_activation_email')
+            else:
+                messages.error(request, "الحساب مفعل لهذا البريد الالكتروني.")
+                return redirect('resend_activation_email_view')
+
+        except ObjectDoesNotExist:
+            messages.error(request, "البريد الإلكتروني غير موجود")
+            return redirect('resend_activation_email_view')
+
+    return render(request, "resend_activation_email.html")
+
+
+def resend_activation_email(request):
+
+    try:
+        session_username = request.session['username']
+        user = CustomUser.objects.get(username=session_username)
+
+        if not user.is_active:
+            current_site = get_current_site(request)
+            email_subject = "تفعيل حسابك في جمعية الاصدقاء"
+
+            message = render_to_string('email_confirmation.html', {
+                'name': user.first_name,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': generate_token.make_token(user),
+            })
+
+            email = EmailMessage(
+                email_subject,
+                message,
+                settings.EMAIL_HOST_USER,
+                [user.email],
+            )
+
+            email.fail_silently = True
+            email.send()
+        else:
+            messages.warning(request, "الحساب مفعل بالفعل.")
+    except CustomUser.DoesNotExist:
+        messages.error(request, "المستخدم غير موجود.")
+
+    return redirect('login')  # Change 'login' to your desired URL
 
 
 def signin(request):
-
     if request.method == 'POST':
 
         username = request.POST.get("username")
         password = request.POST.get("password")
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, "تم تسجيل الدخول بنجاح")
+
+        # Authenticate user with username and password
+        user_auth = authenticate(username=username, password=password)
+        # Get user info from the db
+        user_db = CustomUser.objects.filter(username=username).first()
+
+        if user_db is not None:
+            # Check whether user password is correct
+            check_pass = check_password(password, user_db.password)
+            # Check if user is active
+            is_user_active = user_db.is_active
+
+        if user_auth is not None:
+            login(request, user_auth)
+            # messages.success(request, "تم تسجيل الدخول بنجاح")
             return redirect("home")
+
+        # In case of user account is not activated
+        elif user_db is not None and check_pass and is_user_active is False:
+
+            messages.error(
+                request, "لم يتم تفعيل حسابك بعد! رجاء التأكد من بريدك الإلكتروني.", extra_tags='activation_email')
+            return redirect("login")
         else:
             messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
             return redirect("login")
 
     return render(request, "registration/login.html")
+
+
+@login_required(login_url="/login")
+def logout_user(request):
+
+    logout(request)
+    return redirect("home")
+
+
+def validate_email(request):
+
+    email = request.POST.get('email', None)
+
+    if email is None:
+        return HttpResponse("true")
+    else:
+
+        data = not CustomUser.objects.filter(email__iexact=email).exists()
+        if data is True:
+            data = "true"
+        else:
+            data = "false"
+
+        return HttpResponse(data)
+
+
+def validate_username(request):
+
+    username = request.POST.get('username', None)
+
+    if username is None:
+        return HttpResponse("true")
+    else:
+
+        data = not CustomUser.objects.filter(username__exact=username).exists()
+        if data is True:
+            data = "true"
+        else:
+            data = "false"
+
+        return HttpResponse(data)
+
+
+def validate_phonenumber(request):
+
+    email = request.POST.get('email', None)
+
+    if email is None:
+        return HttpResponse("true")
+    else:
+
+        data = not CustomUser.objects.filter(email__iexact=email).exists()
+        if data is True:
+            data = "true"
+        else:
+            data = "false"
+
+        return HttpResponse(data)
 
 
 @login_required(login_url="/login")
@@ -815,6 +1026,8 @@ def beneficiary_indiv(request):
 
         dependent_table = data.get('dependents-table', None)
 
+        print("\n\n\n", dependent_table)
+
         # Parse the JSON string into a Python object
         try:
             dependents_list = json.loads(dependent_table)
@@ -823,6 +1036,8 @@ def beneficiary_indiv(request):
             dependents_list = []
 
         # Now, you can iterate over the list of dependents
+        print(dependents_list)
+
         for dep in dependents_list:
             # Extract the data for each field
             first_name = dep.get('firstName', '')
@@ -834,8 +1049,6 @@ def beneficiary_indiv(request):
             marital_status = dep.get('martialStatus', '')
             national_id = dep.get('nationalID', '')
             health_status = dep.get('healthStatus', None)
-            income_amount = dep.get('incomeAmount', 0)
-            income_source = dep.get('incomeSource', '')
             needs_type = dep.get('needsType', '')
             educational_degree = dep.get('educationalDegree', '')
             date_of_birth = dep.get('dateOfBitrh', None)
@@ -844,10 +1057,12 @@ def beneficiary_indiv(request):
             national_id_exp_date = dep.get(
                 'nationalIDExpDate', None)
             if national_id_exp_date is not None:
-                date_of_birth = convert_to_date(national_id_exp_date)
+                national_id_exp_date = convert_to_date(national_id_exp_date)
             needs_description = dep.get('needsDescription', '')
             educational_level = dep.get('educationalLevel', None)
             disease_type = dep.get('diseaseType', None)
+            dependent_income_table = json.loads(
+                dep.get('dependentIncomeTable', []))
 
             # Create a new dependent object and save it to the database
             new_dependent = dependent(
@@ -864,8 +1079,6 @@ def beneficiary_indiv(request):
                 educational_status=educational_status,
                 health_status=health_status,
                 disease_type=disease_type,
-                income_amount=income_amount,
-                income_source=income_source,
                 needs_type=needs_type,
                 educational_degree=educational_degree,
                 needs_description=needs_description,
@@ -873,13 +1086,39 @@ def beneficiary_indiv(request):
             )
             new_dependent.save()
 
-        # handle file uploads
-        file_beneficiary_national_id = request.FILES.get(
-            'id_formFileBeneficiaryNationalID', None)
-        file1 = files.get('fileBeneficiaryNationalID', None)
-        # print(file_beneficiary_national_id, file1)
+            # Store list of income for dependent -------------------
+            # Store all file objects in a list
+            dependent_file_list = []
 
-        # print(data)
+            for entry in dependent_income_table:
+                # Extract the monthly income and remove commas
+                monthly_income_str = entry.get('monthlyIncome', '')
+                monthly_income = Decimal(monthly_income_str.replace(',', ''))
+                income_source = entry.get('incomeSource', '')
+
+                # Initialize dependent income list
+                dependent_income_obj = Dependent_income(
+                    source=income_source,
+                    amount=monthly_income,
+                    dependent=new_dependent
+                )
+                dependent_file_list.append(dependent_income_obj)
+
+            # Save dependent income objects
+            if dependent_file_list:
+                Dependent_income.objects.bulk_create(dependent_file_list)
+
+        # Create Beneficiary_request object in the DB
+
+        # Retrieve the object for the logged in user
+        logged_in_user = request.user
+
+        beneficiary_new_request = Beneficiary_request(
+            user=logged_in_user,
+            beneficiary=beneficiary_obj,
+            status="waiting",
+        )
+        beneficiary_new_request.save()
 
         # In case of successful submission and valid form data
         return JsonResponse({'redirect': '/confirmation', 'file_no': beneficiary_obj.file_no})
@@ -942,6 +1181,21 @@ def beneficiary_details(request, beneficiary_id):
             dependent_data = []
 
             for dependent_obj in dependent_list:
+
+                # Initialize dependent income list with every dependent
+                dependent_income_data = []
+
+                # Retrieve the dependent income infomration
+                dependent_income_list = Dependent_income.objects.filter(
+                    dependent=dependent_obj).all()
+
+                # Add the data into the dependent income list
+                for dependent_income_obj in dependent_income_list:
+                    dependent_income_data.append({
+                        'income_source': dependent_income_obj.source,
+                        'income_amount': dependent_income_obj.amount,
+                    })
+
                 dependent_data.append({
                     'dependent_id': dependent_obj.id,
                     'dependent_first_name': dependent_obj.first_name,
@@ -954,14 +1208,13 @@ def beneficiary_details(request, beneficiary_id):
                     'dependent_national_id': dependent_obj.national_id,
                     'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
                     'dependent_health_status': dependent_obj.health_status,
-                    'dependent_income_amount': dependent_obj.income_amount,
-                    'dependent_income_source': dependent_obj.income_source,
                     'dependent_needs_type': dependent_obj.needs_type,
                     'dependent_educational_degree': dependent_obj.educational_degree,
                     'dependent_date_of_birth': dependent_obj.date_of_birth,
                     'dependent_needs_description': dependent_obj.needs_description,
                     'dependent_educational_level': dependent_obj.educational_level,
                     'dependent_disease_type': dependent_obj.disease_type,
+                    'dependent_income_data': dependent_income_data,
                 })
 
             beneficiary_attachment_list = []
@@ -1005,11 +1258,11 @@ def beneficiary_details(request, beneficiary_id):
                 beneficiary_attachment_list.append({
                     'file_path': attachment.file_object.url,
                     'file_extension': file_extension(attachment.file_object.url),
-                    'file_name': attachment.filename(),
+                    'file_name': attachment.filename().split(".")[0],
                     'file_size': attachment.file_size,
                     'attachment_type': attachment_type_ar,
                 })
-            print("attachments: ", beneficiary_attachment_list)
+            # print("attachments: ", beneficiary_attachment_list)
 
             data = {
                 'id': beneficiary_obj.id,
@@ -1054,6 +1307,7 @@ def beneficiary_details(request, beneficiary_id):
         pass
 
 
+@login_required(login_url="/login")
 def supporter_indiv(request):
 
     if request.method == 'GET':
@@ -1099,17 +1353,15 @@ def supporter_indiv(request):
 @login_required(login_url="/login")
 def supporter_indiv_post(request):
     if request.method == 'POST':
+
         # Retrieve form data
         # Get the data from the request
         post_data = request.POST
         files_data = request.FILES
 
-        choice0 = request.POST.get('beneficiaries_choice')
-        choice1 = request.POST.get('id_personal_choice')
-        choice2 = request.POST.get('id_charity_choice')
-        form_field1 = request.POST.get('charitychoice_orphan_number')
-        form_field2 = request.POST.get('charitychoice_widower_donation_type')
         # ... retrieve other form fields as needed
+        # This field represent user option either to let the selection for the charity or do it by himself
+        beneficiary_choice = request.POST.get('beneficiaries_choice')
 
         # Retrieve selected rows' data
         try:
@@ -1119,21 +1371,16 @@ def supporter_indiv_post(request):
             return JsonResponse({'error': 'Invalid JSON format in selectedRowsData'}, status=400)
 
         # Now you can access the data from form and selected rows
-        if choice0 == "id_personal_choice":
+        if beneficiary_choice == "id_personal_choice":
             print("personal choice")
         else:
             print("charity choice")
-        print('Choice1: ', choice1)
-        print('Choice2: ', choice2)
-        print('Form field 1:', form_field1)
-        print('Form field 2:', form_field2)
+
         print('Selected rows data:', selected_rows_data)
 
         # Print or log the data
         print("POST Data:", post_data)
         print("Files Data:", files_data)
-
-        # Your processing logic here...
 
         # Return a JSON response as needed
         return JsonResponse({'success': True})
@@ -1165,3 +1412,316 @@ def supporter_test(request):
         return render(request, 'main/table.html', context)
     # else
     return render(request, 'main/individual2.html', context)
+
+
+@login_required(login_url='/login')
+def beneficiary_profile(request, username):
+
+    # Get the logged-in user
+    logged_in_user = request.user
+
+    context = {}
+    try:
+        # Retrieve the user whose profile is being requested
+        user = CustomUser.objects.get(username=username)
+
+        # Check if the logged-in user matches the requested user
+        if logged_in_user != user:
+            messages.error(request, "ليس لديك الصلاحية اللازمة!")
+            return redirect('home')
+
+        context = {
+            'user_info': user,
+        }
+    except ObjectDoesNotExist:
+        messages.error(request, "المستخدم غير موجود!")
+        return redirect('home')
+
+    return render(request, 'beneficiary_profile.html', context)
+
+
+@login_required(login_url='/login')
+def beneficiary_requests(request, username):
+
+    # Get the logged-in user
+    logged_in_user = request.user
+
+    context = {}
+    try:
+        # Retrieve the user whose profile is being requested
+        user = CustomUser.objects.get(username=username)
+
+        # Check if the logged-in user matches the requested user
+        if logged_in_user != user:
+            messages.error(request, "ليس لديك الصلاحية اللازمة!")
+            return redirect('home')
+
+        beneficiary_requests = Beneficiary_request.objects.filter(
+            user=user.id).all()
+        context = {
+            'user_info': user,
+            'beneficiary_requests': beneficiary_requests,
+            'request_count': len(beneficiary_requests)
+        }
+    except ObjectDoesNotExist:
+        messages.error(request, "المستخدم غير موجود!")
+        return redirect('home')
+
+    return render(request, 'beneficiary_requests.html', context)
+
+
+@login_required(login_url='/login')
+def beneficiary_request_details(request, username, b_request_id):
+
+    # Get the logged-in user
+    logged_in_user = request.user
+
+    context = {}
+    try:
+        # Retrieve the user whose profile is being requested
+        user = CustomUser.objects.get(username=username)
+
+        # Check if the logged-in user matches the requested user
+        if logged_in_user != user:
+            messages.error(request, "ليس لديك الصلاحية اللازمة!")
+            return redirect('home')
+
+        beneficiary_requests = Beneficiary_request.objects.get(
+            id=b_request_id)
+        beneficiary_obj = beneficiary.objects.get(id=beneficiary_requests.id)
+        beneficiary_house_obj = beneficiary_house.objects.get(
+            id=beneficiary_obj.id)
+        beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
+            id=beneficiary_obj.id)
+        beneficiary_attachment_obj = Beneficiary_attachment.objects.filter(
+            beneficiary_id=beneficiary_obj.id).all()
+
+        dependent_list = dependent.objects.filter(
+            beneficiary_id=beneficiary_obj.id).all()
+
+        dependent_data = []
+
+        for dependent_obj in dependent_list:
+
+            # Initialize dependent income list with every dependent
+            dependent_income_data = []
+
+            # Retrieve the dependent income infomration
+            dependent_income_list = Dependent_income.objects.filter(
+                dependent=dependent_obj).all()
+
+            # Add the data into the dependent income list
+            for dependent_income_obj in dependent_income_list:
+                dependent_income_data.append({
+                    'id': dependent_income_obj.id,
+                    'income_source': dependent_income_obj.source,
+                    'income_amount': dependent_income_obj.amount,
+                })
+
+            dependent_data.append({
+                'dependent_id': dependent_obj.id,
+                'dependent_first_name': dependent_obj.first_name,
+                'dependent_second_name': dependent_obj.second_name,
+                'dependent_last_name': dependent_obj.last_name,
+                'dependent_gender': dependent_obj.gender,
+                'dependent_relationship': dependent_obj.relationship,
+                'dependent_educational_status': dependent_obj.educational_status,
+                'dependent_marital_status': dependent_obj.marital_status,
+                'dependent_national_id': dependent_obj.national_id,
+                'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                'dependent_health_status': dependent_obj.health_status,
+                'dependent_needs_type': dependent_obj.needs_type,
+                'dependent_educational_degree': dependent_obj.educational_degree,
+                'dependent_date_of_birth': dependent_obj.date_of_birth,
+                'dependent_needs_description': dependent_obj.needs_description,
+                'dependent_educational_level': dependent_obj.educational_level,
+                'dependent_disease_type': dependent_obj.disease_type,
+                'dependent_income_data': dependent_income_data,
+            })
+
+        beneficiary_attachment_list = []
+
+        for attachment in beneficiary_attachment_obj:
+            # A variable that holds the attachment type in Arabic
+            attachment_type_ar = ""
+
+            if attachment.file_type == "national_id":
+                attachment_type_ar = "صورة الهوية الوطنية/الإقامة"
+            elif attachment.file_type == "national_address":
+                attachment_type_ar = "العنوان الوطني"
+            elif attachment.file_type == "dept_instrument":
+                attachment_type_ar = "صك الدين"
+            elif attachment.file_type == "pension_social_insurance":
+                attachment_type_ar = "مشهد التقاعد أو التأمينات الاجتماعية"
+            elif attachment.file_type == "father_husband_death_cert":
+                attachment_type_ar = "شهادة الوفاة للزوج / الأب"
+            elif attachment.file_type == "letter_from_prison":
+                attachment_type_ar = "خطاب من السجن"
+            elif attachment.file_type == "divorce_deed":
+                attachment_type_ar = "صك الطلاق"
+            elif attachment.file_type == "children_responsibility_deed":
+                attachment_type_ar = "صك إعالة الأبناء"
+            elif attachment.file_type == "other_files":
+                attachment_type_ar = "مستندات أخرى"
+            elif attachment.file_type == "lease_contract_title_deed":
+                attachment_type_ar = "عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية"
+            elif attachment.file_type == "water_or_electricity_bills":
+                attachment_type_ar = "الفواتير (كهرباء - ماء)"
+            elif attachment.file_type == "dependent_national_id":
+                attachment_type_ar = "صورة الهوية الوطنية/الإقامة للمرافقين"
+            elif attachment.file_type == "social_warranty_inquiry":
+                attachment_type_ar = "مشهد الضمان الاجتماعي"
+            else:
+                attachment_type_ar = attachment.file_type
+
+            beneficiary_attachment_list.append({
+                'file_path': attachment.file_object.url,
+                'file_extension': file_extension(attachment.file_object.url),
+                'file_name': attachment.filename().split(".")[0],
+                'file_size': attachment.file_size,
+                'attachment_type': attachment_type_ar,
+            })
+
+        context = {
+            'user_info': user,
+            'beneficiary_requests': beneficiary_requests,
+            'beneficiary': beneficiary_obj,
+            'beneficiary_house': beneficiary_house_obj,
+            'beneficiary_income_expense': beneficiary_income_expense_obj,
+            'beneficiary_attachments': beneficiary_attachment_list,
+            'dependent_list': dependent_data,
+        }
+    except ObjectDoesNotExist:
+        messages.error(request, "المستخدم غير موجود!")
+        return redirect('home')
+
+    return render(request, "beneficiary_request_details.html", context)
+
+
+@login_required(login_url="/login")
+def beneficiary_request_update(request, username, b_request_id):
+
+    # Get the logged-in user
+    logged_in_user = request.user
+
+    context = {}
+    try:
+        # Retrieve the user whose profile is being requested
+        user = CustomUser.objects.get(username=username)
+
+        # Check if the logged-in user matches the requested user
+        if logged_in_user != user:
+            messages.error(request, "ليس لديك الصلاحية اللازمة!")
+            return redirect('home')
+
+        beneficiary_requests = Beneficiary_request.objects.get(
+            id=b_request_id)
+        beneficiary_obj = beneficiary.objects.get(id=beneficiary_requests.id)
+        beneficiary_house_obj = beneficiary_house.objects.get(
+            id=beneficiary_obj.id)
+        beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
+            id=beneficiary_obj.id)
+        beneficiary_attachment_obj = Beneficiary_attachment.objects.filter(
+            beneficiary_id=beneficiary_obj.id).all()
+
+        dependent_list = dependent.objects.filter(
+            beneficiary_id=beneficiary_obj.id).all()
+
+        dependent_data = []
+
+        for dependent_obj in dependent_list:
+
+            # Initialize dependent income list with every dependent
+            dependent_income_data = []
+
+            # Retrieve the dependent income infomration
+            dependent_income_list = Dependent_income.objects.filter(
+                dependent=dependent_obj).all()
+
+            # Add the data into the dependent income list
+            for dependent_income_obj in dependent_income_list:
+                dependent_income_data.append({
+                    'id': dependent_income_obj.id,
+                    'income_source': dependent_income_obj.source,
+                    'income_amount': dependent_income_obj.amount,
+                })
+
+            dependent_data.append({
+                'dependent_id': dependent_obj.id,
+                'dependent_first_name': dependent_obj.first_name,
+                'dependent_second_name': dependent_obj.second_name,
+                'dependent_last_name': dependent_obj.last_name,
+                'dependent_gender': dependent_obj.gender,
+                'dependent_relationship': dependent_obj.relationship,
+                'dependent_educational_status': dependent_obj.educational_status,
+                'dependent_marital_status': dependent_obj.marital_status,
+                'dependent_national_id': dependent_obj.national_id,
+                'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                'dependent_health_status': dependent_obj.health_status,
+                'dependent_needs_type': dependent_obj.needs_type,
+                'dependent_educational_degree': dependent_obj.educational_degree,
+                'dependent_date_of_birth': dependent_obj.date_of_birth,
+                'dependent_needs_description': dependent_obj.needs_description,
+                'dependent_educational_level': dependent_obj.educational_level,
+                'dependent_disease_type': dependent_obj.disease_type,
+                'dependent_income_data': dependent_income_data,
+            })
+
+        beneficiary_attachment_list = []
+
+        for attachment in beneficiary_attachment_obj:
+            # A variable that holds the attachment type in Arabic
+            attachment_type_ar = ""
+
+            if attachment.file_type == "national_id":
+                attachment_type_ar = "صورة الهوية الوطنية/الإقامة"
+            elif attachment.file_type == "national_address":
+                attachment_type_ar = "العنوان الوطني"
+            elif attachment.file_type == "dept_instrument":
+                attachment_type_ar = "صك الدين"
+            elif attachment.file_type == "pension_social_insurance":
+                attachment_type_ar = "مشهد التقاعد أو التأمينات الاجتماعية"
+            elif attachment.file_type == "father_husband_death_cert":
+                attachment_type_ar = "شهادة الوفاة للزوج / الأب"
+            elif attachment.file_type == "letter_from_prison":
+                attachment_type_ar = "خطاب من السجن"
+            elif attachment.file_type == "divorce_deed":
+                attachment_type_ar = "صك الطلاق"
+            elif attachment.file_type == "children_responsibility_deed":
+                attachment_type_ar = "صك إعالة الأبناء"
+            elif attachment.file_type == "other_files":
+                attachment_type_ar = "مستندات أخرى"
+            elif attachment.file_type == "lease_contract_title_deed":
+                attachment_type_ar = "عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية"
+            elif attachment.file_type == "water_or_electricity_bills":
+                attachment_type_ar = "الفواتير (كهرباء - ماء)"
+            elif attachment.file_type == "dependent_national_id":
+                attachment_type_ar = "صورة الهوية الوطنية/الإقامة للمرافقين"
+            elif attachment.file_type == "social_warranty_inquiry":
+                attachment_type_ar = "مشهد الضمان الاجتماعي"
+            else:
+                attachment_type_ar = attachment.file_type
+
+            beneficiary_attachment_list.append({
+                'file_path': attachment.file_object.url,
+                'file_extension': file_extension(attachment.file_object.url),
+                'file_name': attachment.filename().split(".")[0],
+                'file_size': attachment.file_size,
+                'attachment_type': attachment_type_ar,
+            })
+
+        context = {
+            'user_info': user,
+            'request_id': b_request_id,
+            'beneficiary_requests': beneficiary_requests,
+            'beneficiary': beneficiary_obj,
+            'beneficiary_house': beneficiary_house_obj,
+            'beneficiary_income_expense': beneficiary_income_expense_obj,
+            'beneficiary_attachments': beneficiary_attachment_list,
+            'dependent_list': dependent_data,
+        }
+    except ObjectDoesNotExist:
+        messages.error(request, "المستخدم غير موجود!")
+        return redirect('home')
+
+    return render(request, "beneficiary_request_update.html", context)

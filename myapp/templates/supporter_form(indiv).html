@@ -614,7 +614,7 @@
           id="sponsorship_information"
           class="form-step bg-light px-3 px-lg-5"
         >
-          <div class="row">
+          <div class="container">
             <h2 class="fs-2 fw-bold mb-5">بيانات الدعم</h2>
 
             <div class="alert alert-primary" role="alert">
@@ -644,49 +644,67 @@
 
             <div class="row" id="charity_choice_section">
               <h4 class="font-normal mb-3 mt-4">معلومات اليتيم/الأرملة</h4>
-              <div class="row row-cols-lg-2">
-                <div class="mb-4">
-                  <label for="id_charitychoice_orphan_number" class="form-label"
-                    >عدد الايتام</label
-                  >
-                  <input type="number" value=0 min="0" max="99" class="form-control" id="id_charitychoice_orphan_number" name="charitychoice_orphan_number" onchange="isThereOrphan(this);"/>
+              {% comment %} <div class="alert alert-warning" role="alert">
+                يجب ترك القيمة صفر (0) على الأقل اذا لم تكن تريد زيادة عدد الارامل او الايتام
+              </div> {% endcomment %}
+              <div class="">
+                <div class="row row-cols-sm-2">
+                  <div class="mb-4 form-group">
+                    <label for="id_charitychoice_orphan_number" class="form-label">
+                      عدد الايتام</label>
+                    <input type="number" value=0 min="0" max="99" class="form-control" id="id_charitychoice_orphan_number" name="charitychoice_orphan_number" onchange="isThereOrphan(this);"/>
+                  </div>
+                  <div class="mb-4 form-group" id="id_orphan_duration_group_info" style="display: none;">
+                    <label for="id_charitychoice_orphan_donation_type" class="form-label col-12"
+                      >مدة الدعم (ايتام)<span style="color: red"
+                      >*</span
+                    ></label
+                    >
+                    <select
+                      id="id_charitychoice_orphan_donation_type"
+                      class="form-select form-select"
+                      name="charitychoice_orphan_donation_type"
+                    >
+                      <option value selected>---------</option>
+                      <option value="شهر واحد">شهر واحد</option>
+                      <option value="3 أشهر">3 أشهر</option>
+                      <option value="6 أشهر">6 أشهر</option>
+                      <option value="سنة كاملة">سنة كاملة</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="mb-4">
-                  <label for="id_charitychoice_widower_number" class="form-label"
-                    >عدد الارامل</label
-                  >
-                  <input type="number" value="0" min="0" max="99" class="form-control" id="id_charitychoice_widower_number" name="charitychoice_widower_number" onchange="isThereWidower(this);"/>
-                </div>
-                <div class="input-group mb-4" id="id_orphan_duration_group_info" style="display: none;">
-                  <label for="id_charitychoice_orphan_donation_type" class="form-label col-12">مدة الدعم (ايتام)</label>
-                  <span class="col-6 input-group-text" id="basic-addon1">
-                    <input id="id_charitychoice_orphan_donation_number" type="number" value="0" min="0" max="99" class="form-control form-control-sm" name="charitychoice_orphan_donation_number">
-                  </span>
-                  <select id="id_charitychoice_orphan_donation_type" class="col-6 form-select form-select form-select-sm" name="charitychoice_orphan_donation_type"> 
-                    <option selected>اختار...</option>
-                    <option value="سنة">سنة</option>
-                    <option value="شهر">شهر</option>
-                  </select>
-                </div>
-              </div>
-              <div class="row row-cols-lg-2">
-                <div class="input-group mb-4" id="id_widower_duration_group_info" style="display: none;">
-                  <label for="id_charitychoice_widower_donation_type" class="form-label col-12">مدة الدعم (ارامل)</label>
-                  <span class="col-6 input-group-text" id="basic-addon1">
-                    <input id="id_charitychoice_widower_donation_number" type="number" value="0" min="0" max="99" class="form-control form-control-sm" name="charitychoice_widower_donation_number">
-                  </span>
-                  <select id="id_charitychoice_widower_donation_type" class="col-6 form-select form-select form-select-sm" name="charitychoice_widower_donation_type"> 
-                    <option selected>اختار...</option>
-                    <option value="سنة">سنة</option>
-                    <option value="شهر">شهر</option>
-                  </select>
+                <div class="row row-cols-sm-2">
+                  <div class="mb-4 form-group">
+                    <label for="id_charitychoice_widower_number" class="form-label"
+                      >عدد الارامل</label
+                    >
+                    <input type="number" value="0" min="0" max="99" class="form-control" id="id_charitychoice_widower_number" name="charitychoice_widower_number" onchange="isThereWidower(this);"/>
+                  </div>
+                  <div class="mb-4 form-group" id="id_widower_duration_group_info" style="display: none;">
+                    <label for="id_charitychoice_widower_donation_type" class="form-label col-12"
+                      >مدة الدعم (ارامل)<span style="color: red"
+                      >*</span
+                    ></label
+                    >
+                    <select
+                      id="id_charitychoice_widower_donation_type"
+                      class="form-select form-select"
+                      name="charitychoice_widower_donation_type"
+                    >
+                      <option value selected>---------</option>
+                      <option value="شهر واحد">شهر واحد</option>
+                      <option value="3 أشهر">3 أشهر</option>
+                      <option value="6 أشهر">6 أشهر</option>
+                      <option value="سنة كاملة">سنة كاملة</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
 
 
             <!-- Step 3 input fields -->
-            <div class="" id="personal_choice_section">
+            <div class="row" id="personal_choice_section">
               <h4 class="font-normal mb-3 mt-4">معلومات اليتيم/الأرملة</h4>
 
               <div class="row">
@@ -709,7 +727,7 @@
                       <input id="maxAge" type="number" min="0" max="150" value="50" disabled>
                     </div>
                   </div>
-                  <div class="col">
+                  <div class="col-12 col-lg-4">
                     <div class="row">
                       <div class="col mb-4 form-group">
                         <label for="id_sponsorship_info_nationality" class="form-label"
@@ -963,9 +981,28 @@
                         <option value="انثى">انثى</option>
                       </select>
                     </div>
+                    <div class="col-md-6 mb-4 form-group">
+                      <label for="id_sponsorship_info_category" class="form-label"
+                        >التصنيف الرئيسي</label
+                      >
+                      <select
+                        name="sponsorship_info_category"
+                        class="form-select form-select-sm"
+                        id="id_sponsorship_info_category"
+                      >
+                        <option value selected>الكل</option>
+                        <option value="أسرة عادية">أسرة عادية</option>
+                        <option value="أسرة أيتام">أسرة أيتام</option>
+                        <option value="أسرة أرملة">أسرة أرملة</option>
+                        <option value="أسرة سجناء">أسرة سجناء</option>
+                        <option value="أسرة مطلقة">أسرة مطلقة</option>
+                        <option value="فرد">فرد</option>
+                      </select>
+                    </div>
                   </div>
-                  <hr>
                 </div>
+
+                <hr>
 
                 <div class="col mb-4 mt-2 alert alert-warning" role="alert">
                   <p class="mb-0"><span class="fw-bold text-danger">توضيح: </span>ما هي نسبة الاحتياج؟ هي نسبة الفرق بين الدخل والمصروفات للشخص, وكل ما كانت أعلى, كان احتياجه أكثر. </p>
@@ -999,7 +1036,7 @@
                 </table>
               </div>
 
-              <hr>
+              <hr class="mt-3">
 
               <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 mt-2">
                 <div class="mb-4 form-group">
@@ -1044,68 +1081,66 @@
 
             <hr class="mb-4 mt-2">
 
-            <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 me-sm-0 ms-sm-3 me-1 ms-3">
-              <div class="col mb-4 form-check form-switch">
-                <label 
-                  class="form-check-label" 
-                  for="id_sponsorship_info_was_sponsor_check"
-                >
-                هل سبق أن كفلت يتيم أو أرملة في وقت سابق أو حالي؟
+            <div class="row row-cols-md-2">
+              <div class="mb-4 form-group">
+                <label for="id_sponsorship_info_was_sponsor_check" class="form-label">هل سبق أن كفلت يتيم أو أرملة في وقت سابق أو حالي؟<span style="color: red">*</span>
                 </label>
-                <input 
-                  class="form-check-input" 
-                  type="checkbox" 
-                  role="switch" 
-                  name="sponsorship_info_was_sponsor_check" 
+                <select
                   id="id_sponsorship_info_was_sponsor_check"
+                  class="form-select form-select"
+                  name="sponsorship_info_was_sponsor_check"
                 >
+                  <option value selected>---------</option>
+                  <option value="نعم">نعم</option>
+                  <option value="لا">لا</option>
+                </select>
               </div>
-              <div class="col mb-4 form-check form-switch">
-                <label 
-                  class="form-check-label ms-md-3" 
-                  for="id_sponsorship_info_status_notify_check"
-                >
-                هل ترغب بتقرير عن اليتيم / الأرملة؟
+              <div class="mb-4 form-group">
+                <label for="id_sponsorship_info_status_notify_check" class="form-label">
+                  هل ترغب بتقرير عن اليتيم / الأرملة؟<span style="color: red">*</span>
                 </label>
-                <input 
-                  class="form-check-input" 
-                  type="checkbox" 
-                  role="switch" 
-                  name="sponsorship_info_status_notify_check" 
+                <select
                   id="id_sponsorship_info_status_notify_check"
+                  class="form-select"
+                  name="sponsorship_info_status_notify_check"
                 >
+                  <option value selected>---------</option>
+                  <option value="نعم">نعم</option>
+                  <option value="لا">لا</option>
+                </select>
               </div>
-              <div class="col mb-4 form-check form-switch">
-                <label 
-                  class="form-check-label" 
-                  for="id_sponsorship_info_invite_beneficiary_check"
-                >
-                هل ترغب بإشراك اليتيم في مناسباتكم العائلية؟
+              <div class="mb-4 form-group">
+                <label for="id_sponsorship_info_invite_beneficiary_check" class="form-label">
+                  هل ترغب بإشراك اليتيم في مناسباتكم العائلية؟<span style="color: red">*</span>
                 </label>
-                <input 
-                  class="form-check-input" 
-                  type="checkbox" 
-                  role="switch" 
-                  name="sponsorship_info_invite_beneficiary_check" 
+                <select
                   id="id_sponsorship_info_invite_beneficiary_check"
+                  class="form-select"
+                  name="sponsorship_info_invite_beneficiary_check"
                 >
+                  <option value selected>---------</option>
+                  <option value="نعم">نعم</option>
+                  <option value="لا">لا</option>
+                </select>
               </div>
-              <div class="col mb-4 form-check form-switch">
-                <label 
-                  class="form-check-label ms-md-3" 
-                  for="id_sponsorship_info_visit_beneficiary_check"
-                >
-                هل ترغب بزيارة لأسرة اليتيم / الأرملة؟
+              <div class="mb-4 form-group">
+                <label for="id_sponsorship_info_visit_beneficiary_check" class="form-label">
+                  هل ترغب بزيارة لأسرة اليتيم / الأرملة؟<span style="color: red">*</span>
                 </label>
-                <input 
-                  class="form-check-input" 
-                  type="checkbox" 
-                  role="switch" 
-                  name="sponsorship_info_visit_beneficiary_check" 
+                <select
                   id="id_sponsorship_info_visit_beneficiary_check"
+                  class="form-select"
+                  name="sponsorship_info_visit_beneficiary_check"
                 >
+                  <option value selected>---------</option>
+                  <option value="نعم">نعم</option>
+                  <option value="لا">لا</option>
+                </select>
               </div>
             </div>
+            
+            <hr>
+
             <div class="mt-3 row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-xl-2">
               <div class="mt-3 d-flex column-gap-2">
                 <div class="col-6">
@@ -1140,7 +1175,7 @@
         <fieldset id="payment_and_submit_confirmation" class="form-step bg-light px-3 px-lg-5">
           <h2 class="fs-2 fw-bold mb-5">تقديم الطلب</h2>
           <!-- Step 5 input fields -->
-          <div class="mt-3">
+          <div class="mt-3 mb-4">
             
             <div class="row mt-5 justify-content-start column-gap-4">
               <div class="alert alert-warning" role="alert" id="checkboxError">
@@ -1225,7 +1260,9 @@
               </div>
             </div>
           </div>
+
           <hr>
+
           <div class="mt-3 row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-xl-2">
             <div class="mt-3 d-flex column-gap-2">
               <div class="col-6">
@@ -1587,15 +1624,33 @@
           },
           // donation info ---------------
           charitychoice_widower_number: {
-            required: true,
+            required: false,
           },
           charitychoice_orphan_number: {
+            required: false,
+          },
+          charitychoice_orphan_donation_type: {
+            required: true,
+          },
+          charitychoice_widower_donation_type: {
             required: true,
           },
           sponsorship_info_donation_type: {
             required: true,
           },
           sponsorship_info_duration: {
+            required: true,
+          },
+          sponsorship_info_was_sponsor_check: {
+            required: true,
+          },
+          sponsorship_info_status_notify_check: {
+            required: true,
+          },
+          sponsorship_info_invite_beneficiary_check: {
+            required: true,
+          },
+          sponsorship_info_visit_beneficiary_check: {
             required: true,
           },
           
@@ -1614,8 +1669,15 @@
           next_fs = $("#sponsorship_information"); // Proceed to the third stepas usual
 
         } else if ($("#sponsorship_information").is(":visible")) {
-          current_fs = $("#sponsorship_information");
-          next_fs = $("#payment_and_submit_confirmation");
+          // Check if the total price is greater than zero
+          if (parseFloat($("#id_sponsorship_info_total_price_2").val()) > 0) {
+            current_fs = $("#sponsorship_information");
+            next_fs = $("#payment_and_submit_confirmation");
+          } else {
+            // Display a message or take any appropriate action if total price is zero
+            alert("[خطأ] - قيمة المبلغ الإجمالي يجب أن تكون أعلى من صفر");
+            return; // Stop further execution
+          }
         }
 
         next_fs.show();
@@ -1747,10 +1809,11 @@
   const genderEl = document.querySelector('#id_sponsorship_info_gender');
   const nationalityEl = document.querySelector('#id_sponsorship_info_nationality');
   const healthStatusEl = document.querySelector('#id_sponsorship_info_health_status');
+  const categoryEl = document.querySelector('#id_sponsorship_info_category');
   
-  // Custom range filtering function
+  // Custom range filtering function (Nationality)
   DataTable.ext.search.push(function (settings, data, dataIndex) {
-      let nationality = (data[7]) || 0; // use data for the age column
+      let nationality = (data[7]) || 0; // use data for the nationality column
   
       if (nationalityEl.value === '' || nationality === nationalityEl.value) {
           return true;
@@ -1856,6 +1919,16 @@
 
   // Calculate the total price function (Charity Choice)
   function calculateTotalPriceCharityChoice() {
+
+    const durationFactors = {
+      "": 0,
+      "شهر واحد": 1,
+      "3 أشهر": 3,
+      "6 أشهر": 6,
+      "سنة كاملة": 12,
+      // Add more duration types and their factors as needed
+    };
+
     // Get the values of the number of orphans and widows
     const orphanNumber = parseInt($('#id_charitychoice_orphan_number').val()) || 0;
     const widowerNumber = parseInt($('#id_charitychoice_widower_number').val()) || 0;
@@ -1865,20 +1938,14 @@
     const widowerPrice = 600;
 
     // Get the selected duration for orphans
-    const orphanDurationNumber = parseInt($('#id_charitychoice_orphan_donation_number').val()) || 0;
     const orphanDurationType = $('#id_charitychoice_orphan_donation_type').val();
 
     // Get the selected duration for widows
-    const widowerDurationNumber = parseInt($('#id_charitychoice_widower_donation_number').val()) || 0;
     const widowerDurationType = $('#id_charitychoice_widower_donation_type').val();
 
     // Calculate the total price for each sponsorship option
-    const orphanTotal = orphanNumber > 0 ? orphanNumber * orphanPrice * getDurationFactor(orphanDurationType, orphanDurationNumber) : 0;
-    const widowerTotal = widowerNumber > 0 ? widowerNumber * widowerPrice * getDurationFactor(widowerDurationType, widowerDurationNumber) : 0;
-
-    console.log(getDurationFactor(orphanDurationType, orphanDurationNumber), getDurationFactor(widowerDurationType, widowerDurationNumber));
-
-    console.log(orphanTotal, widowerTotal);
+    const orphanTotal = orphanNumber > 0 ? orphanNumber * orphanPrice * durationFactors[orphanDurationType] : 0;
+    const widowerTotal = widowerNumber > 0 ? widowerNumber * widowerPrice * durationFactors[widowerDurationType] : 0;
 
     // Calculate the total price
     const totalPrice = orphanTotal + widowerTotal;
@@ -1886,17 +1953,6 @@
     // Update the total price input fields
     $('#id_sponsorship_info_total_price_1').val(totalPrice.toFixed(2));
     $('#id_sponsorship_info_total_price_2').val(totalPrice.toFixed(2));
-  }
-
-  // Helper function to get the duration factor
-  function getDurationFactor(durationType, durationNumber) {
-    const durationFactors = {
-      "سنة": 12,
-      "شهر": 1,
-      // Add more duration types and their factors as needed
-    };
-
-    return durationFactors[durationType] * durationNumber;
   }
 
   // Add event listener to radio buttons
@@ -1926,11 +1982,8 @@
     $('.beneficiary-table-checkbox').prop('checked', false);
 
     // Reset the duration-related input fields to their default values
-    $('#id_charitychoice_orphan_donation_number').val('0');
-    $('#id_charitychoice_orphan_donation_type').val('اختار...');
-
-    $('#id_charitychoice_widower_donation_number').val('0');
-    $('#id_charitychoice_widower_donation_type').val('اختار...');
+    $('#id_charitychoice_orphan_donation_type').val('');
+    $('#id_charitychoice_widower_donation_type').val('');
   }
 
   // Event delegation to handle checkbox clicks
@@ -1967,19 +2020,33 @@
       // console.log(selectedRows);
   });
 
-  // Custom range filtering function
+  // Custom range filtering function (health status)
   DataTable.ext.search.push(function (settings, data, dataIndex) {
-    let health_status = (data[5]) || 0; // use data for the age column
+    let health_status = (data[5]) || 0; // use data for the health status column
 
     if (healthStatusEl.value === '' || health_status === healthStatusEl.value) {
         return true;
     }
     
     return false;
-
   });
 
   healthStatusEl.addEventListener('change', function () {
+    table.draw();
+  });
+
+  // Custom range filtering function (category)
+  DataTable.ext.search.push(function (settings, data, dataIndex) {
+    let category = (data[4]) || 0; // use data for the category column
+
+    if (categoryEl.value === '' || category === categoryEl.value) {
+        return true;
+    }
+    
+    return false;
+  });
+
+  categoryEl.addEventListener('change', function () {
     table.draw();
   });
 
@@ -2062,6 +2129,28 @@
     return new bootstrap.Popover(popoverTriggerEl)
   })
 
+  // Function to convert non-English numbers to English numbers
+  function convertToEnglishNumber(input) {
+    const easternArabicNumerals = '٠١٢٣٤٥٦٧٨٩';
+    const englishNumerals = '0123456789';
+
+    for (let i = 0; i < easternArabicNumerals.length; i++) {
+        const regex = new RegExp(easternArabicNumerals[i], 'g');
+        input = input.replace(regex, englishNumerals[i]);
+    }
+
+    return input;
+  }
+
+
+  // Event listener for input field 'iben number'
+  document.getElementById('id_personalinfo_national_id').addEventListener('input', function (event) {
+    const inputValue = event.target.value;
+    const convertedValue = convertToEnglishNumber(inputValue);
+    event.target.value = convertedValue;
+  });
+
+
   // Handle form submission [not complete yet]
   document.getElementById('supporter_form').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -2076,11 +2165,10 @@
 
     // Increment total price by 300.0 for each selected row
     const totalPriceInput = document.getElementById('id_sponsorship_info_total_price_1');
-    const currentTotalPrice = parseFloat(totalPriceInput.value) || 0.0;
-    const updatedTotalPrice = currentTotalPrice + (selectedRowsData.length * 300.0);
+    const currentTotalPrice = parseFloat(totalPriceInput.value);
 
     // Update the total price in the form data
-    formData.append('total_price', updatedTotalPrice);
+    formData.append('total_price', currentTotalPrice);
 
     // Find the selected radio button
     const radioChoice = document.querySelector('input[name="beneficiaries_choice"]:checked');
@@ -2091,13 +2179,13 @@
     // Append selected rows' data
     formData.append('selectedRowsData', JSON.stringify(selectedRowsData));
 
-    fetch('https://port433.link/supporters/individuals/new_request', {
+    fetch('http://127.0.0.1:8000/supporters/individuals/new_request', {
         method: 'POST',
         body: formData,
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Success:', data);
+        console.log('Success:', data, formData);
         // Handle success, if needed
     })
     .catch((error) => {

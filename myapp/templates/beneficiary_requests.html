@@ -1,0 +1,136 @@
+{% extends 'base.html' %}{% load static %}{% load humanize %}{% block title %}الطلبات{% endblock %}{% block content %}
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container mt-3">
+  <div class="row flex-lg-nowrap">
+
+    <div class="col-12 col-lg-auto mb-3">
+      <div class="card p-3">
+        <div class="e-navlist e-navlist--active-bg">
+          <ul class="nav nav d-flex align-items-start flex-lg-column">
+            <li class="nav-item"><a class="nav-link link-body-emphasis px-2 active" href="{% url 'beneficiary_profile' username=user.username %}"><i class="fa fa-fw fa-bar-chart mr-1"></i><span>  نظرة عامة</span></a></li>
+            <li class="nav-item"><a class="nav-link link-body-emphasis text-dark px-2" href="{% url 'beneficiary_requests' username=user.username %}"><i class="fa fa-fw fa-th mr-1"></i><span class="fw-bold text-success">  الطلبات</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+
+      <div class="row">
+        <div class="col mb-3">
+
+          <div class="row mx-1 mb-3">
+            <div class="card">
+              <h3 class="mt-3">إحصائيات</h3>
+              <hr>
+              <div class="card-body row row-cols-1 row-cols-md-2 row-cols-lg-3">
+                <div class="card col">  <!-- start card-1 -->
+                  <div class="card-body">
+                      <div class="float-end mt-2 me-2 bg-success-subtle text-dark px-3 py-3 rounded-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
+                          <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1M.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8z"/>
+                        </svg>
+                      </div>
+                      <h5 class="text-muted fw-normal mt-0" title="request count">عدد الطلبات</h5>
+                      <h3 class="mt-3 mb-3">{{ request_count }}</h3>
+                      <p class="mb-0 text-muted">
+                          {% comment %} <span class="text-dark me-2"><i class="mdi mdi-arrow-up-bold"></i> 4.87%</span>
+                          <span class="text-nowrap">Since last month</span> {% endcomment %}
+                      </p>
+                  </div> <!-- end card-1-body-->
+              </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="e-profile">
+                <div class="row">
+                  <h2>الطلبات</h2>
+                </div>
+                <hr>
+                <div class="row table-responsive-xl">
+                  <table class="table text-nowrap" style="overflow-x: scroll">
+                    <thead>
+                      <tr>
+                        <th scope="col"># رقم الطلب</th>
+                        <th scope="col">المستفيد</th>
+                        <th scope="col">الحالة</th>
+                        <th scope="col">التعليقات</th>
+                        <th scope="col">مُراجع الطلب</th>
+                        <th scope="col">الاجراءات</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for request in beneficiary_requests %}
+                        <tr>
+                          <td class="col" scope="col">{{ request.id }}</td>
+                          <td class="col" scope="col">{{ request.beneficiary.first_name }} {{ request.beneficiary.last_name }}</td>
+                          <td class="col" scope="col">
+                            {% if request.status == "waiting" %}
+                            <span class="badge text-bg-warning">انتظار</span>
+                            {% else %}
+                            <span class="badge text-bg-primary">{{ request.status }}</span>
+                            {% endif %}
+                            </td>
+                          {% if request.comment %}
+                          <td class="col" scope="col">{{ request.comment }}</td>
+                          {% else %}
+                          <td class="col" scope="col">----</td>
+                          {% endif %}
+                          {% if request.reviewed_by %}
+                          <td class="col" scope="col">{{ request.reviewed_by.first_name }}</td>
+                          {% else %}
+                          <td class="col" scope="col">----</td>
+                          {% endif %}
+                          <td class="col" scope="col">
+                            <div class="dropdown">
+                              <button class="btn bg-secondary-subtle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                                  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+                                </svg>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" type="button" href="{% url 'beneficiary_request_details' username=user.username b_request_id=request.id %}">تفاصيل الطلب</a></li>
+                                <li><a class="dropdown-item" type="button" href="{% url 'beneficiary_request_update' username=user.username b_request_id=request.id %}">تحديث بيانات الطلب</a></li>
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-3 col-md-3 mb-3">
+
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="px-xl-3">
+                <a class="btn btn-block btn-secondary" href="{% url 'logout' %}">
+                  <i class="fa fa-sign-out"></i>
+                  <span>تسجيل الخروج</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title font-weight-bold">الدعم والمساعدة</h6>
+              <p class="card-text text-muted">تواصل معنا في أي وقت, سنكون سعداء بمساعدتك.</p>
+              <button type="button" class="btn btn-primary">تواصل معنا</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

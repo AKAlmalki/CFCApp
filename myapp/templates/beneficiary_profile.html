@@ -1,0 +1,263 @@
+{% extends 'base.html' %}{% load static %}{% load humanize %}{% block title %}الملف الشخصي{% endblock %}{% block content %}
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container mt-3">
+  <div class="row flex-lg-nowrap">
+
+    <div class="col-12 col-lg-auto mb-3">
+      <div class="card p-3">
+        <div class="e-navlist e-navlist--active-bg">
+          <ul class="nav nav d-flex align-items-start flex-lg-column">
+            <li class="nav-item"><a class="nav-link link-body-emphasis px-2 active" href="{% url 'beneficiary_profile' username=user.username %}"><i class="fa fa-fw fa-bar-chart mr-1"></i><span class="fw-bold text-success">  نظرة عامة</span></a></li>
+            <li class="nav-item"><a class="nav-link link-body-emphasis text-dark px-2" href="{% url 'beneficiary_requests' username=user.username %}"><i class="fa fa-fw fa-th mr-1"></i><span>  الطلبات</span></a></li>
+            {% comment %} <li class="nav-item"><a class="nav-link link-body-emphasis text-dark px-2" href="#" target="__blank"><i class="fa fa-fw fa-cog mr-1"></i><span>  الاعدادات</span></a></li> {% endcomment %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="row">
+        <div class="col mb-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="e-profile">
+                <div class="row">
+                  <div class="col-12 col-sm-auto mb-3">
+                    <div class="mx-auto" style="width: 140px;">
+                      <div class="d-flex justify-content-center align-items-center rounded" style="height: 140px; background-color: rgb(233, 236, 239);">
+                        <span style="color: rgb(166, 168, 170); font: bold 8pt Arial;">140x140</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+                    <div class="text-center text-sm-left mb-2 mb-sm-0">
+                      <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">{{ user_info.first_name }} {{ user_info.last_name }}</h4>
+                      <p class="mb-0 text-md-start text-muted">@{{ user_info.username }}</p>
+                      <div class="text-muted"><small>آخر دخول: {{ user_info.last_login|naturaltime }}</small></div>
+                      <div class="mt-2">
+                        <a class="btn btn-primary" type="button" href="#">
+                          <i class="fa fa-fw fa-camera"></i>
+                          <span>غير الصورة</span>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="text-center text-sm-right">
+                      <span class="badge bg-secondary">حساب مستفيد</span>
+                      <div class="text-muted"><small>انضم في {{ user_info.date_joined|date:"F j, Y" }}</small></div>
+                    </div>
+                  </div>
+                </div>
+                {% comment %} <ul class="nav nav-tabs">
+                  <li class="nav-item"><a href="" class="active nav-link">Settings</a></li>
+                </ul> {% endcomment %}
+
+                <hr>
+
+                <div class="tab-content pt-3">
+                  <div class="tab-pane active">
+                    <form class="form" novalidate="">
+                      <div class="row">
+                        <div class="col">
+                          <div class="row row-cols-md-2">
+                            <div class="mb-4 form-group">
+                              <label for="id_personalinfo_first_name" class="form-label"
+                                >الاسم الاول</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="id_personalinfo_first_name"
+                                maxlength="55"
+                                disabled
+                                value="{{ user_info.first_name }}"
+                                readonly
+                                name="personalinfo_first_name"
+                              />
+                            </div>
+                            <div class="mb-4 form-group">
+                              <label for="id_personalinfo_last_name" class="form-label"
+                                >الاسم الاخير</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="id_personalinfo_last_name"
+                                maxlength="55"
+                                disabled
+                                value="{{ user_info.last_name }}"
+                                readonly
+                                name="personalinfo_last_name"
+                              />
+                            </div>
+                          </div>
+                          <div class="row row-cols-md-2">
+                            <div class="mb-4 form-group">
+                              <label for="id_personalinfo_username" class="form-label"
+                                >اسم المستخدم</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="id_personalinfo_username"
+                                maxlength="55"
+                                disabled
+                                  value="{{ user_info.username }}"
+                                  readonly
+                                name="personalinfo_username"
+                              />
+                            </div>
+                            {% comment %} <div class="mb-4 form-group">
+                              <label for="id_personalinfo_last_name" class="form-label"
+                                >معلومات عامة</label
+                              >
+                              <textarea
+                                class="form-control"
+                                id="id_personalinfo_last_name"
+                                rows="5"
+                                disabled
+                                readonly
+                                name="personalinfo_last_name"
+                              >
+                              </textarea>
+                            </div> {% endcomment %}
+                            <div class="mb-4 form-group">
+                              <label for="id_personalinfo_email" class="form-label"
+                                >البريد الالكتروني</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="id_personalinfo_email"
+                                maxlength="55"
+                                disabled
+                                  value="{{ user_info.email }}"
+                                  readonly
+                                name="personalinfo_email"
+                              />
+                            </div>
+                          </div>
+                          <div class="row row-cols-md-2">
+                            <div class="mb-4 form-group">
+                              <label for="id_personalinfo_date_of_birth" class="form-label"
+                                >تاريخ الميلاد</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="id_personalinfo_date_of_birth"
+                                maxlength="55"
+                                disabled
+                                  value="{{ user_info.date_of_birth }}"
+                                  readonly
+                                name="personalinfo_date_of_birth"
+                              />
+                            </div>
+
+                            <div class="mb-4 form-group">
+                              <label for="id_personalinfo_gender" class="form-label"
+                                >الجنس</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="id_personalinfo_gender"
+                                maxlength="55"
+                                disabled
+                                  value="{{ user_info.gender }}"
+                                  readonly
+                                name="personalinfo_gender"
+                              />
+                            </div>
+                          </div>
+                          <div class="row row-cols-md-2">
+                            <div class="mb-4 form-group">
+                              <label for="id_personalinfo_nationality" class="form-label"
+                                >الجنسية</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="id_personalinfo_nationality"
+                                maxlength="55"
+                                disabled
+                                value="{{ user_info.nationality }}"
+                                readonly
+                                name="personalinfo_nationality"
+                              />
+                            </div>
+                            <div class="mb-4 form-group">
+                              <label for="id_personalinfo_phonenumber" class="form-label"
+                                >رقم الجوال</label
+                              >
+                              <div class="input-group mb-1">
+                                <input
+                                  type="number"
+                                  name="personalinfo_phonenumber"
+                                  class="form-control"
+                                  id="id_personalinfo_phonenumber"
+                                  disabled
+                                  readonly
+                                  value="{{ user_info.phonenumber }}"
+                                />
+                                <span class="input-group-text" id="basic-addon1">966+</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="mb-4 form-group">
+                            <label for="id_personalinfo_last_name" class="form-label"
+                              >معلومات عامة</label
+                            >
+                            <textarea
+                              class="form-control"
+                              id="id_personalinfo_last_name"
+                              rows="5"
+                              disabled
+                              readonly
+                              name="personalinfo_last_name"
+                            >
+                            </textarea>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="row">
+                        <div class="col d-flex justify-content-start mt-3">
+                          <button class="btn btn-primary" type="submit">تحديث المعلومات</button>
+                        </div>
+                      </div>
+                    </form>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-3 mb-3">
+
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="px-xl-3">
+                <a class="btn btn-block btn-secondary" href="{% url 'logout' %}">
+                  <i class="fa fa-sign-out"></i>
+                  <span>تسجيل الخروج</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title font-weight-bold">الدعم والمساعدة</h6>
+              <p class="card-text text-muted">تواصل معنا في أي وقت, سنكون سعداء بمساعدتك.</p>
+              <button type="button" class="btn btn-primary">تواصل معنا</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

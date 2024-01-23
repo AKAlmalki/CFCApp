@@ -57,7 +57,7 @@ urlpatterns = [
     path(
         "dashboard/",
         views.dashboard,
-        name="dashboard2"
+        name="dashboard"
     ),
     path(
         "dashboard/requests",
@@ -80,6 +80,26 @@ urlpatterns = [
         name="export_excel"
     ),
     path(
+        'beneficiaries/<str:username>/',
+        views.beneficiary_profile,
+        name="beneficiary_profile"
+    ),
+    path(
+        'beneficiaries/<str:username>/requests/',
+        views.beneficiary_requests,
+        name="beneficiary_requests"
+    ),
+    path(
+        'beneficiaries/<str:username>/requests/<int:b_request_id>/',
+        views.beneficiary_request_details,
+        name="beneficiary_request_details"
+    ),
+    path(
+        'beneficiaries/<str:username>/requests/<int:b_request_id>/update/',
+        views.beneficiary_request_update,
+        name="beneficiary_request_update"
+    ),
+    path(
         "sign-up",
         views.sign_up,
         name="sign-up"
@@ -88,5 +108,40 @@ urlpatterns = [
         "login/",
         views.signin,
         name="login"
+    ),
+    path(
+        "logout/",
+        views.logout_user,
+        name="logout"
+    ),
+    path(
+        "sign-up/validate_email/",
+        views.validate_email,
+        name="validate_email"
+    ),
+    path(
+        "sign-up/validate_username/",
+        views.validate_username,
+        name="validate_username"
+    ),
+    path(
+        "sign-up/validate_phonenumber/",
+        views.validate_phonenumber,
+        name="validate_phonenumber"
+    ),
+    path(
+        "activate/<uidb64>/<token>/",
+        views.activate,
+        name="activate"
+    ),
+    path(
+        'resend-activation/',
+        views.resend_activation_email,
+        name='resend_activation_email'
+    ),
+    path(
+        'resend-activation-email/',
+        views.resend_activation_email_view,
+        name="resend_activation_email_view"
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
