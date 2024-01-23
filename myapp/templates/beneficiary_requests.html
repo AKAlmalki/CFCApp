@@ -92,8 +92,8 @@
                                 </svg>
                               </button>
                               <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" type="button" href="{% url 'beneficiary_requests_details' username=user.username request_id=request.id %}">تفاصيل الطلب</a></li>
-                                <li><a class="dropdown-item" type="button" href="#">تحديث بيانات الطلب</a></li>
+                                <li><a class="dropdown-item" type="button" href="{% url 'beneficiary_request_details' username=user.username b_request_id=request.id %}">تفاصيل الطلب</a></li>
+                                <li><a class="dropdown-item" type="button" href="{% url 'beneficiary_request_details' username=user.username b_request_id=request.id %}">تحديث بيانات الطلب</a></li>
                               </ul>
                             </div>
                           </td>

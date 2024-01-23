@@ -90,9 +90,14 @@ urlpatterns = [
         name="beneficiary_requests"
     ),
     path(
-        'beneficiaries/<str:username>/requests/<int:request_id>/',
-        views.beneficiary_requests_details,
-        name="beneficiary_requests_details"
+        'beneficiaries/<str:username>/requests/<int:b_request_id>/',
+        views.beneficiary_request_details,
+        name="beneficiary_request_details"
+    ),
+    path(
+        'beneficiaries/<str:username>/requests/<int:b_request_id>/update/',
+        views.beneficiary_request_update,
+        name="beneficiary_request_update"
     ),
     path(
         "sign-up",

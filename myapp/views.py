@@ -1471,7 +1471,7 @@ def beneficiary_requests(request, username):
 
 
 @login_required(login_url='/login')
-def beneficiary_requests_details(request, username, request_id):
+def beneficiary_request_details(request, username, b_request_id):
 
     # Get the logged-in user
     logged_in_user = request.user
@@ -1487,7 +1487,7 @@ def beneficiary_requests_details(request, username, request_id):
             return redirect('home')
 
         beneficiary_requests = Beneficiary_request.objects.get(
-            id=request_id)
+            id=b_request_id)
         beneficiary_obj = beneficiary.objects.get(id=beneficiary_requests.id)
         beneficiary_house_obj = beneficiary_house.objects.get(
             id=beneficiary_obj.id)
@@ -1596,3 +1596,8 @@ def beneficiary_requests_details(request, username, request_id):
         return redirect('home')
 
     return render(request, "beneficiary_request_details.html", context)
+
+
+@login_required(login_url="/login")
+def beneficiary_request_update(request, username, b_request_id):
+    pass
