@@ -1,5 +1,15 @@
 {% extends 'base.html' %}{% load static %}{% load humanize %}{% block title %}تفاصيل الطلب{% endblock %}{% block content %}
 <div class="container mt-5">
+  <div class="nav-breadcrumb mb-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">الصفحة الرئيسية</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'beneficiary_requests' username=user.username %}">الطلبات</a></li>
+        <li class="breadcrumb-item active" aria-current="page">تفاصيل الطلب</li>
+      </ol>
+    </nav>
+  </div>
+
   <div class="card">
     <div class="card-body">
       <h2 class="card-title fw-bold">تفاصيل الطلب</h2>
@@ -8,122 +18,122 @@
           <h3 class="mt-4 mb-4">المعلومات الشخصية</h3>
           <div class="row row-cols-lg-2 row-cols-xl-4">
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_file_no">رقم الملف</h6>
-              <input type="text" class="form-control" id="id_modal_file_no" name="file_no" value="{{ beneficiary.file_no }}" disabled readonly>
+              <h6 class="col form-label" for="id_file_no">رقم الملف</h6>
+              <input type="text" class="form-control" id="id_file_no" name="file_no" value="{{ beneficiary.file_no }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_first_name">الأسم الأول</h6>
-              <input type="text" class="form-control" id="id_modal_first_name" name="first_name" disabled readonly>
+              <h6 class="col form-label" for="id_first_name">الأسم الأول</h6>
+              <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ beneficiary.first_name }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_second_name">الأسم الثاني</h6>
-              <input type="text" class="form-control" id="id_modal_second_name" name="second_name" disabled readonly>
+              <h6 class="col form-label" for="id_second_name">الأسم الثاني</h6>
+              <input type="text" class="form-control" id="id_second_name" name="second_name" value="{{ beneficiary.second_name }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_last_name">الأسم الأخير</h6>
-              <input type="text" class="form-control" id="id_modal_last_name" name="last_name" disabled readonly>
+              <h6 class="col form-label" for="id_last_name">الأسم الأخير</h6>
+              <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ beneficiary.last_name }}" disabled readonly>
             </div>
           </div>
 
           <div class="row row-cols-lg-2 row-cols-xl-4">
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_gender">الجنس</h6>
-              <input type="text" class="form-control" id="id_modal_gender" name="gender" disabled readonly>
+              <h6 class="col form-label" for="id_gender">الجنس</h6>
+              <input type="text" class="form-control" id="id_gender" name="gender" value="{{ beneficiary.gender }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_date_of_birth">تاريخ الميلاد</h6>
-              <input type="text" class="form-control" id="id_modal_date_of_birth" name="date_of_birth" disabled readonly>
+              <h6 class="col form-label" for="id_date_of_birth">تاريخ الميلاد</h6>
+              <input type="text" class="form-control" id="id_date_of_birth" name="date_of_birth" value="{{ beneficiary.date_of_birth }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_phone_number">رقم الجوال</h6>
-              <input type="text" class="form-control" id="id_modal_phone_number" name="phone_number" disabled readonly>
+              <h6 class="col form-label" for="id_phone_number">رقم الجوال</h6>
+              <input type="text" class="form-control" id="id_phone_number" name="phone_number" value="{{ beneficiary.phone_number }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_email">الايميل الالكتروني</h6>
-              <input type="email" class="form-control" id="id_modal_email" name="email" disabled readonly>
+              <h6 class="col form-label" for="id_email">الايميل الالكتروني</h6>
+              <input type="email" class="form-control" id="id_email" name="email" value="{{ beneficiary.email }}" disabled readonly>
             </div>
           </div>
 
           <div class="row row-cols-md-1 row-cols-xl-3">
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_nationality">الجنسية</h6>
-              <input type="text" class="form-control" id="id_modal_nationality" name="nationality" disabled readonly>
+              <h6 class="col form-label" for="id_nationality">الجنسية</h6>
+              <input type="text" class="form-control" id="id_nationality" name="nationality" value="{{ beneficiary.nationality }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_national_id">رقم الهوية/الإقامة</h6>
-              <input type="text" class="form-control" id="id_modal_national_id" name="national_id" disabled readonly>
+              <h6 class="col form-label" for="id_national_id">رقم الهوية/الإقامة</h6>
+              <input type="text" class="form-control" id="id_national_id" name="national_id" value="{{ beneficiary.national_id }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة</h6>
-              <input type="text" class="form-control" id="id_modal_national_id_exp_date" name="national_id_exp_date" disabled readonly>
+              <h6 class="col form-label" for="id_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة</h6>
+              <input type="text" class="form-control" id="id_national_id_exp_date" name="national_id_exp_date" value="{{ beneficiary.national_id_exp_date }}" disabled readonly>
             </div>
           </div>
 
           <div class="row row-cols-md-1 row-cols-lg-3">
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_category">التصنيف الرئيسي</h6>
-              <input type="text" class="form-control" id="id_modal_category" name="category" disabled readonly>
+              <h6 class="col form-label" for="id_category">التصنيف الرئيسي</h6>
+              <input type="text" class="form-control" id="id_category" name="category" value="{{ beneficiary.category }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_marital_status">الحالة الاجتماعية</h6>
-              <input type="text" class="form-control" id="id_modal_marital_status" name="marital_status" disabled readonly>
+              <h6 class="col form-label" for="id_marital_status">الحالة الاجتماعية</h6>
+              <input type="text" class="form-control" id="id_marital_status" name="marital_status" value="{{ beneficiary.marital_status }}" disabled readonly>
             </div>
 
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_educational_level">المستوى التعليمي</h6>
-              <input type="text" class="form-control" id="id_modal_educational_level" name="educational_level" disabled readonly>
+              <h6 class="col form-label" for="id_educational_level">المستوى التعليمي</h6>
+              <input type="text" class="form-control" id="id_educational_level" name="educational_level" value="{{ beneficiary.educational_level }}" disabled readonly>
             </div>
           </div>
 
           <div class="row row-cols-lg-2 row-cols-xl-4">
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_health_status">الحالة الصحية</h6>
-              <input type="text" class="form-control" id="id_modal_health_status" name="health_status" disabled readonly>
+              <h6 class="col form-label" for="id_health_status">الحالة الصحية</h6>
+              <input type="text" class="form-control" id="id_health_status" name="health_status" value="{{ beneficiary.health_status }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_disease_type">نوع المرض</h6>
-              <input type="text" class="form-control" id="id_modal_disease_type" name="disease_type" disabled readonly>
+              <h6 class="col form-label" for="id_disease_type">نوع المرض</h6>
+              <input type="text" class="form-control" id="id_disease_type" name="disease_type" value="{% if beneficiary.disease_type %}{{ beneficiary.disease_type }}{% else %}----{% endif %}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_work_status">هل يعمل؟</h6>
-              <input type="text" class="form-control" id="id_modal_work_status" name="work_status" disabled readonly>
+              <h6 class="col form-label" for="id_work_status">هل يعمل؟</h6>
+              <input type="text" class="form-control" id="id_work_status" name="work_status" value="{{ beneficiary.work_status }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_employer">جهة العمل</h6>
-              <input type="text" class="form-control" id="id_modal_employer" name="employer" disabled readonly>
+              <h6 class="col form-label" for="id_employer">جهة العمل</h6>
+              <input type="text" class="form-control" id="id_employer" name="employer" value="{% if beneficiary.employer %}{{ beneficiary.employer }}{% else %}----{% endif %}" disabled readonly>
             </div>
           </div>
 
           <div class="row row-cols-lg-2">
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_death_date_father_husband">تاريخ وفاة الأب/الزوج</h6>
-              <input type="text" class="form-control" id="id_modal_death_date_father_husband" name="death_date_father_husband" disabled readonly>
+              <h6 class="col form-label" for="id_death_date_father_husband">تاريخ وفاة الأب/الزوج</h6>
+              <input type="text" class="form-control" id="id_death_date_father_husband" name="death_date_father_husband" value="{% if beneficiary.death_date_father_husband %}{{ beneficiary.death_date_father_husband }}{% else %}----{% endif %}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_washing_place">المغسلة التي تم التجهيز فيها</h6>
-              <input type="text" class="form-control" id="id_modal_washing_place" name="washing_place" disabled readonly>
+              <h6 class="col form-label" for="id_washing_place">المغسلة التي تم التجهيز فيها</h6>
+              <input type="text" class="form-control" id="id_washing_place" name="washing_place" value="{% if beneficiary.washing_place %}{{ beneficiary.washing_place }}{% else %}----{% endif %}" disabled readonly>
             </div>
           </div>
           
           <div class="row row-cols-lg-2">
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_bank_type">أسم البنك</h6>
-              <input type="text" class="form-control" id="id_modal_bank_type" name="bank_type" disabled readonly>
+              <h6 class="col form-label" for="id_bank_type">أسم البنك</h6>
+              <input type="text" class="form-control" id="id_bank_type" name="bank_type" value="{{ beneficiary.bank_type }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_bank_iban">رقم الإيبان</h6>
-              <input type="text" class="form-control" id="id_modal_bank_iban" name="bank_iban" disabled readonly>
+              <h6 class="col form-label" for="id_bank_iban">رقم الإيبان</h6>
+              <input type="text" class="form-control" id="id_bank_iban" name="bank_iban" value="{{ beneficiary.bank_iban }}" disabled readonly>
             </div>
           </div>
 
           <div class="row row-cols-xl-2">
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_family_issues">المشاكل التي تعاني منها الأسرة</h6>
-              <input type="text" class="form-control" id="id_modal_family_issues" name="family_issues" disabled readonly>
+              <h6 class="col form-label" for="id_family_issues">المشاكل التي تعاني منها الأسرة</h6>
+              <input type="text" class="form-control" id="id_family_issues" name="family_issues" value="{{ beneficiary.family_issues }}" disabled readonly>
             </div>
             <div class="mb-3">
-              <h6 class="col form-label" for="id_modal_family_needs">احتياجات الأسرة</h6>
-              <input type="text" class="form-control" id="id_modal_family_needs" name="family_needs" disabled readonly>
+              <h6 class="col form-label" for="id_family_needs">احتياجات الأسرة</h6>
+              <input type="text" class="form-control" id="id_family_needs" name="family_needs" value="{{ beneficiary.family_needs }}" disabled readonly>
             </div>
           </div>
         </div> <!-- end line personal info -->
@@ -141,8 +151,9 @@
                 name="houseinfo_building_number"
                 min="0"
                 max="9999999"
-                class="form-control"
+                class="form-control text-start"
                 id="id_houseinfo_building_number"
+                value="{{ beneficiary_house.building_number }}"
                 disabled readonly
               />
             </div>
@@ -155,6 +166,7 @@
                 maxlength="50"
                 class="form-control"
                 id="id_houseinfo_street_name"
+                value="{{ beneficiary_house.street_name }}"
                 disabled readonly
               />
             </div>
@@ -167,6 +179,7 @@
                 maxlength="50"
                 class="form-control"
                 id="id_houseinfo_neighborhood"
+                value="{{ beneficiary_house.neighborhood }}"
                 disabled readonly
               />
             </div>
@@ -179,6 +192,7 @@
                 maxlength="50"
                 class="form-control"
                 id="id_houseinfo_city"
+                value="{{ beneficiary_house.city }}"
                 disabled readonly
               />
             </div>
@@ -195,6 +209,7 @@
                 max="9999999"
                 class="form-control"
                 id="id_houseinfo_postal_code"
+                value="{{ beneficiary_house.postal_code }}"
                 disabled readonly
               />
             </div>
@@ -206,8 +221,9 @@
                 name="houseinfo_additional_number"
                 min="0"
                 max="9999999"
-                class="form-control"
+                class="form-control text-start"
                 id="id_houseinfo_additional_number"
+                value="{{ beneficiary_house.additional_number }}"
                 disabled readonly
               />
             </div>
@@ -219,6 +235,7 @@
                 maxlength="50"
                 class="form-control"
                 id="id_houseinfo_unit"
+                value="{{ beneficiary_house.unit }}"
                 disabled readonly
               />
             </div>
@@ -234,6 +251,7 @@
                 maxlength="250"
                 class="form-control"
                 id="id_houseinfo_location_url"
+                value="{{ beneficiary_house.location_url }}"
                 disabled readonly
               />
             </div>
@@ -245,6 +263,7 @@
                 name="houseinfo_housing_type"
                 class="form-control"
                 id="id_houseinfo_housing_type"
+                value="{{ beneficiary_house.housing_type }}"
                 disabled readonly
               />
             </div>
@@ -256,6 +275,7 @@
                 name="houseinfo_housing_ownership"
                 class="form-control"
                 id="id_houseinfo_housing_ownership"
+                value="{{ beneficiary_house.housing_ownership }}"
                 disabled readonly
               />
             </div>
@@ -280,6 +300,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_incomeinfo_salary"
+                  value="{{ beneficiary_income_expense.salary_in }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -296,6 +317,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_incomeinfo_social_insurance"
+                  value="{{ beneficiary_income_expense.social_insurance_in }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -312,6 +334,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_incomeinfo_charity"
+                  value="{{ beneficiary_income_expense.charity_in }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -328,6 +351,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_incomeinfo_social_warranty"
+                  value="{{ beneficiary_income_expense.social_warranty_in }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -347,6 +371,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_incomeinfo_pension_agency"
+                  value="{{ beneficiary_income_expense.pension_agency_in }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -363,6 +388,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_incomeinfo_citizen_account"
+                  value="{{ beneficiary_income_expense.citizen_account_in }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -379,6 +405,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_incomeinfo_benefactor"
+                  value="{{ beneficiary_income_expense.benefactor_in }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -394,6 +421,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_incomeinfo_other"
+                  value="{{ beneficiary_income_expense.other_in }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -414,6 +442,7 @@
                   step="0.01"
                   class="form-control"
                   id="id_incomeinfo_total"
+                  value="{{ beneficiary_income_expense.total_in }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -434,6 +463,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_expensesinfo_housing_rent"
+                  value="{{ beneficiary_income_expense.housing_rent_ex }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -452,6 +482,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_expensesinfo_electricity_bills"
+                  value="{{ beneficiary_income_expense.electricity_bills_ex }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -468,6 +499,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_expensesinfo_water_bills"
+                  value="{{ beneficiary_income_expense.water_bills_ex }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -484,6 +516,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_expensesinfo_transportation"
+                  value="{{ beneficiary_income_expense.transportation_ex }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -503,6 +536,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_expensesinfo_health_supplies"
+                  value="{{ beneficiary_income_expense.health_supplies_ex }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -519,6 +553,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_expensesinfo_food_supplies"
+                  value="{{ beneficiary_income_expense.food_supplies_ex }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -537,6 +572,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_expensesinfo_educational_supplies"
+                  value="{{ beneficiary_income_expense.educational_supplies_ex }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -553,6 +589,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_expensesinfo_proven_debts"
+                  value="{{ beneficiary_income_expense.proven_debts_ex }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -572,6 +609,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_expensesinfo_other"
+                  value="{{ beneficiary_income_expense.other_ex }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>
@@ -588,6 +626,7 @@
                   max="99999999.00"
                   class="form-control"
                   id="id_expensesinfo_total"
+                  value="{{ beneficiary_income_expense.total_ex }}"
                   disabled readonly
                 />
                 <span class="input-group-text" id="basic-addon1">ر.س.</span>

@@ -1489,11 +1489,20 @@ def beneficiary_requests_details(request, username, request_id):
         beneficiary_requests = Beneficiary_request.objects.get(
             id=request_id)
         beneficiary_obj = beneficiary.objects.get(id=beneficiary_requests.id)
+        beneficiary_house_obj = beneficiary_house.objects.get(
+            id=beneficiary_obj.id)
+        beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
+            id=beneficiary_obj.id)
+        beneficiary_attachment_obj = Beneficiary_attachment.objects.get(
+            id=beneficiary_obj.id)
 
         context = {
             'user_info': user,
             'beneficiary_requests': beneficiary_requests,
             'beneficiary': beneficiary_obj,
+            'beneficiary_house': beneficiary_house_obj,
+            'beneficiary_income_expense': beneficiary_income_expense_obj,
+            'beneficiary_attachments': beneficiary_attachment_obj,
         }
     except ObjectDoesNotExist:
         messages.error(request, "المستخدم غير موجود!")
