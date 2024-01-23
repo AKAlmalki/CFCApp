@@ -637,54 +637,6 @@
 
         <hr>
 
-        <div class="attachment_info">
-          <h3 class="mt-4 mb-4">المرفقات</h3>
-          <div>
-            {% if beneficiary_attachments %}
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">اسم الملف</th>
-                    <th scope="col">نوع المرفق</th>
-                    <th scope="col">نوع الملف</th>
-                    <th scope="col">الإجراءات</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for attachment in beneficiary_attachments %}
-                  <tr data-bs-toggle="tooltip" title="">
-                    <td>
-                      <span>
-                        {{ attachment.file_name }}
-                      </span>
-                    </td>
-                    <td>
-                      <span>
-                        {{ attachment.attachment_type }}
-                      </span>
-                    </td>
-                    <td>{{ attachment.file_extension }}</td>
-                    <td>
-                      <div class="d-flex align-items-center actions">
-                        <div class="mb-2">
-                          <a href="{{ attachment.file_path }}" target="_blank" class="btn btn-primary">عرض الملف</a>
-                      </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-            {% else %}
-            <p>لا يوجد مرفقات </p>
-            {% endif %}
-          </div>
-        </div>
-
-        <hr>
-
         <div class="dependents">
           <h3 class="mt-4 mb-4">المرافقين</h3>
           <div>
@@ -805,6 +757,54 @@
                 </div>
               {% endfor %}
             </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="attachment_info">
+          <h3 class="mt-4 mb-4">المرفقات</h3>
+          <div>
+            {% if beneficiary_attachments %}
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">اسم الملف</th>
+                    <th scope="col">نوع المرفق</th>
+                    <th scope="col">نوع الملف</th>
+                    <th scope="col">الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for attachment in beneficiary_attachments %}
+                  <tr data-bs-toggle="tooltip" title="">
+                    <td>
+                      <span>
+                        {{ attachment.file_name }}
+                      </span>
+                    </td>
+                    <td>
+                      <span>
+                        {{ attachment.attachment_type }}
+                      </span>
+                    </td>
+                    <td>{{ attachment.file_extension }}</td>
+                    <td>
+                      <div class="d-flex align-items-center actions">
+                        <div class="mb-2">
+                          <a href="{{ attachment.file_path }}" target="_blank" class="btn btn-primary">عرض الملف</a>
+                      </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <p>لا يوجد مرفقات </p>
+            {% endif %}
           </div>
         </div>
     </div> <!-- end line card body -->
