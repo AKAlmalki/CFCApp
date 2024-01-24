@@ -1640,14 +1640,14 @@
       return bank ? bank.nameAr : null;
     }
 
-    $("#id_beneficiaryinfo_iban").on("input", function () {
+    $("#id_personalinfo_bank_iban").on("input", function () {
       var iban = $(this).val();
       var bankNameAr = getBankByIBAN(iban);
 
       if (bankNameAr) {
-        $("#id_beneficiaryinfo_bank_type").val(bankNameAr).change();
+        $("#id_personalinfo_bank_type").val(bankNameAr).change();
       } else {
-        $("#id_beneficiaryinfo_bank_type").val("").change(); // Reset to default if IBAN is invalid
+        $("#id_personalinfo_bank_type").val("").change(); // Reset to default if IBAN is invalid
       }
     });
 
@@ -2480,15 +2480,6 @@
       fetch('http://127.0.0.1:8000{% url 'beneficiary_request_update_confirm' username=user_info.username b_request_id=request_id %}', {
           method: 'POST',
           body: formData,
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.redirect) {
-              //window.location.href = data.redirect;
-              console.log(data);
-          } else {
-              // Handle other responses
-          }
       })
       .catch((error) => {
           console.error('Error:', error);

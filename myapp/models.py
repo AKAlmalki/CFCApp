@@ -172,7 +172,7 @@ class beneficiary(models.Model):
         return "file_no " + self.file_no + ", name: " + self.first_name + ", national_id:" + self.national_id
 
     # Overwrite save() method to perform additional operations (calculate file_no)
-    def save(self, category_seg, region_seg, *args, **kwargs):
+    def save(self, category_seg="CAT", region_seg="SA", *args, **kwargs):
         if not self.file_no:
             year = datetime.date.today().year
             category_code = category_seg  # Replace with actual logic to determine category
@@ -299,6 +299,7 @@ class Beneficiary_request(models.Model):
         CustomUser, on_delete=models.CASCADE, related_name='requested_beneficiary_set')
     beneficiary = models.ForeignKey(beneficiary, on_delete=models.CASCADE)
     status = models.CharField(max_length=55)
+    request_type = models.CharField(max_length=55, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     reviewed_by = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name='reviewed_beneficiary_set', null=True)
