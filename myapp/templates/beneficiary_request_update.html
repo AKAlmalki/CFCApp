@@ -50,111 +50,439 @@
               <h3 class="mt-4 mb-4">المعلومات الشخصية</h3>
               <div class="row row-cols-lg-2 row-cols-xl-4">
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_file_no">رقم الملف</h6>
-                  <input type="text" class="form-control" id="id_file_no" name="file_no" value="{{ beneficiary.file_no }}" disabled readonly>
+                  <h6 class="col form-label" for="id_personalinfo_file_no">رقم الملف</h6>
+                  <input type="text" class="form-control" id="id_personalinfo_file_no" name="personalinfo_file_no" value="{{ beneficiary.file_no }}" disabled readonly>
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_first_name">الأسم الأول</h6>
-                  <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ beneficiary.first_name }}">
+                  <h6 class="col form-label" for="id_personalinfo_first_name">الأسم الأول</h6>
+                  <input type="text" class="form-control" id="id_personalinfo_first_name" name="personalinfo_first_name" value="{{ beneficiary.first_name }}">
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_second_name">الأسم الثاني</h6>
-                  <input type="text" class="form-control" id="id_second_name" name="second_name" value="{{ beneficiary.second_name }}">
+                  <h6 class="col form-label" for="id_personalinfo_second_name">الأسم الثاني</h6>
+                  <input type="text" class="form-control" id="id_personalinfo_second_name" name="personalinfo_second_name" value="{{ beneficiary.second_name }}">
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_last_name">الأسم الأخير</h6>
-                  <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ beneficiary.last_name }}">
+                  <h6 class="col form-label" for="id_personalinfo_last_name">الأسم الأخير</h6>
+                  <input type="text" class="form-control" id="id_personalinfo_last_name" name="personalinfo_last_name" value="{{ beneficiary.last_name }}">
                 </div>
               </div>
     
               <div class="row row-cols-lg-2 row-cols-xl-4">
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_gender">الجنس</h6>
-                  <input type="text" class="form-control" id="id_gender" name="gender" value="{{ beneficiary.gender }}">
+                  <h6 class="col form-label" for="id_personalinfo_gender">الجنس</h6>
+                  <select
+                    name="personalinfo_gender"
+                    class="form-select"
+                    id="id_personalinfo_gender"
+                  >
+                    <option value>---------</option>
+                    <option value="ذكر">ذكر</option>
+                    <option value="انثى">انثى</option>
+                  </select>
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_date_of_birth">تاريخ الميلاد</h6>
-                  <input type="date" class="form-control" id="id_date_of_birth" name="date_of_birth">
+                  <h6 class="col form-label" for="id_personalinfo_date_of_birth">تاريخ الميلاد</h6>
+                  <input type="date" class="form-control" id="id_personalinfo_date_of_birth" name="personalinfo_date_of_birth">
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_phone_number">رقم الجوال</h6>
-                  <input type="text" class="form-control" id="id_phone_number" name="phone_number" value="{{ beneficiary.phone_number }}">
+                  <h6 class="col form-label" for="id_personalinfo_phone_number">رقم الجوال</h6>
+                  <input type="text" class="form-control" id="id_personalinfo_phone_number" name="personalinfo_phone_number" value="{{ beneficiary.phone_number }}">
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_email">الايميل الالكتروني</h6>
-                  <input type="email" class="form-control" id="id_email" name="email" value="{{ beneficiary.email }}">
+                  <h6 class="col form-label" for="id_personalinfo_email">الايميل الالكتروني</h6>
+                  <input type="email" class="form-control" id="id_personalinfo_email" name="personalinfo_email" value="{{ beneficiary.email }}">
                 </div>
               </div>
     
               <div class="row row-cols-md-1 row-cols-xl-3">
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_nationality">الجنسية</h6>
-                  <input type="text" class="form-control" id="id_nationality" name="nationality" value="{{ beneficiary.nationality }}">
+                  <h6 class="col form-label" for="id_personalinfo_nationality">الجنسية</h6>
+                  <select
+                    name="personalinfo_nationality"
+                    class="form-select"
+                    id="id_personalinfo_nationality"
+                  >
+                    <option value>إختر</option>
+                    <option value="السعودية">السعودية</option>
+                    <option value="أفغانستان">أفغانستان</option>
+                    <option value="ألبانيا">ألبانيا</option>
+                    <option value="الجزائر">الجزائر</option>
+                    <option value="أندورا">أندورا</option>
+                    <option value="أنغولا">أنغولا</option>
+                    <option value="أنتيغوا وباربودا">أنتيغوا وباربودا</option>
+                    <option value="الأرجنتين">الأرجنتين</option>
+                    <option value="أرمينيا">أرمينيا</option>
+                    <option value="أستراليا">أستراليا</option>
+                    <option value="النمسا">النمسا</option>
+                    <option value="أذربيجان">أذربيجان</option>
+                    <option value="البهاما">البهاما</option>
+                    <option value="البحرين">البحرين</option>
+                    <option value="بنغلاديش">بنغلاديش</option>
+                    <option value="باربادوس">باربادوس</option>
+                    <option value="بيلاروسيا">بيلاروسيا</option>
+                    <option value="بلجيكا">بلجيكا</option>
+                    <option value="بليز">بليز</option>
+                    <option value="بنين">بنين</option>
+                    <option value="بوتان">بوتان</option>
+                    <option value="بوليفيا">بوليفيا</option>
+                    <option value="البوسنة والهرسك ">البوسنة والهرسك</option>
+                    <option value="بوتسوانا">بوتسوانا</option>
+                    <option value="البرازيل">البرازيل</option>
+                    <option value="بروناي">بروناي</option>
+                    <option value="بلغاريا">بلغاريا</option>
+                    <option value="بوركينا فاسو ">بوركينا فاسو</option>
+                    <option value="بوروندي">بوروندي</option>
+                    <option value="كمبوديا">كمبوديا</option>
+                    <option value="الكاميرون">الكاميرون</option>
+                    <option value="كندا">كندا</option>
+                    <option value="الرأس الأخضر">الرأس الأخضر</option>
+                    <option value="جمهورية أفريقيا الوسطى ">
+                      جمهورية أفريقيا الوسطى
+                    </option>
+                    <option value="تشاد">تشاد</option>
+                    <option value="تشيلي">تشيلي</option>
+                    <option value="الصين">الصين</option>
+                    <option value="كولومبيا">كولومبيا</option>
+                    <option value="جزر القمر">جزر القمر</option>
+                    <option value="كوستاريكا">كوستاريكا</option>
+                    <option value="ساحل العاج">ساحل العاج</option>
+                    <option value="كرواتيا">كرواتيا</option>
+                    <option value="كوبا">كوبا</option>
+                    <option value="قبرص">قبرص</option>
+                    <option value="التشيك">التشيك</option>
+                    <option value="جمهورية الكونغو الديمقراطية">
+                      جمهورية الكونغو الديمقراطية
+                    </option>
+                    <option value="الدنمارك">الدنمارك</option>
+                    <option value="جيبوتي">جيبوتي</option>
+                    <option value="دومينيكا">دومينيكا</option>
+                    <option value="جمهورية الدومينيكان">
+                      جمهورية الدومينيكان
+                    </option>
+                    <option value="تيمور الشرقية ">تيمور الشرقية</option>
+                    <option value="الإكوادور">الإكوادور</option>
+                    <option value="مصر">مصر</option>
+                    <option value="السلفادور">السلفادور</option>
+                    <option value="غينيا الاستوائية">غينيا الاستوائية</option>
+                    <option value="إريتريا">إريتريا</option>
+                    <option value="إستونيا">إستونيا</option>
+                    <option value="إثيوبيا">إثيوبيا</option>
+                    <option value="فيجي">فيجي</option>
+                    <option value="فنلندا">فنلندا</option>
+                    <option value="فرنسا">فرنسا</option>
+                    <option value="الغابون">الغابون</option>
+                    <option value="غامبيا">غامبيا</option>
+                    <option value="جورجيا">جورجيا</option>
+                    <option value="ألمانيا">ألمانيا</option>
+                    <option value="غانا">غانا</option>
+                    <option value="اليونان">اليونان</option>
+                    <option value="جرينادا">جرينادا</option>
+                    <option value="غواتيمالا">غواتيمالا</option>
+                    <option value="غينيا">غينيا</option>
+                    <option value="غينيا بيساو">غينيا بيساو</option>
+                    <option value="غويانا">غويانا</option>
+                    <option value="هايتي">هايتي</option>
+                    <option value="هندوراس">هندوراس</option>
+                    <option value="المجر">المجر</option>
+                    <option value="آيسلندا">آيسلندا</option>
+                    <option value="الهند">الهند</option>
+                    <option value="إندونيسيا">إندونيسيا</option>
+                    <option value="إيران">إيران</option>
+                    <option value="العراق">العراق</option>
+                    <option value="جمهورية أيرلندا ">جمهورية أيرلندا</option>
+                    <option value="فلسطين">فلسطين</option>
+                    <option value="إيطاليا">إيطاليا</option>
+                    <option value="جامايكا">جامايكا</option>
+                    <option value="اليابان">اليابان</option>
+                    <option value="الأردن">الأردن</option>
+                    <option value="كازاخستان">كازاخستان</option>
+                    <option value="كينيا">كينيا</option>
+                    <option value="كيريباتي">كيريباتي</option>
+                    <option value="الكويت">الكويت</option>
+                    <option value="قرغيزستان">قرغيزستان</option>
+                    <option value="لاوس">لاوس</option>
+                    <option value="لاوس">لاوس</option>
+                    <option value="لاتفيا">لاتفيا</option>
+                    <option value="لبنان">لبنان</option>
+                    <option value="ليسوتو">ليسوتو</option>
+                    <option value="ليبيريا">ليبيريا</option>
+                    <option value="ليبيا">ليبيا</option>
+                    <option value="ليختنشتاين">ليختنشتاين</option>
+                    <option value="ليتوانيا">ليتوانيا</option>
+                    <option value="لوكسمبورغ">لوكسمبورغ</option>
+                    <option value="مدغشقر">مدغشقر</option>
+                    <option value="مالاوي">مالاوي</option>
+                    <option value="ماليزيا">ماليزيا</option>
+                    <option value="جزر المالديف">جزر المالديف</option>
+                    <option value="مالي">مالي</option>
+                    <option value="مالطا">مالطا</option>
+                    <option value="جزر مارشال">جزر مارشال</option>
+                    <option value="موريتانيا">موريتانيا</option>
+                    <option value="موريشيوس">موريشيوس</option>
+                    <option value="المكسيك">المكسيك</option>
+                    <option value="مايكرونيزيا">مايكرونيزيا</option>
+                    <option value="مولدوفا">مولدوفا</option>
+                    <option value="موناكو">موناكو</option>
+                    <option value="منغوليا">منغوليا</option>
+                    <option value="الجبل الأسود">الجبل الأسود</option>
+                    <option value="المغرب">المغرب</option>
+                    <option value="موزمبيق">موزمبيق</option>
+                    <option value="بورما">بورما</option>
+                    <option value="ناميبيا">ناميبيا</option>
+                    <option value="ناورو">ناورو</option>
+                    <option value="نيبال">نيبال</option>
+                    <option value="هولندا">هولندا</option>
+                    <option value="نيوزيلندا">نيوزيلندا</option>
+                    <option value="نيكاراجوا">نيكاراجوا</option>
+                    <option value="النيجر">النيجر</option>
+                    <option value="نيجيريا">نيجيريا</option>
+                    <option value="كوريا الشمالية ">كوريا الشمالية</option>
+                    <option value="النرويج">النرويج</option>
+                    <option value="سلطنة عمان">سلطنة عمان</option>
+                    <option value="باكستان">باكستان</option>
+                    <option value="بالاو">بالاو</option>
+                    <option value="بنما">بنما</option>
+                    <option value="بابوا غينيا الجديدة">
+                      بابوا غينيا الجديدة
+                    </option>
+                    <option value="باراغواي">باراغواي</option>
+                    <option value="بيرو">بيرو</option>
+                    <option value="الفلبين">الفلبين</option>
+                    <option value="بولندا">بولندا</option>
+                    <option value="البرتغال">البرتغال</option>
+                    <option value="قطر">قطر</option>
+                    <option value="جمهورية الكونغو">جمهورية الكونغو</option>
+                    <option value="جمهورية مقدونيا">جمهورية مقدونيا</option>
+                    <option value="رومانيا">رومانيا</option>
+                    <option value="روسيا">روسيا</option>
+                    <option value="رواندا">رواندا</option>
+                    <option value="سانت كيتس ونيفيس">سانت كيتس ونيفيس</option>
+                    <option value="سانت لوسيا">سانت لوسيا</option>
+                    <option value="سانت فنسينت والجرينادينز">
+                      سانت فنسينت والجرينادينز
+                    </option>
+                    <option value="ساموا">ساموا</option>
+                    <option value="سان مارينو">سان مارينو</option>
+                    <option value="ساو تومي وبرينسيب">
+                      ساو تومي وبرينسيب
+                    </option>
+                    <option value="السنغال">السنغال</option>
+                    <option value="صربيا">صربيا</option>
+                    <option value="سيشيل">سيشيل</option>
+                    <option value="سيراليون">سيراليون</option>
+                    <option value="سنغافورة">سنغافورة</option>
+                    <option value="سلوفاكيا">سلوفاكيا</option>
+                    <option value="سلوفينيا">سلوفينيا</option>
+                    <option value="جزر سليمان">جزر سليمان</option>
+                    <option value="الصومال">الصومال</option>
+                    <option value="جنوب أفريقيا">جنوب أفريقيا</option>
+                    <option value="كوريا الجنوبية">كوريا الجنوبية</option>
+                    <option value="جنوب السودان">جنوب السودان</option>
+                    <option value="إسبانيا">إسبانيا</option>
+                    <option value="سريلانكا">سريلانكا</option>
+                    <option value="السودان">السودان</option>
+                    <option value="سورينام">سورينام</option>
+                    <option value="سوازيلاند">سوازيلاند</option>
+                    <option value="السويد">السويد</option>
+                    <option value="سويسرا">سويسرا</option>
+                    <option value="سوريا">سوريا</option>
+                    <option value="طاجيكستان">طاجيكستان</option>
+                    <option value="تنزانيا">تنزانيا</option>
+                    <option value="تايلاند">تايلاند</option>
+                    <option value="توغو">توغو</option>
+                    <option value="تونجا">تونجا</option>
+                    <option value="ترينيداد وتوباغو">ترينيداد وتوباغو</option>
+                    <option value="تونس">تونس</option>
+                    <option value="تركيا">تركيا</option>
+                    <option value="تركمانستان">تركمانستان</option>
+                    <option value="توفالو">توفالو</option>
+                    <option value="أوغندا">أوغندا</option>
+                    <option value="أوكرانيا">أوكرانيا</option>
+                    <option value="الإمارات العربية المتحدة">
+                      الإمارات العربية المتحدة
+                    </option>
+                    <option value="المملكة المتحدة">المملكة المتحدة</option>
+                    <option value="الولايات المتحدة">الولايات المتحدة</option>
+                    <option value="أوروغواي">أوروغواي</option>
+                    <option value="أوزبكستان">أوزبكستان</option>
+                    <option value="فانواتو">فانواتو</option>
+                    <option value="فنزويلا">فنزويلا</option>
+                    <option value="فيتنام">فيتنام</option>
+                    <option value="اليمن">اليمن</option>
+                    <option value="زامبيا">زامبيا</option>
+                    <option value="زيمبابوي">زيمبابوي</option>
+                  </select>
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_national_id">رقم الهوية/الإقامة</h6>
-                  <input type="text" class="form-control" id="id_national_id" name="national_id" value="{{ beneficiary.national_id }}">
+                  <h6 class="col form-label" for="id_personalinfo_national_id">رقم الهوية/الإقامة</h6>
+                  <input type="text" class="form-control" id="id_personalinfo_national_id" name="personalinfo_national_id" value="{{ beneficiary.national_id }}">
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة</h6>
-                  <input type="date" class="form-control" id="id_national_id_exp_date" name="national_id_exp_date">
+                  <h6 class="col form-label" for="id_personalinfo_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة</h6>
+                  <input type="date" class="form-control" id="id_personalinfo_national_id_exp_date" name="personalinfo_national_id_exp_date">
                 </div>
               </div>
     
               <div class="row row-cols-md-1 row-cols-lg-3">
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_category">التصنيف الرئيسي</h6>
-                  <input type="text" class="form-control" id="id_category" name="category" value="{{ beneficiary.category }}">
+                  <h6 class="col form-label" for="id_personalinfo_category">التصنيف الرئيسي</h6>
+                  <select
+                    name="personalinfo_category"
+                    class="form-select"
+                    id="id_personalinfo_category"
+                    {% comment %} onchange="categoryCheck(this);" {% endcomment %}
+                  >
+                    <option value>---------</option>
+                    <option value="أسرة عادية">أسرة عادية</option>
+                    <option value="أسرة أيتام">أسرة أيتام</option>
+                    <option value="أسرة أرملة">أسرة أرملة</option>
+                    <option value="أسرة سجناء">أسرة سجناء</option>
+                    <option value="أسرة مطلقة">أسرة مطلقة</option>
+                    <option value="فرد">فرد</option>
+                  </select>
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_marital_status">الحالة الاجتماعية</h6>
-                  <input type="text" class="form-control" id="id_marital_status" name="marital_status" value="{{ beneficiary.marital_status }}">
+                  <h6 class="col form-label" for="id_personalinfo_marital_status">الحالة الاجتماعية</h6>
+                  <select
+                    name="personalinfo_marital_status"
+                    class="form-select"
+                    id="id_personalinfo_marital_status"
+                    {% comment %} onchange="widowerCheck(this);" {% endcomment %}
+                  >
+                    <option value>---------</option>
+                    <option value="متزوج/ـة">متزوج/ـة</option>
+                    <option value="أعزب/ـة">أعزب/ـة</option>
+                    <option value="أرمل/ـة">أرمل/ـة</option>
+                    <option value="مطلقة">مطلقة</option>
+                    <option value="مهجورة">مهجورة</option>
+                  </select>
                 </div>
     
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_educational_level">المستوى التعليمي</h6>
-                  <input type="text" class="form-control" id="id_educational_level" name="educational_level" value="{{ beneficiary.educational_level }}">
+                  <h6 class="col form-label" for="id_personalinfo_educational_level">المستوى التعليمي</h6>
+                  <select
+                    name="personalinfo_educational_level"
+                    class="form-select"
+                    id="id_personalinfo_educational_level"
+                  >
+                    <option value>---------</option>
+                    <option value="أول ابتدائي">أول ابتدائي</option>
+                    <option value="ثاني ابتدائي">ثاني ابتدائي</option>
+                    <option value="ثالث ابتدائي">ثالث ابتدائي</option>
+                    <option value="رابع ابتدائي">رابع ابتدائي</option>
+                    <option value="خامس ابتدائي">خامس ابتدائي</option>
+                    <option value="سادس ابتدائي">سادس ابتدائي</option>
+                    <option value="أول متوسط">أول متوسط</option>
+                    <option value="ثاني متوسط">ثاني متوسط</option>
+                    <option value="ثالث متوسط">ثالث متوسط</option>
+                    <option value="أول ثانوي">أول ثانوي</option>
+                    <option value="ثاني ثانوي">ثاني ثانوي</option>
+                    <option value="ثالث ثانوي">ثالث ثانوي</option>
+                    <option value="جامعي">جامعي</option>
+                    <option value="لا يدرس">لا يدرس</option>
+                  </select>
                 </div>
               </div>
     
               <div class="row row-cols-lg-2 row-cols-xl-4">
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_health_status">الحالة الصحية</h6>
-                  <input type="text" class="form-control" id="id_health_status" name="health_status" value="{{ beneficiary.health_status }}">
+                  <h6 class="col form-label" for="id_personalinfo_health_status">الحالة الصحية</h6>
+                  <select
+                    name="personalinfo_health_status"
+                    class="form-select"
+                    id="id_personalinfo_health_status"
+                    {% comment %} onchange="personalInfoHealthCheck(this);" {% endcomment %}
+                  >
+                    <option value>---------</option>
+                    <option value="جيدة">جيدة</option>
+                    <option value="غير جيدة">غير جيدة</option>
+                  </select>
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_disease_type">نوع المرض</h6>
-                  <input type="text" class="form-control" id="id_disease_type" name="disease_type" value="{{ beneficiary.disease_type }}">
+                  <h6 class="col form-label" for="id_personalinfo_disease_type">نوع المرض</h6>
+                  <input type="text" class="form-control" id="id_personalinfo_disease_type" name="personalinfo_disease_type" value="{{ beneficiary.disease_type }}">
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_work_status">هل يعمل؟</h6>
-                  <input type="text" class="form-control" id="id_work_status" name="work_status" value="{{ beneficiary.work_status }}">
+                  <h6 class="col form-label" for="id_personalinfo_work_status">هل يعمل؟</h6>
+                  <select
+                    name="personalinfo_work_status"
+                    class="form-select"
+                    id="id_personalinfo_work_status"
+                    {% comment %} onchange="workCheck(this);" {% endcomment %}
+                  >
+                    <option value=>---------</option>
+                    <option value="نعم">نعم</option>
+                    <option value="لا">لا</option>
+                  </select>
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_employer">جهة العمل</h6>
-                  <input type="text" class="form-control" id="id_employer" name="employer" value="{{ beneficiary.employer }}">
+                  <h6 class="col form-label" for="id_personalinfo_employer">جهة العمل</h6>
+                  <input type="text" class="form-control" id="id_personalinfo_employer" name="personalinfo_employer" value="{{ beneficiary.employer }}">
                 </div>
               </div>
     
               <div class="row row-cols-lg-2">
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_death_date_father_husband">تاريخ وفاة الأب/الزوج</h6>
-                  <input type="date" class="form-control" id="id_death_date_father_husband" name="death_date_father_husband">
+                  <h6 class="col form-label" for="id_personalinfo_death_date_father_husband">تاريخ وفاة الأب/الزوج</h6>
+                  <input type="date" class="form-control" id="id_personalinfo_death_date_father_husband" name="personalinfo_death_date_father_husband">
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_washing_place">المغسلة التي تم التجهيز فيها</h6>
-                  <input type="text" class="form-control" id="id_washing_place" name="washing_place" value="{% if beneficiary.washing_place %}{{ beneficiary.washing_place }}{% else %}{% endif %}">
+                  <h6 class="col form-label" for="id_personalinfo_washing_place">المغسلة التي تم التجهيز فيها</h6>
+                  <select
+                    name="personalinfo_washing_place"
+                    class="form-select"
+                    id="id_personalinfo_washing_place"
+                  >
+                    <option value>---------</option>
+                    <option value="إكرام فلسطين">إكرام فلسطين</option>
+                    <option value="الثنيان">الثنيان</option>
+                    <option value="العمودي">العمودي</option>
+                    <option value="ابن القيم">ابن القيم</option>
+                    <option value="الأمير منصور">الأمير منصور</option>
+                    <option value="الملك فهد">الملك فهد</option>
+                    <option value="الملك عبدالعزيز">الملك عبدالعزيز</option>
+                    <option value="اللامي">اللامي</option>
+                    <option value="طيبة">طيبة</option>
+                    <option value="القريقري">القريقري</option>
+                    <option value="شرق جدة">شرق جدة</option>
+                    <option value="أخرى">أخرى</option>
+                  </select>
                 </div>
               </div>
               
               <div class="row row-cols-lg-2">
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_bank_type">أسم البنك</h6>
-                  <input type="text" class="form-control" id="id_bank_type" name="bank_type" value="{{ beneficiary.bank_type }}">
+                  <h6 class="col form-label" for="id_personalinfo_bank_iban">رقم الإيبان</h6>
+                  <input type="text" class="form-control" id="id_personalinfo_bank_iban" name="personalinfo_bank_iban" value="{{ beneficiary.bank_iban }}">
                 </div>
                 <div class="mb-3">
-                  <h6 class="col form-label" for="id_bank_iban">رقم الإيبان</h6>
-                  <input type="text" class="form-control" id="id_bank_iban" name="bank_iban" value="{{ beneficiary.bank_iban }}">
+                  <h6 class="col form-label" for="id_personalinfo_bank_type">أسم البنك</h6>
+                  <select
+                    name="personalinfo_bank_type"
+                    class="form-select"
+                    id="id_personalinfo_bank_type"
+                  >
+                    <option value>---------</option>
+                    <option value="الأهلي السعودي">الأهلي السعودي</option>
+                    <option value="الراجحي">الراجحي</option>
+                    <option value="الجزيرة">الجزيرة</option>
+                    <option value="الإنماء">الإنماء</option>
+                    <option value="البلاد">البلاد</option>
+                    <option value="الرياض">الرياض</option>
+                    <option value="ساب">ساب</option>
+                    <option value="السعودي الفرنسي">السعودي الفرنسي</option>
+                    <option value="العربي">العربي</option>
+                    <option value="مسقط">مسقط</option>
+                    <option value="الإمارات دبي الوطني">الإمارات دبي الوطني</option>
+                    <option value="الخليج الدولي">الخليج الدولي</option>
+                    <option value="البحرين الوطني">البحرين الوطني</option>
+                    <option value="الكويت الوطني">الكويت الوطني</option>
+                    <option value="باكستان الوطني">باكستان الوطني</option>
+                    <option value="الأول">الأول</option>
+                    <option value="السعودي للاستثمار">السعودي للاستثمار</option>
+                    <option value="زراعات">زراعات</option>
+                    <option value="أخرى">أخرى</option>
+                  </select>
                 </div>
               </div>
 
@@ -929,16 +1257,16 @@
   // Populate the date response into the data input element
   let dob = new Date({{ beneficiary_dob }});
   let datestring1 = dob.getFullYear().toString().padStart(4, '0') + '-' + (dob.getMonth()+1).toString().padStart(2, '0') + '-' + dob.getDate().toString().padStart(2, '0');
-  document.getElementById('id_date_of_birth').value = datestring1;
+  document.getElementById('id_personalinfo_date_of_birth').value = datestring1;
 
   let national_id_exp_date = new Date({{ beneficiary_national_id_exp_data }});
   let datestring2 = national_id_exp_date.getFullYear().toString().padStart(4, '0') + '-' + (national_id_exp_date.getMonth()+1).toString().padStart(2, '0') + '-' + national_id_exp_date.getDate().toString().padStart(2, '0');
-  document.getElementById('id_national_id_exp_date').value = datestring2;
+  document.getElementById('id_personalinfo_national_id_exp_date').value = datestring2;
 
   {% if beneficiary_death_date_father_husband %}
   let death_date_father_husband = new Date({{ beneficiary_death_date_father_husband }});
   let datestring3 = death_date_father_husband.getFullYear().toString().padStart(4, '0') + '-' + (death_date_father_husband.getMonth()+1).toString().padStart(2, '0') + '-' + death_date_father_husband.getDate().toString().padStart(2, '0');
-  document.getElementById('id_death_date_father_husband').value = datestring3;
+  document.getElementById('id_personalinfo_death_date_father_husband').value = datestring3;
   {% endif %}
 
   $(document).ready(function () {
@@ -960,6 +1288,21 @@
       }
     });
 
+    // Function to set the selected option for a given select element
+    function setSelectedOption(selectId, selectedValue) {
+      $('#' + selectId).val(selectedValue);
+    }
+
+    // Call the function with the specific select element and value
+    setSelectedOption('id_personalinfo_nationality', "{{ beneficiary.nationality }}");
+    setSelectedOption('id_personalinfo_gender', "{{ beneficiary.gender }}");
+    setSelectedOption('id_personalinfo_category', "{{ beneficiary.category }}");
+    setSelectedOption('id_personalinfo_marital_status', "{{ beneficiary.marital_status }}");
+    setSelectedOption('id_personalinfo_educational_level', "{{ beneficiary.educational_level }}");
+    setSelectedOption('id_personalinfo_health_status', "{{ beneficiary.health_status }}");
+    setSelectedOption('id_personalinfo_work_status', "{{ beneficiary.work_status }}");
+    setSelectedOption('id_personalinfo_washing_place', "{{ beneficiary.washing_place}}");
+    setSelectedOption('id_personalinfo_bank_type', "{{ beneficiary.bank_type }}");
 
   }); // document end line 
   
