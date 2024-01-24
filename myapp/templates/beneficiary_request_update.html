@@ -1,5 +1,11 @@
 {% extends 'base.html' %}{% load static %}{% block title %}الطلبات{% endblock %}
 {% block head %}
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Include jQuery Validation Plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
 {% endblock %}
 {% block content %}
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
@@ -152,12 +158,10 @@
                 </div>
               </div>
 
-              <div class="row mt-3">
+              <div class="row mt-3" id="family_issues_needs_container">
                 <div class="col-md-6 mb-4 form-group">
                   <label class="form-label"
-                    >المشكلات التي تعاني منها الأسرة<span style="color: red"
-                      >*</span
-                    > <span style="font-size: 0.9rem">
+                    >المشكلات التي تعاني منها الأسرة <span class="text-muted" style="font-size: 0.9rem">
                       (إختيار متعدد)</span
                     ></label
                   >
@@ -185,7 +189,7 @@
                 </div>
                 <div class="col-md-6 mb-4 form-group">
                   <label class="form-label"
-                    >احتياجات الأسرة<span style="color: red">*</span> <span style="font-size: 0.9rem">
+                    >احتياجات الأسرة <span class="text-muted" style="font-size: 0.9rem">
                       (إختيار متعدد)</span
                     ></label
                   >
@@ -936,6 +940,28 @@
   let datestring3 = death_date_father_husband.getFullYear().toString().padStart(4, '0') + '-' + (death_date_father_husband.getMonth()+1).toString().padStart(2, '0') + '-' + death_date_father_husband.getDate().toString().padStart(2, '0');
   document.getElementById('id_death_date_father_husband').value = datestring3;
   {% endif %}
+
+  $(document).ready(function () {
+    // List of values to match
+    var family_issues_list = {{ beneficiary.family_issues | safe }};
+    var family_needs_list = {{ beneficiary.family_needs | safe }};
+
+    // Iterate through the checkboxes and set "checked" property based on the match
+    $('[name^="familyinfo_issues_"]').each(function () {
+      if (family_issues_list.includes($(this).val())) {
+        $(this).prop('checked', true);
+      }
+    });
+
+    // Iterate through the checkboxes and set "checked" property based on the match
+    $('[name^="familyinfo_needs_type_"]').each(function () {
+      if (family_needs_list.includes($(this).val())) {
+        $(this).prop('checked', true);
+      }
+    });
+
+
+  }); // document end line 
   
 </script>
 {% endblock %}
