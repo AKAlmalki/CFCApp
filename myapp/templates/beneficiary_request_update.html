@@ -36,6 +36,7 @@
           class="needs-validation"
           novalidate
         >
+        {% csrf_token %}
         <div class="mt-4">
 
           <div class="alert alert-danger" role="alert" id="alert-danger-error-fields">
@@ -1303,7 +1304,7 @@
         <hr>
 
         <div class="mt-4">
-          <button href="#" class="btn btn-success px-5 py-2 submit-btn" disabled id="submit-btn">تأكيد طلب تحديث البيانات</button>
+          <button type="submit" class="btn btn-success px-5 py-2 submit-btn" disabled id="submit-btn">تأكيد طلب تحديث البيانات</button>
           <a href="{% url 'beneficiary_requests' username=user.username %}" class="btn btn-secondary px-4 py-2">العودة للصفحة السابقة</a>
         </div>
       </form>
@@ -2395,6 +2396,104 @@
       
       updateAlert(); // Update the alert after displaying the custom error
       updateTabs();  // Update the tabs after displaying the custom error
+    });
+
+    /*
+    function getTableDataAsJSON() {
+        const table = document.getElementById('family-table');
+        const rows = document.querySelectorAll('#family-table tr');
+        let dependentsData = [];
+    
+        for (let i = 1; i < rows.length; i++) { // Start from 1 to skip table header
+            const cells = rows[i].getElementsByTagName('td');
+            let dependent = {
+                firstName: cells[0].innerText, // Assuming first cell contains the first name
+                secondName: cells[1].innerText,
+                lastName: cells[2].innerText,
+                gender: cells[3].innerText,
+                relationship: cells[4].innerText,
+                educationalStatus: cells[5].innerText,
+                martialStatus: cells[6].innerText,
+                nationalID: cells[7].innerText,
+                healthStatus: cells[8].innerText,
+                dependentIncomeTable: cells[9].innerText,
+                needsType: cells[10].innerText,
+                educationalDegree: cells[11].innerText,
+                dateOfBitrh: cells[12].innerText,
+                nationalIDExpDate: cells[13].innerText,
+                needsDescription: cells[14].innerText,
+                educationalLevel: cells[15].innerText,
+                diseaseType: cells[16].innerText,
+            };
+            dependentsData.push(dependent);
+        }
+    
+        return JSON.stringify(dependentsData);
+    }
+    */
+    
+    // Use this function to get JSON when you need it
+    //const dependentsJSON = getTableDataAsJSON();
+    //console.log(dependentsJSON); // Logs the JSON string
+    
+    document.getElementById('edit_beneficiary_request_form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+
+      // Collecting checkbox values
+      /*
+      let dependentNeedsType = [];
+      document.querySelectorAll('#id_dependent_info_needs_type input[type=checkbox]').forEach((checkbox) => {
+          if (checkbox.checked) {
+              dependentNeedsType.push(checkbox.value);
+          }
+      });
+      formData.append('dependent_info_needs_type', JSON.stringify(dependentNeedsType));
+      */
+
+      // Collecting checkbox values
+      let familyIssue = [];
+      document.querySelectorAll('#id_familyinfo_family_issues input[type=checkbox]').forEach((checkbox) => {
+          if (checkbox.checked) {
+              familyIssue.push(checkbox.value);
+          }
+      });
+      formData.append('familyinfo_family_issues', JSON.stringify(familyIssue));
+
+      // Collecting checkbox values
+      let familyNeedsType = [];
+      document.querySelectorAll('#id_familyinfo_needs_type input[type=checkbox]').forEach((checkbox) => {
+          if (checkbox.checked) {
+              familyNeedsType.push(checkbox.value);
+          }
+      });
+      formData.append('familyinfo_needs_type', JSON.stringify(familyNeedsType));
+
+      // Adding information of the dependents table to the FormData
+      //formData.append('dependents-table', getTableDataAsJSON());
+
+      // Remove 'Content-Type' header to allow the browser to add it
+      // along with the correct 'boundary'
+      // delete options.headers['Content-Type'];
+
+      fetch('http://127.0.0.1:8000{% url 'beneficiary_request_update_confirm' username=user_info.username b_request_id=request_id %}', {
+          method: 'POST',
+          body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.redirect) {
+              //window.location.href = data.redirect;
+              console.log(data);
+          } else {
+              // Handle other responses
+          }
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+          // Handle error
+      });
     });
 
 

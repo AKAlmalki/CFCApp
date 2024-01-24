@@ -1771,4 +1771,6 @@ def beneficiary_request_update(request, username, b_request_id):
 
 @login_required(login_url="/login")
 def beneficiary_request_update_confirm(request, username, b_request_id):
-    pass
+    data = request.POST
+    print(data)
+    return JsonResponse({'redirect': '/confirmation', 'data': data})
