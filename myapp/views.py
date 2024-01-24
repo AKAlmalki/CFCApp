@@ -354,13 +354,15 @@ def new_dashboard(request):
 
 @login_required(login_url="/login")
 def dashboard_requests(request):
-    beneficiary_obj = beneficiary.objects.all()
-    paginator = Paginator(beneficiary_obj, IPP_DASHBOARD_REQUESTS)
+
+    Beneficiary_request_list = Beneficiary_request.objects.all()
+    # beneficiary_obj = beneficiary.objects.all()
+    paginator = Paginator(Beneficiary_request_list, IPP_DASHBOARD_REQUESTS)
     page_number = request.GET.get('page')
-    beneficiary_obj = paginator.get_page(page_number)
+    Beneficiary_request_list = paginator.get_page(page_number)
     context = {
-        "beneficiary_obj": beneficiary_obj,
-        "beneficiaries_headers": ['رقم الملف', 'الأسم الأول', 'الأسم الأخير', 'التصنيف', 'الحالة الصحية', 'تاريخ الإرسال', 'الحالة الاجتماعية', 'مؤهل؟', 'الاجراءات'],
+        "beneficiary_requests": Beneficiary_request_list,
+        "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'المُراجع', 'التعليقات', 'الاجراءات'],
     }
 
     return render(request, "requests.html", context)
@@ -1110,16 +1112,16 @@ def beneficiary_indiv(request, user_id):
                 Dependent_income.objects.bulk_create(dependent_file_list)
 
         # Create Beneficiary_request object in the DB
-
         # Retrieve the object for the logged in user
         logged_in_user = request.user
 
-        beneficiary_new_request = Beneficiary_request(
+        new_beneficiary_request = Beneficiary_request(
             user=logged_in_user,
             beneficiary=beneficiary_obj,
             status="waiting",
+            request_type="new",
         )
-        beneficiary_new_request.save()
+        new_beneficiary_request.save()
 
         # In case of successful submission and valid form data
         return JsonResponse({'redirect': '/confirmation', 'file_no': beneficiary_obj.file_no})
@@ -1995,7 +1997,7 @@ def beneficiary_request_update_confirm(request, user_id):
         new_beneficiary_request = Beneficiary_request(
             user=user,
             beneficiary=beneficiary_obj,
-            status="under review",
+            status="waiting",
             request_type="update",
         )
         new_beneficiary_request.save()
