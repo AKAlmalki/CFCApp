@@ -100,6 +100,11 @@ urlpatterns = [
         name="beneficiary_request_update"
     ),
     path(
+        'beneficiaries/<str:username>/requests/<int:b_request_id>/update/confirm/',
+        views.beneficiary_request_update_confirm,
+        name="beneficiary_request_update_confirm"
+    ),
+    path(
         "sign-up",
         views.sign_up,
         name="sign-up"

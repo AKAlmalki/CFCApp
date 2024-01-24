@@ -1767,3 +1767,8 @@ def beneficiary_request_update(request, username, b_request_id):
         return redirect('home')
 
     return render(request, "beneficiary_request_update.html", context)
+
+
+@login_required(login_url="/login")
+def beneficiary_request_update_confirm(request, username, b_request_id):
+    pass
