@@ -14,6 +14,7 @@ from datetime import datetime, date
 import logging
 import os
 import json
+import time
 from decimal import Decimal
 from openpyxl import Workbook
 from openpyxl.styles import *
@@ -1710,16 +1711,57 @@ def beneficiary_request_update(request, username, b_request_id):
                 'attachment_type': attachment_type_ar,
             })
 
-        context = {
-            'user_info': user,
-            'request_id': b_request_id,
-            'beneficiary_requests': beneficiary_requests,
-            'beneficiary': beneficiary_obj,
-            'beneficiary_house': beneficiary_house_obj,
-            'beneficiary_income_expense': beneficiary_income_expense_obj,
-            'beneficiary_attachments': beneficiary_attachment_list,
-            'dependent_list': dependent_data,
-        }
+        # Convert date of birth to be populated in the template
+        dob = date(
+            beneficiary_obj.date_of_birth.year,
+            beneficiary_obj.date_of_birth.month,
+            beneficiary_obj.date_of_birth.day
+        )
+
+        # Convert date of birth to be populated in the template
+        national_id_exp_date = date(
+            beneficiary_obj.national_id_exp_date.year,
+            beneficiary_obj.national_id_exp_date.month,
+            beneficiary_obj.national_id_exp_date.day
+        )
+
+        death_date_father_husband = None
+        if beneficiary_obj.death_date_father_husband is not None:
+            death_date_father_husband = date(
+                beneficiary_obj.death_date_father_husband.year,
+                beneficiary_obj.death_date_father_husband.month,
+                beneficiary_obj.death_date_father_husband.day
+            )
+
+        if death_date_father_husband is not None:
+            context = {
+                'user_info': user,
+                'request_id': b_request_id,
+                'beneficiary_requests': beneficiary_requests,
+                'beneficiary': beneficiary_obj,
+                'beneficiary_dob': int(time.mktime(dob.timetuple())) * 1000,
+                'beneficiary_death_date_father_husband': int(time.mktime(death_date_father_husband.timetuple())) * 1000,
+                'beneficiary_national_id_exp_data': int(time.mktime(national_id_exp_date.timetuple())) * 1000,
+                'beneficiary_house': beneficiary_house_obj,
+                'beneficiary_income_expense': beneficiary_income_expense_obj,
+                'beneficiary_attachments': beneficiary_attachment_list,
+                'dependent_list': dependent_data,
+            }
+
+        else:
+            context = {
+                'user_info': user,
+                'request_id': b_request_id,
+                'beneficiary_requests': beneficiary_requests,
+                'beneficiary': beneficiary_obj,
+                'beneficiary_dob': int(time.mktime(dob.timetuple())) * 1000,
+                'beneficiary_national_id_exp_data': int(time.mktime(national_id_exp_date.timetuple())) * 1000,
+                'beneficiary_house': beneficiary_house_obj,
+                'beneficiary_income_expense': beneficiary_income_expense_obj,
+                'beneficiary_attachments': beneficiary_attachment_list,
+                'dependent_list': dependent_data,
+            }
+
     except ObjectDoesNotExist:
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')

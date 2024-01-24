@@ -1,4 +1,7 @@
-{% extends 'base.html' %}{% load static %}{% load humanize %}{% block title %}الطلبات{% endblock %}{% block content %}
+{% extends 'base.html' %}{% load static %}{% block title %}الطلبات{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container mt-5">
   <div class="nav-breadcrumb mb-4">
@@ -11,7 +14,7 @@
     </nav>
   </div>
 
-  <div class="card">
+  <div class="card bg-light">
     <div class="card-body">
       <h2 class="card-title fw-bold mt-3">تحديث بيانات الطلب</h2>
       <small class="text-muted">رقم الطلب #{{ request_id }}</small>
@@ -42,7 +45,7 @@
               <div class="row row-cols-lg-2 row-cols-xl-4">
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_file_no">رقم الملف</h6>
-                  <input type="text" class="form-control" id="id_file_no" name="file_no" value="{{ beneficiary.file_no }}">
+                  <input type="text" class="form-control" id="id_file_no" name="file_no" value="{{ beneficiary.file_no }}" disabled readonly>
                 </div>
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_first_name">الأسم الأول</h6>
@@ -65,7 +68,7 @@
                 </div>
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_date_of_birth">تاريخ الميلاد</h6>
-                  <input type="date" class="form-control" id="id_date_of_birth" name="date_of_birth" value="{{ beneficiary.date_of_birth }}">
+                  <input type="date" class="form-control" id="id_date_of_birth" name="date_of_birth">
                 </div>
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_phone_number">رقم الجوال</h6>
@@ -80,83 +83,151 @@
               <div class="row row-cols-md-1 row-cols-xl-3">
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_nationality">الجنسية</h6>
-                  <input type="text" class="form-control" id="id_nationality" name="nationality" value="{{ beneficiary.nationality }}" disabled readonly>
+                  <input type="text" class="form-control" id="id_nationality" name="nationality" value="{{ beneficiary.nationality }}">
                 </div>
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_national_id">رقم الهوية/الإقامة</h6>
-                  <input type="text" class="form-control" id="id_national_id" name="national_id" value="{{ beneficiary.national_id }}" disabled readonly>
+                  <input type="text" class="form-control" id="id_national_id" name="national_id" value="{{ beneficiary.national_id }}">
                 </div>
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة</h6>
-                  <input type="text" class="form-control" id="id_national_id_exp_date" name="national_id_exp_date" value="{{ beneficiary.national_id_exp_date }}" disabled readonly>
+                  <input type="date" class="form-control" id="id_national_id_exp_date" name="national_id_exp_date">
                 </div>
               </div>
     
               <div class="row row-cols-md-1 row-cols-lg-3">
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_category">التصنيف الرئيسي</h6>
-                  <input type="text" class="form-control" id="id_category" name="category" value="{{ beneficiary.category }}" disabled readonly>
+                  <input type="text" class="form-control" id="id_category" name="category" value="{{ beneficiary.category }}">
                 </div>
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_marital_status">الحالة الاجتماعية</h6>
-                  <input type="text" class="form-control" id="id_marital_status" name="marital_status" value="{{ beneficiary.marital_status }}" disabled readonly>
+                  <input type="text" class="form-control" id="id_marital_status" name="marital_status" value="{{ beneficiary.marital_status }}">
                 </div>
     
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_educational_level">المستوى التعليمي</h6>
-                  <input type="text" class="form-control" id="id_educational_level" name="educational_level" value="{{ beneficiary.educational_level }}" disabled readonly>
+                  <input type="text" class="form-control" id="id_educational_level" name="educational_level" value="{{ beneficiary.educational_level }}">
                 </div>
               </div>
     
               <div class="row row-cols-lg-2 row-cols-xl-4">
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_health_status">الحالة الصحية</h6>
-                  <input type="text" class="form-control" id="id_health_status" name="health_status" value="{{ beneficiary.health_status }}" disabled readonly>
+                  <input type="text" class="form-control" id="id_health_status" name="health_status" value="{{ beneficiary.health_status }}">
                 </div>
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_disease_type">نوع المرض</h6>
-                  <input type="text" class="form-control" id="id_disease_type" name="disease_type" value="{% if beneficiary.disease_type %}{{ beneficiary.disease_type }}{% else %}----{% endif %}" disabled readonly>
+                  <input type="text" class="form-control" id="id_disease_type" name="disease_type" value="{{ beneficiary.disease_type }}">
                 </div>
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_work_status">هل يعمل؟</h6>
-                  <input type="text" class="form-control" id="id_work_status" name="work_status" value="{{ beneficiary.work_status }}" disabled readonly>
+                  <input type="text" class="form-control" id="id_work_status" name="work_status" value="{{ beneficiary.work_status }}">
                 </div>
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_employer">جهة العمل</h6>
-                  <input type="text" class="form-control" id="id_employer" name="employer" value="{% if beneficiary.employer %}{{ beneficiary.employer }}{% else %}----{% endif %}" disabled readonly>
+                  <input type="text" class="form-control" id="id_employer" name="employer" value="{{ beneficiary.employer }}">
                 </div>
               </div>
     
               <div class="row row-cols-lg-2">
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_death_date_father_husband">تاريخ وفاة الأب/الزوج</h6>
-                  <input type="text" class="form-control" id="id_death_date_father_husband" name="death_date_father_husband" value="{% if beneficiary.death_date_father_husband %}{{ beneficiary.death_date_father_husband }}{% else %}----{% endif %}" disabled readonly>
+                  <input type="date" class="form-control" id="id_death_date_father_husband" name="death_date_father_husband">
                 </div>
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_washing_place">المغسلة التي تم التجهيز فيها</h6>
-                  <input type="text" class="form-control" id="id_washing_place" name="washing_place" value="{% if beneficiary.washing_place %}{{ beneficiary.washing_place }}{% else %}----{% endif %}" disabled readonly>
+                  <input type="text" class="form-control" id="id_washing_place" name="washing_place" value="{% if beneficiary.washing_place %}{{ beneficiary.washing_place }}{% else %}{% endif %}">
                 </div>
               </div>
               
               <div class="row row-cols-lg-2">
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_bank_type">أسم البنك</h6>
-                  <input type="text" class="form-control" id="id_bank_type" name="bank_type" value="{{ beneficiary.bank_type }}" disabled readonly>
+                  <input type="text" class="form-control" id="id_bank_type" name="bank_type" value="{{ beneficiary.bank_type }}">
                 </div>
                 <div class="mb-3">
                   <h6 class="col form-label" for="id_bank_iban">رقم الإيبان</h6>
-                  <input type="text" class="form-control" id="id_bank_iban" name="bank_iban" value="{{ beneficiary.bank_iban }}" disabled readonly>
+                  <input type="text" class="form-control" id="id_bank_iban" name="bank_iban" value="{{ beneficiary.bank_iban }}">
                 </div>
               </div>
-    
-              <div class="row row-cols-xl-2">
-                <div class="mb-3">
-                  <h6 class="col form-label" for="id_family_issues">المشاكل التي تعاني منها الأسرة</h6>
-                  <input type="text" class="form-control" id="id_family_issues" name="family_issues" value="{{ beneficiary.family_issues }}" disabled readonly>
+
+              <div class="row mt-3">
+                <div class="col-md-6 mb-4 form-group">
+                  <label class="form-label"
+                    >المشكلات التي تعاني منها الأسرة<span style="color: red"
+                      >*</span
+                    > <span style="font-size: 0.9rem">
+                      (إختيار متعدد)</span
+                    ></label
+                  >
+                    <div
+                      name="familyinfo_family_issues"
+                      class="d-grid gap-2"
+                      style="grid-template-columns: 1fr 1fr;"
+                      id="id_familyinfo_family_issues"
+                    >
+                      <input type="checkbox" class="btn-check" id="id_familyinfo_issues_economical" autocomplete="off" name="familyinfo_issues_economical" value="اقتصادية">
+                      <label class="btn btn-outline-primary" for="id_familyinfo_issues_economical">اقتصادية</label>
+  
+                      <input type="checkbox" class="btn-check" id="id_familyinfo_issues_educational" autocomplete="off" name="familyinfo_issues_educational" value="تعليمية">
+                      <label class="btn btn-outline-primary" for="id_familyinfo_issues_educational">تعليمية</label>
+  
+                      <input type="checkbox" class="btn-check" id="id_familyinfo_issues_employment" autocomplete="off" name="familyinfo_issues_employment" value="توظيف">
+                      <label class="btn btn-outline-primary" for="id_familyinfo_issues_employment">توظيف</label>
+  
+                      <input type="checkbox" class="btn-check" id="id_familyinfo_issues_sponsorship" autocomplete="off" name="familyinfo_issues_sponsorship" value="كفالة">
+                      <label class="btn btn-outline-primary" for="id_familyinfo_issues_sponsorship">كفالة</label>
+  
+                      <input type="checkbox" class="btn-check" id="id_familyinfo_issues_healthy" autocomplete="off" name="familyinfo_issues_healthy" value="صحية">
+                      <label class="btn btn-outline-primary" for="id_familyinfo_issues_healthy">صحية</label>
+                    </div>
                 </div>
-                <div class="mb-3">
-                  <h6 class="col form-label" for="id_family_needs">احتياجات الأسرة</h6>
-                  <input type="text" class="form-control" id="id_family_needs" name="family_needs" value="{{ beneficiary.family_needs }}" disabled readonly>
+                <div class="col-md-6 mb-4 form-group">
+                  <label class="form-label"
+                    >احتياجات الأسرة<span style="color: red">*</span> <span style="font-size: 0.9rem">
+                      (إختيار متعدد)</span
+                    ></label
+                  >
+                  <div
+                    name="familyinfo_needs_type"
+                    class="d-grid gap-2"
+                    style="grid-template-columns: 1fr 1fr;"
+                    id="id_familyinfo_needs_type"
+                  >
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_food_baskets" autocomplete="off" name="familyinfo_needs_type_food_baskets" value="سلال غذائية">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_food_baskets">سلال غذائية</label>
+  
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_clothing" autocomplete="off" name="familyinfo_needs_type_clothing" value="كسوة">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_clothing">كسوة</label>
+  
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_school_bags"  autocomplete="off" name="familyinfo_needs_type_school_bags" value="حقائب مدرسية">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_school_bags">حقائب مدرسية</label>
+  
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_water_filters"  autocomplete="off" name="familyinfo_needs_type_water_filters" value="فلاتر مياه">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_water_filters">فلاتر مياه</label>
+  
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_rent_payment"  autocomplete="off" name="familyinfo_needs_type_rent_payment" value="سداد إيجار">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_rent_payment">سداد إيجار</label>
+  
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_electricity_payment"  autocomplete="off" name="familyinfo_needs_type_electricity_payment" value="سداد كهرباء">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_electricity_payment">سداد كهرباء</label>
+  
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_dept_payment" autocomplete="off" name="familyinfo_needs_type_dept_payment" value="سداد دين">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_dept_payment">سداد دين</label>
+  
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_training"  autocomplete="off" name="familyinfo_needs_type_training" value="تدريب">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_training">تدريب</label>
+  
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_electronic_devices" autocomplete="off" name="familyinfo_needs_type_electronic_devices" value="أجهزة كهربائية">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_electronic_devices">أجهزة كهربائية</label>
+  
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_furniture" autocomplete="off" name="familyinfo_needs_type_furniture" value="أثاث">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_furniture">أثاث</label>
+  
+                    <input type="checkbox" class="btn-check" id="id_familyinfo_needs_type_home_renovation" autocomplete="off" name="familyinfo_needs_type_home_renovation" value="ترميم">
+                    <label class="btn btn-outline-primary" for="id_familyinfo_needs_type_home_renovation">ترميم</label>
+                  </div>
                 </div>
               </div>
             </div> <!-- end line personal info --> 
@@ -850,5 +921,21 @@
 </div> <!-- end line container -->
 <script>
 
+  // console.log({{ beneficiary_dob }})
+  // Populate the date response into the data input element
+  let dob = new Date({{ beneficiary_dob }});
+  let datestring1 = dob.getFullYear().toString().padStart(4, '0') + '-' + (dob.getMonth()+1).toString().padStart(2, '0') + '-' + dob.getDate().toString().padStart(2, '0');
+  document.getElementById('id_date_of_birth').value = datestring1;
+
+  let national_id_exp_date = new Date({{ beneficiary_national_id_exp_data }});
+  let datestring2 = national_id_exp_date.getFullYear().toString().padStart(4, '0') + '-' + (national_id_exp_date.getMonth()+1).toString().padStart(2, '0') + '-' + national_id_exp_date.getDate().toString().padStart(2, '0');
+  document.getElementById('id_national_id_exp_date').value = datestring2;
+
+  {% if beneficiary_death_date_father_husband %}
+  let death_date_father_husband = new Date({{ beneficiary_death_date_father_husband }});
+  let datestring3 = death_date_father_husband.getFullYear().toString().padStart(4, '0') + '-' + (death_date_father_husband.getMonth()+1).toString().padStart(2, '0') + '-' + death_date_father_husband.getDate().toString().padStart(2, '0');
+  document.getElementById('id_death_date_father_husband').value = datestring3;
+  {% endif %}
+  
 </script>
 {% endblock %}
