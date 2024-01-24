@@ -1416,7 +1416,7 @@ def supporter_test(request):
 
 
 @login_required(login_url='/login')
-def beneficiary_profile(request, username):
+def beneficiary_profile(request, user_id):
 
     # Get the logged-in user
     logged_in_user = request.user
@@ -1424,7 +1424,7 @@ def beneficiary_profile(request, username):
     context = {}
     try:
         # Retrieve the user whose profile is being requested
-        user = CustomUser.objects.get(username=username)
+        user = CustomUser.objects.get(id=user_id)
 
         # Check if the logged-in user matches the requested user
         if logged_in_user != user:
@@ -1442,7 +1442,7 @@ def beneficiary_profile(request, username):
 
 
 @login_required(login_url='/login')
-def beneficiary_requests(request, username):
+def beneficiary_requests(request, user_id):
 
     # Get the logged-in user
     logged_in_user = request.user
@@ -1450,7 +1450,7 @@ def beneficiary_requests(request, username):
     context = {}
     try:
         # Retrieve the user whose profile is being requested
-        user = CustomUser.objects.get(username=username)
+        user = CustomUser.objects.get(id=user_id)
 
         # Check if the logged-in user matches the requested user
         if logged_in_user != user:
@@ -1472,7 +1472,7 @@ def beneficiary_requests(request, username):
 
 
 @login_required(login_url='/login')
-def beneficiary_request_details(request, username, b_request_id):
+def beneficiary_request_details(request, user_id):
 
     # Get the logged-in user
     logged_in_user = request.user
@@ -1480,20 +1480,19 @@ def beneficiary_request_details(request, username, b_request_id):
     context = {}
     try:
         # Retrieve the user whose profile is being requested
-        user = CustomUser.objects.get(username=username)
+        user = CustomUser.objects.get(id=user_id)
 
         # Check if the logged-in user matches the requested user
         if logged_in_user != user:
             messages.error(request, "ليس لديك الصلاحية اللازمة!")
             return redirect('home')
 
-        beneficiary_requests = Beneficiary_request.objects.get(
-            id=b_request_id)
-        beneficiary_obj = beneficiary.objects.get(id=beneficiary_requests.id)
+        beneficiary_obj = beneficiary.objects.get(
+            user=user)
         beneficiary_house_obj = beneficiary_house.objects.get(
-            id=beneficiary_obj.id)
+            beneficiary_id=beneficiary_obj.id)
         beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
-            id=beneficiary_obj.id)
+            beneficiary_id=beneficiary_obj.id)
         beneficiary_attachment_obj = Beneficiary_attachment.objects.filter(
             beneficiary_id=beneficiary_obj.id).all()
 
@@ -1600,7 +1599,7 @@ def beneficiary_request_details(request, username, b_request_id):
 
 
 @login_required(login_url="/login")
-def beneficiary_request_update(request, username, b_request_id):
+def beneficiary_request_update(request, user_id):
 
     # Get the logged-in user
     logged_in_user = request.user
@@ -1608,20 +1607,19 @@ def beneficiary_request_update(request, username, b_request_id):
     context = {}
     try:
         # Retrieve the user whose profile is being requested
-        user = CustomUser.objects.get(username=username)
+        user = CustomUser.objects.get(id=user_id)
 
         # Check if the logged-in user matches the requested user
         if logged_in_user != user:
             messages.error(request, "ليس لديك الصلاحية اللازمة!")
             return redirect('home')
 
-        beneficiary_requests = Beneficiary_request.objects.get(
-            id=b_request_id)
-        beneficiary_obj = beneficiary.objects.get(id=beneficiary_requests.id)
+        beneficiary_obj = beneficiary.objects.get(
+            user=user_id)
         beneficiary_house_obj = beneficiary_house.objects.get(
-            id=beneficiary_requests.beneficiary.id)
+            beneficiary_id=beneficiary_obj.id)
         beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
-            id=beneficiary_obj.id)
+            beneficiary_id=beneficiary_obj.id)
         beneficiary_attachment_obj = Beneficiary_attachment.objects.filter(
             beneficiary_id=beneficiary_obj.id).all()
 
@@ -1736,7 +1734,6 @@ def beneficiary_request_update(request, username, b_request_id):
         if death_date_father_husband is not None:
             context = {
                 'user_info': user,
-                'request_id': b_request_id,
                 'beneficiary_requests': beneficiary_requests,
                 'beneficiary': beneficiary_obj,
                 'beneficiary_dob': int(time.mktime(dob.timetuple())) * 1000,
@@ -1751,7 +1748,6 @@ def beneficiary_request_update(request, username, b_request_id):
         else:
             context = {
                 'user_info': user,
-                'request_id': b_request_id,
                 'beneficiary_requests': beneficiary_requests,
                 'beneficiary': beneficiary_obj,
                 'beneficiary_dob': int(time.mktime(dob.timetuple())) * 1000,
@@ -1771,7 +1767,7 @@ def beneficiary_request_update(request, username, b_request_id):
 
 @csrf_exempt
 @login_required(login_url="/login")
-def beneficiary_request_update_confirm(request, username, b_request_id):
+def beneficiary_request_update_confirm(request, user_id):
 
     # Get the logged-in user
     logged_in_user = request.user
@@ -1782,7 +1778,7 @@ def beneficiary_request_update_confirm(request, username, b_request_id):
         files = request.FILES
 
         # Retrieve the user whose profile is being requested
-        user = CustomUser.objects.get(username=username)
+        user = CustomUser.objects.get(id=user_id)
 
         # Check if the logged-in user matches the requested user
         if logged_in_user != user:
@@ -1790,8 +1786,8 @@ def beneficiary_request_update_confirm(request, username, b_request_id):
             return redirect('home')
 
         # Get beneficiary_reqeust using b_reqeust_id
-        beneficiary_requests = Beneficiary_request.objects.get(
-            id=b_request_id)
+        # beneficiary_requests = Beneficiary_request.objects.get(
+        #     id=b_request_id)
 
         # Accessing the data for beneficiary
         first_name = data.get('personalinfo_first_name', None)
@@ -1839,7 +1835,7 @@ def beneficiary_request_update_confirm(request, username, b_request_id):
 
         # Get beneficiary object using beneficiary_requests.beneficiary.id
         beneficiary_obj = beneficiary.objects.get(
-            id=beneficiary_requests.beneficiary.id)
+            user=user)
 
         # Update object values
         beneficiary_obj.first_name = first_name
@@ -2075,7 +2071,6 @@ def beneficiary_request_update_confirm(request, username, b_request_id):
 
         context = {
             'user_info': user,
-            'request_id': b_request_id,
             'beneficiary_requests': beneficiary_requests,
             'beneficiary': beneficiary_obj,
         }
@@ -2084,7 +2079,7 @@ def beneficiary_request_update_confirm(request, username, b_request_id):
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
-    return JsonResponse({'redirect': '/beneficiaries/requests/confirm_message/', 'username': username})
+    return JsonResponse({'redirect': '/beneficiaries/requests/confirm_message/', 'user_id': user_id})
     # data = request.POST
     # print(data)
     # return JsonResponse({'redirect': '/confirmation', 'data': data})

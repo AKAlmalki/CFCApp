@@ -80,27 +80,27 @@ urlpatterns = [
         name="export_excel"
     ),
     path(
-        'beneficiaries/<str:username>/',
+        'beneficiaries/<int:user_id>/',
         views.beneficiary_profile,
         name="beneficiary_profile"
     ),
     path(
-        'beneficiaries/<str:username>/requests/',
+        'beneficiaries/<int:user_id>/requests/',
         views.beneficiary_requests,
         name="beneficiary_requests"
     ),
     path(
-        'beneficiaries/<str:username>/requests/<int:b_request_id>/',
+        'beneficiaries/<int:user_id>/details/',
         views.beneficiary_request_details,
         name="beneficiary_request_details"
     ),
     path(
-        'beneficiaries/<str:username>/requests/<int:b_request_id>/update/',
+        'beneficiaries/<int:user_id>/update/',
         views.beneficiary_request_update,
         name="beneficiary_request_update"
     ),
     path(
-        'beneficiaries/<str:username>/requests/<int:b_request_id>/update/confirm/',
+        'beneficiaries/<int:user_id>/confirm/',
         views.beneficiary_request_update_confirm,
         name="beneficiary_request_update_confirm"
     ),

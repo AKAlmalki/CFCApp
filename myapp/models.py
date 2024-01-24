@@ -167,6 +167,8 @@ class beneficiary(models.Model):
     family_needs = JSONField(default=list)
     last_updated = models.DateTimeField(null=True)
     status = models.CharField(max_length=55, null=True)
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return "file_no " + self.file_no + ", name: " + self.first_name + ", national_id:" + self.national_id

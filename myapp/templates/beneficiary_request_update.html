@@ -16,7 +16,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home' %}">الصفحة الرئيسية</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'beneficiary_requests' username=user.username %}">الطلبات</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'beneficiary_requests' user_id=user.id %}">الطلبات</a></li>
         <li class="breadcrumb-item active" aria-current="page">تفاصيل الطلب</li>
       </ol>
     </nav>
@@ -32,7 +32,7 @@
           name="edit_beneficiary_request_form"
           enctype="multipart/form-data"
           method="POST"
-          action="{% url 'beneficiary_request_update_confirm' username=user_info.username b_request_id=request_id %}"
+          action="{% url 'beneficiary_request_update_confirm' user_id=user_info.id %}"
           class="needs-validation"
           novalidate
         >
@@ -1305,7 +1305,7 @@
 
         <div class="mt-4">
           <button type="submit" class="btn btn-success px-5 py-2 submit-btn" disabled id="submit-btn">تأكيد طلب تحديث البيانات</button>
-          <a href="{% url 'beneficiary_requests' username=user.username %}" class="btn btn-secondary px-4 py-2">العودة للصفحة السابقة</a>
+          <a href="{% url 'beneficiary_requests' user_id=user.id %}" class="btn btn-secondary px-4 py-2">العودة للصفحة السابقة</a>
         </div>
       </form>
 
@@ -2477,7 +2477,7 @@
       // along with the correct 'boundary'
       // delete options.headers['Content-Type'];
 
-      fetch('http://127.0.0.1:8000{% url 'beneficiary_request_update_confirm' username=user_info.username b_request_id=request_id %}', {
+      fetch('http://127.0.0.1:8000{% url 'beneficiary_request_update_confirm' user_id=user_info.id %}', {
           method: 'POST',
           body: formData,
       })

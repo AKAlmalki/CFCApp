@@ -7,8 +7,8 @@
       <div class="card p-3">
         <div class="e-navlist e-navlist--active-bg">
           <ul class="nav nav d-flex align-items-start flex-lg-column">
-            <li class="nav-item"><a class="nav-link link-body-emphasis px-2 active" href="{% url 'beneficiary_profile' username=user.username %}"><i class="fa fa-fw fa-bar-chart mr-1"></i><span>  نظرة عامة</span></a></li>
-            <li class="nav-item"><a class="nav-link link-body-emphasis text-dark px-2" href="{% url 'beneficiary_requests' username=user.username %}"><i class="fa fa-fw fa-th mr-1"></i><span class="fw-bold text-success">  الطلبات</span></a></li>
+            <li class="nav-item"><a class="nav-link link-body-emphasis px-2 active" href="{% url 'beneficiary_profile' user_id=user.id %}"><i class="fa fa-fw fa-bar-chart mr-1"></i><span>  نظرة عامة</span></a></li>
+            <li class="nav-item"><a class="nav-link link-body-emphasis text-dark px-2" href="{% url 'beneficiary_requests' user_id=user.id %}"><i class="fa fa-fw fa-th mr-1"></i><span class="fw-bold text-success">  الطلبات</span></a></li>
           </ul>
         </div>
       </div>
@@ -59,7 +59,7 @@
                         <th scope="col">الحالة</th>
                         <th scope="col">التعليقات</th>
                         <th scope="col">مُراجع الطلب</th>
-                        <th scope="col">الاجراءات</th>
+                        {% comment %} <th scope="col">الاجراءات</th> {% endcomment %}
                       </tr>
                     </thead>
                     <tbody>
@@ -70,6 +70,8 @@
                           <td class="col" scope="col">
                             {% if request.status == "waiting" %}
                             <span class="badge text-bg-warning">انتظار</span>
+                            {% elif request.status == "under review" %}
+                            <span class="badge text-bg-primary">تحت المراجعة</span>
                             {% else %}
                             <span class="badge text-bg-primary">{{ request.status }}</span>
                             {% endif %}
@@ -84,7 +86,7 @@
                           {% else %}
                           <td class="col" scope="col">----</td>
                           {% endif %}
-                          <td class="col" scope="col">
+                          {% comment %} <td class="col" scope="col">
                             <div class="dropdown">
                               <button class="btn bg-secondary-subtle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
@@ -96,7 +98,7 @@
                                 <li><a class="dropdown-item" type="button" href="{% url 'beneficiary_request_update' username=user.username b_request_id=request.id %}">تحديث بيانات الطلب</a></li>
                               </ul>
                             </div>
-                          </td>
+                          </td> {% endcomment %}
                         </tr>
                       {% endfor %}
                     </tbody>
@@ -107,7 +109,7 @@
           </div>
         </div>
 
-        <div class="col-3 col-md-3 mb-3">
+        <div class="col-12 col-md-5 mb-3">
 
           <div class="card mb-3">
             <div class="card-body">
@@ -120,11 +122,22 @@
             </div>
           </div>
 
-          <div class="card">
+          <div class="card mb-3">
             <div class="card-body">
               <h6 class="card-title font-weight-bold">الدعم والمساعدة</h6>
               <p class="card-text text-muted">تواصل معنا في أي وقت, سنكون سعداء بمساعدتك.</p>
               <button type="button" class="btn btn-primary">تواصل معنا</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title font-weight-bold">ملف المستفيد</h6>
+              <p class="card-text text-muted">قم بتحديث معلومات المستفيد خاصتك او الاطلاع عليها من خلال زيارة الراوبط التالية</p>
+              <div class="">
+                <a class="btn btn-primary mb-md-2" type="button" href="{% url 'beneficiary_request_details' user_id=user.id %}">تفاصيل الطلب</a>
+                <a class="btn btn-success mb-md-2" type="button" href="{% url 'beneficiary_request_update' user_id=user.id %}">تحديث بيانات الطلب</a>
+              </div>
             </div>
           </div>
         </div>
