@@ -1953,20 +1953,20 @@ def beneficiary_request_update_confirm(request, username, b_request_id):
         # Save object changes
         beneficiary_income_expense_obj.save()
 
+        # Create a new beneficiary_request to have "under review" status
+        new_beneficiary_request = Beneficiary_request(
+            user=user,
+            beneficiary=beneficiary_obj,
+            status="under review",
+            request_type="update",
+        )
+        new_beneficiary_request.save()
+
         # beneficiary_attachment_obj = Beneficiary_attachment.objects.filter(
         #     beneficiary_id=beneficiary_obj.id).all()
 
         # dependent_list = dependent.objects.filter(
         #     beneficiary_id=beneficiary_obj.id).all()
-
-        # # Create a new beneficiary_request to have "under review" status
-        # new_beneficiary_request = Beneficiary_request(
-        #     user=user,
-        #     beneficiary=beneficiary_obj,
-        #     status="under review",
-        #     request_type="update",
-        # )
-        # new_beneficiary_request.save()
 
         # dependent_data = []
 
