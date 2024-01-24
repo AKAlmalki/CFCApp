@@ -833,7 +833,7 @@
         var beneficiaryId = this.getAttribute('data-id');
 
         // Fetch request using beneficiaryId to get the beneficiary details:
-        fetch('http://127.0.0.1:8000/beneficiary_details/' + beneficiaryId)
+        fetch('https://port433.link/beneficiary_details/' + beneficiaryId)
            .then(response => response.json())
            .then(data => {
               console.log(data);
