@@ -44,12 +44,6 @@
               {% else %}
               <td class="col">----</td>
               {% endif %}
-              {% comment %} {% if row.is_qualified == 0 %}
-              <td class="col"><p class="badge text-bg-warning">انتظار</p></td>
-              {% else %}
-              <td class="col"><p class="badge text-bg-success">مقبول</p></td>
-              {% endif %} {% endcomment %}
-              {% comment %} <td>{{ row }}</td>  {% endcomment %}
               <td class="col"><!-- Button trigger modal -->
                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal2">
                   الغاء
@@ -734,7 +728,25 @@
                           </div>
                           <div class="mb-3">
                             <label for="id_modal_needs_descriptions" class="col form-label">وصف الاحتياج</label>
-                            <textarea class="form-control" id="id_modal_needs_descriptions"></textarea>
+                            <textarea class="form-control" id="id_modal_needs_descriptions" rows="5"></textarea>
+                          </div>
+                          <hr>
+                          <div class="mb-3">
+                            <label for="id_modal_request_comment" class="col form-label">التعليقات</label>
+                            <textarea class="form-control" id="id_modal_request_comment" rows="5" name="modal_request_comment"></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label for="id_modal_request_status" class="col form-label">حالة الطلب</label>
+                            <select class="form-select" id="id_modal_request_status" rows="5" name="modal_request_status">
+                              <option value selected>---------</option>
+                              <option value="new">جديد</option>
+                              <option value="under review">تحت المراجعة</option>
+                              <option value="waiting">انتظار</option>
+                              <option value="not complete">غير مكتمل</option>
+                              <option value="rejected">مرفوض</option>
+                              <option value="accepted">مقبول</option>
+                              <option value="needs update">يحتاج تحديث</option>
+                            </select>
                           </div>
                         </form>
                       </div>

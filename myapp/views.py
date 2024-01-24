@@ -1657,6 +1657,24 @@ def beneficiary_request_update(request, user_id):
             messages.error(
                 request, "ليس لديك ملف مستفيد لدينا!")
             return redirect('home')
+        # Get the last added beneficiary_request
+
+        # # Check if there's existing beneficiary requests
+        # is_beneficiary_request = Beneficiary_request.objects.filter(
+        #     user=user).exists()
+
+        # if is_beneficiary_request:
+        #     last_beneficiary_request = Beneficiary_request.objects.latest(
+        #         'created_at')
+        #     if last_beneficiary_request.request_type == "update":
+        #         messages.error(
+        #             request, "لديك طلب تحديث بيانات سابق! لا يمكنك طلب تحديث بيانات جديد الى ان تتغير حالة الطلب السابق.")
+        #         return redirect('home')
+
+        # else:
+        #     messages.error(
+        #         request, "ليس لديك طلبات سابقة!!")
+        #     return redirect('home')
 
         beneficiary_obj = beneficiary.objects.get(
             user=user_id)
