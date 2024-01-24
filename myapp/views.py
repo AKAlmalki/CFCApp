@@ -281,6 +281,17 @@ def signin(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
 
+        remember_me = request.POST.get("remember_me", None)
+
+        if remember_me is not None:
+            # This if statement can change,
+            # but the purpose is checking remember me checkbox is checked or not.
+            request.session.set_expiry(604800)  # Here we extend session.
+
+        else:
+            # This part of code means, close session when browser is closed.
+            request.session.set_expiry(0)
+
         # Authenticate user with username and password
         user_auth = authenticate(username=username, password=password)
         # Get user info from the db
@@ -306,6 +317,11 @@ def signin(request):
         else:
             messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
             return redirect("login")
+
+    else:
+        # GET method
+        if request.user.is_authenticated:
+            return (""" Remember ME ! Let user inside""")
 
     return render(request, "registration/login.html")
 
