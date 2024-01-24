@@ -2084,7 +2084,13 @@ def beneficiary_request_update_confirm(request, username, b_request_id):
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
-    return render(request, "beneficiary_update_request_confirm.html", context)
+    return JsonResponse({'redirect': '/beneficiaries/requests/confirm_message/', 'username': username})
     # data = request.POST
     # print(data)
     # return JsonResponse({'redirect': '/confirmation', 'data': data})
+
+
+@login_required(login_url="/login")
+def confirm_beneficiary_request_update(request):
+
+    return render(request, "beneficiary_update_request_confirm.html")

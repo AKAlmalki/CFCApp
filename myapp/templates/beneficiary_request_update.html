@@ -2481,6 +2481,15 @@
           method: 'POST',
           body: formData,
       })
+      .then(response => response.json())
+      .then(data => {
+          if (data.redirect) {
+              window.location.href = data.redirect;
+              // console.log(data);
+          } else {
+              // Handle other responses
+          }
+      })
       .catch((error) => {
           console.error('Error:', error);
           // Handle error

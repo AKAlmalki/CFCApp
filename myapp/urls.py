@@ -105,6 +105,11 @@ urlpatterns = [
         name="beneficiary_request_update_confirm"
     ),
     path(
+        'beneficiaries/requests/confirm_message/',
+        views.confirm_beneficiary_request_update,
+        name="beneficiary_request_update_confirm_message"
+    ),
+    path(
         "sign-up",
         views.sign_up,
         name="sign-up"
