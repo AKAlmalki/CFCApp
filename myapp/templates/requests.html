@@ -20,10 +20,30 @@
             {% for row in beneficiary_requests %}
             <tr>
               <th scope="row">{{ row.id }}</th>
+              {% if row.request_type == "new" %}
+              <td class="col"><span class="badge text-bg-success">{{ row.request_type }}</span></td>
+              {% elif row.request_type == "update" %}
+              <td class="col"><span class="badge text-bg-info">{{ row.request_type }}</span></td>
+              {% else %}
               <td class="col">{{ row.request_type }}</td>
+              {% endif %}
+              {% if row.status == "under review" %}
+              <td class="col"><span class="badge text-bg-primary">{{ row.status }}</span></td>
+              {% elif row.status == "waiting" %}
+              <td class="col"><span class="badge text-bg-warning">{{ row.status }}</span></td>
+              {% else %}
               <td class="col">{{ row.status }}</td>
+              {% endif %}
+              {% if row.reviewed_by %}
               <td class="col">{{ row.reviewed_by }}</td>
+              {% else %}
+              <td class="col">----</td>
+              {% endif %}
+              {% if row.comment %}
               <td class="col">{{ row.comment }}</td>
+              {% else %}
+              <td class="col">----</td>
+              {% endif %}
               {% comment %} {% if row.is_qualified == 0 %}
               <td class="col"><p class="badge text-bg-warning">انتظار</p></td>
               {% else %}
