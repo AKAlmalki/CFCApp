@@ -60,7 +60,7 @@
                       <p class="d-inline">تقديم طلب</p> 
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                      <li><a class="dropdown-item" href="{% url 'beneficiary_new' %}">طلب مستفيد</a></li>
+                      <li><a class="dropdown-item" href="{% url 'beneficiary_new' user_id=user.id %}">طلب مستفيد</a></li>
                       <li><a class="dropdown-item" href="{% url 'supporter_indiv' %}">طلب كفالة</a></li>
                     </ul>
                   </li>

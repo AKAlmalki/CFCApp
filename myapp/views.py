@@ -725,7 +725,7 @@ def export_excel(request):
 
 @csrf_exempt
 @login_required(login_url="/login")
-def beneficiary_indiv(request):
+def beneficiary_indiv(request, user_id):
 
     if request.method == 'POST':
         data = request.POST
@@ -1125,7 +1125,33 @@ def beneficiary_indiv(request):
         return JsonResponse({'redirect': '/confirmation', 'file_no': beneficiary_obj.file_no})
 
     elif request.method == 'GET':
-        return render(request, "main/index2.html")
+
+        # Get the logged-in user
+        logged_in_user = request.user
+
+        context = {}
+        try:
+            # Retrieve the user whose profile is being requested
+            user = CustomUser.objects.get(id=user_id)
+
+            # Check if the logged-in user matches the requested user
+            if logged_in_user != user:
+                messages.error(request, "ليس لديك الصلاحية اللازمة!")
+                return redirect('home')
+
+            # Assuming `user_id` is the ID of the user you're checking for
+            beneficiary_exists = beneficiary.objects.filter(user=user).exists()
+
+            if beneficiary_exists:
+                messages.error(
+                    request, "لديك طلب مستفيد سابق! لا يمكنك طلب مستفيد أخر!")
+                return redirect('home')
+            else:
+
+                return render(request, "main/index2.html")
+        except ObjectDoesNotExist:
+            messages.error(request, "المستخدم غير موجود!")
+            return redirect('home')
 
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
@@ -1487,6 +1513,14 @@ def beneficiary_request_details(request, user_id):
             messages.error(request, "ليس لديك الصلاحية اللازمة!")
             return redirect('home')
 
+        # Assuming `user_id` is the ID of the user you're checking for
+        beneficiary_exists = beneficiary.objects.filter(user=user).exists()
+
+        if not beneficiary_exists:
+            messages.error(
+                request, "ليس لديك ملف مستفيد لدينا!")
+            return redirect('home')
+
         beneficiary_obj = beneficiary.objects.get(
             user=user)
         beneficiary_house_obj = beneficiary_house.objects.get(
@@ -1612,6 +1646,14 @@ def beneficiary_request_update(request, user_id):
         # Check if the logged-in user matches the requested user
         if logged_in_user != user:
             messages.error(request, "ليس لديك الصلاحية اللازمة!")
+            return redirect('home')
+
+        # Assuming `user_id` is the ID of the user you're checking for
+        beneficiary_exists = beneficiary.objects.filter(user=user).exists()
+
+        if not beneficiary_exists:
+            messages.error(
+                request, "ليس لديك ملف مستفيد لدينا!")
             return redirect('home')
 
         beneficiary_obj = beneficiary.objects.get(

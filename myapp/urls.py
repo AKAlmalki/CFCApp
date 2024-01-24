@@ -20,7 +20,7 @@ urlpatterns = [
         name="index"
     ),
     path(
-        "beneficiaries/new",
+        "beneficiaries/<int:user_id>/new",
         views.beneficiary_indiv,
         name="beneficiary_new"
     ),
