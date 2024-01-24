@@ -14,6 +14,7 @@ from datetime import datetime, date
 import logging
 import os
 import json
+import time
 from decimal import Decimal
 from openpyxl import Workbook
 from openpyxl.styles import *
@@ -105,12 +106,48 @@ def sign_up(request):
         nationality = request.POST['nationality']
         username = request.POST['username']
         email = request.POST['email']
-        phonenumber = request.POST['phonenumber']
+        phonenumber = request.POST.get('phonenumber', None)
         password1 = request.POST['password1']
         password2 = request.POST['password2']
 
+        username_exists = CustomUser.objects.filter(username=username).exists()
+
+        if username_exists:
+            # Pass request data back
+            request.session['first_name'] = first_name
+            request.session['last_name'] = last_name
+            request.session['date_of_birth'] = date_of_birth
+            request.session['gender'] = gender
+            request.session['nationality'] = nationality
+            request.session['username'] = username
+            request.session['email'] = email
+            request.session['phonenumber'] = phonenumber
+
+            # Alert an error message
+            messages.error(request, "أسم المستخدم موجود سابقًا.")
+
+            return redirect('sign-up')
+
+        email_exists = CustomUser.objects.filter(email=email).exists()
+
+        if email_exists:
+            # Pass request data back
+            request.session['first_name'] = first_name
+            request.session['last_name'] = last_name
+            request.session['date_of_birth'] = date_of_birth
+            request.session['gender'] = gender
+            request.session['nationality'] = nationality
+            request.session['username'] = username
+            request.session['email'] = email
+            request.session['phonenumber'] = phonenumber
+
+            # Alert an error message
+            messages.error(request, "البريد الالكتروني موجود سابقًا.")
+
+            return redirect('sign-up')
+
         # Make a new user object
-        new_user = CustomUser.objects.create_user(
+        new_user = CustomUser(
             username=username,
             email=email,
             password=password1,
@@ -123,7 +160,7 @@ def sign_up(request):
             # Make the user not active until it is confirmed by the link sent to the email
             is_active=False,
         )
-
+        new_user.save()
         messages.success(
             request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
 
@@ -244,6 +281,17 @@ def signin(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
 
+        remember_me = request.POST.get("remember_me", None)
+
+        if remember_me is not None:
+            # This if statement can change,
+            # but the purpose is checking remember me checkbox is checked or not.
+            request.session.set_expiry(604800)  # Here we extend session.
+
+        else:
+            # This part of code means, close session when browser is closed.
+            request.session.set_expiry(0)
+
         # Authenticate user with username and password
         user_auth = authenticate(username=username, password=password)
         # Get user info from the db
@@ -269,6 +317,11 @@ def signin(request):
         else:
             messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
             return redirect("login")
+
+    else:
+        # GET method
+        if request.user.is_authenticated:
+            return (""" Remember ME ! Let user inside""")
 
     return render(request, "registration/login.html")
 
@@ -353,13 +406,15 @@ def new_dashboard(request):
 
 @login_required(login_url="/login")
 def dashboard_requests(request):
-    beneficiary_obj = beneficiary.objects.all()
-    paginator = Paginator(beneficiary_obj, IPP_DASHBOARD_REQUESTS)
+
+    Beneficiary_request_list = Beneficiary_request.objects.all()
+    # beneficiary_obj = beneficiary.objects.all()
+    paginator = Paginator(Beneficiary_request_list, IPP_DASHBOARD_REQUESTS)
     page_number = request.GET.get('page')
-    beneficiary_obj = paginator.get_page(page_number)
+    Beneficiary_request_list = paginator.get_page(page_number)
     context = {
-        "beneficiary_obj": beneficiary_obj,
-        "beneficiaries_headers": ['رقم الملف', 'الأسم الأول', 'الأسم الأخير', 'التصنيف', 'الحالة الصحية', 'تاريخ الإرسال', 'الحالة الاجتماعية', 'مؤهل؟', 'الاجراءات'],
+        "beneficiary_requests": Beneficiary_request_list,
+        "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'المُراجع', 'التعليقات', 'الاجراءات'],
     }
 
     return render(request, "requests.html", context)
@@ -724,7 +779,7 @@ def export_excel(request):
 
 @csrf_exempt
 @login_required(login_url="/login")
-def beneficiary_indiv(request):
+def beneficiary_indiv(request, user_id):
 
     if request.method == 'POST':
         data = request.POST
@@ -1109,22 +1164,48 @@ def beneficiary_indiv(request):
                 Dependent_income.objects.bulk_create(dependent_file_list)
 
         # Create Beneficiary_request object in the DB
-
         # Retrieve the object for the logged in user
         logged_in_user = request.user
 
-        beneficiary_new_request = Beneficiary_request(
+        new_beneficiary_request = Beneficiary_request(
             user=logged_in_user,
             beneficiary=beneficiary_obj,
             status="waiting",
+            request_type="new",
         )
-        beneficiary_new_request.save()
+        new_beneficiary_request.save()
 
         # In case of successful submission and valid form data
         return JsonResponse({'redirect': '/confirmation', 'file_no': beneficiary_obj.file_no})
 
     elif request.method == 'GET':
-        return render(request, "main/index2.html")
+
+        # Get the logged-in user
+        logged_in_user = request.user
+
+        context = {}
+        try:
+            # Retrieve the user whose profile is being requested
+            user = CustomUser.objects.get(id=user_id)
+
+            # Check if the logged-in user matches the requested user
+            if logged_in_user != user:
+                messages.error(request, "ليس لديك الصلاحية اللازمة!")
+                return redirect('home')
+
+            # Assuming `user_id` is the ID of the user you're checking for
+            beneficiary_exists = beneficiary.objects.filter(user=user).exists()
+
+            if beneficiary_exists:
+                messages.error(
+                    request, "لديك طلب مستفيد سابق! لا يمكنك طلب مستفيد أخر!")
+                return redirect('home')
+            else:
+
+                return render(request, "main/index2.html")
+        except ObjectDoesNotExist:
+            messages.error(request, "المستخدم غير موجود!")
+            return redirect('home')
 
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
@@ -1415,7 +1496,7 @@ def supporter_test(request):
 
 
 @login_required(login_url='/login')
-def beneficiary_profile(request, username):
+def beneficiary_profile(request, user_id):
 
     # Get the logged-in user
     logged_in_user = request.user
@@ -1423,7 +1504,7 @@ def beneficiary_profile(request, username):
     context = {}
     try:
         # Retrieve the user whose profile is being requested
-        user = CustomUser.objects.get(username=username)
+        user = CustomUser.objects.get(id=user_id)
 
         # Check if the logged-in user matches the requested user
         if logged_in_user != user:
@@ -1441,7 +1522,7 @@ def beneficiary_profile(request, username):
 
 
 @login_required(login_url='/login')
-def beneficiary_requests(request, username):
+def beneficiary_requests(request, user_id):
 
     # Get the logged-in user
     logged_in_user = request.user
@@ -1449,7 +1530,7 @@ def beneficiary_requests(request, username):
     context = {}
     try:
         # Retrieve the user whose profile is being requested
-        user = CustomUser.objects.get(username=username)
+        user = CustomUser.objects.get(id=user_id)
 
         # Check if the logged-in user matches the requested user
         if logged_in_user != user:
@@ -1471,7 +1552,7 @@ def beneficiary_requests(request, username):
 
 
 @login_required(login_url='/login')
-def beneficiary_request_details(request, username, b_request_id):
+def beneficiary_request_details(request, user_id):
 
     # Get the logged-in user
     logged_in_user = request.user
@@ -1479,20 +1560,27 @@ def beneficiary_request_details(request, username, b_request_id):
     context = {}
     try:
         # Retrieve the user whose profile is being requested
-        user = CustomUser.objects.get(username=username)
+        user = CustomUser.objects.get(id=user_id)
 
         # Check if the logged-in user matches the requested user
         if logged_in_user != user:
             messages.error(request, "ليس لديك الصلاحية اللازمة!")
             return redirect('home')
 
-        beneficiary_requests = Beneficiary_request.objects.get(
-            id=b_request_id)
-        beneficiary_obj = beneficiary.objects.get(id=beneficiary_requests.id)
+        # Assuming `user_id` is the ID of the user you're checking for
+        beneficiary_exists = beneficiary.objects.filter(user=user).exists()
+
+        if not beneficiary_exists:
+            messages.error(
+                request, "ليس لديك ملف مستفيد لدينا!")
+            return redirect('home')
+
+        beneficiary_obj = beneficiary.objects.get(
+            user=user)
         beneficiary_house_obj = beneficiary_house.objects.get(
-            id=beneficiary_obj.id)
+            beneficiary_id=beneficiary_obj.id)
         beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
-            id=beneficiary_obj.id)
+            beneficiary_id=beneficiary_obj.id)
         beneficiary_attachment_obj = Beneficiary_attachment.objects.filter(
             beneficiary_id=beneficiary_obj.id).all()
 
@@ -1599,7 +1687,7 @@ def beneficiary_request_details(request, username, b_request_id):
 
 
 @login_required(login_url="/login")
-def beneficiary_request_update(request, username, b_request_id):
+def beneficiary_request_update(request, user_id):
 
     # Get the logged-in user
     logged_in_user = request.user
@@ -1607,20 +1695,45 @@ def beneficiary_request_update(request, username, b_request_id):
     context = {}
     try:
         # Retrieve the user whose profile is being requested
-        user = CustomUser.objects.get(username=username)
+        user = CustomUser.objects.get(id=user_id)
 
         # Check if the logged-in user matches the requested user
         if logged_in_user != user:
             messages.error(request, "ليس لديك الصلاحية اللازمة!")
             return redirect('home')
 
-        beneficiary_requests = Beneficiary_request.objects.get(
-            id=b_request_id)
-        beneficiary_obj = beneficiary.objects.get(id=beneficiary_requests.id)
+        # Assuming `user_id` is the ID of the user you're checking for
+        beneficiary_exists = beneficiary.objects.filter(user=user).exists()
+
+        if not beneficiary_exists:
+            messages.error(
+                request, "ليس لديك ملف مستفيد لدينا!")
+            return redirect('home')
+        # Get the last added beneficiary_request
+
+        # # Check if there's existing beneficiary requests
+        # is_beneficiary_request = Beneficiary_request.objects.filter(
+        #     user=user).exists()
+
+        # if is_beneficiary_request:
+        #     last_beneficiary_request = Beneficiary_request.objects.latest(
+        #         'created_at')
+        #     if last_beneficiary_request.request_type == "update":
+        #         messages.error(
+        #             request, "لديك طلب تحديث بيانات سابق! لا يمكنك طلب تحديث بيانات جديد الى ان تتغير حالة الطلب السابق.")
+        #         return redirect('home')
+
+        # else:
+        #     messages.error(
+        #         request, "ليس لديك طلبات سابقة!!")
+        #     return redirect('home')
+
+        beneficiary_obj = beneficiary.objects.get(
+            user=user_id)
         beneficiary_house_obj = beneficiary_house.objects.get(
-            id=beneficiary_obj.id)
+            beneficiary_id=beneficiary_obj.id)
         beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
-            id=beneficiary_obj.id)
+            beneficiary_id=beneficiary_obj.id)
         beneficiary_attachment_obj = Beneficiary_attachment.objects.filter(
             beneficiary_id=beneficiary_obj.id).all()
 
@@ -1710,18 +1823,383 @@ def beneficiary_request_update(request, username, b_request_id):
                 'attachment_type': attachment_type_ar,
             })
 
-        context = {
-            'user_info': user,
-            'request_id': b_request_id,
-            'beneficiary_requests': beneficiary_requests,
-            'beneficiary': beneficiary_obj,
-            'beneficiary_house': beneficiary_house_obj,
-            'beneficiary_income_expense': beneficiary_income_expense_obj,
-            'beneficiary_attachments': beneficiary_attachment_list,
-            'dependent_list': dependent_data,
-        }
+        # Convert date of birth to be populated in the template
+        dob = date(
+            beneficiary_obj.date_of_birth.year,
+            beneficiary_obj.date_of_birth.month,
+            beneficiary_obj.date_of_birth.day
+        )
+
+        # Convert date of birth to be populated in the template
+        national_id_exp_date = date(
+            beneficiary_obj.national_id_exp_date.year,
+            beneficiary_obj.national_id_exp_date.month,
+            beneficiary_obj.national_id_exp_date.day
+        )
+
+        death_date_father_husband = None
+        if beneficiary_obj.death_date_father_husband is not None:
+            death_date_father_husband = date(
+                beneficiary_obj.death_date_father_husband.year,
+                beneficiary_obj.death_date_father_husband.month,
+                beneficiary_obj.death_date_father_husband.day
+            )
+
+        if death_date_father_husband is not None:
+            context = {
+                'user_info': user,
+                'beneficiary_requests': beneficiary_requests,
+                'beneficiary': beneficiary_obj,
+                'beneficiary_dob': int(time.mktime(dob.timetuple())) * 1000,
+                'beneficiary_death_date_father_husband': int(time.mktime(death_date_father_husband.timetuple())) * 1000,
+                'beneficiary_national_id_exp_data': int(time.mktime(national_id_exp_date.timetuple())) * 1000,
+                'beneficiary_house': beneficiary_house_obj,
+                'beneficiary_income_expense': beneficiary_income_expense_obj,
+                'beneficiary_attachments': beneficiary_attachment_list,
+                'dependent_list': dependent_data,
+            }
+
+        else:
+            context = {
+                'user_info': user,
+                'beneficiary_requests': beneficiary_requests,
+                'beneficiary': beneficiary_obj,
+                'beneficiary_dob': int(time.mktime(dob.timetuple())) * 1000,
+                'beneficiary_national_id_exp_data': int(time.mktime(national_id_exp_date.timetuple())) * 1000,
+                'beneficiary_house': beneficiary_house_obj,
+                'beneficiary_income_expense': beneficiary_income_expense_obj,
+                'beneficiary_attachments': beneficiary_attachment_list,
+                'dependent_list': dependent_data,
+            }
+
     except ObjectDoesNotExist:
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
     return render(request, "beneficiary_request_update.html", context)
+
+
+@csrf_exempt
+@login_required(login_url="/login")
+def beneficiary_request_update_confirm(request, user_id):
+
+    # Get the logged-in user
+    logged_in_user = request.user
+
+    context = {}
+    try:
+        data = request.POST
+        files = request.FILES
+
+        # Retrieve the user whose profile is being requested
+        user = CustomUser.objects.get(id=user_id)
+
+        # Check if the logged-in user matches the requested user
+        if logged_in_user != user:
+            messages.error(request, "ليس لديك الصلاحية اللازمة!")
+            return redirect('home')
+
+        # Get beneficiary_reqeust using b_reqeust_id
+        # beneficiary_requests = Beneficiary_request.objects.get(
+        #     id=b_request_id)
+
+        # Accessing the data for beneficiary
+        first_name = data.get('personalinfo_first_name', None)
+        second_name = data.get('personalinfo_second_name', None)
+        last_name = data.get('personalinfo_last_name', None)
+
+        date_of_birth_data = data.get('personalinfo_date_of_birth', None)
+        date_of_birth = None
+        # Check if the date string exists and is not empty
+        if date_of_birth_data:
+            # Convert the date string to a date object
+            date_of_birth = datetime.strptime(
+                date_of_birth_data, '%Y-%m-%d').date()
+        else:
+            print("No valid date found in JSON")
+
+        gender = data.get('personalinfo_gender', None)
+        national_id = data.get('personalinfo_national_id', None)
+        national_id_exp_date_data = data.get(
+            'personalinfo_national_id_exp_date', None)
+        national_id_exp_date = convert_to_date(
+            national_id_exp_date_data)
+        nationality = data.get('personalinfo_nationality', None)
+        category = data.get('personalinfo_category', None)
+        marital_status = data.get('personalinfo_marital_status', None)
+        educational_level = data.get('personalinfo_educational_level', None)
+
+        date_of_death_of_father_or_husband = data.get(
+            'personalinfo_date_of_death_of_father_or_husband', None)
+        if date_of_death_of_father_or_husband is not None:
+            date_of_death_of_father_or_husband = convert_to_date(
+                date_of_death_of_father_or_husband)
+
+        washing_place = data.get('personalinfo_washing_place', None)
+        health_status = data.get('personalinfo_health_status', None)
+        disease_type = data.get('personalinfo_disease_type', None)
+        work_status = data.get('personalinfo_work_status', None)
+        employer = data.get('personalinfo_employer', None)
+        phone_number = data.get('personalinfo_phone_number', None)
+        email = data.get('personalinfo_email', None)
+        bank_type = data.get('personalinfo_bank_type', None)
+        bank_iban = data.get('personalinfo_bank_iban', None)
+        family_issues = data.get('familyinfo_family_issues', None)
+        family_needs = data.get('familyinfo_needs_type', None)
+
+        # Get beneficiary object using beneficiary_requests.beneficiary.id
+        beneficiary_obj = beneficiary.objects.get(
+            user=user)
+
+        # Update object values
+        beneficiary_obj.first_name = first_name
+        beneficiary_obj.second_name = second_name
+        beneficiary_obj.last_name = last_name
+        beneficiary_obj.date_of_birth = date_of_birth
+        beneficiary_obj.nationality = nationality
+        beneficiary_obj.gender = gender
+        beneficiary_obj.phone_number = phone_number
+        beneficiary_obj.email = email
+        beneficiary_obj.national_id = national_id
+        beneficiary_obj.national_id_exp_date = national_id_exp_date
+        beneficiary_obj.category = category
+        beneficiary_obj.marital_status = marital_status
+        beneficiary_obj.educational_level = educational_level
+        beneficiary_obj.death_date_father_husband = date_of_death_of_father_or_husband
+        beneficiary_obj.washing_place = washing_place
+        beneficiary_obj.health_status = health_status
+        beneficiary_obj.disease_type = disease_type
+        beneficiary_obj.work_status = work_status
+        beneficiary_obj.employer = employer
+        beneficiary_obj.bank_type = bank_type
+        beneficiary_obj.bank_iban = bank_iban
+        beneficiary_obj.family_issues = family_issues
+        beneficiary_obj.family_needs = family_needs
+
+        # Save object changes
+        beneficiary_obj.save()
+
+        # Accessing the data for beneficiary_house -----------------
+        building_number = data.get('houseinfo_building_number', None)
+        street_name = data.get('houseinfo_street_name', None)
+        neighborhood = data.get('houseinfo_neighborhood', None)
+        city = data.get('houseinfo_city', None)
+        postal_code = data.get('houseinfo_postal_code', None)
+        additional_number = data.get('houseinfo_additional_number', None)
+        unit = data.get('houseinfo_unit', None)
+        location_url = data.get('houseinfo_location_url', None)
+        housing_type = data.get('houseinfo_housing_type', None)
+        housing_ownership = data.get('houseinfo_housing_ownership', None)
+
+        # Get corresponding beneficiary objects of other tables
+        beneficiary_house_obj = beneficiary_house.objects.get(
+            id=beneficiary_obj.id)
+
+        # Update object values
+        beneficiary_house_obj.building_number = building_number
+        beneficiary_house_obj.street_name = street_name
+        beneficiary_house_obj.neighborhood = neighborhood
+        beneficiary_house_obj.city = city
+        beneficiary_house_obj.postal_code = postal_code
+        beneficiary_house_obj.additional_number = additional_number
+        beneficiary_house_obj.unit = unit
+        beneficiary_house_obj.location_url = location_url
+        beneficiary_house_obj.housing_type = housing_type
+        beneficiary_house_obj.housing_ownership = housing_ownership
+        beneficiary_house_obj.beneficiary_id = beneficiary_obj
+
+        # Save object changes
+        beneficiary_house_obj.save()
+
+        # Accessing the data for beneficiary_income_expense, and converting str into float type
+        salary_in = float(data.get('incomeinfo_salary', None))
+        social_insurance_in = float(
+            data.get('incomeinfo_social_insurance', None))
+        charity_in = float(data.get('incomeinfo_charity', None))
+        social_warranty_in = float(
+            data.get('incomeinfo_social_warranty', None))
+        pension_agency_in = float(data.get('incomeinfo_pension_agency', None))
+        citizen_account_in = float(
+            data.get('incomeinfo_citizen_account', None))
+        benefactor_in = float(data.get('incomeinfo_benefactor', None))
+        other_in = float(data.get('incomeinfo_other', None))
+        housing_rent_ex = float(data.get('expensesinfo_housing_rent', None))
+        electricity_bills_ex = float(
+            data.get('expensesinfo_electricity_bills', None))
+        water_bills_ex = float(data.get('expensesinfo_water_bills', None))
+        transportation_ex = float(
+            data.get('expensesinfo_transportation', None))
+        health_supplies_ex = float(
+            data.get('expensesinfo_health_supplies', None))
+        food_supplies_ex = float(data.get('expensesinfo_food_supplies', None))
+        educational_supplies_ex = float(data.get(
+            'expensesinfo_educational_supplies', None))
+        proven_debts_ex = float(data.get('expensesinfo_proven_debts', None))
+        other_ex = float(data.get('expensesinfo_other', None))
+
+        beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
+            id=beneficiary_obj.id)
+
+        # Update object values
+        beneficiary_income_expense_obj.salary_in = salary_in
+        beneficiary_income_expense_obj.social_insurance_in = social_insurance_in
+        beneficiary_income_expense_obj.charity_in = charity_in
+        beneficiary_income_expense_obj.social_warranty_in = social_warranty_in
+        beneficiary_income_expense_obj.pension_agency_in = pension_agency_in
+        beneficiary_income_expense_obj.citizen_account_in = citizen_account_in
+        beneficiary_income_expense_obj.benefactor_in = benefactor_in
+        beneficiary_income_expense_obj.other_in = other_in
+        beneficiary_income_expense_obj.housing_rent_ex = housing_rent_ex
+        beneficiary_income_expense_obj.electricity_bills_ex = electricity_bills_ex
+        beneficiary_income_expense_obj.water_bills_ex = water_bills_ex
+        beneficiary_income_expense_obj.transportation_ex = transportation_ex
+        beneficiary_income_expense_obj.health_supplies_ex = health_supplies_ex
+        beneficiary_income_expense_obj.food_supplies_ex = food_supplies_ex
+        beneficiary_income_expense_obj.educational_supplies_ex = educational_supplies_ex
+        beneficiary_income_expense_obj.proven_debts_ex = proven_debts_ex
+        beneficiary_income_expense_obj.other_ex = other_ex
+        beneficiary_income_expense_obj.beneficiary_id = beneficiary_obj
+
+        # Save object changes
+        beneficiary_income_expense_obj.save()
+
+        # Create a new beneficiary_request to have "under review" status
+        new_beneficiary_request = Beneficiary_request(
+            user=user,
+            beneficiary=beneficiary_obj,
+            status="waiting",
+            request_type="update",
+        )
+        new_beneficiary_request.save()
+
+        # beneficiary_attachment_obj = Beneficiary_attachment.objects.filter(
+        #     beneficiary_id=beneficiary_obj.id).all()
+
+        # dependent_list = dependent.objects.filter(
+        #     beneficiary_id=beneficiary_obj.id).all()
+
+        # dependent_data = []
+
+        # for dependent_obj in dependent_list:
+
+        #     # Initialize dependent income list with every dependent
+        #     dependent_income_data = []
+
+        #     # Retrieve the dependent income infomration
+        #     dependent_income_list = Dependent_income.objects.filter(
+        #         dependent=dependent_obj).all()
+
+        #     # Add the data into the dependent income list
+        #     for dependent_income_obj in dependent_income_list:
+        #         dependent_income_data.append({
+        #             'id': dependent_income_obj.id,
+        #             'income_source': dependent_income_obj.source,
+        #             'income_amount': dependent_income_obj.amount,
+        #         })
+
+        #     dependent_data.append({
+        #         'dependent_id': dependent_obj.id,
+        #         'dependent_first_name': dependent_obj.first_name,
+        #         'dependent_second_name': dependent_obj.second_name,
+        #         'dependent_last_name': dependent_obj.last_name,
+        #         'dependent_gender': dependent_obj.gender,
+        #         'dependent_relationship': dependent_obj.relationship,
+        #         'dependent_educational_status': dependent_obj.educational_status,
+        #         'dependent_marital_status': dependent_obj.marital_status,
+        #         'dependent_national_id': dependent_obj.national_id,
+        #         'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+        #         'dependent_health_status': dependent_obj.health_status,
+        #         'dependent_needs_type': dependent_obj.needs_type,
+        #         'dependent_educational_degree': dependent_obj.educational_degree,
+        #         'dependent_date_of_birth': dependent_obj.date_of_birth,
+        #         'dependent_needs_description': dependent_obj.needs_description,
+        #         'dependent_educational_level': dependent_obj.educational_level,
+        #         'dependent_disease_type': dependent_obj.disease_type,
+        #         'dependent_income_data': dependent_income_data,
+        #     })
+
+        # beneficiary_attachment_list = []
+
+        # for attachment in beneficiary_attachment_obj:
+        #     # A variable that holds the attachment type in Arabic
+        #     attachment_type_ar = ""
+
+        #     if attachment.file_type == "national_id":
+        #         attachment_type_ar = "صورة الهوية الوطنية/الإقامة"
+        #     elif attachment.file_type == "national_address":
+        #         attachment_type_ar = "العنوان الوطني"
+        #     elif attachment.file_type == "dept_instrument":
+        #         attachment_type_ar = "صك الدين"
+        #     elif attachment.file_type == "pension_social_insurance":
+        #         attachment_type_ar = "مشهد التقاعد أو التأمينات الاجتماعية"
+        #     elif attachment.file_type == "father_husband_death_cert":
+        #         attachment_type_ar = "شهادة الوفاة للزوج / الأب"
+        #     elif attachment.file_type == "letter_from_prison":
+        #         attachment_type_ar = "خطاب من السجن"
+        #     elif attachment.file_type == "divorce_deed":
+        #         attachment_type_ar = "صك الطلاق"
+        #     elif attachment.file_type == "children_responsibility_deed":
+        #         attachment_type_ar = "صك إعالة الأبناء"
+        #     elif attachment.file_type == "other_files":
+        #         attachment_type_ar = "مستندات أخرى"
+        #     elif attachment.file_type == "lease_contract_title_deed":
+        #         attachment_type_ar = "عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية"
+        #     elif attachment.file_type == "water_or_electricity_bills":
+        #         attachment_type_ar = "الفواتير (كهرباء - ماء)"
+        #     elif attachment.file_type == "dependent_national_id":
+        #         attachment_type_ar = "صورة الهوية الوطنية/الإقامة للمرافقين"
+        #     elif attachment.file_type == "social_warranty_inquiry":
+        #         attachment_type_ar = "مشهد الضمان الاجتماعي"
+        #     else:
+        #         attachment_type_ar = attachment.file_type
+
+        #     beneficiary_attachment_list.append({
+        #         'file_path': attachment.file_object.url,
+        #         'file_extension': file_extension(attachment.file_object.url),
+        #         'file_name': attachment.filename().split(".")[0],
+        #         'file_size': attachment.file_size,
+        #         'attachment_type': attachment_type_ar,
+        #     })
+
+        # # Convert date of birth to be populated in the template
+        # dob = date(
+        #     beneficiary_obj.date_of_birth.year,
+        #     beneficiary_obj.date_of_birth.month,
+        #     beneficiary_obj.date_of_birth.day
+        # )
+
+        # # Convert date of birth to be populated in the template
+        # national_id_exp_date = date(
+        #     beneficiary_obj.national_id_exp_date.year,
+        #     beneficiary_obj.national_id_exp_date.month,
+        #     beneficiary_obj.national_id_exp_date.day
+        # )
+
+        # death_date_father_husband = None
+        # if beneficiary_obj.death_date_father_husband is not None:
+        #     death_date_father_husband = date(
+        #         beneficiary_obj.death_date_father_husband.year,
+        #         beneficiary_obj.death_date_father_husband.month,
+        #         beneficiary_obj.death_date_father_husband.day
+        #     )
+
+        context = {
+            'user_info': user,
+            'beneficiary_requests': beneficiary_requests,
+            'beneficiary': beneficiary_obj,
+        }
+
+    except ObjectDoesNotExist:
+        messages.error(request, "المستخدم غير موجود!")
+        return redirect('home')
+
+    return JsonResponse({'redirect': '/beneficiaries/requests/confirm_message/', 'user_id': user_id})
+    # data = request.POST
+    # print(data)
+    # return JsonResponse({'redirect': '/confirmation', 'data': data})
+
+
+@login_required(login_url="/login")
+def confirm_beneficiary_request_update(request):
+
+    return render(request, "beneficiary_update_request_confirm.html")

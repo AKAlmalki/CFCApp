@@ -178,7 +178,7 @@
                     >
                     <select
                       name="personalinfo_gender"
-                      class="form-control"
+                      class="form-select"
                       id="id_personalinfo_gender"
                       required
                     >
@@ -224,7 +224,7 @@
                     >
                     <select
                       name="personalinfo_nationality"
-                      class="form-control"
+                      class="form-select"
                       id="id_personalinfo_nationality"
                     >
                       <option value selected>إختر</option>
@@ -449,7 +449,7 @@
                     >
                     <select
                       name="personalinfo_category"
-                      class="form-control"
+                      class="form-select"
                       required
                       id="id_personalinfo_category"
                       onchange="categoryCheck(this);"
@@ -471,7 +471,7 @@
                     >
                     <select
                       name="personalinfo_marital_status"
-                      class="form-control"
+                      class="form-select"
                       required
                       id="id_personalinfo_marital_status"
                       onchange="widowerCheck(this);"
@@ -492,7 +492,7 @@
                     >
                     <select
                       name="personalinfo_educational_level"
-                      class="form-control"
+                      class="form-select"
                       id="id_personalinfo_educational_level"
                     >
                       <option value="" selected>---------</option>
@@ -544,7 +544,7 @@
                     >
                     <select
                       name="personalinfo_washing_place"
-                      class="form-control"
+                      class="form-select"
                       id="id_personalinfo_washing_place"
                     >
                       <option value="" selected>---------</option>
@@ -564,7 +564,7 @@
                   </div>
                 </div>
 
-                <hr id="widower_hr" style="display: none" />
+                <hr id="widower_hr" style="display: none"/>
 
                 <div class="row">
                   <div class="col-md-6 mb-4 form-group">
@@ -575,7 +575,7 @@
                     >
                     <select
                       name="personalinfo_health_status"
-                      class="form-control"
+                      class="form-select"
                       id="id_personalinfo_health_status"
                       onchange="personalInfoHealthCheck(this);"
                     >
@@ -612,7 +612,7 @@
                     >
                     <select
                       name="personalinfo_work_status"
-                      class="form-control"
+                      class="form-select"
                       required
                       id="id_personalinfo_work_status"
                       onchange="workCheck(this);"
@@ -644,17 +644,24 @@
                 <hr />
 
                 <div class="row">
-                  <div class="col-md-6 mb-4 form-group">
+                  <div class="col mb-3 form-group">
                     <label for="id_personalinfo_phone_number" class="form-label"
-                      >رقم التواصل<span style="color: red">*</span></label
+                      >رقم الجوال<span style="color: red">*</span></label
                     >
-                    <input
-                      type="tel"
-                      name="personalinfo_phone_number"
-                      class="form-control"
-                      required
-                      id="id_personalinfo_phone_number"
-                    />
+                    <div class="input-group mb-1">
+                      <input
+                        type="text"
+                        name="personalinfo_phone_number"
+                        data-bs-title="رقم الجوال" 
+                        class="form-control convert-to-english"
+                        id="id_personalinfo_phone_number"
+                        placeholder="5XXXXXXXX"
+                        required
+                        value="{{ beneficiary.phone_number }}"
+                      />
+                      <span class="input-group-text" id="basic-addon1">966+</span>
+                    </div>
+                    <div class="form-text" id="basic-addon4">يبدا رقم الجوال بدون الصفر, مثال (512345678)</div>
                   </div>
                   <div class="col-md-6 mb-4 form-group">
                     <label for="id_personalinfo_email" class="form-label"
@@ -771,7 +778,7 @@
                   >
                   <select
                     name="dependent_info_gender"
-                    class="form-control"
+                    class="form-select"
                     id="id_dependent_info_gender"
                   >
                     <option value selected>---------</option>
@@ -785,7 +792,7 @@
                   >
                   <select
                     name="dependent_info_relationship"
-                    class="form-control"
+                    class="form-select"
                     id="id_dependent_info_relationship"
                   >
                     <option value selected>---------</option>
@@ -807,7 +814,7 @@
                   >
                   <select
                     name="dependent_info_marital_status"
-                    class="form-control"
+                    class="form-select"
                     id="id_dependent_info_marital_status"
                   >
                     <option value selected>---------</option>
@@ -834,7 +841,7 @@
                   >
                   <select
                     name="dependent_info_educational_status"
-                    class="form-control"
+                    class="form-select"
                     id="id_dependent_info_educational_status"
                     onchange="educationalStatusCheck(this);"
                   >
@@ -851,7 +858,7 @@
                   >
                   <select
                     name="dependent_info_educational_level"
-                    class="form-control"
+                    class="form-select"
                     id="id_dependent_info_educational_level"
                   >
                     <option value selected>---------</option>
@@ -878,7 +885,7 @@
                   >
                   <select
                     name="dependent_info_educational_degree"
-                    class="form-control"
+                    class="form-select"
                     id="id_dependent_info_educational_degree"
                   >
                     <option value selected>---------</option>
@@ -938,7 +945,7 @@
                 </div>
                 <div class="col-md-4 col-lg-5 mb-2 form-group">
                   <label for="id_dependent_info_income_source" class="form-label">مصدر الدخل</label>
-                  <select name="dependent_info_income_source" class="form-control" id="id_dependent_info_income_source">
+                  <select name="dependent_info_income_source" class="form-select" id="id_dependent_info_income_source">
                     <option value selected>---------</option>
                     <option value="الراتب">الراتب</option>
                     <option value="التأمينات الاجتماعية">التأمينات الاجتماعية</option>
@@ -981,7 +988,7 @@
                   >
                   <select
                     name="dependent_info_health_status"
-                    class="form-control"
+                    class="form-select"
                     id="id_dependent_info_health_status"
                     onchange="dependentInfoHealthCheck(this);"
                   >
@@ -1044,7 +1051,7 @@
                 </div>
                 <div class="col-md-12 mb-4 form-group">
                   <label for="id_dependent_info_needs_description" class="form-label">وصف الاحتياج</label>
-                  <textarea type="textarea" class="form-control form-control-lg" id="id_dependent_info_needs_description" name="dependentinfo_needs_description" maxlength="2000"></textarea>
+                  <textarea type="textarea" class="form-control form-control-lg" id="id_dependent_info_needs_description" rows="5" name="dependentinfo_needs_description" maxlength="2000"></textarea>
                 </div>
               </div>
 
@@ -1246,7 +1253,7 @@
                 >
                 <select
                   name="houseinfo_housing_type"
-                  class="form-control"
+                  class="form-select"
                   id="id_houseinfo_housing_type"
                 >
                   <option value selected>---------</option>
@@ -1262,7 +1269,7 @@
                 >
                 <select
                   name="houseinfo_housing_ownership"
-                  class="form-control"
+                  class="form-select"
                   id="id_houseinfo_housing_ownership"
                 >
                   <option value selected>---------</option>
@@ -1729,7 +1736,7 @@
                 >
                 <select
                   name="beneficiaryinfo_bank"
-                  class="form-control"
+                  class="form-select"
                   id="id_beneficiaryinfo_bank"
                 >
                   <option value selected>---------</option>
@@ -2425,7 +2432,7 @@
                 >
                 <select
                   name="dependent_edit_info_gender"
-                  class="form-control"
+                  class="form-select"
                   id="id_dependent_edit_info_gender"
                 >
                   <option value selected>---------</option>
@@ -2439,7 +2446,7 @@
                 >
                 <select
                   name="dependent_edit_info_relationship"
-                  class="form-control"
+                  class="form-select"
                   id="id_dependent_edit_info_relationship"
                 >
                   <option value selected>---------</option>
@@ -2461,7 +2468,7 @@
                 >
                 <select
                   name="dependent_edit_info_marital_status"
-                  class="form-control"
+                  class="form-select"
                   id="id_dependent_edit_info_marital_status"
                 >
                   <option value selected>---------</option>
@@ -2488,7 +2495,7 @@
                 >
                 <select
                   name="dependent_edit_info_educational_status"
-                  class="form-control"
+                  class="form-select"
                   id="id_dependent_edit_info_educational_status"
                   onchange="educationalStatusEditInfoCheck(this);"
                 >
@@ -2505,7 +2512,7 @@
                 >
                 <select
                   name="dependent_edit_info_educational_level"
-                  class="form-control"
+                  class="form-select"
                   id="id_dependent_edit_info_educational_level"
                 >
                   <option value selected>---------</option>
@@ -2532,7 +2539,7 @@
                 >
                 <select
                   name="dependent_edit_info_educational_degree"
-                  class="form-control"
+                  class="form-select"
                   id="id_dependent_edit_info_educational_degree"
                 >
                   <option value selected>---------</option>
@@ -2592,7 +2599,7 @@
                   </div>
                   <div class="col-md-4 col-lg-5 mb-2 form-group">
                     <label for="id_dependent_edit_info_income_source" class="form-label">مصدر الدخل للمرافق</label>
-                    <select name="dependent_edit_info_income_source" class="form-control" id="id_dependent_edit_info_income_source">
+                    <select name="dependent_edit_info_income_source" class="form-select" id="id_dependent_edit_info_income_source">
                       <option value selected>---------</option>
                       <option value="الراتب">الراتب</option>
                       <option value="التأمينات الاجتماعية">التأمينات الاجتماعية</option>
@@ -2635,7 +2642,7 @@
                 >
                 <select
                   name="dependent_edit_info_health_status"
-                  class="form-control"
+                  class="form-select"
                   id="id_dependent_edit_info_health_status"
                   onchange="dependentEditInfoHealthCheck(this);"
                 >
@@ -2711,6 +2718,7 @@
                   id="id_dependent_edit_info_needs_description"
                   name="dependent_edit_info_needs_description"
                   maxlength="2000"
+                  rows="5"
                 ></textarea>
               </div>
             </div>
@@ -2812,7 +2820,8 @@
       // along with the correct 'boundary'
       // delete options.headers['Content-Type'];
   
-      fetch('https://port433.link/beneficiaries/new', {
+
+      fetch('https://port433.link{% url 'beneficiary_new' user_id=user.id %}', {
           method: 'POST',
           body: formData,
       })
@@ -3509,10 +3518,10 @@
       "saudiPhoneRegex",
       function (value, element) {
         return (
-          this.optional(element) || /^(?:\+966\s?5\d{8}|05\d{8})$/i.test(value)
+          this.optional(element) || /^(5\d{8})$/i.test(value)
         );
       },
-      "الرجاء إدخال رقم جوال صحيح في المملكة العربية السعودية."
+      "الرجاء إدخال رقم جوال صحيح يبدأ برقم 5 وبطول 9 ارقام."
     );
 
     // Email address validator

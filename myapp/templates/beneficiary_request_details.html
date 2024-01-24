@@ -4,7 +4,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home' %}">الصفحة الرئيسية</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'beneficiary_requests' username=user.username %}">الطلبات</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'beneficiary_requests' user_id=user.id %}">الطلبات</a></li>
         <li class="breadcrumb-item active" aria-current="page">تفاصيل الطلب</li>
       </ol>
     </nav>

@@ -60,7 +60,7 @@
                       <p class="d-inline">تقديم طلب</p> 
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                      <li><a class="dropdown-item" href="{% url 'beneficiary_new' %}">طلب مستفيد</a></li>
+                      <li><a class="dropdown-item" href="{% url 'beneficiary_new' user_id=user.id %}">طلب مستفيد</a></li>
                       <li><a class="dropdown-item" href="{% url 'supporter_indiv' %}">طلب كفالة</a></li>
                     </ul>
                   </li>
@@ -87,8 +87,8 @@
                     </svg><p class="d-inline">   {{ user.username }}</p> 
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="{% url 'beneficiary_profile' username=user.username %}">الملف الشخصي</a></li>
-                    <li><a class="dropdown-item" href="{% url 'beneficiary_requests' username=user.username %}">الطلبات</a></li>
+                    <li><a class="dropdown-item" href="{% url 'beneficiary_profile' user_id=user.id %}">الملف الشخصي</a></li>
+                    <li><a class="dropdown-item" href="{% url 'beneficiary_requests' user_id=user.id %}">الطلبات</a></li>
                     <li><a class="dropdown-item" href="{% url 'logout' %}">تسجيل الخروج</a></li>
                   </ul>
                 </li>

@@ -2,8 +2,8 @@
 <div class="row mb-5">
   <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-inner">
-      <div class="carousel-item active">
-        <img src="{% static '/imgs/background.png' %}" class="d-block w-100" alt="...">
+      <div class="carousel-item active d-flex justify-content-center">
+        <img src="{% static '/imgs/background_compressed.png' %}" class="d-block w-100" alt="..." style="max-width: 100rem;">
       </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
@@ -50,7 +50,11 @@
       <h1 class="mb-3">الصندوق التنموي للأيتام لحياة كريمة</h1>
       <p class="lead">استثمر معنا لأخرتك وشارك بتأمين حياة أحد الأسر   المحتاجة أو الارامل <a href="https://www.tutorialrepublic.com" class="text-success" target="_blank">من هنا</a> ابدا بملئ طلب كفالة أو دعم مادي او غير عيني (أثاث أدوات مكتبية) للأيتام والمحتاجين</p>
       <div class="d-flex flex-row mb-3 column-gap-3">
-        <p><a href="/index2" class="btn btn-success btn-lg">طلب مستفيد</a></p>
+        {% if user.id %}
+        <p><a href="{% url 'beneficiary_new' user_id=user.id %}" class="btn btn-success btn-lg">طلب مستفيد</a></p>
+        {% else %}
+        <p><a href="{% url 'login' %}" class="btn btn-success btn-lg">طلب مستفيد</a></p>
+        {% endif %}
         {% comment %} <div class="dropdown">
           <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             طلب كفالة
