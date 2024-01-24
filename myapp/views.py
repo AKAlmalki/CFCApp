@@ -106,12 +106,48 @@ def sign_up(request):
         nationality = request.POST['nationality']
         username = request.POST['username']
         email = request.POST['email']
-        phonenumber = request.POST['phonenumber']
+        phonenumber = request.POST.get('phonenumber', None)
         password1 = request.POST['password1']
         password2 = request.POST['password2']
 
+        username_exists = CustomUser.objects.filter(username=username).exists()
+
+        if username_exists:
+            # Pass request data back
+            request.session['first_name'] = first_name
+            request.session['last_name'] = last_name
+            request.session['date_of_birth'] = date_of_birth
+            request.session['gender'] = gender
+            request.session['nationality'] = nationality
+            request.session['username'] = username
+            request.session['email'] = email
+            request.session['phonenumber'] = phonenumber
+
+            # Alert an error message
+            messages.error(request, "أسم المستخدم موجود سابقًا.")
+
+            return redirect('sign-up')
+
+        email_exists = CustomUser.objects.filter(email=email).exists()
+
+        if email_exists:
+            # Pass request data back
+            request.session['first_name'] = first_name
+            request.session['last_name'] = last_name
+            request.session['date_of_birth'] = date_of_birth
+            request.session['gender'] = gender
+            request.session['nationality'] = nationality
+            request.session['username'] = username
+            request.session['email'] = email
+            request.session['phonenumber'] = phonenumber
+
+            # Alert an error message
+            messages.error(request, "البريد الالكتروني موجود سابقًا.")
+
+            return redirect('sign-up')
+
         # Make a new user object
-        new_user = CustomUser.objects.create_user(
+        new_user = CustomUser(
             username=username,
             email=email,
             password=password1,
@@ -124,7 +160,7 @@ def sign_up(request):
             # Make the user not active until it is confirmed by the link sent to the email
             is_active=False,
         )
-
+        new_user.save()
         messages.success(
             request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
 
