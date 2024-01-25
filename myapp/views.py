@@ -150,7 +150,6 @@ def sign_up(request):
         new_user = CustomUser(
             username=username,
             email=email,
-            password=password1,
             first_name=first_name,
             last_name=last_name,
             gender=gender,
@@ -160,7 +159,11 @@ def sign_up(request):
             # Make the user not active until it is confirmed by the link sent to the email
             is_active=False,
         )
+        # Set the password to be hashed for the new user
+        new_user.set_password(password1)
+        # Save new user information
         new_user.save()
+        
         messages.success(
             request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
 
