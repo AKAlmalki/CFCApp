@@ -1933,7 +1933,7 @@ def beneficiary_request_update_confirm(request, user_id):
         educational_level = data.get('personalinfo_educational_level', None)
 
         date_of_death_of_father_or_husband = data.get(
-            'personalinfo_date_of_death_of_father_or_husband', None)
+            'personalinfo_death_date_father_husband', None)
         if date_of_death_of_father_or_husband is not None:
             date_of_death_of_father_or_husband = convert_to_date(
                 date_of_death_of_father_or_husband)
