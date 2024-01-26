@@ -1721,7 +1721,7 @@ def beneficiary_request_update(request, user_id):
         if is_beneficiary_request:
             last_beneficiary_request = Beneficiary_request.objects.latest(
                 'created_at')
-            if last_beneficiary_request.request_type == "update":
+            if last_beneficiary_request.request_type == "update" and last_beneficiary_request.status == "waiting":
                 messages.error(
                     request, "لديك طلب تحديث بيانات سابق! لا يمكنك إنشاء طلب جديد الى ان يتم الرد من قبل فريق العمل على الطلب الأخير.")
                 return redirect('home')
