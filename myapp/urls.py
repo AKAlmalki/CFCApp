@@ -110,7 +110,7 @@ urlpatterns = [
         name="beneficiary_request_update_confirm_message"
     ),
     path(
-        "sign-up",
+        "sign-up/",
         views.sign_up,
         name="sign-up"
     ),
