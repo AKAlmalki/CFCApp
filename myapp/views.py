@@ -98,6 +98,10 @@ def confirmBeneficiaryRequestView(request):
 def sign_up(request):
     if request.method == 'POST':
 
+        # Check if the user is already authenticated
+        if request.user.is_authenticated:
+            return redirect('home')
+
         # Retrieve request data
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
@@ -196,6 +200,12 @@ def sign_up(request):
 
         return redirect('/login')
 
+    else:
+
+        # Check if the user is already authenticated
+        if request.user.is_authenticated:
+            return redirect('home')
+
     return render(request, "registration/sign_up.html")
 
 
@@ -223,6 +233,11 @@ def activate(request, uidb64, token):
 def resend_activation_email_view(request):
 
     if request.method == 'POST':
+
+        # Check if the user is already authenticated
+        if request.user.is_authenticated:
+            return redirect('home')
+
         email = request.POST.get("email")
 
         try:
@@ -240,6 +255,12 @@ def resend_activation_email_view(request):
         except ObjectDoesNotExist:
             messages.error(request, "البريد الإلكتروني غير موجود")
             return redirect('resend_activation_email_view')
+
+    else:
+
+        # Check if the user is already authenticated
+        if request.user.is_authenticated:
+            return redirect('home')
 
     return render(request, "resend_activation_email.html")
 
@@ -280,6 +301,10 @@ def resend_activation_email(request):
 
 def signin(request):
     if request.method == 'POST':
+
+        # Check if the user is already authenticated
+        if request.user.is_authenticated:
+            return redirect('home')
 
         username = request.POST.get("username")
         password = request.POST.get("password")
@@ -322,9 +347,10 @@ def signin(request):
             return redirect("login")
 
     else:
-        # GET method
+        # GET method -- In case Remember Me button is clicked
+        # Check if the user is already authenticated
         if request.user.is_authenticated:
-            return (""" Remember ME ! Let user inside""")
+            return redirect('home')
 
     return render(request, "registration/login.html")
 
