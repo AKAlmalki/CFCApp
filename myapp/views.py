@@ -878,7 +878,7 @@ def beneficiary_indiv(request, user_id):
             bank_iban=bank_iban,
             family_issues=family_issues,
             family_needs=family_needs,
-
+            user=request.user,  # Pass user object to link it to this beneficiary profile
         )
         beneficiary_obj.save(category_seg="CAT", region_seg="SA")
 

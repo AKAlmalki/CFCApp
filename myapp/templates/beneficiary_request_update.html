@@ -425,7 +425,7 @@
                 <hr>
 
                 <div class="row row-cols-lg-2" id="id_personalinfo_widower_group_info"
-                style="display: none !important">
+                {% if beneficiary_death_date_father_husband or beneficiary.washing_place %}{% else %}style="display: none !important"{% endif %}>
                   <div class="mb-3">
                     <h6 class="col form-label" for="id_personalinfo_death_date_father_husband">تاريخ وفاة الأب/الزوج</h6>
                     <input type="date" class="form-control" id="id_personalinfo_death_date_father_husband" name="personalinfo_death_date_father_husband"
@@ -474,7 +474,7 @@
                     </select>
                   </div>
                   <div class="mb-3" id="id_personalinfo_disease_type_group_info"
-                  style="display: none">
+                  {% if beneficiary.disease_type %}{% else %}style="display: none !important"{% endif %}>
                     <h6 class="col form-label" for="id_personalinfo_disease_type">نوع المرض</h6>
                     <input type="text" class="form-control" id="id_personalinfo_disease_type" name="personalinfo_disease_type" data-bs-title="نوع المرض" value="{{ beneficiary.disease_type }}">
                   </div>
@@ -493,7 +493,7 @@
                     </select>
                   </div>
                   <div class="mb-3" id="id_personalinfo_employer_group_info"
-                  style="display: none">
+                  {% if beneficiary.employer %}{% else %}style="display: none !important"{% endif %}>
                     <h6 class="col form-label" for="id_personalinfo_employer">جهة العمل</h6>
                     <input type="text" class="form-control" id="id_personalinfo_employer" name="personalinfo_employer" data-bs-title="جهة العمل" value="{{ beneficiary.employer }}">
                   </div>
@@ -1377,7 +1377,7 @@
     setSelectedOption('id_personalinfo_educational_level', "{{ beneficiary.educational_level }}");
     setSelectedOption('id_personalinfo_health_status', "{{ beneficiary.health_status }}");
     setSelectedOption('id_personalinfo_work_status', "{{ beneficiary.work_status }}");
-    setSelectedOption('id_personalinfo_washing_place', "{{ beneficiary.washing_place}}");
+    setSelectedOption('id_personalinfo_washing_place', "{{ beneficiary.washing_place }}");
     setSelectedOption('id_personalinfo_bank_type', "{{ beneficiary.bank_type }}");
     
     // Housing information selectors
