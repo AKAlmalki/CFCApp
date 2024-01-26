@@ -1785,7 +1785,7 @@ def beneficiary_request_update(request, user_id):
                 dependent_income_data.append({
                     'id': dependent_income_obj.id,
                     'income_source': dependent_income_obj.source,
-                    'income_amount': dependent_income_obj.amount,
+                    'income_amount': str(dependent_income_obj.amount),
                 })
 
             dependent_data.append({
@@ -1798,16 +1798,18 @@ def beneficiary_request_update(request, user_id):
                 'dependent_educational_status': dependent_obj.educational_status,
                 'dependent_marital_status': dependent_obj.marital_status,
                 'dependent_national_id': dependent_obj.national_id,
-                'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                'dependent_national_id_exp_date': dependent_obj.national_id_exp_date.strftime('%Y-%m-%d'),
                 'dependent_health_status': dependent_obj.health_status,
                 'dependent_needs_type': dependent_obj.needs_type,
                 'dependent_educational_degree': dependent_obj.educational_degree,
-                'dependent_date_of_birth': dependent_obj.date_of_birth,
+                'dependent_date_of_birth': dependent_obj.date_of_birth.strftime('%Y-%m-%d'),
                 'dependent_needs_description': dependent_obj.needs_description,
                 'dependent_educational_level': dependent_obj.educational_level,
                 'dependent_disease_type': dependent_obj.disease_type,
                 'dependent_income_data': dependent_income_data,
             })
+
+        print(dependent_data)
 
         beneficiary_attachment_list = []
 
