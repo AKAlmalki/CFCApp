@@ -1172,13 +1172,13 @@ def beneficiary_indiv(request, user_id):
 
             # Store list of income for dependent -------------------
             # Store all file objects in a list
-            dependent_file_list = []
+            dependent_income_list = []
 
             for entry in dependent_income_table:
                 # Extract the monthly income and remove commas
-                monthly_income_str = entry.get('monthlyIncome', '')
+                monthly_income_str = entry.get('income_amount', '')
                 monthly_income = Decimal(monthly_income_str.replace(',', ''))
-                income_source = entry.get('incomeSource', '')
+                income_source = entry.get('income_source', '')
 
                 # Initialize dependent income list
                 dependent_income_obj = Dependent_income(
@@ -1186,11 +1186,11 @@ def beneficiary_indiv(request, user_id):
                     amount=monthly_income,
                     dependent=new_dependent
                 )
-                dependent_file_list.append(dependent_income_obj)
+                dependent_income_list.append(dependent_income_obj)
 
             # Save dependent income objects
-            if dependent_file_list:
-                Dependent_income.objects.bulk_create(dependent_file_list)
+            if dependent_income_list:
+                Dependent_income.objects.bulk_create(dependent_income_list)
 
         # Create Beneficiary_request object in the DB
         # Retrieve the object for the logged in user
@@ -1809,8 +1809,6 @@ def beneficiary_request_update(request, user_id):
                 'dependent_income_data': dependent_income_data,
             })
 
-        print(dependent_data)
-
         beneficiary_attachment_list = []
 
         for attachment in beneficiary_attachment_obj:
@@ -1929,10 +1927,6 @@ def beneficiary_request_update_confirm(request, user_id):
         if logged_in_user != user:
             messages.error(request, "ليس لديك الصلاحية اللازمة!")
             return redirect('home')
-
-        # Get beneficiary_reqeust using b_reqeust_id
-        # beneficiary_requests = Beneficiary_request.objects.get(
-        #     id=b_request_id)
 
         # Accessing the data for beneficiary
         first_name = data.get('personalinfo_first_name', None)
@@ -2106,49 +2100,89 @@ def beneficiary_request_update_confirm(request, user_id):
         # beneficiary_attachment_obj = Beneficiary_attachment.objects.filter(
         #     beneficiary_id=beneficiary_obj.id).all()
 
-        # dependent_list = dependent.objects.filter(
-        #     beneficiary_id=beneficiary_obj.id).all()
+        dependent_table = data.get('dependents-table', None)
 
-        # dependent_data = []
+        print("\n\n\n", dependent_table)
 
-        # for dependent_obj in dependent_list:
+        # Parse the JSON string into a Python object
+        try:
+            dependents_list = json.loads(dependent_table)
+        except json.JSONDecodeError:
+            print("Error parsing JSON")
+            dependents_list = []
 
-        #     # Initialize dependent income list with every dependent
-        #     dependent_income_data = []
+        # Now, you can iterate over the list of dependents
+        print(dependents_list)
 
-        #     # Retrieve the dependent income infomration
-        #     dependent_income_list = Dependent_income.objects.filter(
-        #         dependent=dependent_obj).all()
+        for dep in dependents_list:
+            # Extract the data for each field
+            first_name = dep.get('firstName', '')
+            second_name = dep.get('secondName', '')
+            last_name = dep.get('lastName', '')
+            gender = dep.get('gender', '')
+            relationship = dep.get('relationship', '')
+            educational_status = dep.get('educationalStatus', None)
+            marital_status = dep.get('martialStatus', '')
+            national_id = dep.get('nationalID', '')
+            health_status = dep.get('healthStatus', None)
+            needs_type = dep.get('needsType', '')
+            educational_degree = dep.get('educationalDegree', '')
+            date_of_birth = dep.get('dateOfBitrh', None)
+            if date_of_birth is not None:
+                date_of_birth = convert_to_date(date_of_birth_data)
+            national_id_exp_date = dep.get(
+                'nationalIDExpDate', None)
+            if national_id_exp_date is not None:
+                national_id_exp_date = convert_to_date(national_id_exp_date)
+            needs_description = dep.get('needsDescription', '')
+            educational_level = dep.get('educationalLevel', None)
+            disease_type = dep.get('diseaseType', None)
+            dependent_income_table = json.loads(
+                dep.get('dependentIncomeTable', []))
 
-        #     # Add the data into the dependent income list
-        #     for dependent_income_obj in dependent_income_list:
-        #         dependent_income_data.append({
-        #             'id': dependent_income_obj.id,
-        #             'income_source': dependent_income_obj.source,
-        #             'income_amount': dependent_income_obj.amount,
-        #         })
+            # Create a new dependent object and save it to the database
+            new_dependent = dependent(
+                first_name=first_name,
+                second_name=second_name,
+                last_name=last_name,
+                gender=gender,
+                relationship=relationship,
+                date_of_birth=date_of_birth,
+                national_id=national_id,
+                national_id_exp_date=national_id_exp_date,
+                marital_status=marital_status,
+                educational_level=educational_level,
+                educational_status=educational_status,
+                health_status=health_status,
+                disease_type=disease_type,
+                needs_type=needs_type,
+                educational_degree=educational_degree,
+                needs_description=needs_description,
+                beneficiary_id=beneficiary_obj
+            )
+            new_dependent.save()
 
-        #     dependent_data.append({
-        #         'dependent_id': dependent_obj.id,
-        #         'dependent_first_name': dependent_obj.first_name,
-        #         'dependent_second_name': dependent_obj.second_name,
-        #         'dependent_last_name': dependent_obj.last_name,
-        #         'dependent_gender': dependent_obj.gender,
-        #         'dependent_relationship': dependent_obj.relationship,
-        #         'dependent_educational_status': dependent_obj.educational_status,
-        #         'dependent_marital_status': dependent_obj.marital_status,
-        #         'dependent_national_id': dependent_obj.national_id,
-        #         'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
-        #         'dependent_health_status': dependent_obj.health_status,
-        #         'dependent_needs_type': dependent_obj.needs_type,
-        #         'dependent_educational_degree': dependent_obj.educational_degree,
-        #         'dependent_date_of_birth': dependent_obj.date_of_birth,
-        #         'dependent_needs_description': dependent_obj.needs_description,
-        #         'dependent_educational_level': dependent_obj.educational_level,
-        #         'dependent_disease_type': dependent_obj.disease_type,
-        #         'dependent_income_data': dependent_income_data,
-        #     })
+            # Store list of income for dependent -------------------
+            # Store all income objects in a list
+            dependent_income_list = []
 
+            for entry in dependent_income_table:
+                # Extract the monthly income and remove commas
+                monthly_income_str = entry.get('monthlyIncome', '')
+                monthly_income = Decimal(monthly_income_str.replace(',', ''))
+                income_source = entry.get('incomeSource', '')
+
+                # Initialize dependent income list
+                dependent_income_obj = Dependent_income(
+                    source=income_source,
+                    amount=monthly_income,
+                    dependent=new_dependent
+                )
+                dependent_income_list.append(dependent_income_obj)
+
+            # Save dependent income objects
+            if dependent_income_list:
+                Dependent_income.objects.bulk_create(dependent_income_list)
         # beneficiary_attachment_list = []
 
         # for attachment in beneficiary_attachment_obj:
@@ -2234,3 +2268,48 @@ def beneficiary_request_update_confirm(request, user_id):
 def confirm_beneficiary_request_update(request):
 
     return render(request, "beneficiary_update_request_confirm.html")
+
+
+def validate_national_id_dependent(request, user_id):
+
+    national_id = request.POST.get('national_id', None)
+
+    if national_id is None:
+        return HttpResponse("true")
+    else:
+
+        data = not dependent.objects.filter(
+            national_id=national_id).exists()
+        # in case of national_id doesn't exist before
+        if data is True:
+            data = "true"
+        else:
+            data = "false"
+
+        return HttpResponse(data)
+
+
+# This handles that case of edit dependent where the national_id may equal to the current national_id.
+# base_national_id is the national_id of the dependent before edit
+def validate_national_id_edit_dependent(request, user_id):
+
+    national_id = request.POST.get('national_id', None)
+    base_nid = request.POST.get('base_nid', None)
+
+    if national_id is None:
+        return HttpResponse("true")
+    else:
+
+        data = not dependent.objects.filter(
+            national_id=national_id).exists()
+        # in case of national_id doesn't exist before
+        if data is True:
+            data = "true"
+        else:
+            # in case of national_id exists before but it is equal to the base_national_id
+            if base_nid == national_id:
+                data = "true"
+            else:
+                data = "false"
+
+        return HttpResponse(data)

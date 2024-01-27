@@ -3123,6 +3123,9 @@
 
     $add_dependent_form = $('#editDependentForm');
 
+    // Retrieve the CSRF token from the specific form with id 'editDependentForm'
+    var csrfTokenDepForm = $('#editDependentForm input[name=csrfmiddlewaretoken]').val();
+
     // When "add Child button" is clicked, the following function is called
 
     $(".addChildBtn").click(function (event) {
@@ -3163,6 +3166,16 @@
           dependent_info_national_id: {
             required: true,
             nationalidRegex: true,
+            remote: {
+              url: '{% url 'validate_national_id_dependent' user_id=request.user.id %}',
+              type: 'post',
+              data: {
+                national_id: function() {
+                  return $('#id_dependent_info_national_id').val();
+                },
+                csrfmiddlewaretoken: csrfTokenDepForm,  // Include CSRF token
+              },
+            },
           },
           dependent_info_national_id_exp_date: {
             required: true,
@@ -3198,23 +3211,26 @@
           },
         },
         messages: {
-          dependent_edit_info_first_name: {
+          dependent_info_first_name: {
             required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
             minlength: "يجب ألا يقل الاسم عن حرفين",
           },
-          dependent_edit_info_second_name: {
+          dependent_info_second_name: {
             required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
             minlength: "يجب ألا يقل الاسم عن حرفين",
           },
-          dependent_edit_info_last_name: {
+          dependent_info_last_name: {
             required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
             minlength: "يجب ألا يقل الاسم عن حرفين",
           },
-          dependent_edit_info_gender: {
+          dependent_info_gender: {
             required: "الرجاء اختيار الجنس",
           },
-          dependent_edit_info_relationship: {
+          dependent_info_relationship: {
             required: "الرجاء اختيار صلة القرابة",
+          },
+          dependent_info_national_id: {
+            remote: "اسم المستخدم تم استخدامه بالفعل!",
           },
           // Add other field messages here
         },
@@ -3288,8 +3304,8 @@
 
             // Create a JSON object to store income information
             var incomeInfo = {
-              monthlyIncome: cells[0].innerText,
-              incomeSource: cells[1].innerText,
+              income_amount: cells[0].innerText,
+              income_source: cells[1].innerText,
             };
 
             incomeInfoArray.push(incomeInfo);
@@ -3363,6 +3379,7 @@
             $("<td></td>")
               .text(dependentNationalID)
               .attr("data-attr", "dependent_edit_info_national_id")
+              .attr("data-attr-base-nid", dependentNationalID)
           );
           $row.append(
             $("<td></td>")
@@ -3856,7 +3873,7 @@
         handleEducationalStatusEditInput.call(educationalStatusDropdown);
         handleHealthStatusEditInput.call();
       }, 2000); // Replace 2000 with the actual time it takes to load data
-      
+
     }
 
 
@@ -3875,6 +3892,12 @@
 
     var $modalForm = $("#editModalForm");
     var $saveChangesButton = $("#saveChanges");
+
+    // Retrieve the CSRF token from the specific form with id 'editModalForm'
+    var csrfTokenEditDepForm = $('#editModalForm input[name=csrfmiddlewaretoken]').val();
+
+    // Retrieve the data-attr-base-nid 
+    //var base_national_id_edit_dep = $('#id_dependent_edit_info_national_id').data('data-attr-base-nid');
 
     $.validator.addMethod(
       "fullNameRegex",
@@ -3965,6 +3988,19 @@
         dependent_edit_info_national_id: {
           required: true,
           nationalidRegex: true,
+          remote: {
+            url: '/beneficiaries/' + {{ request.user.id }}  + '/update/validate_national_id_edit_dependent/',
+            type: 'post',
+            data: {
+              national_id: function() {
+                return $('#id_dependent_edit_info_national_id').val();
+              },
+              csrfmiddlewaretoken: csrfTokenEditDepForm,  // Include CSRF token
+              base_nid: function() { 
+                return document.querySelector('td[data-attr="dependent_edit_info_national_id"]').getAttribute('data-attr-base-nid');
+              },
+            },
+          },
         },
         dependent_edit_info_national_id_exp_date: {
           required: true,
@@ -4018,7 +4054,9 @@
         dependent_edit_info_relationship: {
           required: "الرجاء اختيار صلة القرابة",
         },
-        // Add other field messages here
+        dependent_edit_info_national_id: {
+          remote: "اسم المستخدم تم استخدامه بالفعل!",
+        },
       },
       errorElement: "div",
       errorClass: "invalid-feedback",
@@ -4096,7 +4134,7 @@
             newRow.append('<td data-attr="dependent_edit_info_relationship">' + dependent.dependent_relationship + '</td>');
             newRow.append('<td data-attr="dependent_edit_info_educational_status">' + dependent.dependent_educational_status + '</td>');
             newRow.append('<td data-attr="dependent_edit_info_marital_status">' + dependent.dependent_marital_status + '</td>');
-            newRow.append('<td data-attr="dependent_edit_info_national_id">' + dependent.dependent_national_id + '</td>');
+            newRow.append('<td data-attr="dependent_edit_info_national_id" data-attr-base-nid='+ dependent.dependent_national_id + '>' + dependent.dependent_national_id + '</td>');
             newRow.append('<td data-attr="dependent_edit_info_health_status">' + dependent.dependent_health_status + '</td>');
 
             // Assuming dependent.dependent_income_data is an array
@@ -4151,7 +4189,6 @@
     var dependentData = {{ dependent_list | safe }};
     populateTable(dependentData);
 
-    /*
     function getTableDataAsJSON() {
         const table = document.getElementById('family-table');
         const rows = document.querySelectorAll('#family-table tr');
@@ -4183,19 +4220,16 @@
     
         return JSON.stringify(dependentsData);
     }
-    */
-    
-    // Use this function to get JSON when you need it
-    //const dependentsJSON = getTableDataAsJSON();
-    //console.log(dependentsJSON); // Logs the JSON string
-    
-    document.getElementById('edit_beneficiary_request_form').addEventListener('submit', function(e) {
-      e.preventDefault();
 
-      const formData = new FormData(this);
+    document.getElementById('submit-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+  
+      // Select the form element
+      const form = document.getElementById('edit_beneficiary_request_form');
+
+      const formData = new FormData(form);
 
       // Collecting checkbox values
-      /*
       let dependentNeedsType = [];
       document.querySelectorAll('#id_dependent_info_needs_type input[type=checkbox]').forEach((checkbox) => {
           if (checkbox.checked) {
@@ -4203,7 +4237,7 @@
           }
       });
       formData.append('dependent_info_needs_type', JSON.stringify(dependentNeedsType));
-      */
+      
 
       // Collecting checkbox values
       let familyIssue = [];
@@ -4224,7 +4258,7 @@
       formData.append('familyinfo_needs_type', JSON.stringify(familyNeedsType));
 
       // Adding information of the dependents table to the FormData
-      //formData.append('dependents-table', getTableDataAsJSON());
+      formData.append('dependents-table', getTableDataAsJSON());
 
       // Remove 'Content-Type' header to allow the browser to add it
       // along with the correct 'boundary'
