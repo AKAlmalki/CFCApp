@@ -1175,14 +1175,14 @@ def beneficiary_indiv(request, user_id):
 
             for entry in dependent_income_table:
                 # Extract the monthly income and remove commas
-                monthly_income_str = entry.get('income_amount', '')
-                monthly_income = Decimal(monthly_income_str.replace(',', ''))
+                income_amount_str = entry.get('income_amount', '')
+                income_amount = Decimal(income_amount_str.replace(',', ''))
                 income_source = entry.get('income_source', '')
 
                 # Initialize dependent income list
                 dependent_income_obj = Dependent_income(
                     source=income_source,
-                    amount=monthly_income,
+                    amount=income_amount,
                     dependent=new_dependent
                 )
                 dependent_income_list.append(dependent_income_obj)
