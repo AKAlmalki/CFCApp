@@ -2821,7 +2821,7 @@
       // delete options.headers['Content-Type'];
   
 
-      fetch('https://port433.link{% url 'beneficiary_new' user_id=user.id %}', {
+      fetch('http://127.0.0.1:8000{% url 'beneficiary_new' user_id=user.id %}', {
           method: 'POST',
           body: formData,
       })
@@ -2886,7 +2886,7 @@
     $.validator.addMethod(
       "nationalidRegex",
       function (value, element) {
-        console.log(value, validateSAID(value));
+        // console.log(value, validateSAID(value));
         return this.optional(element) || validateSAID(value);
       },
       "أدخل رقم هوية/إقامة صحيح."
@@ -3323,7 +3323,7 @@
     $.validator.addMethod(
       "validateIBAN",
       function (value, element) {
-        console.log(value, validateIBAN(value));
+        // console.log(value, validateIBAN(value));
         return this.optional(element) || validateIBAN(value);
       },
       "الرجاء إدخال رقم إيبان صحيح"
@@ -4002,8 +4002,8 @@
 
           // Create a JSON object to store income information
           var incomeInfo = {
-            monthlyIncome: cells[0].innerText,
-            incomeSource: cells[1].innerText,
+            income_amount: cells[0].innerText,
+            income_source: cells[1].innerText,
           };
 
           incomeInfoArray.push(incomeInfo);
