@@ -356,10 +356,13 @@ class Individual_supporter(models.Model):
 
 
 # A table that link between the beneficiary and the supporter which represents the support operation
-class Individual_supporter_beneficiary_sponsorship(models.Model):
-    db_table = "individual_supporter_beneficiary_sponsorship"
+class Supporter_beneficiary_sponsorship(models.Model):
+    db_table = "supporter_beneficiary_sponsorship"
     created_at = models.DateTimeField(auto_now_add=True)
-    amount = models.DecimalField(decimal_places=2, max_digits=15, default=0)
+    amount_donated = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    start_date = models.DateField()
+    end_date = models.DateField()
     beneficiary = models.ForeignKey(
         beneficiary, on_delete=models.CASCADE)
     individual_supporter = models.ForeignKey(

@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Individual_supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request
 # from .forms import CustomUserCreationForm
 from django.db.models import Q
 from django.contrib import messages
@@ -1424,18 +1424,27 @@ def supporter_indiv(request):
 
         beneficiary_data = []
 
+        in_ex_diff = 0
+
         for beneficiary_indiv in beneficiary_obj:
             # Retrieve beneficiary income and expenses information
             try:
-                beneficiary_income_expenses_obj = beneficiary_income_expense.objects.get(
-                    beneficiary_id=beneficiary_indiv.id)
+                beneficiary_income_expenses_obj = beneficiary_income_expense.objects.filter(
+                    beneficiary_id=beneficiary_indiv.id).first()
+
+                if beneficiary_income_expenses_obj is not None:
+                    in_ex_diff = beneficiary_income_expenses_obj.in_ex_diff
+                else:
+                    print("income is not available.")
+
             except ObjectDoesNotExist:
                 beneficiary_income_expenses_obj = None
+
             # Collect the data and add them to the object
             beneficiary_data.append({
                 'id': beneficiary_indiv.id,
                 'gender': beneficiary_indiv.gender,
-                'in_ex_diff': beneficiary_income_expenses_obj.in_ex_diff,
+                'in_ex_diff': in_ex_diff,
                 'category': beneficiary_indiv.category,
                 'health_status': beneficiary_indiv.health_status,
                 'age': beneficiary_indiv.age,
