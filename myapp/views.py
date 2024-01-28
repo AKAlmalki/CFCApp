@@ -167,7 +167,6 @@ def sign_up(request):
         new_user.set_password(password1)
         # Save new user information
         new_user.save()
-
         messages.success(
             request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
 
