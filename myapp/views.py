@@ -415,13 +415,13 @@ def validate_phonenumber(request):
 def dashboard(request):
     # insights for the dashboard
     beneficiaries_num = beneficiary.objects.count()
-    supporter_operations_num = supporter_operation.objects.count()
-    entities_num = entity.objects.count()
+    # supporter_operations_num = supporter_operation.objects.count()
+    # entities_num = entity.objects.count()
 
     context = {
         "beneficiaries_num": beneficiaries_num,
-        "supporter_operations_num": supporter_operations_num,
-        "entities_num": entities_num
+        "supporter_operations_num": 0,
+        "entities_num": 0
     }
 
     return render(request, "dashboard.html", context)
