@@ -1,13 +1,12 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Dependent_income, Beneficiary_attachment, Entity_supporter_operation, Individual_supporter_beneficiary_sponsorship, Individual_supporter, CustomUser, Beneficiary_request
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Individual_supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request
 # from .forms import CustomUserCreationForm
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import login, logout, authenticate
-
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, date

@@ -106,26 +106,6 @@ class CustomUser(AbstractUser):
         return self.username
 
 
-class entity(models.Model):
-    name = models.CharField(max_length=55)
-    account = models.CharField(max_length=55, null=True)
-    total_amount = models.DecimalField(
-        decimal_places=2, max_digits=55, default=0)
-
-
-class individual(models.Model):
-    name = models.CharField(max_length=55)
-    account = models.CharField(max_length=55, null=True)
-    total_amount = models.DecimalField(
-        decimal_places=2, max_digits=55, default=0)
-
-
-class supporter_operation(models.Model):
-    amount = models.DecimalField(decimal_places=2, max_digits=55, default=0)
-    category = models.CharField(max_length=55)
-    # entity_id = models.ForeignKey(entity, on_delete=models.CASCADE)
-
-
 class beneficiary(models.Model):
     id = models.AutoField(primary_key=True)
     file_no = models.CharField(max_length=512, null=True, blank=True)
@@ -384,13 +364,3 @@ class Individual_supporter_beneficiary_sponsorship(models.Model):
         beneficiary, on_delete=models.CASCADE)
     individual_supporter = models.ForeignKey(
         Individual_supporter, on_delete=models.CASCADE)
-
-
-class Entity_supporter_operation(models.Model):
-    db_table = "entity_supporter_operation"
-    status = models.CharField(max_length=55, default=1)
-    amount = models.DecimalField(decimal_places=2, max_digits=55, default=0)
-    date = models.DateTimeField(auto_now_add=True)
-    supporter_operation_id = models.ForeignKey(
-        supporter_operation, on_delete=models.CASCADE)
-    entity_id = models.ForeignKey(entity, on_delete=models.CASCADE)
