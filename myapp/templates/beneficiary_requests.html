@@ -56,6 +56,7 @@
                       <tr>
                         <th scope="col"># رقم الطلب</th>
                         <th scope="col">المستفيد</th>
+                        <th scope="col">نوع الطلب</th>
                         <th scope="col">الحالة</th>
                         <th scope="col">التعليقات</th>
                         <th scope="col">مُراجع الطلب</th>
@@ -68,14 +69,23 @@
                           <td class="col" scope="col">{{ request.id }}</td>
                           <td class="col" scope="col">{{ request.beneficiary.first_name }} {{ request.beneficiary.last_name }}</td>
                           <td class="col" scope="col">
-                            {% if request.status == "waiting" %}
-                            <span class="badge text-bg-warning">انتظار</span>
-                            {% elif request.status == "under review" %}
-                            <span class="badge text-bg-primary">تحت المراجعة</span>
-                            {% else %}
-                            <span class="badge text-bg-primary">{{ request.status }}</span>
-                            {% endif %}
-                            </td>
+                          {% if request.request_type == "new" %}
+                          <span class="badge text-bg-success">جديد</span>
+                          {% elif request.request_type == "update" %}
+                          <span class="badge text-bg-warning">تحديث</span>
+                          {% else %}
+                          <span class="badge text-bg-primary">{{ request.status }}</span>
+                          {% endif %}
+                          </td>
+                          <td class="col" scope="col">
+                          {% if request.status == "waiting" %}
+                          <span class="badge text-bg-warning">انتظار</span>
+                          {% elif request.status == "under review" %}
+                          <span class="badge text-bg-primary">تحت المراجعة</span>
+                          {% else %}
+                          <span class="badge text-bg-primary">{{ request.status }}</span>
+                          {% endif %}
+                          </td>
                           {% if request.comment %}
                           <td class="col" scope="col">{{ request.comment }}</td>
                           {% else %}

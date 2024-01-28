@@ -100,6 +100,16 @@ urlpatterns = [
         name="beneficiary_request_update"
     ),
     path(
+        'beneficiaries/<int:user_id>/update/validate_national_id_dependent/',
+        views.validate_national_id_dependent,
+        name="validate_national_id_dependent"
+    ),
+    path(
+        'beneficiaries/<int:user_id>/update/validate_national_id_edit_dependent/',
+        views.validate_national_id_edit_dependent,
+        name="validate_national_id_edit_dependent"
+    ),
+    path(
         'beneficiaries/<int:user_id>/confirm/',
         views.beneficiary_request_update_confirm,
         name="beneficiary_request_update_confirm"
@@ -110,7 +120,7 @@ urlpatterns = [
         name="beneficiary_request_update_confirm_message"
     ),
     path(
-        "sign-up",
+        "sign-up/",
         views.sign_up,
         name="sign-up"
     ),

@@ -316,7 +316,7 @@ class dependent(models.Model):
     relationship = models.CharField(max_length=64)
     educational_status = models.CharField(max_length=128, null=True)
     marital_status = models.CharField(max_length=64)
-    national_id = models.CharField(max_length=20)
+    national_id = models.CharField(max_length=20, unique=True)
     health_status = models.CharField(max_length=128, null=True)
     needs_type = JSONField(default=list)
     educational_degree = models.CharField(max_length=128, null=True)
