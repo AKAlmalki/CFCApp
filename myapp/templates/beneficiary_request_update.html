@@ -3230,7 +3230,7 @@
             required: "الرجاء اختيار صلة القرابة",
           },
           dependent_info_national_id: {
-            remote: "اسم المستخدم تم استخدامه بالفعل!",
+            remote: "رقم الهوية / الإقامة تم استخدامه بالفعل!",
           },
           // Add other field messages here
         },
@@ -3602,7 +3602,15 @@
                       $(this).prop('checked', true);
                   }
               } else {
+                  
                   $(this).val(cellText);
+
+                // If the input is the national id field, add a data attribute
+                if ($(this).attr('name') === 'dependent_edit_info_national_id') {
+
+                    // Assuming you want to add a data attribute named 'custom-data'
+                    $(this).attr('data-attr-base-nid', cellText);
+                }
               }
           });
 
@@ -3997,7 +4005,9 @@
               },
               csrfmiddlewaretoken: csrfTokenEditDepForm,  // Include CSRF token
               base_nid: function() { 
-                return document.querySelector('td[data-attr="dependent_edit_info_national_id"]').getAttribute('data-attr-base-nid');
+                // Get the value from the data-attr-base-nid attribute using plain JavaScript
+                var element = document.getElementById('id_dependent_edit_info_national_id');
+                return element.getAttribute('data-attr-base-nid');
               },
             },
           },
@@ -4055,7 +4065,7 @@
           required: "الرجاء اختيار صلة القرابة",
         },
         dependent_edit_info_national_id: {
-          remote: "اسم المستخدم تم استخدامه بالفعل!",
+          remote: "رقم الهوية / الإقامة تم استخدامه بالفعل!",
         },
       },
       errorElement: "div",

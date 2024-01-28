@@ -2369,6 +2369,8 @@ def validate_national_id_edit_dependent(request, user_id):
     national_id = request.POST.get('national_id', None)
     base_nid = request.POST.get('base_nid', None)
 
+    print(request.POST)
+
     if national_id is None:
         return HttpResponse("true")
     else:
