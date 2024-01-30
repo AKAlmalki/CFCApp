@@ -11,7 +11,7 @@ These instructions will get you a copy of the project up and running on your loc
 What things you need to install the software and how to install them:
 
 - Python 3.10
-- Django (latest version)
+- Django (5.0.1)
 - Other dependencies listed in `requirements.txt`
 
 ### Installing
@@ -62,7 +62,6 @@ Add additional notes about how to deploy this on a live system.
 * [Django](https://www.djangoproject.com/) - The web framework used
 * [Python](https://www.python.org/) - Programming Language
 * [PostgreSQL](https://www.postgresql.org/) - Database Management System (if applicable)
-* [Other technologies/libraries used]
 
 ## Contributing
 
@@ -78,7 +77,6 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 * Anas Khaled - *Initial work* - [YourGithubProfile](link to your GitHub profile)
 
 See also the list of [contributors](link to contributors list) who participated in this project.
-
 
 ## Acknowledgments
 
