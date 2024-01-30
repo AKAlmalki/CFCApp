@@ -1,6 +1,7 @@
+
 # Community Friends Charity App (CFC)
 
-CFC App is a web application built using the Django framework. It is designed to impower the charity support and ease of use.
+CFC App is a web application built using the Django framework. It is designed to empower charity support and ease of use.
 
 ## Getting Started
 
@@ -62,6 +63,21 @@ Add additional notes about how to deploy this on a live system.
 * [Django](https://www.djangoproject.com/) - The web framework used
 * [Python](https://www.python.org/) - Programming Language
 * [PostgreSQL](https://www.postgresql.org/) - Database Management System (if applicable)
+* [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/) - Library for web scraping
+* [Django Crispy Forms](https://django-crispy-forms.readthedocs.io/) - Styling Django forms
+* [Django Formtools](https://django-formtools.readthedocs.io/) - Collection of utilities for Django forms
+* [Django Widget Tweaks](https://django-widget-tweaks.readthedocs.io/) - Tweak the form field rendering in templates
+* [jQuery Validate](https://jqueryvalidation.org/) - Client-side form validation
+* [DataTables](https://datatables.net/) - jQuery plugin for interactive tables
+* [openpyxl](https://openpyxl.readthedocs.io/) - Library for reading and writing Excel files
+* [psycopg2-binary](https://www.psycopg.org/) - PostgreSQL adapter for Python
+* [python-dotenv](https://pypi.org/project/python-dotenv/) - Library for loading environment variables from a file
+* [typing-extensions](https://docs.python.org/3/library/typing.html) - Type hints for Python
+* [et-xmlfile](https://pypi.org/project/et-xmlfile/) - Library for reading and writing Excel files
+* [six](https://pypi.org/project/six/) - Python 2 and 3 compatibility library
+* [soupsieve](https://pypi.org/project/soupsieve/) - Library for parsing CSS selectors
+* [sqlparse](https://pypi.org/project/sqlparse/) - SQL parser for Python
+* ...
 
 ## Contributing
 
