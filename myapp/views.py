@@ -1508,8 +1508,6 @@ def supporter_indiv_post(request):
         post_data = request.POST
         files_data = request.FILES
 
-        print(files_data)
-
         # Supporter information
         first_name = post_data.get('personalinfo_first_name', None)
         second_name = post_data.get('personalinfo_second_name', None)
@@ -1580,7 +1578,6 @@ def supporter_indiv_post(request):
         # Now you can access the data from form and selected rows
         if beneficiary_choice == "id_personal_choice":
 
-            print("personal choice")
             duration = request.POST.get('sponsorship_info_duration', None)
             donation_type = request.POST.get(
                 'sponsorship_info_donation_type', None)
@@ -1607,9 +1604,6 @@ def supporter_indiv_post(request):
                     "nationality": selected_row[7],
                 })
 
-            for data in beneficiary_list:
-                print('\n\n', data)
-
             supporter_request_obj = Supporter_request(
                 supporter=supporter_obj,
                 status="انتظار",
@@ -1624,7 +1618,6 @@ def supporter_indiv_post(request):
 
         else:
 
-            print("charity choice")
             orphan_number = request.POST.get(
                 'charitychoice_orphan_number', None)
             orphan_donation_type = request.POST.get(
@@ -1652,6 +1645,7 @@ def supporter_indiv_post(request):
 
         file_list = []
 
+        # Loop for every file object to add to file_list
         for file_obj in bank_transfer_file:
             file_list.append(Supporter_request_attachment(
                 supporter_request=supporter_request_obj,
