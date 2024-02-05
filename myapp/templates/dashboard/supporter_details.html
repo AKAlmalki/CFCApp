@@ -184,7 +184,7 @@
           <div class="attachment_info">
             <h3 class="mt-4 mb-4">المرفقات</h3>
             <div>
-              {% if supporter_attachments %}
+              {% if supporter_request_attachments %}
               <div class="table-responsive">
                 <table class="table">
                   <thead>
@@ -196,7 +196,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    {% for attachment in supporter_attachments %}
+                    {% for attachment in supporter_request_attachments %}
                     <tr data-bs-toggle="tooltip" title="">
                       <td>
                         <span>

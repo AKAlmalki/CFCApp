@@ -19,76 +19,11 @@ def beneficiary_file_directory(instance, filename):
     return "beneficiaries/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
 
 
-# def dependent_file_directory(instance, filename):
-#     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-#     return "dependents/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
-
-# all below methods must be removed (it is not needed anymore)
-
-
-def beneficiary_national_id_directory_path(instance, filename):
+def supporter_request_file_directory(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_national_id/{1}".format(instance.national_id, filename)
+    return "supporters/{0}/requests/{1}/{2}/{3}".format(instance.supporter_request.supporter.id, instance.supporter_request.id, instance.file_type, filename)
 
 
-def beneficiary_national_address_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_national_address/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_debt_instrument_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_debt_instrument/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_pension_social_insurance_inquiry_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_pension_social_insurance_inquiry/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_father_husband_death_certificate_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_father_husband_death_certificate/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_letter_from_prison_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_letter_from_prison/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_divorce_deed_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_divorce_deed/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_children_responsibility_deed_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_children_responsibility_deed/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_other_files_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_other_files/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_lease_contract_title_deed_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_lease_contract_title_deed/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_water_electricity_bills_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_water_electricity_bills/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_national_id_dependents_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_national_id_dependents/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_social_warranty_inquiry_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_social_warranty_inquiry/{1}".format(instance.national_id, filename)
 #########################################################
 
 
@@ -371,10 +306,9 @@ class Supporter_request(models.Model):
     comment = models.CharField(max_length=512, null=True)
     total_amount = models.DecimalField(
         decimal_places=2, max_digits=15, default=0, null=True)
-
     selection_type = models.CharField(max_length=55, null=True)
 
-    # Fields for charity choice
+    # Fields for charity beneficiary selection
     orphan_number = models.PositiveIntegerField(
         default=0, null=True)
     orphan_donation_type = models.CharField(max_length=55, null=True)
@@ -386,6 +320,23 @@ class Supporter_request(models.Model):
     duration = models.CharField(max_length=55, null=True)
     donation_type = models.CharField(max_length=55, null=True)
     beneficiary_list = JSONField(default=list)
+
+
+class Supporter_request_attachment(models.Model):
+    db_table = "supporter_request_attachment"
+    supporter_request = models.ForeignKey(
+        Supporter_request, on_delete=models.CASCADE)
+    file_type = models.CharField(max_length=256, null=True)
+    file_object = models.FileField(
+        upload_to=supporter_request_file_directory, blank=True, null=True)
+
+    @property
+    def file_size(self):
+        return self.file_object.size
+
+    # Returns file name with its extension
+    def filename(self):
+        return os.path.basename(self.file_object.name)
 
 
 # A table that link between the beneficiary and the supporter which represents the support operation

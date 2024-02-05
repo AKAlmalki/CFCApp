@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment
 # from .forms import CustomUserCreationForm
 from django.db.models import Q
 from django.contrib import messages
@@ -1508,6 +1508,8 @@ def supporter_indiv_post(request):
         post_data = request.POST
         files_data = request.FILES
 
+        print(files_data)
+
         # Supporter information
         first_name = post_data.get('personalinfo_first_name', None)
         second_name = post_data.get('personalinfo_second_name', None)
@@ -1645,6 +1647,22 @@ def supporter_indiv_post(request):
             )
             supporter_request_obj.save()
 
+        bank_transfer_file = request.FILES.getlist(
+            'file_bank_transfer')
+
+        file_list = []
+
+        for file_obj in bank_transfer_file:
+            file_list.append(Supporter_request_attachment(
+                supporter_request=supporter_request_obj,
+                file_type="bank_transfer",
+                file_object=file_obj,
+            ))
+
+        # Create the attachment objects for supporter request
+        if file_list:
+            Supporter_request_attachment.objects.bulk_create(file_list)
+
         # Return a JSON response as needed
         return JsonResponse({'success': True})
     else:
@@ -1654,14 +1672,37 @@ def supporter_indiv_post(request):
 @login_required(login_url="/login")
 def supporter_request_details(request, supporter_id, s_request_id):
 
+    supporter_obj = Supporter.objects.get(id=supporter_id)
+
     supporter_request_obj = Supporter_request.objects.filter(
         supporter=supporter_id, id=s_request_id).first()
 
-    supporter_obj = Supporter.objects.get(id=supporter_id)
+    supporter_request_attachment_obj = Supporter_request_attachment.objects.filter(
+        supporter_request=supporter_request_obj.id).all()
+
+    supporter_request_attachment_list = []
+
+    for attachment in supporter_request_attachment_obj:
+        # A variable that holds the attachment type in Arabic
+        attachment_type_ar = ""
+
+        if attachment.file_type == "bank_transfer":
+            attachment_type_ar = "صورة إيصال الحوالة البنكية"
+        else:
+            attachment_type_ar = attachment.file_type
+
+        supporter_request_attachment_list.append({
+            'file_path': attachment.file_object.url,
+            'file_extension': file_extension(attachment.file_object.url),
+            'file_name': attachment.filename().split(".")[0],
+            'file_size': attachment.file_size,
+            'attachment_type': attachment_type_ar,
+        })
 
     context = {
         "supporter": supporter_obj,
         "supporter_request": supporter_request_obj,
+        "supporter_request_attachments": supporter_request_attachment_list,
     }
 
     return render(request, "dashboard/supporter_details.html", context)
