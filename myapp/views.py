@@ -1613,6 +1613,7 @@ def supporter_indiv_post(request):
                 status="انتظار",
                 request_type="جديد",
                 total_amount=total_price,
+                selection_type="شخصي",
                 duration=duration,
                 donation_type=donation_type,
                 beneficiary_list=beneficiary_list,
@@ -1636,6 +1637,7 @@ def supporter_indiv_post(request):
                 status="انتظار",
                 request_type="جديد",
                 total_amount=total_price,
+                selection_type="الجمعية",
                 orphan_number=orphan_number,
                 orphan_donation_type=orphan_donation_type,
                 widower_number=widower_number,
@@ -1655,21 +1657,11 @@ def supporter_request_details(request, supporter_id, s_request_id):
     supporter_request_obj = Supporter_request.objects.filter(
         supporter=supporter_id, id=s_request_id).first()
 
-    print(supporter_id)
     supporter_obj = Supporter.objects.get(id=supporter_id)
-
-    supporter_choice = ""
-    if supporter_request_obj.is_charity_choice:
-        supporter_choice = "charity_choice"
-    else:
-        supporter_choice = "personal_choice"
-
-    print(supporter_choice)
 
     context = {
         "supporter": supporter_obj,
         "supporter_request": supporter_request_obj,
-        "supporter_choice": supporter_choice,
     }
 
     return render(request, "dashboard/supporter_details.html", context)

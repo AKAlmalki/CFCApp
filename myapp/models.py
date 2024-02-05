@@ -372,6 +372,8 @@ class Supporter_request(models.Model):
     total_amount = models.DecimalField(
         decimal_places=2, max_digits=15, default=0, null=True)
 
+    selection_type = models.CharField(max_length=55, null=True)
+
     # Fields for charity choice
     orphan_number = models.PositiveIntegerField(
         default=0, null=True)
@@ -384,14 +386,6 @@ class Supporter_request(models.Model):
     duration = models.CharField(max_length=55, null=True)
     donation_type = models.CharField(max_length=55, null=True)
     beneficiary_list = JSONField(default=list)
-
-    def is_charity_choice(self):
-        # Implement a method to check if the supporter has chosen charity-based beneficiaries
-        return self.orphan_number is not None or self.widower_number is not None
-
-    def is_personal_selection(self):
-        # Implement a method to check if the supporter has manually selected beneficiaries
-        return self.duration is not None and self.donation_type is not None
 
 
 # A table that link between the beneficiary and the supporter which represents the support operation

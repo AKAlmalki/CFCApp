@@ -100,7 +100,7 @@
 
           <hr>
 
-          {% if supporter_choice == "charity_choice" %}
+          {% if supporter_request.selection_type == "شخصي" %}
           <div class="sponsorship">
             <h3 class="mt-4 mb-4">معلومات الدعم</h3>
             <div>
@@ -133,8 +133,22 @@
                             <input type="text" class="form-control" id="id_beneficiary_nationality{{ beneficiary.id }}" name="beneficiary_nationality" value="{{ beneficiary.nationality }}" disabled readonly>
                           </div>
                         </div>
+                        <div class="row row-cols-lg-2 row-cols-xl-3">
+                          <div class="mb-3">
+                            <h6 class="col form-label" for="id_beneficiary_category{{ beneficiary.id }}">التصنيف الرئيسي</h6>
+                            <input type="text" class="form-control" id="id_beneficiary_category{{ beneficiary.id }}" name="beneficiary_category" value="{{ beneficiary.category }}" disabled readonly>
+                          </div>
+                          <div class="mb-3">
+                            <h6 class="col form-label" for="id_beneficiary_health_status{{ beneficiary.id }}">الحالة الصحية</h6>
+                            <input type="text" class="form-control" id="id_beneficiary_health_status{{ beneficiary.id }}" name="beneficiary_health_status" value="{{ beneficiary.health_status }}" disabled readonly>
+                          </div>
+                          <div class="mb-3">
+                            <h6 class="col form-label" for="id_beneficiary_in_ex_diff{{ beneficiary.id }}">نسبة الاحتياج</h6>
+                            <input type="text" class="form-control" id="id_beneficiary_in_ex_diff{{ beneficiary.id }}" name="beneficiary_in_ex_diff" value="{{ beneficiary.in_ex_diff }}" disabled readonly>
+                          </div>
+                        </div>
 
-                      </div>
+                      </div><!-- accordion body end line -->
                     </div>
                   </div>
                 {% endfor %}
