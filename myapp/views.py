@@ -1640,7 +1640,7 @@ def supporter_indiv_post(request):
             )
             supporter_request_obj.save()
 
-        bank_transfer_file = request.FILES.getlist(
+        bank_transfer_file = files_data.getlist(
             'file_bank_transfer')
 
         file_list = []
