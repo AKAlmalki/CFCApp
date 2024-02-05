@@ -1680,8 +1680,10 @@ def supporter_request_details(request, supporter_id, s_request_id):
     supporter_request_attachment_obj = Supporter_request_attachment.objects.filter(
         supporter_request=supporter_request_obj.id).all()
 
+    # List of attachments for the supporter request
     supporter_request_attachment_list = []
 
+    # Loop to add specific attributes to each attachment object
     for attachment in supporter_request_attachment_obj:
         # A variable that holds the attachment type in Arabic
         attachment_type_ar = ""
