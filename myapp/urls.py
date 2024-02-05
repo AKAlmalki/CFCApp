@@ -45,7 +45,7 @@ urlpatterns = [
         name="supporter_indiv"
     ),
     path(
-        "supporters/individuals/new_request",
+        "supporters/new_request/",
         views.supporter_indiv_post,
         name="supporter_indiv_post"
     ),
@@ -63,6 +63,16 @@ urlpatterns = [
         "dashboard/requests",
         views.dashboard_requests,
         name="requests"
+    ),
+    path(
+        "dashboard/supporters/requests/",
+        views.dashboard_supporters_request,
+        name="dashboard_supporters_request"
+    ),
+    path(
+        "dashboard/supporters/<int:supporter_id>/requests/<int:s_request_id>/",
+        views.supporter_request_details,
+        name="supporter_request_details"
     ),
     path(
         "dashboard/reports",

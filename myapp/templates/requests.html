@@ -1,4 +1,4 @@
-{% extends "dashboard/dbase.html" %} {% load humanize %} {% block title %} الصفحة الرئيسية {% endblock %}
+{% extends "dashboard/dbase.html" %} {% load humanize %} {% block title %} طلبات المستفيدين {% endblock %}
 {% block head %}
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -20,16 +20,16 @@
             {% for row in beneficiary_requests %}
             <tr>
               <th scope="row">{{ row.id }}</th>
-              {% if row.request_type == "new" %}
+              {% if row.request_type == "جديد" %}
               <td class="col"><span class="badge text-bg-success">{{ row.request_type }}</span></td>
-              {% elif row.request_type == "update" %}
+              {% elif row.request_type == "تحديث" %}
               <td class="col"><span class="badge text-bg-info">{{ row.request_type }}</span></td>
               {% else %}
               <td class="col">{{ row.request_type }}</td>
               {% endif %}
-              {% if row.status == "under review" %}
+              {% if row.status == "تحت المراجعة" %}
               <td class="col"><span class="badge text-bg-primary">{{ row.status }}</span></td>
-              {% elif row.status == "waiting" %}
+              {% elif row.status == "انتظار" %}
               <td class="col"><span class="badge text-bg-warning">{{ row.status }}</span></td>
               {% else %}
               <td class="col">{{ row.status }}</td>
@@ -833,7 +833,7 @@
         var beneficiaryId = this.getAttribute('data-id');
 
         // Fetch request using beneficiaryId to get the beneficiary details:
-        fetch('https://port433.link/beneficiary_details/' + beneficiaryId)
+        fetch('http://127.0.0.1:8000/beneficiary_details/' + beneficiaryId)
            .then(response => response.json())
            .then(data => {
               console.log(data);

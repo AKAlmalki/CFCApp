@@ -334,8 +334,9 @@ class Dependent_income(models.Model):
 #     def filename(self):
 #         return os.path.basename(self.file_object.name)
 
-class Individual_supporter(models.Model):
-    db_table = "individual_supporter"
+
+class Supporter(models.Model):
+    db_table = "supporter"
     first_name = models.CharField(max_length=55)
     second_name = models.CharField(max_length=55)
     last_name = models.CharField(max_length=55)
@@ -350,20 +351,60 @@ class Individual_supporter(models.Model):
     employer = models.CharField(max_length=128, null=True)
     phone_number = models.CharField(max_length=15)
     email = models.EmailField()
+    status = models.CharField(max_length=55, null=True)
 
-    orphan_number = models.DecimalField(
-        decimal_places=2, max_digits=15, default=0)
+    was_sponsor = models.CharField(max_length=55, null=True)
+    status_notify = models.CharField(max_length=55, null=True)
+    invite_beneficiary = models.CharField(max_length=55, null=True)
+    visit_beneficiary = models.CharField(max_length=55, null=True)
+
+
+class Supporter_request(models.Model):
+    db_table = "supporter_request"
+    supporter = models.ForeignKey(
+        Supporter, on_delete=models.CASCADE)
+    status = models.CharField(max_length=55)
+    request_type = models.CharField(max_length=55, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_by = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='reviewed_supporter_set', null=True)
+    comment = models.CharField(max_length=512, null=True)
+    total_amount = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0, null=True)
+
+    # Fields for charity choice
+    orphan_number = models.PositiveIntegerField(
+        default=0, null=True)
+    orphan_donation_type = models.CharField(max_length=55, null=True)
+    widower_number = models.PositiveIntegerField(
+        default=0, null=True)
+    widower_donation_type = models.CharField(max_length=55, null=True)
+
+    # Fields for personal beneficiary selection
+    duration = models.CharField(max_length=55, null=True)
+    donation_type = models.CharField(max_length=55, null=True)
+    beneficiary_list = JSONField(default=list)
+
+    def is_charity_choice(self):
+        # Implement a method to check if the supporter has chosen charity-based beneficiaries
+        return self.orphan_number is not None or self.widower_number is not None
+
+    def is_personal_selection(self):
+        # Implement a method to check if the supporter has manually selected beneficiaries
+        return self.duration is not None and self.donation_type is not None
 
 
 # A table that link between the beneficiary and the supporter which represents the support operation
 class Supporter_beneficiary_sponsorship(models.Model):
     db_table = "supporter_beneficiary_sponsorship"
     created_at = models.DateTimeField(auto_now_add=True)
-    amount_donated = models.DecimalField(
+    total_amount_donated = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    amount_donated_monthly = models.DecimalField(
         decimal_places=2, max_digits=15, default=0)
     start_date = models.DateField()
     end_date = models.DateField()
     beneficiary = models.ForeignKey(
         beneficiary, on_delete=models.CASCADE)
-    individual_supporter = models.ForeignKey(
-        Individual_supporter, on_delete=models.CASCADE)
+    supporter = models.ForeignKey(
+        Supporter, on_delete=models.CASCADE)

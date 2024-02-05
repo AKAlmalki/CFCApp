@@ -1,0 +1,252 @@
+{% extends "dashboard/dbase.html" %} {% load humanize %} {% block title %} تفاصيل الداعم{% endblock %}
+{% block head %}
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+  <div class="row mt-5">
+    <div class="nav-breadcrumb mb-4">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">الصفحة الرئيسية</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'dashboard_supporters_request' %}">طلبات الكفلاء</a></li>
+          <li class="breadcrumb-item active" aria-current="page">تفاصيل الطلب</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div>
+          <h2 class="card-title fw-bold">تفاصيل طلب الداعم</h2>
+          <small class="text-muted">رقم الداعم #{{ supporter.id }}</small>
+        </div>
+          <hr>
+          <div class="personal_info">
+            <h3 class="mt-4 mb-4">المعلومات الشخصية</h3>
+            <div class="row row-cols-md-1 row-cols-xl-3">
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_first_name">الأسم الأول</h6>
+                <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ supporter.first_name }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_second_name">الأسم الثاني</h6>
+                <input type="text" class="form-control" id="id_second_name" name="second_name" value="{{ supporter.second_name }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_last_name">الأسم الأخير</h6>
+                <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ supporter.last_name }}" disabled readonly>
+              </div>
+            </div>
+
+            <div class="row row-cols-lg-2 row-cols-xl-4">
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_gender">الجنس</h6>
+                <input type="text" class="form-control" id="id_gender" name="gender" value="{{ supporter.gender }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_date_of_birth">تاريخ الميلاد</h6>
+                <input type="text" class="form-control" id="id_date_of_birth" name="date_of_birth" value="{{ supporter.date_of_birth }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_phone_number">رقم الجوال</h6>
+                <input type="text" class="form-control" id="id_phone_number" name="phone_number" value="{{ supporter.phone_number }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_email">الايميل الالكتروني</h6>
+                <input type="email" class="form-control" id="id_email" name="email" value="{{ supporter.email }}" disabled readonly>
+              </div>
+            </div>
+
+            <div class="row row-cols-md-1 row-cols-xl-3">
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_nationality">الجنسية</h6>
+                <input type="text" class="form-control" id="id_nationality" name="nationality" value="{{ supporter.nationality }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_national_id">رقم الهوية/الإقامة</h6>
+                <input type="text" class="form-control" id="id_national_id" name="national_id" value="{{ supporter.national_id }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة</h6>
+                <input type="text" class="form-control" id="id_national_id_exp_date" name="national_id_exp_date" value="{{ supporter.national_id_exp_date }}" disabled readonly>
+              </div>
+            </div>
+
+            <div class="row row-cols-md-1 row-cols-lg-2">
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_marital_status">الحالة الاجتماعية</h6>
+                <input type="text" class="form-control" id="id_marital_status" name="marital_status" value="{{ supporter.marital_status }}" disabled readonly>
+              </div>
+
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_educational_level">المستوى التعليمي</h6>
+                <input type="text" class="form-control" id="id_educational_level" name="educational_level" value="{{ supporter.educational_level }}" disabled readonly>
+              </div>
+            </div>
+
+            <div class="row row-cols-lg-2">
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_work_status">هل يعمل؟</h6>
+                <input type="text" class="form-control" id="id_work_status" name="work_status" value="{{ supporter.work_status }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_employer">جهة العمل</h6>
+                <input type="text" class="form-control" id="id_employer" name="employer" value="{% if supporter.employer %}{{ supporter.employer }}{% else %}----{% endif %}" disabled readonly>
+              </div>
+            </div>
+          </div> <!-- end line personal info -->
+
+          <hr>
+
+          {% if supporter_choice == "charity_choice" %}
+          <div class="sponsorship">
+            <h3 class="mt-4 mb-4">معلومات الدعم</h3>
+            <div>
+              <div class="accordion" id="beneficiaryAccordion">
+                {% for beneficiary in supporter_request.beneficiary_list %}
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="beneficiaryHeading{{ beneficiary.id }}">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiaryCollapse{{ beneficiary.id }}" aria-expanded="false" aria-controls="beneficiaryCollapse{{ beneficiary.id }}">
+                         المستفيد رقم #{{ beneficiary.id }}
+                      </button>
+                    </h2>
+                    <div id="beneficiaryCollapse{{ beneficiary.id }}" class="accordion-collapse collapse" aria-labelledby="beneficiaryHeading{{ beneficiary.id }}">
+                      <div class="accordion-body">
+
+                        <div class="row row-cols-lg-2 row-cols-xl-4">
+                          <div class="mb-3">
+                            <h6 class="col form-label" for="id_beneficiary_id{{ beneficiary.id }}">رقم المستفيد</h6>
+                            <input type="text" class="form-control" id="id_beneficiary_id{{ beneficiary.id }}" name="beneficiary_id" value="{{ beneficiary.id }}" disabled readonly>
+                          </div>
+                          <div class="mb-3">
+                            <h6 class="col form-label" for="id_beneficiary_age{{ beneficiary.id }}">العمر</h6>
+                            <input type="text" class="form-control" id="id_beneficiary_age{{ beneficiary.id }}" name="beneficiary_age" value="{{ beneficiary.age }}" disabled readonly>
+                          </div>
+                          <div class="mb-3">
+                            <h6 class="col form-label" for="id_beneficiary_gender{{ beneficiary.id }}">الجنس</h6>
+                            <input type="text" class="form-control" id="id_beneficiary_gender{{ beneficiary.id }}" name="beneficiary_gender" value="{{ beneficiary.gender }}" disabled readonly>
+                          </div>
+                          <div class="mb-3">
+                            <h6 class="col form-label" for="id_beneficiary_nationality{{ beneficiary.id }}">الجنسية</h6>
+                            <input type="text" class="form-control" id="id_beneficiary_nationality{{ beneficiary.id }}" name="beneficiary_nationality" value="{{ beneficiary.nationality }}" disabled readonly>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <div class="sponsorship mb-4">
+            <h3 class="mt-4 mb-4">معلومات الدعم</h3>
+            <div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_orphan_number">عدد الايتام</h6>
+                <input type="text" class="form-control" id="id_orphan_number" name="orphan_number" value="{{ supporter_request.orphan_number }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_orphan_donation_type">مدة الدعم (ايتام)</h6>
+                <input type="text" class="form-control" id="id_orphan_donation_type" name="orphan_donation_type" value="{{ supporter_request.orphan_donation_type }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_widower_number">عدد الارامل</h6>
+                <input type="text" class="form-control" id="id_widower_number" name="widower_number" value="{{ supporter_request.widower_number }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_widower_donation_type">مدة الدعم (ارامل)</h6>
+                <input type="text" class="form-control" id="id_widower_donation_type" name="widower_donation_type" value="{{ supporter_request.widower_donation_type }}" disabled readonly>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <hr>
+
+          <div class="attachment_info">
+            <h3 class="mt-4 mb-4">المرفقات</h3>
+            <div>
+              {% if supporter_attachments %}
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">اسم الملف</th>
+                      <th scope="col">نوع المرفق</th>
+                      <th scope="col">نوع الملف</th>
+                      <th scope="col">الإجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for attachment in supporter_attachments %}
+                    <tr data-bs-toggle="tooltip" title="">
+                      <td>
+                        <span>
+                          {{ attachment.file_name }}
+                        </span>
+                      </td>
+                      <td>
+                        <span>
+                          {{ attachment.attachment_type }}
+                        </span>
+                      </td>
+                      <td>{{ attachment.file_extension }}</td>
+                      <td>
+                        <div class="d-flex align-items-center actions">
+                          <div class="mb-2">
+                            <a href="{{ attachment.file_path }}" target="_blank" class="btn btn-primary">عرض الملف</a>
+                        </div>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% else %}
+              <p>لا يوجد مرفقات </p>
+              {% endif %}
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="supporter_preferences">
+            <h3 class="mt-4 mb-4">تفضيلات الداعم</h3>
+            <div>
+              <div>
+                <div class="mb-3 form-group">
+                  <label for="id_sponsorship_preference_was_sponsor_check" class="form-label">هل سبق أن كفلت يتيم أو أرملة في وقت سابق أو حالي؟
+                  </label>
+                  <input type="text" class="form-control" id="id_sponsorship_preference_was_sponsor_check" name="sponsorship_preference_was_sponsor_check" value="{{ supporter.was_sponsor }}" disabled readonly>
+                </div>
+                <div class="mb-3 form-group">
+                  <label for="id_sponsorship_info_status_notify_check" class="form-label">
+                    هل ترغب بتقرير عن اليتيم / الأرملة؟
+                  </label>
+                  <input type="text" class="form-control" id="id_sponsorship_info_status_notify_check" name="sponsorship_info_status_notify_check" value="{{ supporter.status_notify }}" disabled readonly>
+                </div>
+                <div class="mb-3 form-group">
+                  <label for="id_sponsorship_info_invite_beneficiary_check" class="form-label">
+                    هل ترغب بإشراك اليتيم في مناسباتكم العائلية؟
+                  </label>
+                  <input type="text" class="form-control" id="id_sponsorship_info_invite_beneficiary_check" name="sponsorship_info_invite_beneficiary_check" value="{{ supporter.invite_beneficiary }}" disabled readonly>
+                </div>
+                <div class="mb-3 form-group">
+                  <label for="id_sponsorship_info_visit_beneficiary_check" class="form-label">
+                    هل ترغب بزيارة لأسرة اليتيم / الأرملة؟
+                  </label>
+                  <input type="text" class="form-control" id="id_sponsorship_info_visit_beneficiary_check" name="sponsorship_info_visit_beneficiary_check" value="{{ supporter.visit_beneficiary }}" disabled readonly>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div> <!-- end line card body -->
+    </div> <!-- end line card -->
+  </div> <!-- end line container -->
+</div>
+{% endblock %}

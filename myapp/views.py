@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request
 # from .forms import CustomUserCreationForm
 from django.db.models import Q
 from django.contrib import messages
@@ -429,6 +429,38 @@ def dashboard(request):
 
 def new_dashboard(request):
     return render(request, "dashboard/dashboard2.html")
+
+
+@login_required(login_url="/login")
+def dashboard_supporters_request(request):
+
+    context = {}
+
+    try:
+        # List of supporters requests
+        supporters_request_list = Supporter_request.objects.all()
+
+        paginator = Paginator(supporters_request_list, IPP_DASHBOARD_REQUESTS)
+        page_number = request.GET.get('page')
+        supporter_request_pag_list = paginator.get_page(page_number)
+
+        # List of beneficiaries
+        beneficiary_list = beneficiary.objects.all()
+
+        # List of supporters
+        supporters_list = Supporter.objects.all()
+
+        context = {
+            'beneficiaries': beneficiary_list,
+            'supporters': supporters_list,
+            'supporters_requests': supporter_request_pag_list,
+            'supporters_requests_headers': {'رقم الطلب', 'نوع الطلب', 'الحالة', 'المُراجع', 'التعليقات', 'الإجراءات'},
+        }
+    except ObjectDoesNotExist:
+        print("[Error] - Object does not exist, dashboard_supporters_request.")
+        return JsonResponse({"message": "Object does not exist!", "code": "404"})
+
+    return render(request, "dashboard/supporters.html", context)
 
 
 @login_required(login_url="/login")
@@ -1197,8 +1229,8 @@ def beneficiary_indiv(request, user_id):
         new_beneficiary_request = Beneficiary_request(
             user=logged_in_user,
             beneficiary=beneficiary_obj,
-            status="waiting",
-            request_type="new",
+            status="انتظار",
+            request_type="جديد",
         )
         new_beneficiary_request.save()
 
@@ -1476,28 +1508,140 @@ def supporter_indiv_post(request):
         post_data = request.POST
         files_data = request.FILES
 
-        # ... retrieve other form fields as needed
+        # Supporter information
+        first_name = post_data.get('personalinfo_first_name', None)
+        second_name = post_data.get('personalinfo_second_name', None)
+        last_name = post_data.get('personalinfo_last_name', None)
+        date_of_birth_data = post_data.get('personalinfo_date_of_birth', None)
+        date_of_birth = None
+        # Check if the date string exists and is not empty
+        if date_of_birth_data:
+            # Convert the date string to a date object
+            date_of_birth = datetime.strptime(
+                date_of_birth_data, '%Y-%m-%d').date()
+        else:
+            print("No valid date found in JSON")
+        gender = post_data.get('personalinfo_gender', None)
+        national_id = post_data.get('personalinfo_national_id', None)
+        national_id_exp_date_data = post_data.get(
+            'personalinfo_national_id_exp_date', None)
+        national_id_exp_date = convert_to_date(
+            national_id_exp_date_data)
+        nationality = post_data.get('personalinfo_nationality', None)
+        marital_status = post_data.get('personalinfo_marital_status', None)
+        educational_level = post_data.get(
+            'personalinfo_educational_level', None)
+        work_status = post_data.get('personalinfo_work_status', None)
+        employer = post_data.get('personalinfo_employer', None)
+        phone_number = post_data.get('personalinfo_phone_number', None)
+        email = post_data.get('personalinfo_email', None)
+
+        # Supporter preferences
+        was_sponsor = request.POST.get(
+            'sponsorship_info_was_sponsor_check', None)
+        status_notify = request.POST.get(
+            'sponsorship_info_status_notify_check', None)
+        invite_beneficiary = request.POST.get(
+            'sponsorship_info_invite_beneficiary_check', None)
+        visit_beneficiary = request.POST.get(
+            'sponsorship_info_visit_beneficiary_check', None)
+
+        supporter_obj = Supporter(
+            first_name=first_name,
+            second_name=second_name,
+            last_name=last_name,
+            date_of_birth=date_of_birth,
+            gender=gender,
+            national_id=national_id,
+            national_id_exp_date=national_id_exp_date,
+            nationality=nationality,
+            marital_status=marital_status,
+            educational_level=educational_level,
+            work_status=work_status,
+            employer=employer,
+            phone_number=phone_number,
+            email=email,
+            status="غير مفعل",
+            was_sponsor=was_sponsor,
+            status_notify=status_notify,
+            invite_beneficiary=invite_beneficiary,
+            visit_beneficiary=visit_beneficiary,
+        )
+        supporter_obj.save()
+
+        # Total price is the same either in personal or charity choice
+        total_price = request.POST.get('total_price', None)
+
         # This field represent user option either to let the selection for the charity or do it by himself
         beneficiary_choice = request.POST.get('beneficiaries_choice')
 
-        # Retrieve selected rows' data
-        try:
-            selected_rows_data = json.loads(
-                request.POST.get('selectedRowsData'))
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON format in selectedRowsData'}, status=400)
-
         # Now you can access the data from form and selected rows
         if beneficiary_choice == "id_personal_choice":
+
             print("personal choice")
+            duration = request.POST.get('sponsorship_info_duration', None)
+            donation_type = request.POST.get(
+                'sponsorship_info_donation_type', None)
+
+            # Retrieve selected rows' data
+            try:
+                selected_rows_data = json.loads(
+                    request.POST.get('selectedRowsData'))
+            except json.JSONDecodeError:
+                return JsonResponse({'error': 'Invalid JSON format in selectedRowsData'}, status=400)
+
+            # A dictionary of beneficiary objects
+            beneficiary_list = []
+
+            for selected_row in selected_rows_data:
+
+                beneficiary_list.append({
+                    "id": selected_row[1],
+                    "health_status": selected_row[5],
+                    "category": selected_row[4],
+                    "in_ex_diff": selected_row[3],
+                    "gender": selected_row[2],
+                    "age": selected_row[6],
+                    "nationality": selected_row[7],
+                })
+
+            for data in beneficiary_list:
+                print('\n\n', data)
+
+            supporter_request_obj = Supporter_request(
+                supporter=supporter_obj,
+                status="انتظار",
+                request_type="جديد",
+                total_amount=total_price,
+                duration=duration,
+                donation_type=donation_type,
+                beneficiary_list=beneficiary_list,
+            )
+            supporter_request_obj.save()
+
         else:
+
             print("charity choice")
+            orphan_number = request.POST.get(
+                'charitychoice_orphan_number', None)
+            orphan_donation_type = request.POST.get(
+                'charitychoice_orphan_donation_type', None)
+            widower_number = request.POST.get(
+                'charitychoice_widower_number', None)
+            widower_donation_type = request.POST.get(
+                'charitychoice_widower_donation_type', None)
 
-        print('Selected rows data:', selected_rows_data)
-
-        # Print or log the data
-        print("POST Data:", post_data)
-        print("Files Data:", files_data)
+            supporter_request_obj = Supporter_request(
+                supporter=supporter_obj,
+                status="انتظار",
+                request_type="جديد",
+                total_amount=total_price,
+                orphan_number=orphan_number,
+                orphan_donation_type=orphan_donation_type,
+                widower_number=widower_number,
+                widower_donation_type=widower_donation_type,
+            )
+            supporter_request_obj.save()
 
         # Return a JSON response as needed
         return JsonResponse({'success': True})
@@ -1505,7 +1649,34 @@ def supporter_indiv_post(request):
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
+@login_required(login_url="/login")
+def supporter_request_details(request, supporter_id, s_request_id):
+
+    supporter_request_obj = Supporter_request.objects.filter(
+        supporter=supporter_id, id=s_request_id).first()
+
+    print(supporter_id)
+    supporter_obj = Supporter.objects.get(id=supporter_id)
+
+    supporter_choice = ""
+    if supporter_request_obj.is_charity_choice:
+        supporter_choice = "charity_choice"
+    else:
+        supporter_choice = "personal_choice"
+
+    print(supporter_choice)
+
+    context = {
+        "supporter": supporter_obj,
+        "supporter_request": supporter_request_obj,
+        "supporter_choice": supporter_choice,
+    }
+
+    return render(request, "dashboard/supporter_details.html", context)
+
 # just for testing
+
+
 def supporter_test(request):
 
     # Including only necessary part
