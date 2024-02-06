@@ -867,9 +867,6 @@ def beneficiary_indiv(request, user_id):
         social_warranty_inquiry_file = request.FILES.getlist(
             'fileSocialWarrantyInquiry')
 
-        print("\n\n1", data)
-        print("\n\n2", files)
-
         # Accessing the data for beneficiary
         first_name = data.get('personalinfo_first_name', None)
         second_name = data.get('personalinfo_second_name', None)
@@ -1140,8 +1137,6 @@ def beneficiary_indiv(request, user_id):
 
         dependent_table = data.get('dependents-table', None)
 
-        print("\n\n\n", dependent_table)
-
         # Parse the JSON string into a Python object
         try:
             dependents_list = json.loads(dependent_table)
@@ -1150,7 +1145,6 @@ def beneficiary_indiv(request, user_id):
             dependents_list = []
 
         # Now, you can iterate over the list of dependents
-        print(dependents_list)
 
         for dep in dependents_list:
             # Extract the data for each field
