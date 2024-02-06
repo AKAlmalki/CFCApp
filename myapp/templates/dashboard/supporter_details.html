@@ -1005,7 +1005,7 @@
             </div>
             <div class="mb-3">
               <label for="id_request_status" class="col form-label">حالة الطلب</label>
-              <select class="form-select" id="id_request_status" rows="5" name="request_status">
+              <select class="form-select" id="id_request_status" rows="5" name="request_status" {% if supporter_request.status == "مقبول" %}disabled readonly{% endif %}>
                 <option value selected>---------</option>
                 <option value="جديد">جديد</option>
                 <option value="تحت المراجعة">تحت المراجعة</option>
@@ -1018,7 +1018,7 @@
             </div>
             <div class="mb-3">
               <label for="id_request_comment" class="col form-label">التعليقات</label>
-              <textarea class="form-control" id="id_request_comment" rows="5" name="request_comment" value="{% if supporter_request.comment %}{{ supporter_request.comment }}{% else %}{% endif %}"></textarea>
+              <textarea class="form-control" id="id_request_comment" rows="5" name="request_comment" value="{% if supporter_request.comment %}{{ supporter_request.comment }}{% else %}{% endif %}" {% if supporter_request.status == "مقبول" %}disabled readonly{% endif %}></textarea>
             </div>
 
             <hr class="mt-4">
