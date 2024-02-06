@@ -6,15 +6,49 @@
 {% block content %}
 <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 
+  {% if messages %}
+  <script>
+    // Execute the following JavaScript code when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show the modal when there are messages
+      var modal = new bootstrap.Modal(document.getElementById('errorModal'));
+      modal.show();
+    });
+  </script>
+  {% endif %}
+
+  {% for message in messages %}
+  <div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">رسالة</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ message }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
   <div class="col row-gap-3 justify-content-md-center mb-5">
     <div class="col-md-auto p-1 pt-3 mt-4 bg-dark rounded-3 d-flex flex-column justify-content-center align-self-center table-responsive text-nowrap" style="overflow-x: scroll">
       <p class="text-light ms-2 fs-3">طلبات الكفلاء</p>
       <table class="table table-striped-columns mb-1">
         <thead class="">
           <tr>
-            {% for header in supporters_requests_headers %}
-            <th scope="col">{{ header }}</th>
-            {% endfor %}
+            <th scope="col">رقم الطلب</th>
+            <th scope="col">نوع الطلب</th>
+            <th scope="col">الحالة</th>
+            <th scope="col">تاريخ الإرسال</th>
+            <th scope="col">مُراجع الطلب</th>
+            <th scope="col">التعليقات</th>
+            <th scope="col">الإجراءات</th>
           </tr>
         </thead>
         <tbody>
@@ -35,11 +69,13 @@
             {% else %}
             <td class="col">{{ supporter_request.status }}</td>
             {% endif %}
+            <td class="col">{{ supporter_request.created_at }}</td>
             {% if supporter_request.reviewed_by %}
             <td class="col">{{ supporter_request.reviewed_by }}</td>
             {% else %}
             <td class="col">----</td>
             {% endif %}
+            
             {% if supporter_request.comment %}
             <td class="col">{{ supporter_request.comment }}</td>
             {% else %}

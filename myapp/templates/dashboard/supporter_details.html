@@ -961,7 +961,7 @@
           <div class="mt-4 mb-2">
             <div class="">
               <a type="button" class="btn btn-secondary" href="{% url 'dashboard_supporters_request' %}">الرجوع لصفحة الطلبات</a>
-              <a type="button" class="btn btn-success">تأكيد الطلب</a>
+              <a type="button" class="btn btn-success" href="{% url 'supporter_request_confirm' supporter_id=supporter.id s_request_id=supporter_request.id %}">تأكيد الطلب</a>
             </div>
           </div>
 

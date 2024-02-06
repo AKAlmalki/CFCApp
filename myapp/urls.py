@@ -75,6 +75,11 @@ urlpatterns = [
         name="supporter_request_details"
     ),
     path(
+        "dashboard/supporters/<int:supporter_id>/requests/<int:s_request_id>/confirm",
+        views.supporter_request_confirm,
+        name="supporter_request_confirm"
+    ),
+    path(
         "dashboard/reports",
         views.dashboard_reports,
         name="reports"

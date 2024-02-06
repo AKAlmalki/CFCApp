@@ -454,7 +454,6 @@ def dashboard_supporters_request(request):
             'beneficiaries': beneficiary_list,
             'supporters': supporters_list,
             'supporters_requests': supporter_request_pag_list,
-            'supporters_requests_headers': {'رقم الطلب', 'نوع الطلب', 'الحالة', 'المُراجع', 'التعليقات', 'الإجراءات'},
         }
     except ObjectDoesNotExist:
         print("[Error] - Object does not exist, dashboard_supporters_request.")
@@ -473,7 +472,7 @@ def dashboard_requests(request):
     Beneficiary_request_list = paginator.get_page(page_number)
     context = {
         "beneficiary_requests": Beneficiary_request_list,
-        "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'المُراجع', 'التعليقات', 'الاجراءات'],
+        "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'تاريخ الإرسال', 'مُراجع الطلب', 'التعليقات', 'الإجراءات'],
     }
 
     return render(request, "requests.html", context)
@@ -1730,9 +1729,52 @@ def supporter_request_details(request, supporter_id, s_request_id):
 
     return render(request, "dashboard/supporter_details.html", context)
 
+
+@login_required(login_url="/login")
+def supporter_request_confirm(request, supporter_id, s_request_id):
+    if request.method == "GET":
+
+        supporter_obj = Supporter.objects.get(id=supporter_id)
+
+        supporter_request_obj = Supporter_request.objects.filter(
+            supporter=supporter_id, id=s_request_id).first()
+
+        supporter_request_attachment_obj = Supporter_request_attachment.objects.filter(
+            supporter_request=supporter_request_obj.id).all()
+
+        beneficiary_list = []
+
+        # Retrieve information about each beneficiary for this request (in case of personal selection)
+        for beneficiary_obj in supporter_request_obj.beneficiary_list:
+
+            # Retrieve beneficiary information from DB
+            beneficiary_temp = beneficiary.objects.get(
+                id=beneficiary_obj['id'])
+
+            # Retrieve beneficiary income and expenses information from DB
+            beneficiary_income_expenses_temp = beneficiary_income_expense.objects.filter(
+                beneficiary_id=beneficiary_temp.id).first()
+
+            in_ex_diff = 0
+
+            if beneficiary_income_expenses_temp is not None:
+                in_ex_diff = beneficiary_income_expenses_temp.in_ex_diff
+
+            beneficiary_list.append({
+                "id": beneficiary_obj['id'],
+                "full_name": (beneficiary_temp.first_name + ' ' + beneficiary_temp.second_name + ' ' + beneficiary_temp.last_name),
+                "category": beneficiary_obj['category'],
+                "in_ex_diff": in_ex_diff,
+            })
+
+        messages.success(request, "لقد تم قبول طلب الداعم بنجاح!")
+        return redirect("dashboard_supporters_request")
+
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Method Not Allowed'}, status=405)
+
+
 # just for testing
-
-
 def supporter_test(request):
 
     # Including only necessary part

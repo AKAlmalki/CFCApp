@@ -34,6 +34,7 @@
               {% else %}
               <td class="col">{{ row.status }}</td>
               {% endif %}
+              <td class="col">{{ row.created_at }}</td>
               {% if row.reviewed_by %}
               <td class="col">{{ row.reviewed_by }}</td>
               {% else %}
@@ -45,13 +46,13 @@
               <td class="col">----</td>
               {% endif %}
               <td class="col"><!-- Button trigger modal -->
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+                {% comment %} <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal2">
                   الغاء
                 </button>
 
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal3">
                   قبول
-                </button>
+                </button> {% endcomment %}
 
                 <button type="button" class="btn btn-primary btn-details" data-bs-toggle="modal" data-bs-target="#beneficiaryDetailsModal" data-id="{{ row.beneficiary.id }}">
                   تفاصيل الطلب
