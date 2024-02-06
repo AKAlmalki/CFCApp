@@ -966,10 +966,14 @@
             id="id_supporter_request_review_form"
             name="supporter_request_review_form"
             method="POST"
-            action=""
             class="needs-validation"
             novalidate
           >
+            {% csrf_token %}
+            <!-- the below fields determine the action url depending on the clicked button -->
+            <input type="hidden" id="accept_url" value="{% url 'supporter_request_confirm' supporter_id=supporter.id s_request_id=supporter_request.id %}">
+            <input type="hidden" id="change_status_url" value="{% url 'supporter_request_update' supporter_id=supporter.id s_request_id=supporter_request.id %}">
+
             <h4 class="fw-bold mt-4 mb-4">معلومات مُراجع الطلب</h4>
             <div class="mb-3">
               <h6 class="col form-label" for="id_received_at">تاريخ الإرسال</h6>
@@ -978,6 +982,18 @@
             <div class="mb-3">
               <h6 class="col form-label" for="id_reviewd_at">تاريخ المراجعة</h6>
               <input type="text" class="form-control" id="id_reviewd_at" name="reviewd_at" disabled readonly value="{% if supporter_request.reviewed_at %}{{ supporter_request.reviewed_at }}{% else %}----{% endif %}">
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_total_amount">المبلغ الإجمالي</h6>
+              <input type="text" class="form-control" id="id_total_amount" name="total_amount" disabled readonly value="{% if supporter_request.total_amount %}{{ supporter_request.total_amount }}{% else %}----{% endif %}">
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_duration">مدة الدعم</h6>
+              <input type="text" class="form-control" id="id_duration" name="duration" disabled readonly value="{% if supporter_request.duration %}{{ supporter_request.duration }}{% else %}----{% endif %}">
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_donation_type">نوع الدعم</h6>
+              <input type="text" class="form-control" id="id_donation_type" name="donation_type" disabled readonly value="{% if supporter_request.donation_type %}{{ supporter_request.donation_type }}{% else %}----{% endif %}">
             </div>
             <div class="mb-3">
               <h6 class="col form-label" for="id_request_id">رقم الطلب</h6>
@@ -1004,8 +1020,6 @@
               <label for="id_request_comment" class="col form-label">التعليقات</label>
               <textarea class="form-control" id="id_request_comment" rows="5" name="request_comment" value="{% if supporter_request.comment %}{{ supporter_request.comment }}{% else %}{% endif %}"></textarea>
             </div>
-          
-
 
             <hr class="mt-4">
 
@@ -1013,11 +1027,15 @@
               <div class="">
                 <a type="button" class="btn btn-secondary" href="{% url 'dashboard_supporters_request' %}">الرجوع لصفحة الطلبات</a>
 
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmationModal">
-                  تحديث حالة الطلب
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmationModal" {% if supporter_request.status == "مقبول" %}disabled{% endif %}>
+                  قبول الطلب
                 </button>
 
-                <!-- ؤonfirmation Modal  -->
+                <a type="button" class="btn btn-primary" onclick="setActionAndSubmit('#change_status_url')">
+                  تغيير حالة الطلب
+                </a>
+
+                <!-- Confirmation Modal  -->
                 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -1030,14 +1048,14 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
-                        <a type="button" class="btn btn-success" href="{% url 'supporter_request_confirm' supporter_id=supporter.id s_request_id=supporter_request.id %}">نعم, متأكد!</a>
+                        <button type="button" class="btn btn-success" onclick="setActionAndSubmit('#accept_url')">نعم, متأكد!</button>
                       </div>
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
+            
           </form>
 
       </div> <!-- end line card body -->
@@ -1046,6 +1064,13 @@
 
 </div>
 <script>
+
+  function setActionAndSubmit(actionId) {
+    var actionUrl = $(actionId).val();
+    $('#id_supporter_request_review_form').attr('action', actionUrl);
+    $('#id_supporter_request_review_form').submit();
+  }
+
   // Add an event listener for the details button
   document.querySelectorAll('.btn-details').forEach(function(button) {
     button.addEventListener('click', function() {

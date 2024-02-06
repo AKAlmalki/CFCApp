@@ -66,6 +66,8 @@
             <td class="col"><span class="badge text-bg-primary">تحت المراجعة</span></td>
             {% elif supporter_request.status == "انتظار" %}
             <td class="col"><span class="badge text-bg-warning">انتظار</span></td>
+            {% elif supporter_request.status == "مقبول" %}
+            <td class="col"><span class="badge text-bg-success">مقبول</span></td>
             {% else %}
             <td class="col">{{ supporter_request.status }}</td>
             {% endif %}

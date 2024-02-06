@@ -288,7 +288,6 @@ class Supporter(models.Model):
     phone_number = models.CharField(max_length=15)
     email = models.EmailField()
     status = models.CharField(max_length=55, null=True)
-
     was_sponsor = models.CharField(max_length=55, null=True)
     status_notify = models.CharField(max_length=55, null=True)
     invite_beneficiary = models.CharField(max_length=55, null=True)

@@ -9,7 +9,8 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth import login, logout, authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from dateutil.relativedelta import relativedelta
 import logging
 import os
 import json
@@ -37,6 +38,15 @@ logger = logging.getLogger(__name__)
 IPP_DASHBOARD_REQUESTS = 10  # IPP stands for Item Per Page
 IPP_SUPPORTER_FORM = 8
 IPP_DASHBOARD_REPORTS = 10
+
+duration_factors = {
+    "": 0,
+    "شهر واحد": 1,
+    "3 أشهر": 3,
+    "6 أشهر": 6,
+    "سنة كاملة": 12,
+    # Add more duration types and their factors as needed
+}
 
 # Utility functions =======================================
 
@@ -1732,17 +1742,34 @@ def supporter_request_details(request, supporter_id, s_request_id):
 
 @login_required(login_url="/login")
 def supporter_request_confirm(request, supporter_id, s_request_id):
-    if request.method == "GET":
+    if request.method == "POST":
+
+        print(request.POST)
+        request_status = request.POST.get('request_status', None)
+        print(request_status)
+        request_comment = request.POST.get('request_comment', None)
 
         supporter_obj = Supporter.objects.get(id=supporter_id)
 
         supporter_request_obj = Supporter_request.objects.filter(
             supporter=supporter_id, id=s_request_id).first()
 
-        supporter_request_attachment_obj = Supporter_request_attachment.objects.filter(
-            supporter_request=supporter_request_obj.id).all()
+        # Update object data
+        supporter_request_obj.status = "مقبول"
+        supporter_request_obj.comment = request_comment
+        supporter_request_obj.reviewed_by = request.user
+        supporter_request_obj.reviewed_at = datetime.now()
 
-        beneficiary_list = []
+        # Save the changes
+        supporter_request_obj.save()
+
+        # Get the current date
+        current_date = date.today()
+
+        # Get the date after the specified months
+        date_after = current_date + \
+            relativedelta(
+                months=+duration_factors[supporter_request_obj.duration])
 
         # Retrieve information about each beneficiary for this request (in case of personal selection)
         for beneficiary_obj in supporter_request_obj.beneficiary_list:
@@ -1751,27 +1778,57 @@ def supporter_request_confirm(request, supporter_id, s_request_id):
             beneficiary_temp = beneficiary.objects.get(
                 id=beneficiary_obj['id'])
 
-            # Retrieve beneficiary income and expenses information from DB
-            beneficiary_income_expenses_temp = beneficiary_income_expense.objects.filter(
-                beneficiary_id=beneficiary_temp.id).first()
+            # In case of other categories
+            amount_donated_per_month = 400.0
 
-            in_ex_diff = 0
+            # In case of orphan family, the total amount will change
+            if beneficiary_temp.category == 'أسرة أيتام':
+                amount_donated_per_month = 600.0
 
-            if beneficiary_income_expenses_temp is not None:
-                in_ex_diff = beneficiary_income_expenses_temp.in_ex_diff
+            total_amount_per_beneficiary = amount_donated_per_month * \
+                duration_factors[supporter_request_obj.duration]
 
-            beneficiary_list.append({
-                "id": beneficiary_obj['id'],
-                "full_name": (beneficiary_temp.first_name + ' ' + beneficiary_temp.second_name + ' ' + beneficiary_temp.last_name),
-                "category": beneficiary_obj['category'],
-                "in_ex_diff": in_ex_diff,
-            })
+            # Create a relation between each beneficiary in the list of this supporter request
+            sponsorship = Supporter_beneficiary_sponsorship(
+                amount_donated_monthly=amount_donated_per_month,
+                total_amount_donated=total_amount_per_beneficiary,
+                start_date=current_date,
+                end_date=date_after,
+                beneficiary=beneficiary_temp,
+                supporter=supporter_obj,
+            )
+            sponsorship.save()
 
         messages.success(request, "لقد تم قبول طلب الداعم بنجاح!")
         return redirect("dashboard_supporters_request")
 
     else:
         return JsonResponse({'status': 'error', 'message': 'Method Not Allowed'}, status=405)
+
+
+@login_required(login_url="/login")
+def supporter_request_update(request, supporter_id, s_request_id):
+    if request.method == "POST":
+
+        request_status = request.POST.get('request_status', None)
+        request_comment = request.POST.get('request_comment', None)
+
+        supporter_obj = Supporter.objects.get(id=supporter_id)
+
+        supporter_request_obj = Supporter_request.objects.filter(
+            supporter=supporter_id, id=s_request_id).first()
+
+        # Update object data
+        supporter_request_obj.status = request_status
+        supporter_request_obj.comment = request_comment
+        supporter_request_obj.reviewed_by = request.user
+        supporter_request_obj.reviewed_at = datetime.now()
+
+        # Save the changes
+        supporter_request_obj.save()
+
+        messages.success(request, "لقد تم تحديث بيانات طلب الداعم بنجاح!")
+        return redirect("dashboard_supporters_request")
 
 
 # just for testing
