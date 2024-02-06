@@ -1276,44 +1276,51 @@ def beneficiary_details(request, beneficiary_id):
         try:
             beneficiary_obj = beneficiary.objects.get(id=beneficiary_id)
 
-            beneficiary_housing_obj = beneficiary_house.objects.get(
-                beneficiary_id=beneficiary_id)
+            beneficiary_housing_obj = beneficiary_house.objects.filter(
+                beneficiary_id=beneficiary_id).first()
 
-            housing_data = {
-                'building_number': beneficiary_housing_obj.building_number,
-                'street_name': beneficiary_housing_obj.street_name,
-                'neighborhood': beneficiary_housing_obj.neighborhood,
-                'city': beneficiary_housing_obj.city,
-                'postal_code': beneficiary_housing_obj.postal_code,
-                'additional_number': beneficiary_housing_obj.additional_number,
-                'unit': beneficiary_housing_obj.unit,
-                'location_url': beneficiary_housing_obj.location_url,
-                'housing_type': beneficiary_housing_obj.housing_type,
-                'housing_ownership': beneficiary_housing_obj.housing_ownership
-            }
+            housing_data = {}
 
-            beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
-                beneficiary_id=beneficiary_id)
+            if beneficiary_housing_obj is not None:
 
-            income_expense_data = {
-                'salary_in': beneficiary_income_expense_obj.salary_in,
-                'social_insurance_in': beneficiary_income_expense_obj.social_insurance_in,
-                'charity_in': beneficiary_income_expense_obj.charity_in,
-                'social_warranty_in': beneficiary_income_expense_obj.social_warranty_in,
-                'pension_agency_in': beneficiary_income_expense_obj.pension_agency_in,
-                'citizen_account_in': beneficiary_income_expense_obj.citizen_account_in,
-                'benefactor_in': beneficiary_income_expense_obj.benefactor_in,
-                'other_in': beneficiary_income_expense_obj.other_in,
-                'housing_rent_ex': beneficiary_income_expense_obj.housing_rent_ex,
-                'electricity_bills_ex': beneficiary_income_expense_obj.electricity_bills_ex,
-                'water_bills_ex': beneficiary_income_expense_obj.water_bills_ex,
-                'transportation_ex': beneficiary_income_expense_obj.transportation_ex,
-                'health_supplies_ex': beneficiary_income_expense_obj.health_supplies_ex,
-                'food_supplies_ex': beneficiary_income_expense_obj.food_supplies_ex,
-                'educational_supplies_ex': beneficiary_income_expense_obj.educational_supplies_ex,
-                'proven_debts_ex': beneficiary_income_expense_obj.proven_debts_ex,
-                'other_ex': beneficiary_income_expense_obj.other_ex
-            }
+                housing_data = {
+                    'building_number': beneficiary_housing_obj.building_number,
+                    'street_name': beneficiary_housing_obj.street_name,
+                    'neighborhood': beneficiary_housing_obj.neighborhood,
+                    'city': beneficiary_housing_obj.city,
+                    'postal_code': beneficiary_housing_obj.postal_code,
+                    'additional_number': beneficiary_housing_obj.additional_number,
+                    'unit': beneficiary_housing_obj.unit,
+                    'location_url': beneficiary_housing_obj.location_url,
+                    'housing_type': beneficiary_housing_obj.housing_type,
+                    'housing_ownership': beneficiary_housing_obj.housing_ownership
+                }
+
+            beneficiary_income_expense_obj = beneficiary_income_expense.objects.filter(
+                beneficiary_id=beneficiary_id).first()
+
+            income_expense_data = {}
+
+            if beneficiary_income_expense_obj is not None:
+                income_expense_data = {
+                    'salary_in': beneficiary_income_expense_obj.salary_in,
+                    'social_insurance_in': beneficiary_income_expense_obj.social_insurance_in,
+                    'charity_in': beneficiary_income_expense_obj.charity_in,
+                    'social_warranty_in': beneficiary_income_expense_obj.social_warranty_in,
+                    'pension_agency_in': beneficiary_income_expense_obj.pension_agency_in,
+                    'citizen_account_in': beneficiary_income_expense_obj.citizen_account_in,
+                    'benefactor_in': beneficiary_income_expense_obj.benefactor_in,
+                    'other_in': beneficiary_income_expense_obj.other_in,
+                    'housing_rent_ex': beneficiary_income_expense_obj.housing_rent_ex,
+                    'electricity_bills_ex': beneficiary_income_expense_obj.electricity_bills_ex,
+                    'water_bills_ex': beneficiary_income_expense_obj.water_bills_ex,
+                    'transportation_ex': beneficiary_income_expense_obj.transportation_ex,
+                    'health_supplies_ex': beneficiary_income_expense_obj.health_supplies_ex,
+                    'food_supplies_ex': beneficiary_income_expense_obj.food_supplies_ex,
+                    'educational_supplies_ex': beneficiary_income_expense_obj.educational_supplies_ex,
+                    'proven_debts_ex': beneficiary_income_expense_obj.proven_debts_ex,
+                    'other_ex': beneficiary_income_expense_obj.other_ex
+                }
 
             dependent_list = dependent.objects.filter(
                 beneficiary_id=beneficiary_id).all()
@@ -1695,10 +1702,36 @@ def supporter_request_details(request, supporter_id, s_request_id):
             'attachment_type': attachment_type_ar,
         })
 
+    beneficiary_list = []
+
+    # Retrieve information about each beneficiary for this request (in case of personal selection)
+    for beneficiary_obj in supporter_request_obj.beneficiary_list:
+
+        # Retrieve beneficiary information from DB
+        beneficiary_temp = beneficiary.objects.get(
+            id=beneficiary_obj['id'])
+
+        # Retrieve beneficiary income and expenses information from DB
+        beneficiary_income_expenses_temp = beneficiary_income_expense.objects.filter(
+            beneficiary_id=beneficiary_temp.id).first()
+
+        in_ex_diff = 0
+
+        if beneficiary_income_expenses_temp is not None:
+            in_ex_diff = beneficiary_income_expenses_temp.in_ex_diff
+
+        beneficiary_list.append({
+            "id": beneficiary_obj['id'],
+            "full_name": (beneficiary_temp.first_name + ' ' + beneficiary_temp.second_name + ' ' + beneficiary_temp.last_name),
+            "category": beneficiary_obj['category'],
+            "in_ex_diff": in_ex_diff,
+        })
+
     context = {
         "supporter": supporter_obj,
         "supporter_request": supporter_request_obj,
         "supporter_request_attachments": supporter_request_attachment_list,
+        "beneficiary_list": beneficiary_list,
     }
 
     return render(request, "dashboard/supporter_details.html", context)
