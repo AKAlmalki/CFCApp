@@ -220,6 +220,7 @@ class Beneficiary_request(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     reviewed_by = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name='reviewed_beneficiary_set', null=True)
+    reviewed_at = models.DateTimeField(null=True)
     comment = models.CharField(max_length=512, null=True)
 
 
@@ -303,6 +304,7 @@ class Supporter_request(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     reviewed_by = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name='reviewed_supporter_set', null=True)
+    reviewed_at = models.DateTimeField(null=True)
     comment = models.CharField(max_length=512, null=True)
     total_amount = models.DecimalField(
         decimal_places=2, max_digits=15, default=0, null=True)

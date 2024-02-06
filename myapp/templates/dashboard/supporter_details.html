@@ -261,7 +261,7 @@
                                               <input type="text" class="form-control" id="id_modal_washing_place" name="washing_place" disabled readonly>
                                             </div>
                                           </div>
-                                          
+
                                           <div class="row row-cols-lg-2">
                                             <div class="mb-3">
                                               <h6 class="col form-label" for="id_modal_bank_type">أسم البنك</h6>
@@ -780,12 +780,12 @@
                                         <div class="accordion-body">
                                           {% comment %} Below are the attachments {% endcomment %}
                                           <div id="attachmentsContainer">
-                                            
+
                                           </div>
                                         </div>
                                       </div>
                                     </div>
-                                    
+
                                   </div>
                                   <hr>
 
@@ -958,10 +958,63 @@
 
           <hr class="mt-4">
 
-          <div class="mt-4 mb-2">
+          <h4 class="fw-bold mt-4 mb-4">معلومات مُراجع الطلب</h4>
+          <div class="mb-3">
+            <h6 class="col form-label" for="id_modal_received_at">تاريخ الإرسال</h6>
+            <input type="datetime" class="form-control" id="id_modal_received_at" name="received_at" disabled readonly value="{% if supporter_request.created_at %}{{ supporter_request.created_at }}{% else %}----{% endif %}">
+          </div>
+          <div class="mb-3">
+            <h6 class="col form-label" for="id_modal_reviewd_at">تاريخ المراجعة</h6>
+            <input type="text" class="form-control" id="id_modal_reviewd_at" name="reviewd_at" disabled readonly value="{% if supporter_request.reviewed_at %}{{ supporter_request.reviewed_at }}{% else %}----{% endif %}">
+          </div>
+          <div class="mb-3">
+            <label for="id_modal_request_status" class="col form-label">حالة الطلب</label>
+            <select class="form-select" id="id_modal_request_status" rows="5" name="modal_request_status">
+              <option value selected>---------</option>
+              <option value="new">جديد</option>
+              <option value="under review">تحت المراجعة</option>
+              <option value="waiting">انتظار</option>
+              <option value="not complete">غير مكتمل</option>
+              <option value="rejected">مرفوض</option>
+              <option value="accepted">مقبول</option>
+              <option value="needs update">يحتاج تحديث</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="id_modal_request_comment" class="col form-label">التعليقات</label>
+            <textarea class="form-control" id="id_modal_request_comment" rows="5" name="modal_request_comment"></textarea>
+          </div>
+
+
+          <hr class="mt-4">
+
+          <div class="mt-3 mb-2">
             <div class="">
               <a type="button" class="btn btn-secondary" href="{% url 'dashboard_supporters_request' %}">الرجوع لصفحة الطلبات</a>
-              <a type="button" class="btn btn-success" href="{% url 'supporter_request_confirm' supporter_id=supporter.id s_request_id=supporter_request.id %}">تأكيد الطلب</a>
+
+              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmationModal">
+                قبول الطلب
+              </button>
+
+              <!-- ؤonfirmation Modal  -->
+              <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">رسالة تأكيد</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p class="fs-4 text-center">هل أنت متأكد من معلومات الطلب؟</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                      <a type="button" class="btn btn-success" href="{% url 'supporter_request_confirm' supporter_id=supporter.id s_request_id=supporter_request.id %}">نعم, متأكد!</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -980,7 +1033,7 @@
        fetch('http://127.0.0.1:8000/beneficiary_details/' + beneficiaryId)
           .then(response => response.json())
           .then(data => {
-             
+
              // Update modal content based on the received data
              // Personal information:
              document.getElementById('id_modal_file_no').value = data.file_no;
