@@ -20,7 +20,7 @@ from openpyxl import Workbook
 from openpyxl.styles import *
 import decimal
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import send_mail, EmailMessage, BadHeaderError
 from cfc_app import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -29,6 +29,9 @@ from django.utils.encoding import force_bytes, force_str
 from .tokens import generate_token
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.models import User
+from django.db.models.query_utils import Q
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -368,6 +371,50 @@ def logout_user(request):
 
     logout(request)
     return redirect("home")
+
+
+def password_reset_request(request):
+
+    if request.method == 'POST':
+
+        password_form = PasswordResetForm(request.POST)
+
+        if password_form.is_valid():
+            # Get the email sent with the user request
+            data = password_form.cleaned_data['email']
+
+            # Ensure that the email exists
+            user_email = CustomUser.objects.filter(Q(email=data))
+            if user_email.exists():
+                for user in user_email:
+                    subject = "تغيير كلمة المرور"
+                    email_template_name = "auth/password_reset_msg.txt",
+                    parameters = {
+                        "email": user.email,
+                        "username": user.username,
+                        "first_name": user.first_name,
+                        "domain": "127.0.0.1:8000",
+                        "protocol": "http",
+                        "site_name": "جمعية اصدقاء المجتمع",
+                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                        "token": default_token_generator.make_token(user),
+                    }
+                    email = render_to_string(email_template_name, parameters)
+                    try:
+                        send_mail(subject, email, '', [
+                            user.email], fail_silently=False)
+                    except BadHeaderError:
+                        return HttpResponse('Invalid Header')
+
+                    return redirect('password_reset_done')
+    else:
+        password_form = PasswordResetForm()
+
+    context = {
+        "password_form": password_form,
+    }
+
+    return render(request, "auth/password_reset_form.html", context)
 
 
 def validate_email(request):
