@@ -63,13 +63,15 @@
             <td class="col">{{ supporter_request.request_type }}</td>
             {% endif %}
             {% if supporter_request.status == "تحت المراجعة" %}
-            <td class="col"><span class="badge text-bg-primary">تحت المراجعة</span></td>
+            <td class="col"><span class="badge text-bg-primary">{{ supporter_request.status }}</span></td>
             {% elif supporter_request.status == "انتظار" %}
-            <td class="col"><span class="badge text-bg-warning">انتظار</span></td>
+            <td class="col"><span class="badge text-bg-warning">{{ supporter_request.status }}</span></td>
             {% elif supporter_request.status == "مقبول" %}
-            <td class="col"><span class="badge text-bg-success">مقبول</span></td>
+            <td class="col"><span class="badge text-bg-success">{{ supporter_request.status }}</span></td>
+            {% elif supporter_request.status == "مرفوض" %}
+            <td class="col"><span class="badge text-bg-danger">{{ supporter_request.status }}</span></td>
             {% else %}
-            <td class="col">{{ supporter_request.status }}</td>
+            <td class="col"><span class="badge text-bg-primary">{{ supporter_request.status }}</span></td>
             {% endif %}
             <td class="col">{{ supporter_request.created_at }}</td>
             {% if supporter_request.reviewed_by %}

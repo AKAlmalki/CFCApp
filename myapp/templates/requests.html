@@ -31,8 +31,12 @@
               <td class="col"><span class="badge text-bg-primary">{{ row.status }}</span></td>
               {% elif row.status == "انتظار" %}
               <td class="col"><span class="badge text-bg-warning">{{ row.status }}</span></td>
+              {% elif row.status == "مقبول" %}
+              <td class="col"><span class="badge text-bg-success">{{ row.status }}</span></td>
+              {% elif row.status == "مرفوض" %}
+              <td class="col"><span class="badge text-bg-danger">{{ row.status }}</span></td>
               {% else %}
-              <td class="col">{{ row.status }}</td>
+              <td class="col"><span class="badge text-bg-primary">{{ row.status }}</span></td>
               {% endif %}
               <td class="col">{{ row.created_at }}</td>
               {% if row.reviewed_by %}

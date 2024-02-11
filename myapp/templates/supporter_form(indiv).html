@@ -571,15 +571,22 @@
               <div class="row row-cols-md-2">
                 <div class="mb-4 form-group">
                   <label for="id_personalinfo_phone_number" class="form-label"
-                    >رقم التواصل<span style="color: red">*</span></label
+                    >رقم الجوال<span style="color: red">*</span></label
                   >
-                  <input
-                    type="tel"
-                    name="personalinfo_phone_number"
-                    class="form-control"
-                    required
-                    id="id_personalinfo_phone_number"
-                  />
+                  <div class="input-group mb-1">
+                    <input
+                      type="text"
+                      name="personalinfo_phone_number"
+                      data-bs-title="رقم الجوال" 
+                      class="form-control convert-to-english"
+                      id="id_personalinfo_phone_number"
+                      placeholder="5XXXXXXXX"
+                      required
+                      value="{{ beneficiary.phone_number }}"
+                    />
+                    <span class="input-group-text" id="basic-addon1">966+</span>
+                  </div>
+                  <div class="form-text" id="basic-addon4">يبدا رقم الجوال بدون الصفر, مثال (512345678)</div>
                 </div>
                 <div class="mb-4 form-group">
                   <label for="id_personalinfo_email" class="form-label"
@@ -1441,17 +1448,6 @@
       "يحتوي الأسم على حروف فقط."
     );
 
-    $.validator.addMethod(
-      "fullNameRegex",
-      function (value, element) {
-        return (
-          this.optional(element) ||
-          /^[a-zA-Z\u0621-\u064A]+([ '-][a-zA-Z\u0621-\u064A]+)*$/i.test(value)
-        );
-      },
-      "يجب أن يتكون الاسم الكامل من الاسم الأول والأوسط والأخير."
-    );
-
     // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
     function validateSAID(id) {
       let type = id.substr(0, 1);
@@ -1495,10 +1491,10 @@
       "saudiPhoneRegex",
       function (value, element) {
         return (
-          this.optional(element) || /^(?:\+966\s?5\d{8}|05\d{8})$/i.test(value)
+          this.optional(element) || /^(5\d{8})$/i.test(value)
         );
       },
-      "الرجاء إدخال رقم جوال صحيح في المملكة العربية السعودية."
+      "الرجاء إدخال رقم جوال صحيح يبدأ برقم 5 وبطول 9 ارقام."
     );
 
     // Email address validator

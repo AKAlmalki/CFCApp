@@ -2127,9 +2127,9 @@ def beneficiary_request_update(request, user_id):
         if is_beneficiary_request:
             last_beneficiary_request = Beneficiary_request.objects.latest(
                 'created_at')
-            if last_beneficiary_request.request_type == "update" and last_beneficiary_request.status == "waiting":
+            if last_beneficiary_request.status == "تحت المراجعة" or last_beneficiary_request.status == "انتظار":
                 messages.error(
-                    request, "لديك طلب تحديث بيانات سابق! لا يمكنك إنشاء طلب جديد الى ان يتم الرد من قبل فريق العمل على الطلب الأخير.")
+                    request, "لديك طلب سابق غير مكتمل! لا يمكنك إنشاء طلب جديد حتى يكتمل الطلب السابق.")
                 return redirect('home')
 
         else:
@@ -2472,8 +2472,8 @@ def beneficiary_request_update_confirm(request, user_id):
         new_beneficiary_request = Beneficiary_request(
             user=user,
             beneficiary=beneficiary_obj,
-            status="waiting",
-            request_type="update",
+            status="انتظار",
+            request_type="تحديث",
         )
         new_beneficiary_request.save()
 

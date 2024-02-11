@@ -54,7 +54,7 @@
                   <table class="table text-nowrap" style="overflow-x: scroll">
                     <thead>
                       <tr>
-                        <th scope="col"># رقم الطلب</th>
+                        <th scope="col">رقم الطلب</th>
                         <th scope="col">المستفيد</th>
                         <th scope="col">نوع الطلب</th>
                         <th scope="col">الحالة</th>
@@ -69,19 +69,23 @@
                           <td class="col" scope="col">{{ request.id }}</td>
                           <td class="col" scope="col">{{ request.beneficiary.first_name }} {{ request.beneficiary.last_name }}</td>
                           <td class="col" scope="col">
-                          {% if request.request_type == "new" %}
+                          {% if request.request_type == "جديد" %}
                           <span class="badge text-bg-success">جديد</span>
-                          {% elif request.request_type == "update" %}
+                          {% elif request.request_type == "تحديث" %}
                           <span class="badge text-bg-warning">تحديث</span>
                           {% else %}
-                          <span class="badge text-bg-primary">{{ request.status }}</span>
+                          <span class="badge text-bg-primary">{{ request.request_type }}</span>
                           {% endif %}
                           </td>
                           <td class="col" scope="col">
-                          {% if request.status == "waiting" %}
+                          {% if request.status == "انتظار" %}
                           <span class="badge text-bg-warning">انتظار</span>
-                          {% elif request.status == "under review" %}
+                          {% elif request.status == "تحت المراجعة" %}
                           <span class="badge text-bg-primary">تحت المراجعة</span>
+                          {% elif request.status == "مرفوض" %}
+                          <span class="badge text-bg-danger">{{ request.status }}</span>
+                          {% elif request.status == "مقبول" %}
+                          <span class="badge text-bg-success">{{ request.status }}</span>
                           {% else %}
                           <span class="badge text-bg-primary">{{ request.status }}</span>
                           {% endif %}
