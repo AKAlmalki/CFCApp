@@ -186,7 +186,7 @@ def sign_up(request):
         current_site = get_current_site(request)
         email_subject = "تفعيل حسابك في جمعية الاصدقاء"
 
-        message2 = render_to_string('email_confirmation.html', {
+        message2 = render_to_string('auth/email_confirmation.html', {
             'name': new_user.first_name,
             'domain': current_site.domain,
             'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
