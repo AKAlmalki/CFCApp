@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'myapp',
     'formtools',
     'crispy_forms',
-    'widget_tweaks'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'

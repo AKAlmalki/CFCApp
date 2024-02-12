@@ -83,8 +83,10 @@ def is_ajax(request):
 
 # View Handlers ==============================================
 
-def unauthorized_access(request):
-    return render(request, 'auth/403.html')
+
+def forbidden(request):
+    return render(request, 'errors/403.html')
+
 
 def home(request):
     return render(request, "home.html")

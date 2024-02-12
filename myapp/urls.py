@@ -7,7 +7,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path(
         "403/",
-        views.unauthorized_access,
+        views.forbidden,
         name="403",
     ),
     path(
