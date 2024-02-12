@@ -35,13 +35,8 @@ urlpatterns = [
         views.confirmBeneficiaryRequestView,
         name="beneficiary_confirmation"
     ),
-    # path(
-    #     "supporters/entities/new",
-    #     views.supporter_entity,
-    #     name="supporter_entity"
-    # ),
     path(
-        "supporters/individuals/new",
+        "supporters/new",
         views.supporter_indiv,
         name="supporter_indiv"
     ),
@@ -51,24 +46,19 @@ urlpatterns = [
         name="supporter_indiv_post"
     ),
     path(
-        "supporters/individuals/test",
-        views.supporter_test,
-        name="supporter_indiv_test"
-    ),
-    path(
         "dashboard/",
         views.dashboard,
         name="dashboard"
     ),
     path(
         "dashboard/requests",
-        views.dashboard_requests,
-        name="requests"
+        views.dashboard_beneficiaries_requests,
+        name="dashboard_beneficiaries_requests"
     ),
     path(
         "dashboard/supporters/requests/",
-        views.dashboard_supporters_request,
-        name="dashboard_supporters_request"
+        views.dashboard_supporters_requests,
+        name="dashboard_supporters_requests"
     ),
     path(
         "dashboard/supporters/<int:supporter_id>/requests/<int:s_request_id>/",
@@ -88,17 +78,17 @@ urlpatterns = [
     path(
         "dashboard/reports",
         views.dashboard_reports,
-        name="reports"
+        name="dashboard_generate_reports"
     ),
     path(
         "dashboard/reports/new",
         views.dashboard_reports_post,
-        name="reports_post"
+        name="dashboard_generate_reports_post"
     ),
     path(
         'export_excel',
         views.export_excel,
-        name="export_excel"
+        name="dashboard_generate_reports_export_excel"
     ),
     path(
         'beneficiaries/<int:user_id>/',

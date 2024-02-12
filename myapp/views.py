@@ -215,8 +215,6 @@ def sign_up(request):
 
 def activate(request, uidb64, token):
 
-    print(uidb64, token)
-
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         myuser = CustomUser.objects.get(pk=uid)
@@ -231,7 +229,7 @@ def activate(request, uidb64, token):
         login(request, myuser)
         return redirect('home')
     else:
-        return render(request, 'activation_failed.html')
+        return render(request, 'auth/activation_failed.html')
 
 
 def resend_activation_email_view(request):
@@ -266,7 +264,7 @@ def resend_activation_email_view(request):
         if request.user.is_authenticated:
             return redirect('home')
 
-    return render(request, "resend_activation_email.html")
+    return render(request, "auth/resend_activation_email.html")
 
 
 def resend_activation_email(request):
@@ -279,7 +277,7 @@ def resend_activation_email(request):
             current_site = get_current_site(request)
             email_subject = "تفعيل حسابك في جمعية الاصدقاء"
 
-            message = render_to_string('email_confirmation.html', {
+            message = render_to_string('auth/email_confirmation.html', {
                 'name': user.first_name,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -475,15 +473,12 @@ def dashboard(request):
         "entities_num": 0
     }
 
-    return render(request, "dashboard.html", context)
+    return render(request, "dashboard/dashboard_home.html", context)
 
 
-def new_dashboard(request):
-    return render(request, "dashboard/dashboard2.html")
-
-
+@group_required("Management")
 @login_required(login_url="/login")
-def dashboard_supporters_request(request):
+def dashboard_supporters_requests(request):
 
     context = {}
 
@@ -510,11 +505,12 @@ def dashboard_supporters_request(request):
         print("[Error] - Object does not exist, dashboard_supporters_request.")
         return JsonResponse({"message": "Object does not exist!", "code": "404"})
 
-    return render(request, "dashboard/supporters.html", context)
+    return render(request, "dashboard/supporters_requests.html", context)
 
 
+@group_required("Management")
 @login_required(login_url="/login")
-def dashboard_requests(request):
+def dashboard_beneficiaries_requests(request):
 
     Beneficiary_request_list = Beneficiary_request.objects.all()
     # beneficiary_obj = beneficiary.objects.all()
@@ -526,9 +522,10 @@ def dashboard_requests(request):
         "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'تاريخ الإرسال', 'مُراجع الطلب', 'التعليقات', 'الإجراءات'],
     }
 
-    return render(request, "requests.html", context)
+    return render(request, "dashboard/beneficiaries_requests.html", context)
 
 
+@group_required("Management")
 @login_required(login_url="/login")
 def dashboard_reports(request):
 
@@ -607,12 +604,13 @@ def dashboard_reports(request):
             "is_qualified": is_qualified_val,
         }
 
-        return render(request, "reports.html", context)
+        return render(request, "dashboard/generate_reports.html", context)
 
     else:
-        return render(request, "reports.html")
+        return render(request, "dashboard/generate_reports.html")
 
 
+@group_required("Management")
 @login_required(login_url="/login")
 def dashboard_reports_post(request):
 
@@ -691,12 +689,13 @@ def dashboard_reports_post(request):
             "is_qualified": is_qualified_val,
         }
 
-        return render(request, "reports.html", context)
+        return render(request, "dashboard/generate_reports.html", context)
 
     else:
-        return render(request, "reports.html")
+        return render(request, "dashboard/generate_reports.html")
 
 
+@group_required("Management")
 @login_required(login_url="/login")
 def export_excel(request):
 
@@ -1305,7 +1304,7 @@ def beneficiary_indiv(request, user_id):
                 return redirect('home')
             else:
 
-                return render(request, "main/index2.html")
+                return render(request, "main/beneficiary_form.html")
         except ObjectDoesNotExist:
             messages.error(request, "المستخدم غير موجود!")
             return redirect('home')
@@ -1543,7 +1542,7 @@ def supporter_indiv(request):
             'beneficiary_headers': ['#', 'الجنس', 'نسبة الاحتياج', 'التصنيف', 'الحالة الصحية', 'العمر', 'الجنسية'],
             'beneficiary_data': beneficiary_data,
         }
-        return render(request, "supporter_form(indiv).html", context)
+        return render(request, "main/supporter_form(indiv).html", context)
 
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
@@ -1714,6 +1713,7 @@ def supporter_indiv_post(request):
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
+@group_required("Management")
 @login_required(login_url="/login")
 def supporter_request_details(request, supporter_id, s_request_id):
 
@@ -1781,6 +1781,7 @@ def supporter_request_details(request, supporter_id, s_request_id):
     return render(request, "dashboard/supporter_details.html", context)
 
 
+@group_required("Management")
 @login_required(login_url="/login")
 def supporter_request_confirm(request, supporter_id, s_request_id):
     if request.method == "POST":
@@ -1841,12 +1842,13 @@ def supporter_request_confirm(request, supporter_id, s_request_id):
             sponsorship.save()
 
         messages.success(request, "لقد تم قبول طلب الداعم بنجاح!")
-        return redirect("dashboard_supporters_request")
+        return redirect("dashboard_supporters_requests")
 
     else:
         return JsonResponse({'status': 'error', 'message': 'Method Not Allowed'}, status=405)
 
 
+@group_required("Management")
 @login_required(login_url="/login")
 def supporter_request_update(request, supporter_id, s_request_id):
     if request.method == "POST":
@@ -1869,33 +1871,7 @@ def supporter_request_update(request, supporter_id, s_request_id):
         supporter_request_obj.save()
 
         messages.success(request, "لقد تم تحديث بيانات طلب الداعم بنجاح!")
-        return redirect("dashboard_supporters_request")
-
-
-# just for testing
-def supporter_test(request):
-
-    # Including only necessary part
-    beneficiaries = beneficiary.objects.all()
-    paginator = Paginator(beneficiaries, 6)
-    page = request.GET.get('page')
-    try:
-        beneficiaries = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        beneficiaries = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range, deliver last page of results.
-        beneficiaries = paginator.page(paginator.num_pages)
-
-    context = {
-        'beneficiaries': beneficiaries
-    }
-
-    if is_ajax(request=request):
-        return render(request, 'main/table.html', context)
-    # else
-    return render(request, 'main/individual2.html', context)
+        return redirect("dashboard_supporters_requests")
 
 
 @login_required(login_url='/login')
@@ -1921,7 +1897,7 @@ def beneficiary_profile(request, user_id):
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
-    return render(request, 'beneficiary_profile.html', context)
+    return render(request, 'main/beneficiary_profile.html', context)
 
 
 @login_required(login_url='/login')
@@ -1951,7 +1927,7 @@ def beneficiary_requests(request, user_id):
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
-    return render(request, 'beneficiary_requests.html', context)
+    return render(request, 'main/beneficiary_requests.html', context)
 
 
 @login_required(login_url='/login')
@@ -2086,7 +2062,7 @@ def beneficiary_request_details(request, user_id):
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
-    return render(request, "beneficiary_request_details.html", context)
+    return render(request, "main/beneficiary_request_details.html", context)
 
 
 @login_required(login_url="/login")
@@ -2279,7 +2255,7 @@ def beneficiary_request_update(request, user_id):
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
-    return render(request, "beneficiary_request_update.html", context)
+    return render(request, "main/beneficiary_request_update.html", context)
 
 
 @csrf_exempt
@@ -2714,7 +2690,7 @@ def beneficiary_request_update_confirm(request, user_id):
 @login_required(login_url="/login")
 def confirm_beneficiary_request_update(request):
 
-    return render(request, "beneficiary_update_request_confirm.html")
+    return render(request, "main/beneficiary_update_request_confirm.html")
 
 
 def validate_national_id_dependent(request, user_id):
@@ -2742,8 +2718,6 @@ def validate_national_id_edit_dependent(request, user_id):
 
     national_id = request.POST.get('national_id', None)
     base_nid = request.POST.get('base_nid', None)
-
-    print(request.POST)
 
     if national_id is None:
         return HttpResponse("true")
