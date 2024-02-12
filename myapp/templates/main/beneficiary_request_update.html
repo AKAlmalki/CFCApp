@@ -4285,7 +4285,7 @@
       // along with the correct 'boundary'
       // delete options.headers['Content-Type'];
 
-      fetch('http://127.0.0.1:8000{% url 'beneficiary_request_update_confirm' user_id=user_info.id %}', {
+      fetch('https://port433.link{% url 'beneficiary_request_update_confirm' user_id=user_info.id %}', {
           method: 'POST',
           body: formData,
       })
