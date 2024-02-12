@@ -231,20 +231,20 @@
         <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
           <ul class="nav flex-column">
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 active text-dark" aria-current="page" href="/dashboard">
+              <a class="nav-link d-flex align-items-center gap-2 active {% if request.path == '/dashboard/' %} text-bg-success {% else %} text-dark {% endif %}" aria-current="page" href="/dashboard">
                 <svg class="bi"><use xlink:href="#house-fill"/></svg>
                 لوحة القيادة
               </a>
             </li>
             <li class="nav-item">
-              <button class="nav-link d-flex align-items-center gap-2 text-dark" data-bs-toggle="collapse" data-bs-target="#dashboard-requests" aria-expanded="true">
+              <button class="nav-link d-flex w-100 align-items-center gap-2 {% if request.path == '/dashboard/supporters/requests/' or request.path == '/dashboard/beneficiaries/requests/' %} text-bg-success {% else %} text-dark {% endif %}" data-bs-toggle="collapse" data-bs-target="#dashboard-requests" aria-expanded="true">
                 <svg class="bi"><use xlink:href="#file-earmark"/></svg>
                 الطلبات
               </button>
-              <div class="collapse {% if request.path == '/dashboard/requests' or request.path == '/dashboard/supporters/requests/' %}show{% endif %}" id="dashboard-requests">
+              <div class="collapse {% if request.path == '/dashboard/beneficiaries/requests/' or request.path == '/dashboard/supporters/requests/' %}show{% endif %}" id="dashboard-requests">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                   <li><a href="{% url 'dashboard_supporters_requests' %}" class="{% if request.path == '/dashboard/supporters/requests/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">الكفلاء</a></li>
-                  <li><a href="{% url 'dashboard_beneficiaries_requests' %}" class="{% if request.path == '/dashboard/requests' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">المستفيدين</a></li>
+                  <li><a href="{% url 'dashboard_beneficiaries_requests' %}" class="{% if request.path == '/dashboard/beneficiaries/requests/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">المستفيدين</a></li>
                 </ul>
               </div>
             </li>
@@ -263,7 +263,7 @@
             </li>
             -->
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 text-dark" href="{% url 'dashboard_generate_reports' %}">
+              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/dashboard/reports/' %} text-bg-success {% else %} text-dark {% endif %}" href="{% url 'dashboard_generate_reports' %}">
                 <svg class="bi"><use xlink:href="#graph-up"/></svg>
                 التقارير
               </a>

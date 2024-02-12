@@ -61,7 +61,7 @@ urlpatterns = [
         name="dashboard"
     ),
     path(
-        "dashboard/requests",
+        "dashboard/beneficiaries/requests/",
         views.dashboard_beneficiaries_requests,
         name="dashboard_beneficiaries_requests"
     ),
@@ -86,7 +86,7 @@ urlpatterns = [
         name="supporter_request_update"
     ),
     path(
-        "dashboard/reports",
+        "dashboard/reports/",
         views.dashboard_reports,
         name="dashboard_generate_reports"
     ),
