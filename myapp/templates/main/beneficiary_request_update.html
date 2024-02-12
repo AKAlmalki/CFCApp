@@ -2560,9 +2560,14 @@
         //$(element).fadeOut(function() {
         //  $(element).fadeIn();
         //  });
+        $(element).addClass("is-invalid");
+        $(element).removeClass("is-valid");
       },
       unhighlight: function (element, errorClass, validClass) {
         $(element).closest(".form-group").removeClass("has-error");
+
+        $(element).removeClass("is-invalid");
+        $(element).addClass("is-valid");
       },
       errorPlacement: function (error, element) {
         // Check if the element is inside an input-group
@@ -3238,10 +3243,16 @@
         errorClass: "invalid-feedback",
         highlight: function (element, errorClass, validClass) {
           //$(element).addClass('is-invalid');
-          $(element).closest(".form-group").removeClass("has-error");
+          $(element).closest(".form-group").addClass("has-error");
+
+          $(element).addClass("is-invalid");
+          $(element).removeClass("is-valid");
         },
         unhighlight: function (element, errorClass, validClass) {
           $(element).closest(".form-group").removeClass("has-error");
+
+          $(element).removeClass("is-invalid");
+          $(element).addClass("is-valid");
         },
         errorPlacement: function (error, element) {
           // Check if the element is inside an input-group
