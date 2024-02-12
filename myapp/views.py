@@ -32,6 +32,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
+from .decorators import group_required
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -82,18 +83,8 @@ def is_ajax(request):
 
 # View Handlers ==============================================
 
-
-def individual2test(request):
-    return render(request, 'main/individual2.html')
-
-
-def individualtest(request):
-    return render(request, 'main/individual.html')
-
-
-def test2(request):
-    return render(request, "main/index2.html")
-
+def unauthorized_access(request):
+    return render(request, 'auth/403.html')
 
 def home(request):
     return render(request, "home.html")
@@ -468,6 +459,7 @@ def validate_phonenumber(request):
         return HttpResponse(data)
 
 
+@group_required("Management")
 @login_required(login_url="/login")
 def dashboard(request):
     # insights for the dashboard

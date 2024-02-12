@@ -6,6 +6,11 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path(
+        "403/",
+        views.unauthorized_access,
+        name="403",
+    ),
+    path(
         "",
         views.home_redirect,
         name="index"
@@ -14,11 +19,6 @@ urlpatterns = [
         "home/",
         views.home,
         name="home"
-    ),
-    path(
-        "index2/",
-        views.test2,
-        name="index"
     ),
     path(
         "beneficiaries/<int:user_id>/new",

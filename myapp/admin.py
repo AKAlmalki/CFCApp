@@ -4,8 +4,6 @@ from .models import beneficiary, beneficiary_house, beneficiary_income_expense, 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 
-# Register your models here.
-
 admin.site.register(beneficiary)
 admin.site.register(beneficiary_house)
 admin.site.register(beneficiary_income_expense)
@@ -17,7 +15,16 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ["email", "username"]
+    list_display = ["email", "username", "is_staff", "is_active"]
+    list_filter = ["email", "username", "is_staff", "is_active"]
+    fieldsets = (
+        (None, {'fields': ('email', 'username', 'phonenumber',
+                           'first_name', 'last_name', 'is_superuser', 'date_of_birth', 'gender', 'nationality', 'last_updated')}),
+        ('Permissions', {'fields': ('is_staff',
+         'is_active', 'groups', 'user_permissions',)}),
+    )
+    search_fields = ('username',)
+    ordering = ('username',)
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
