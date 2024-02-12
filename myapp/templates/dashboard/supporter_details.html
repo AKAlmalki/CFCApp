@@ -1,0 +1,1452 @@
+{% extends "dashboard/dbase.html" %} {% load humanize %} {% block title %} تفاصيل الداعم{% endblock %}
+{% block head %}
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Include jQuery Validation Plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+{% endblock %}
+{% block content %}
+<div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+  <div class="row mt-5">
+    <div class="nav-breadcrumb mb-4">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">لوحة القيادة</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'dashboard_supporters_requests' %}">طلبات الكفلاء</a></li>
+          <li class="breadcrumb-item active" aria-current="page">تفاصيل الطلب</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <div>
+          <h2 class="card-title fw-bold"><a class="nav-link d-inline" href="{% url 'dashboard_supporters_requests' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi-arrow-right" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+            </svg>
+          </a>تفاصيل طلب الداعم</h2>
+          <small class="text-muted">رقم الداعم #{{ supporter.id }}</small>
+        </div>
+          <hr>
+          <div class="personal_info">
+            <h3 class="mt-4 mb-4">المعلومات الشخصية</h3>
+            <div class="row row-cols-md-1 row-cols-xl-3">
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_first_name">الأسم الأول</h6>
+                <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ supporter.first_name }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_second_name">الأسم الثاني</h6>
+                <input type="text" class="form-control" id="id_second_name" name="second_name" value="{{ supporter.second_name }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_last_name">الأسم الأخير</h6>
+                <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ supporter.last_name }}" disabled readonly>
+              </div>
+            </div>
+
+            <div class="row row-cols-lg-2 row-cols-xl-4">
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_gender">الجنس</h6>
+                <input type="text" class="form-control" id="id_gender" name="gender" value="{{ supporter.gender }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_date_of_birth">تاريخ الميلاد</h6>
+                <input type="text" class="form-control" id="id_date_of_birth" name="date_of_birth" value="{{ supporter.date_of_birth }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_phone_number">رقم الجوال</h6>
+                <input type="text" class="form-control" id="id_phone_number" name="phone_number" value="{{ supporter.phone_number }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_email">الايميل الالكتروني</h6>
+                <input type="email" class="form-control" id="id_email" name="email" value="{{ supporter.email }}" disabled readonly>
+              </div>
+            </div>
+
+            <div class="row row-cols-md-1 row-cols-xl-3">
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_nationality">الجنسية</h6>
+                <input type="text" class="form-control" id="id_nationality" name="nationality" value="{{ supporter.nationality }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_national_id">رقم الهوية/الإقامة</h6>
+                <input type="text" class="form-control" id="id_national_id" name="national_id" value="{{ supporter.national_id }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة</h6>
+                <input type="text" class="form-control" id="id_national_id_exp_date" name="national_id_exp_date" value="{{ supporter.national_id_exp_date }}" disabled readonly>
+              </div>
+            </div>
+
+            <div class="row row-cols-md-1 row-cols-lg-2">
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_marital_status">الحالة الاجتماعية</h6>
+                <input type="text" class="form-control" id="id_marital_status" name="marital_status" value="{{ supporter.marital_status }}" disabled readonly>
+              </div>
+
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_educational_level">المستوى التعليمي</h6>
+                <input type="text" class="form-control" id="id_educational_level" name="educational_level" value="{{ supporter.educational_level }}" disabled readonly>
+              </div>
+            </div>
+
+            <div class="row row-cols-lg-2">
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_work_status">هل يعمل؟</h6>
+                <input type="text" class="form-control" id="id_work_status" name="work_status" value="{{ supporter.work_status }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_employer">جهة العمل</h6>
+                <input type="text" class="form-control" id="id_employer" name="employer" value="{% if supporter.employer %}{{ supporter.employer }}{% else %}----{% endif %}" disabled readonly>
+              </div>
+            </div>
+          </div> <!-- end line personal info -->
+
+          <hr>
+
+          {% if supporter_request.selection_type == "شخصي" %}
+          <div class="sponsorship">
+            <h3 class="mt-4 mb-0">معلومات الدعم</h3>
+            <small class="text-muted">المستفيدين ادناه تم اختيارهم من قبل الداعم (اختيار شخصي)</small>
+            <div class="mt-3">
+              <div class="table-responsive">
+                <table class="table text-nowrap">
+                  <thead>
+                    <tr>
+                      <th class="col">رقم المستفيد</th>
+                      <th scope="col">اسم المستفيد الكامل</th>
+                      <th scope="col">التصنيف</th>
+                      <th scope="col">نسبة الاحتياج</th>
+                      <th scope="col">الإجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for beneficiary in beneficiary_list %}
+                    <tr data-bs-toggle="tooltip" title="">
+                      <td>
+                        {{ beneficiary.id }}
+                      </td>
+                      <td>
+                        <span>
+                          {{ beneficiary.full_name }}
+                        </span>
+                      </td>
+                      <td>
+                        <span>
+                          {{ beneficiary.category }}
+                        </span>
+                      </td>
+                      <td>
+                        <span>
+                          {{ beneficiary.in_ex_diff }}%
+                        </span>
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-primary btn-details" data-bs-toggle="modal" data-bs-target="#beneficiaryDetailsModal" data-id="{{ beneficiary.id }}">
+                          تفاصيل الطلب
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="beneficiaryDetailsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="beneficiaryDetailsModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered modal-xl modal-lg">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title fw-bold" id="beneficiaryDetailsModalLabel">معلومات المستفيد</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form>
+                                  <h4 class="fw-bold mb-4">المعلومات الأساسية</h4>
+                                  {% csrf_token %}
+                                  <div class="accordion" id="id_beneficiary_accordion">
+                                    <div class="accordion-item">
+                                      <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_personal_info_collapseOne{{row.id}}" aria-expanded="false" aria-controls="beneficiary_personal_info_collapseOne{{row.id}}">
+                                          معلومات مقدم الطلب
+                                        </button>
+                                      </h2>
+                                      <div id="beneficiary_personal_info_collapseOne{{row.id}}" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                          <div class="row row-cols-lg-2 row-cols-xl-4">
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_file_no">رقم الملف</h6>
+                                              <input type="text" class="form-control" id="id_modal_file_no" name="file_no" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_first_name">الأسم الأول</h6>
+                                              <input type="text" class="form-control" id="id_modal_first_name" name="first_name" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_second_name">الأسم الثاني</h6>
+                                              <input type="text" class="form-control" id="id_modal_second_name" name="second_name" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_last_name">الأسم الأخير</h6>
+                                              <input type="text" class="form-control" id="id_modal_last_name" name="last_name" disabled readonly>
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-lg-2 row-cols-xl-4">
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_gender">الجنس</h6>
+                                              <input type="text" class="form-control" id="id_modal_gender" name="gender" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_date_of_birth">تاريخ الميلاد</h6>
+                                              <input type="text" class="form-control" id="id_modal_date_of_birth" name="date_of_birth" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_phone_number">رقم الجوال</h6>
+                                              <input type="text" class="form-control" id="id_modal_phone_number" name="phone_number" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_email">الايميل الالكتروني</h6>
+                                              <input type="email" class="form-control" id="id_modal_email" name="email" disabled readonly>
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-md-1 row-cols-xl-3">
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_nationality">الجنسية</h6>
+                                              <input type="text" class="form-control" id="id_modal_nationality" name="nationality" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_national_id">رقم الهوية/الإقامة</h6>
+                                              <input type="text" class="form-control" id="id_modal_national_id" name="national_id" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة</h6>
+                                              <input type="text" class="form-control" id="id_modal_national_id_exp_date" name="national_id_exp_date" disabled readonly>
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-md-1 row-cols-lg-3">
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_category">التصنيف الرئيسي</h6>
+                                              <input type="text" class="form-control" id="id_modal_category" name="category" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_marital_status">الحالة الاجتماعية</h6>
+                                              <input type="text" class="form-control" id="id_modal_marital_status" name="marital_status" disabled readonly>
+                                            </div>
+
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_educational_level">المستوى التعليمي</h6>
+                                              <input type="text" class="form-control" id="id_modal_educational_level" name="educational_level" disabled readonly>
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-lg-2 row-cols-xl-4">
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_health_status">الحالة الصحية</h6>
+                                              <input type="text" class="form-control" id="id_modal_health_status" name="health_status" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_disease_type">نوع المرض</h6>
+                                              <input type="text" class="form-control" id="id_modal_disease_type" name="disease_type" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_work_status">هل يعمل؟</h6>
+                                              <input type="text" class="form-control" id="id_modal_work_status" name="work_status" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_employer">جهة العمل</h6>
+                                              <input type="text" class="form-control" id="id_modal_employer" name="employer" disabled readonly>
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-lg-2">
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_death_date_father_husband">تاريخ وفاة الأب/الزوج</h6>
+                                              <input type="text" class="form-control" id="id_modal_death_date_father_husband" name="death_date_father_husband" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_washing_place">المغسلة التي تم التجهيز فيها</h6>
+                                              <input type="text" class="form-control" id="id_modal_washing_place" name="washing_place" disabled readonly>
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-lg-2">
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_bank_type">أسم البنك</h6>
+                                              <input type="text" class="form-control" id="id_modal_bank_type" name="bank_type" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_bank_iban">رقم الإيبان</h6>
+                                              <input type="text" class="form-control" id="id_modal_bank_iban" name="bank_iban" disabled readonly>
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-xl-2">
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_family_issues">المشاكل التي تعاني منها الأسرة</h6>
+                                              <input type="text" class="form-control" id="id_modal_family_issues" name="family_issues" disabled readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                              <h6 class="col form-label" for="id_modal_family_needs">احتياجات الأسرة</h6>
+                                              <input type="text" class="form-control" id="id_modal_family_needs" name="family_needs" disabled readonly>
+                                            </div>
+                                          </div>
+
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                      <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_housing_info_collapseTwo{{row.id}}" aria-expanded="false" aria-controls="beneficiary_housing_info_collapseTwo{{row.id}}">
+                                          معلومات السكن
+                                        </button>
+                                      </h2>
+                                      <div id="beneficiary_housing_info_collapseTwo{{row.id}}" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+
+                                          <div class="row row-cols-lg-2 row-cols-xl-4">
+                                            <div class="mb-3 form-group">
+                                              <label for="id_houseinfo_building_number" class="form-label"
+                                                >رقم المبنى</label>
+                                              <input
+                                                type="number"
+                                                name="houseinfo_building_number"
+                                                min="0"
+                                                max="9999999"
+                                                class="form-control"
+                                                id="id_houseinfo_building_number"
+                                                disabled readonly
+                                              />
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_houseinfo_street_name" class="form-label"
+                                                >اسم الشارع</label>
+                                              <input
+                                                type="text"
+                                                name="houseinfo_street_name"
+                                                maxlength="50"
+                                                class="form-control"
+                                                id="id_houseinfo_street_name"
+                                                disabled readonly
+                                              />
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_houseinfo_neighborhood" class="form-label"
+                                                >الحي</label>
+                                              <input
+                                                type="text"
+                                                name="houseinfo_neighborhood"
+                                                maxlength="50"
+                                                class="form-control"
+                                                id="id_houseinfo_neighborhood"
+                                                disabled readonly
+                                              />
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_houseinfo_city" class="form-label"
+                                                >المدينة</label>
+                                              <input
+                                                type="text"
+                                                name="houseinfo_city"
+                                                maxlength="50"
+                                                class="form-control"
+                                                id="id_houseinfo_city"
+                                                disabled readonly
+                                              />
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-lg-3">
+                                            <div class="mb-3 form-group">
+                                              <label for="id_houseinfo_postal_code" class="form-label"
+                                                >الرمز البريدي</label>
+                                              <input
+                                                type="number"
+                                                name="houseinfo_postal_code"
+                                                min="0"
+                                                max="9999999"
+                                                class="form-control"
+                                                id="id_houseinfo_postal_code"
+                                                disabled readonly
+                                              />
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_houseinfo_additional_number" class="form-label"
+                                                >الرقم الإضافي</label>
+                                              <input
+                                                type="number"
+                                                name="houseinfo_additional_number"
+                                                min="0"
+                                                max="9999999"
+                                                class="form-control"
+                                                id="id_houseinfo_additional_number"
+                                                disabled readonly
+                                              />
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_houseinfo_unit" class="form-label">الوحدة</label>
+                                              <input
+                                                type="text"
+                                                name="houseinfo_unit"
+                                                maxlength="50"
+                                                class="form-control"
+                                                id="id_houseinfo_unit"
+                                                disabled readonly
+                                              />
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-xl-3">
+                                            <div class="mb-3 form-group">
+                                              <label for="id_houseinfo_location_url" class="form-label"
+                                                >رابط موقع المنزل (google maps)</label>
+                                              <input
+                                                type="url"
+                                                name="houseinfo_location_url"
+                                                maxlength="250"
+                                                class="form-control"
+                                                id="id_houseinfo_location_url"
+                                                disabled readonly
+                                              />
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_houseinfo_housing_type" class="form-label"
+                                                >نوع السكن</label>
+                                              <input
+                                                type="text"
+                                                name="houseinfo_housing_type"
+                                                class="form-control"
+                                                id="id_houseinfo_housing_type"
+                                                disabled readonly
+                                              />
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_houseinfo_housing_ownership" class="form-label"
+                                                >ملكية السكن</label>
+                                              <input
+                                                type="text"
+                                                name="houseinfo_housing_ownership"
+                                                class="form-control"
+                                                id="id_houseinfo_housing_ownership"
+                                                disabled readonly
+                                              />
+                                            </div>
+                                          </div>
+
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                      <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_income_expenses_info_collapseThree{{row.id}}" aria-expanded="false" aria-controls="beneficiary_income_expenses_info_collapseThree{{row.id}}">
+                                          معلومات الدخل والمصروفات
+                                        </button>
+                                      </h2>
+                                      <div id="beneficiary_income_expenses_info_collapseThree{{row.id}}" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+
+                                          <h4 class="mt-2 mb-3">مصادر دخل رب الأسرة (شهريًا)</h4>
+                                          <div class="row row-cols-lg-2 row-cols-xl-4 mt-4">
+                                            <div class="mb-3 form-group">
+                                              <label for="id_incomeinfo_salary" class="form-label"
+                                                >الراتب</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="incomeinfo_salary"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_incomeinfo_salary"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_incomeinfo_social_insurance" class="form-label"
+                                                >التأمينات الاجتماعية</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="incomeinfo_social_insurance"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_incomeinfo_social_insurance"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_incomeinfo_charity" class="form-label"
+                                                >جمعيات خيرية</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="incomeinfo_charity"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_incomeinfo_charity"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_incomeinfo_social_warranty" class="form-label"
+                                                >الضمان الاجتماعي</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="incomeinfo_social_warranty"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_incomeinfo_social_warranty"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-lg-2 row-cols-xl-4">
+                                            <div class="mb-3 form-group">
+                                              <label for="id_incomeinfo_pension_agency" class="form-label"
+                                                >مصلحة التقاعد</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="incomeinfo_pension_agency"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_incomeinfo_pension_agency"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_incomeinfo_citizen_account" class="form-label"
+                                                >حساب المواطن</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="incomeinfo_citizen_account"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_incomeinfo_citizen_account"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_incomeinfo_benefactor" class="form-label"
+                                                >فاعل خير</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="incomeinfo_benefactor"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_incomeinfo_benefactor"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_incomeinfo_other" class="form-label">أخرى</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="incomeinfo_other"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_incomeinfo_other"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <div class="row">
+                                            <div class="mb-3 form-group">
+                                              <label for="id_incomeinfo_total" class="form-label"
+                                                >إجمالي الدخل</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="incomeinfo_total"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  step="0.01"
+                                                  class="form-control"
+                                                  id="id_incomeinfo_total"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <hr>
+
+                                          <h4 class="mt-4 mb-3">مصروفات الأسرة (شهريًا)</h4>
+                                          <div class="row row-cols-lg-2 row-cols-xl-4 mt-4">
+                                            <div class="mb-3 form-group">
+                                              <label for="id_expensesinfo_housing_rent" class="form-label"
+                                                >إيجار السكن</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="expensesinfo_housing_rent"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_expensesinfo_housing_rent"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label
+                                                for="id_expensesinfo_electricity_bills"
+                                                class="form-label"
+                                                >فواتير كهرباء</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="expensesinfo_electricity_bills"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_expensesinfo_electricity_bills"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_expensesinfo_water_bills" class="form-label"
+                                                >فواتير ماء</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="expensesinfo_water_bills"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_expensesinfo_water_bills"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_expensesinfo_transportation" class="form-label"
+                                                >مواصلات</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="expensesinfo_transportation"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_expensesinfo_transportation"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-lg-2 row-cols-xl-4">
+                                            <div class="mb-3 form-group">
+                                              <label for="id_expensesinfo_health_supplies" class="form-label"
+                                                >مستلزمات صحية</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="expensesinfo_health_supplies"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_expensesinfo_health_supplies"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_expensesinfo_food_supplies" class="form-label"
+                                                >مستلزمات غذائية</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="expensesinfo_food_supplies"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_expensesinfo_food_supplies"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label
+                                                for="id_expensesinfo_educational_supplies"
+                                                class="form-label"
+                                                >مستلزمات دراسية</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="expensesinfo_educational_supplies"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_expensesinfo_educational_supplies"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_expensesinfo_proven_debts" class="form-label"
+                                                >ديون مثبتة</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="expensesinfo_proven_debts"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_expensesinfo_proven_debts"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <div class="row row-cols-lg-2">
+                                            <div class="mb-3 form-group">
+                                              <label for="id_expensesinfo_other" class="form-label"
+                                                >أخرى</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="expensesinfo_other"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_expensesinfo_other"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                            <div class="mb-3 form-group">
+                                              <label for="id_expensesinfo_total" class="form-label"
+                                                >إجمالي المصروفات</label>
+                                              <div class="input-group mb-3">
+                                                <input
+                                                  type="number"
+                                                  name="expensesinfo_total"
+                                                  min="0.00"
+                                                  max="99999999.00"
+                                                  class="form-control"
+                                                  id="id_expensesinfo_total"
+                                                  disabled readonly
+                                                />
+                                                <span class="input-group-text" id="basic-addon1">ر.س.</span>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                      <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_attachments{{row.id}}" aria-expanded="false" aria-controls="beneficiary_attachments{{row.id}}">
+                                          المرفقات
+                                        </button>
+                                      </h2>
+                                      <div id="beneficiary_attachments{{row.id}}" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                          {% comment %} Below are the attachments {% endcomment %}
+                                          <div id="attachmentsContainer">
+
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                  </div>
+                                  <hr>
+
+                                  {% comment %} dependents data displayed below {% endcomment %}
+                                  <div id="dependentsAccordion"></div>
+
+                                  <hr>
+
+                                  <h4 class="fw-bold mt-4 mb-4">معلومات مُراجع الطلب</h4>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_received_at">تاريخ الاستلام</h6>
+                                    <input type="datetime" class="form-control" id="id_modal_received_at" name="received_at" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_reviewd_at">تاريخ المراجعة</h6>
+                                    <input type="text" class="form-control" id="id_modal_reviewd_at" name="reviewd_at" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_is_qualified">مؤهل؟</h6>
+                                    <input type="text" class="form-control" id="id_modal_is_qualified" name="is_qualified" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_is_benefiting">مستفيد؟</h6>
+                                    <input type="text" class="form-control" id="id_modal_is_benefiting" name="is_benefiting" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <label for="id_modal_needs_descriptions" class="col form-label">وصف الاحتياج</label>
+                                    <textarea class="form-control" id="id_modal_needs_descriptions" rows="5" disabled readonly></textarea>
+                                  </div>
+                                  <hr>
+                                  <div class="mb-3">
+                                    <label for="id_modal_request_comment" class="col form-label">التعليقات</label>
+                                    <textarea class="form-control" disabled readonly id="id_modal_request_comment" rows="5" name="modal_request_comment"></textarea>
+                                  </div>
+                                  <div class="mb-3">
+                                    <label for="id_modal_request_status" class="col form-label">حالة الطلب</label>
+                                    <select class="form-select" id="id_modal_request_status" rows="5" name="modal_request_status" disabled readonly>
+                                      <option value selected>---------</option>
+                                      <option value="new">جديد</option>
+                                      <option value="under review">تحت المراجعة</option>
+                                      <option value="waiting">انتظار</option>
+                                      <option value="not complete">غير مكتمل</option>
+                                      <option value="rejected">مرفوض</option>
+                                      <option value="accepted">مقبول</option>
+                                      <option value="needs update">يحتاج تحديث</option>
+                                    </select>
+                                  </div>
+                                </form>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                                <button type="button" class="btn btn-primary">قبول الطلب</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <div class="sponsorship mb-4">
+            <h3 class="mt-4 mb-4">معلومات الدعم</h3>
+            <div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_orphan_number">عدد الايتام</h6>
+                <input type="text" class="form-control" id="id_orphan_number" name="orphan_number" value="{{ supporter_request.orphan_number }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_orphan_donation_type">مدة الدعم (ايتام)</h6>
+                <input type="text" class="form-control" id="id_orphan_donation_type" name="orphan_donation_type" value="{{ supporter_request.orphan_donation_type }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_widower_number">عدد الارامل</h6>
+                <input type="text" class="form-control" id="id_widower_number" name="widower_number" value="{{ supporter_request.widower_number }}" disabled readonly>
+              </div>
+              <div class="mb-3">
+                <h6 class="col form-label" for="id_widower_donation_type">مدة الدعم (ارامل)</h6>
+                <input type="text" class="form-control" id="id_widower_donation_type" name="widower_donation_type" value="{{ supporter_request.widower_donation_type }}" disabled readonly>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <hr>
+
+          <div class="attachment_info">
+            <h3 class="mt-4 mb-4">المرفقات</h3>
+            <div>
+              {% if supporter_request_attachments %}
+              <div class="table-responsive text-nowrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">اسم الملف</th>
+                      <th scope="col">نوع المرفق</th>
+                      <th scope="col">نوع الملف</th>
+                      <th scope="col">الإجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for attachment in supporter_request_attachments %}
+                    <tr data-bs-toggle="tooltip" title="">
+                      <td>
+                        <span>
+                          {{ attachment.file_name }}
+                        </span>
+                      </td>
+                      <td>
+                        <span>
+                          {{ attachment.attachment_type }}
+                        </span>
+                      </td>
+                      <td>{{ attachment.file_extension }}</td>
+                      <td>
+                        <div class="d-flex align-items-center actions">
+                          <div class="mb-2">
+                            <a href="{{ attachment.file_path }}" target="_blank" class="btn btn-primary">عرض الملف</a>
+                        </div>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% else %}
+              <p class="mb-4">لا يوجد مرفقات</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="supporter_preferences">
+            <h3 class="mt-4 mb-4">تفضيلات الداعم</h3>
+            <div>
+              <div>
+                <div class="mb-3 form-group">
+                  <label for="id_sponsorship_preference_was_sponsor_check" class="form-label">هل سبق أن كفلت يتيم أو أرملة في وقت سابق أو حالي؟
+                  </label>
+                  <input type="text" class="form-control" id="id_sponsorship_preference_was_sponsor_check" name="sponsorship_preference_was_sponsor_check" value="{{ supporter.was_sponsor }}" disabled readonly>
+                </div>
+                <div class="mb-3 form-group">
+                  <label for="id_sponsorship_info_status_notify_check" class="form-label">
+                    هل ترغب بتقرير عن اليتيم / الأرملة؟
+                  </label>
+                  <input type="text" class="form-control" id="id_sponsorship_info_status_notify_check" name="sponsorship_info_status_notify_check" value="{{ supporter.status_notify }}" disabled readonly>
+                </div>
+                <div class="mb-3 form-group">
+                  <label for="id_sponsorship_info_invite_beneficiary_check" class="form-label">
+                    هل ترغب بإشراك اليتيم في مناسباتكم العائلية؟
+                  </label>
+                  <input type="text" class="form-control" id="id_sponsorship_info_invite_beneficiary_check" name="sponsorship_info_invite_beneficiary_check" value="{{ supporter.invite_beneficiary }}" disabled readonly>
+                </div>
+                <div class="mb-3 form-group">
+                  <label for="id_sponsorship_info_visit_beneficiary_check" class="form-label">
+                    هل ترغب بزيارة لأسرة اليتيم / الأرملة؟
+                  </label>
+                  <input type="text" class="form-control" id="id_sponsorship_info_visit_beneficiary_check" name="sponsorship_info_visit_beneficiary_check" value="{{ supporter.visit_beneficiary }}" disabled readonly>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="mt-4">
+
+          <form
+            id="id_supporter_request_review_form"
+            name="supporter_request_review_form"
+            method="POST"
+            class="needs-validation"
+            novalidate
+          >
+            {% csrf_token %}
+            <!-- the below fields determine the action url depending on the clicked button -->
+            <input type="hidden" id="accept_url" value="{% url 'supporter_request_confirm' supporter_id=supporter.id s_request_id=supporter_request.id %}">
+            <input type="hidden" id="change_status_url" value="{% url 'supporter_request_update' supporter_id=supporter.id s_request_id=supporter_request.id %}">
+
+            <h4 class="fw-bold mt-4 mb-4">معلومات مُراجع الطلب</h4>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_received_at">تاريخ الإرسال</h6>
+              <input type="datetime" class="form-control" id="id_received_at" name="received_at" disabled readonly value="{% if supporter_request.created_at %}{{ supporter_request.created_at }}{% else %}----{% endif %}">
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_reviewd_at">تاريخ المراجعة</h6>
+              <input type="text" class="form-control" id="id_reviewd_at" name="reviewd_at" disabled readonly value="{% if supporter_request.reviewed_at %}{{ supporter_request.reviewed_at }}{% else %}----{% endif %}">
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_total_amount">المبلغ الإجمالي</h6>
+              <input type="text" class="form-control" id="id_total_amount" name="total_amount" disabled readonly value="{% if supporter_request.total_amount %}{{ supporter_request.total_amount }}{% else %}----{% endif %}">
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_duration">مدة الدعم</h6>
+              <input type="text" class="form-control" id="id_duration" name="duration" disabled readonly value="{% if supporter_request.duration %}{{ supporter_request.duration }}{% else %}----{% endif %}">
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_donation_type">نوع الدعم</h6>
+              <input type="text" class="form-control" id="id_donation_type" name="donation_type" disabled readonly value="{% if supporter_request.donation_type %}{{ supporter_request.donation_type }}{% else %}----{% endif %}">
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_request_id">رقم الطلب</h6>
+              <input type="text" class="form-control" id="id_request_id" name="request_id" disabled readonly value="{% if supporter_request.id %}{{ supporter_request.id }}{% else %}----{% endif %}">
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_request_type">نوع الطلب</h6>
+              <input type="text" class="form-control" id="id_request_type" name="request_type" disabled readonly value="{% if supporter_request.request_type %}{{ supporter_request.request_type }}{% else %}----{% endif %}">
+            </div>
+            <div class="mb-3">
+              <label for="id_request_status" class="col form-label">حالة الطلب</label>
+              <select class="form-select" id="id_request_status" rows="5" name="request_status" {% if supporter_request.status == "مقبول" %}disabled readonly{% endif %}>
+                <option value selected>---------</option>
+                <option value="جديد">جديد</option>
+                <option value="تحت المراجعة">تحت المراجعة</option>
+                <option value="انتظار">انتظار</option>
+                <option value="غير مكتمل">غير مكتمل</option>
+                <option value="مرفوض">مرفوض</option>
+                <option value="مقبول">مقبول</option>
+                <option value="بحاجة الى تحديث">بحاجة الى تحديث</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="id_request_comment" class="col form-label">التعليقات</label>
+              <textarea class="form-control" id="id_request_comment" rows="5" name="request_comment" value="{% if supporter_request.comment %}{{ supporter_request.comment }}{% else %}{% endif %}" {% if supporter_request.status == "مقبول" %}disabled readonly{% endif %}></textarea>
+            </div>
+
+            <hr class="mt-4">
+
+            <div class="mt-3 mb-2">
+              <div class="">
+                <a type="button" class="btn btn-secondary" href="{% url 'dashboard_supporters_requests' %}">الرجوع لصفحة الطلبات</a>
+
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmationModal" {% if supporter_request.status == "مقبول" %}disabled{% endif %}>
+                  قبول الطلب
+                </button>
+
+                {% comment %} <a type="button" class="btn btn-primary" onclick="setActionAndSubmit('#change_status_url')">
+                  تغيير حالة الطلب
+                </a> {% endcomment %}
+
+                <!-- Confirmation Modal  -->
+                <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">رسالة تأكيد</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p class="fs-4 text-center">هل أنت متأكد من معلومات الطلب؟</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                        <button type="button" class="btn btn-success" onclick="setActionAndSubmit('#accept_url')">نعم, متأكد!</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </form>
+
+      </div> <!-- end line card body -->
+    </div> <!-- end line card -->
+  </div> <!-- end line container -->
+
+</div>
+<script>
+
+  function setActionAndSubmit(actionId) {
+    var actionUrl = $(actionId).val();
+    $('#id_supporter_request_review_form').attr('action', actionUrl);
+    $('#id_supporter_request_review_form').submit();
+  }
+
+  // Add an event listener for the details button
+  document.querySelectorAll('.btn-details').forEach(function(button) {
+    button.addEventListener('click', function() {
+       var beneficiaryId = this.getAttribute('data-id');
+
+       // Fetch request using beneficiaryId to get the beneficiary details:
+       fetch('http://127.0.0.1:8000/beneficiary_details/' + beneficiaryId)
+          .then(response => response.json())
+          .then(data => {
+
+             // Update modal content based on the received data
+             // Personal information:
+             document.getElementById('id_modal_file_no').value = data.file_no;
+             document.getElementById('id_modal_first_name').value = data.first_name;
+             document.getElementById('id_modal_second_name').value = data.second_name;
+             document.getElementById('id_modal_last_name').value = data.last_name;
+             document.getElementById('id_modal_nationality').value = data.nationality;
+             document.getElementById('id_modal_gender').value = data.gender;
+             // Convert the date into more convinent format
+             var date_of_birth = "";
+             date_of_birth = data.date_of_birth.substring(0, 10);
+             document.getElementById('id_modal_date_of_birth').value = date_of_birth;
+             document.getElementById('id_modal_phone_number').value = data.phone_number;
+             document.getElementById('id_modal_email').value = data.email;
+             document.getElementById('id_modal_national_id').value = data.national_id;
+             // Convert the date into more convinent format
+             var national_id_exp_date = "";
+             if (data.national_id_exp_date != null) {
+               national_id_exp_date = data.national_id_exp_date.substring(0, 10);
+             }
+             document.getElementById('id_modal_national_id_exp_date').value = national_id_exp_date;
+             document.getElementById('id_modal_is_qualified').value = data.is_qualified;
+             document.getElementById('id_modal_category').value = data.category;
+             document.getElementById('id_modal_marital_status').value = data.marital_status;
+             document.getElementById('id_modal_educational_level').value = data.educational_level;
+             document.getElementById('id_modal_health_status').value = data.health_status;
+             document.getElementById('id_modal_disease_type').value = data.disease_type;
+             document.getElementById('id_modal_work_status').value = data.work_status;
+             document.getElementById('id_modal_employer').value = data.employer;
+             // Convert the date into more convinent format
+             var death_date_father_husband = "";
+             if (data.death_date_father_husband != null) {
+               death_date_father_husband = data.death_date_father_husband.substring(0, 10);
+             }
+             document.getElementById('id_modal_death_date_father_husband').value = death_date_father_husband;
+             document.getElementById('id_modal_washing_place').value = data.washing_place;
+             document.getElementById('id_modal_is_benefiting').value = data.is_benefiting;
+             // Convert ISO 8601 date into Date objects
+             var receive_date = new Date(data.received_at);
+             var review_date = new Date(data.reviewed_at);
+             document.getElementById('id_modal_received_at').value = receive_date;
+             document.getElementById('id_modal_reviewd_at').value = review_date;
+             document.getElementById('id_modal_bank_type').value = data.bank_type;
+             document.getElementById('id_modal_bank_iban').value = data.bank_iban;
+             document.getElementById('id_modal_family_issues').value = data.family_issues;
+             document.getElementById('id_modal_family_needs').value = data.family_needs;
+
+
+             // Housing information:
+             document.getElementById('id_houseinfo_building_number').value = data.housing_info.building_number;
+             document.getElementById('id_houseinfo_street_name').value = data.housing_info.street_name;
+             document.getElementById('id_houseinfo_neighborhood').value = data.housing_info.neighborhood;
+             document.getElementById('id_houseinfo_city').value = data.housing_info.city;
+             document.getElementById('id_houseinfo_postal_code').value = data.housing_info.postal_code;
+             document.getElementById('id_houseinfo_additional_number').value = data.housing_info.additional_number;
+             document.getElementById('id_houseinfo_unit').value = data.housing_info.unit;
+             document.getElementById('id_houseinfo_location_url').value = data.housing_info.location_url;
+             document.getElementById('id_houseinfo_housing_type').value = data.housing_info.housing_type;
+             document.getElementById('id_houseinfo_housing_ownership').value = data.housing_info.housing_ownership;
+
+
+             // Income & Expenses information
+             document.getElementById('id_incomeinfo_salary').value = data.income_expenses_info.salary_in;
+             document.getElementById('id_incomeinfo_social_insurance').value = data.income_expenses_info.social_insurance_in;
+             document.getElementById('id_incomeinfo_charity').value = data.income_expenses_info.charity_in;
+             document.getElementById('id_incomeinfo_social_warranty').value = data.income_expenses_info.social_warranty_in;
+             document.getElementById('id_incomeinfo_pension_agency').value = data.income_expenses_info.pension_agency_in;
+             document.getElementById('id_incomeinfo_citizen_account').value = data.income_expenses_info.citizen_account_in;
+             document.getElementById('id_incomeinfo_benefactor').value = data.income_expenses_info.benefactor_in;
+             document.getElementById('id_incomeinfo_other').value = data.income_expenses_info.other_in;
+             // Sum of all income
+             var total_in = parseFloat(data.income_expenses_info.salary_in) + parseFloat(data.income_expenses_info.social_insurance_in) + parseFloat(data.income_expenses_info.charity_in) + parseFloat(data.income_expenses_info.social_warranty_in) + parseFloat(data.income_expenses_info.pension_agency_in) + parseFloat(data.income_expenses_info.citizen_account_in) + parseFloat(data.income_expenses_info.benefactor_in) + parseFloat(data.income_expenses_info.other_in);
+             total_in = total_in.toFixed(2);
+             document.getElementById('id_incomeinfo_total').value = total_in;
+
+             document.getElementById('id_expensesinfo_housing_rent').value = data.income_expenses_info.housing_rent_ex;
+             document.getElementById('id_expensesinfo_electricity_bills').value = data.income_expenses_info.electricity_bills_ex;
+             document.getElementById('id_expensesinfo_water_bills').value = data.income_expenses_info.water_bills_ex;
+             document.getElementById('id_expensesinfo_transportation').value = data.income_expenses_info.transportation_ex;
+             document.getElementById('id_expensesinfo_health_supplies').value = data.income_expenses_info.health_supplies_ex;
+             document.getElementById('id_expensesinfo_food_supplies').value = data.income_expenses_info.food_supplies_ex;
+             document.getElementById('id_expensesinfo_educational_supplies').value = data.income_expenses_info.educational_supplies_ex;
+             document.getElementById('id_expensesinfo_proven_debts').value = data.income_expenses_info.proven_debts_ex;
+             document.getElementById('id_expensesinfo_other').value = data.income_expenses_info.other_ex;
+             // Sum of all expenses
+             var total_ex = parseFloat(data.income_expenses_info.housing_rent_ex) + parseFloat(data.income_expenses_info.electricity_bills_ex) + parseFloat(data.income_expenses_info.water_bills_ex) + parseFloat(data.income_expenses_info.transportation_ex) + parseFloat(data.income_expenses_info.health_supplies_ex) + parseFloat(data.income_expenses_info.food_supplies_ex) + parseFloat(data.income_expenses_info.educational_supplies_ex) + parseFloat(data.income_expenses_info.proven_debts_ex) + parseFloat(data.income_expenses_info.other_ex);
+             total_ex = total_ex.toFixed(2);
+             document.getElementById('id_expensesinfo_total').value = total_ex;
+
+
+             // Dependents Accordion data:
+             const dependentsAccordion = document.getElementById('dependentsAccordion');
+
+             // Check if there are dependents
+             if (data.dependent_list && data.dependent_list.length > 0) {
+                 const accordionHtml = `
+                   <h4 class="fw-bold mt-4 mb-4">المرافقين</h4>
+                   <div class="accordion" id="dependentsAccordion">
+                     ${data.dependent_list.map((dependent, index) => `
+                       <div class="accordion-item">
+                         <h2 class="accordion-header" id="dependentHeading${index}">
+                           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dependentCollapse${index}" aria-expanded="false" aria-controls="dependentCollapse${index}">
+                             ${dependent.dependent_first_name} ${dependent.dependent_second_name} ${dependent.dependent_last_name}
+                           </button>
+                         </h2>
+                         <div id="dependentCollapse${index}" class="accordion-collapse collapse" aria-labelledby="dependentHeading${index}">
+                           <div class="accordion-body">
+
+                             <div class="row row-cols-lg-2 row-cols-xl-4">
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_id${index}">رقم المرافق</h6>
+                                 <input type="text" class="form-control" id="id_dependent_id${index}" name="dependent_id" value="${dependent.dependent_id}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_first_name${index}">الأسم الأول</h6>
+                                 <input type="text" class="form-control" id="id_dependent_first_name${index}" name="dependent_first_name" value="${dependent.dependent_first_name}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_second_name${index}">الأسم الثاني</h6>
+                                 <input type="text" class="form-control" id="id_dependent_second_name${index}" name="dependent_second_name" value="${dependent.dependent_second_name}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_last_name${index}">الأسم الأخير</h6>
+                                 <input type="text" class="form-control" id="id_dependent_last_name${index}" name="dependent_last_name" value="${dependent.dependent_last_name}" disabled readonly>
+                               </div>
+                             </div>
+
+                             <div class="row row-cols-lg-2 row-cols-xl-4">
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_gender${index}">الجنس</h6>
+                                 <input type="text" class="form-control" id="id_dependent_gender${index}" name="dependent_gender" value="${dependent.dependent_gender}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_relationship${index}">صلة القرابة</h6>
+                                 <input type="text" class="form-control" id="id_dependent_relationship${index}" name="dependent_relationship" value="${dependent.dependent_relationship}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_marital_status${index}">الحالة الاجتماعية</h6>
+                                 <input type="text" class="form-control" id="id_dependent_marital_status${index}" name="dependent_marital_status" value="${dependent.dependent_marital_status}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_educational_status${index}">الحالة الدراسية</h6>
+                                 <input type="text" class="form-control" id="id_dependent_educational_status${index}" name="dependent_educational_status" value="${dependent.dependent_educational_status}" disabled readonly>
+                               </div>
+                             </div>
+
+                             <div class="row row-cols-lg-2 row-cols-xl-4">
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_educational_level${index}">المرحلة الدراسية</h6>
+                                 <input type="text" class="form-control" id="id_dependent_educational_level${index}" name="dependent_educational_level" value="${dependent.dependent_educational_level}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_educational_degree${index}">المؤهل التعليمي</h6>
+                                 <input type="text" class="form-control" id="id_dependent_educational_degree${index}" name="dependent_educational_degree" value="${dependent.dependent_educational_degree}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_relationship${index}">الحالة الصحية</h6>
+                                 <input type="text" class="form-control" id="id_dependent_relationship${index}" name="dependent_relationship" value="${dependent.dependent_health_status}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_marital_status${index}">نوع المرض</h6>
+                                 <input type="text" class="form-control" id="id_dependent_marital_status${index}" name="dependent_marital_status" value="${dependent.dependent_disease_type}" disabled readonly>
+                               </div>
+                             </div>
+
+                             <div class="row row-cols-lg-2">
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_national_id${index}">رقم الهوية الوطنية / الإقامة</h6>
+                                 <input type="text" class="form-control" id="id_dependent_national_id${index}" name="dependent_national_id" value="${dependent.dependent_national_id}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_national_id_exp_date${index}">تاريخ انتهاء الهوية / الإقامة</h6>
+                                 <input type="text" class="form-control" id="id_dependent_national_id_exp_date${index}" name="dependent_national_id_exp_date" value="${dependent.dependent_national_id_exp_date}" disabled readonly>
+                               </div>
+                             </div>
+
+                             <div class="row row-cols-lg-2 row-cols-xl-3">
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_date_of_birth${index}">تاريخ الميلاد</h6>
+                                 <input type="text" class="form-control" id="id_dependent_date_of_birth${index}" name="dependent_date_of_birth" value="${dependent.dependent_date_of_birth}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_needs_description${index}">وصف الاحتياج</h6>
+                                 <input type="text" class="form-control" id="id_dependent_needs_description${index}" name="dependent_needs_description" value="${dependent.dependent_needs_description}" disabled readonly>
+                               </div>
+                               <div class="mb-3">
+                                 <h6 class="col form-label" for="id_dependent_educational_status${index}">نوع الاحتياج</h6>
+                                 <input type="text" class="form-control" id="id_dependent_educational_status${index}" name="dependent_educational_status" value="${dependent.dependent_needs_type}" disabled readonly>
+                               </div>
+                             </div>
+
+                             <!-- Display dependent income data as a table -->
+                             <table class="table">
+                               <thead>
+                                 <tr>
+                                   <th>مصدر الدخل</th>
+                                   <th>قيمة الدخل</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                                 ${dependent.dependent_income_data.map((income, incomeIndex) => `
+                                   <tr key="${incomeIndex}">
+                                     <td>${income.income_source}</td>
+                                     <td>${income.income_amount}</td>
+                                   </tr>
+                                 `).join('')}
+                               </tbody>
+                             </table>
+
+                           </div>
+                         </div>
+                       </div>
+                     `).join('')}
+                   </div>
+                 `;
+
+                 // Append the accordion HTML to the dependentsAccordion container
+                 dependentsAccordion.innerHTML = accordionHtml;
+
+             } else {
+                 // Display a message or handle the case when there are no dependents
+                 dependentsAccordion.innerHTML = '<h4 class="fw-bold">المرافقين</h4><p>لا يوجد مرافقين</p>';
+             }
+
+             // Handle attachments information
+             const attachmentsContainer = document.getElementById('attachmentsContainer');
+             if (attachmentsContainer) {
+                 attachmentsContainer.innerHTML = ''; // Clear previous attachments
+
+                 if (data.attachments && data.attachments.length > 0) {
+                     var attachmentsHtml = '<h4 class="fw-bold mt-4 mb-4">المرفقات</h4>';
+
+                         attachmentsHtml = `
+                             <div class="table-responsive">
+                               <table class="table">
+                                 <tr>
+                                   <th scope="col">اسم الملف</th>
+                                   <th scope="col">نوع المرفق</th>
+                                   <th scope="col">نوع الملف</th>
+                                   <th scope="col">الإجراءات</th>
+                                 </tr>
+                                  ${data.attachments.map((attachment, index) => `
+                                   <tr data-bs-toggle="tooltip" title="">
+                                     <td>
+                                       <span>
+                                         ${attachment.file_name}
+                                       </span>
+                                     </td>
+                                     <td>
+                                       <span>
+                                         ${attachment.attachment_type}
+                                       </span>
+                                     </td>
+                                     <td>${attachment.file_extension}</td>
+                                     <td>
+                                       <div class="d-flex align-items-center actions">
+                                         <div class="mb-2">
+                                           <a href="${attachment.file_path}" target="_blank" class="btn btn-primary">عرض الملف</a>
+                                       </div>
+                                       </div>
+                                     </td>
+                                   </tr>
+                                 `).join('')}
+                               </table>
+                             </div>
+                           `;
+
+                     attachmentsContainer.innerHTML = attachmentsHtml;
+                 } else {
+                     attachmentsContainer.innerHTML = '<p class="mb-4">لا توجد مرفقات</p>';
+                 }
+             } else {
+                 console.error("Element with id 'attachmentsContainer' not found.");
+             }
+
+          })
+          .catch(error => {
+             console.error('Error:', error);
+          });
+    });
+  });
+  $(document).ready(function () {
+
+    // Function to set the selected option for a given select element
+    function setSelectedOption(selectId, selectedValue) {
+      $('#' + selectId).val(selectedValue);
+    }
+
+    // Call the function with the specific select element and value
+    setSelectedOption('id_request_status', "{{ supporter_request.status }}");
+
+    // Global variables
+    var form = $("#id_supporter_request_review_form");
+
+    // The below code will change the default validation messages
+    $.extend($.validator.messages, {
+      required: "هذا الحقل مطلوب.",
+      remote: "الرجاء اصلاح هذا الحقل.",
+      email: "الرجاء إدخال بريد الكتروني صالح.",
+      url: "الرجاء إدخال رابط صحيح وفعال.",
+      date: "الرجاء إدخال تاريخ صالح.",
+      dateISO: "الرجاء إدخال تاريخ صحيح (بصيغة ISO).",
+      number: "الرجاء إدخال رقم صحيح.",
+      digits: "الرجاء إدخال أرقام فقط.",
+      creditcard: "الرجاء إدخال رقم بطاقة ائتمان صالحة.",
+      equalTo: "رجاء أدخل نفس القيمة مره أخرى.",
+      accept: "الرجاء إدخال قيمة بإمتداد صحيح.",
+      maxlength: $.validator.format("الرجاء عدم إدخال أكثر من {0} أحرف."),
+      minlength: $.validator.format("الرجاء إدخال على الأقل {0} حروف."),
+      rangelength: $.validator.format(
+        "يجب إدخال قيمة بين {0} و {1} عدد حروف."
+      ),
+      range: $.validator.format("الرجاء إدخال رقم بين {0} و {1}."),
+      max: $.validator.format(" الرجاء إدخال قيمة أقل من أو تساوي {0}."),
+      min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
+    });
+
+    form.validate({
+      errorElement: "span",
+      errorClass: "help-block invalid-feedback",
+      highlight: function (element, errorClass, validClass) {
+        $(element).closest(".form-group").addClass("has-error");
+        //$(element).fadeOut(function() {
+        //  $(element).fadeIn();
+        //  });
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).closest(".form-group").removeClass("has-error");
+      },
+      errorPlacement: function (error, element) {
+        // Check if the element is inside an input-group
+        if (element.parent(".input-group").length) {
+          // Place the error after the input-group
+          error.insertAfter(element.parent(".input-group"));
+        } else {
+          // Default placement for other elements
+          error.insertAfter(element);
+        }
+      },
+      focusInvalid: true,
+
+      // Adding the rules (validations) for each input in the form.
+      rules: {
+        request_comment: {
+          required: false,
+          maxlength: 500,
+        },
+        request_status: {
+          required: true,
+        },
+      },
+      messages: {
+      },
+    });
+
+    // When ".next" button is clicked, the following function is executed
+    form.find("input, select, textarea").on("input change", function () {
+
+      form.valid(); // Trigger validation
+
+    }); // input, select, textarea input fields (onclick, oninput) end line
+
+  }); // document end line 
+</script>
+{% endblock %}

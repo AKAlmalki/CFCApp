@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %} {% load auth_group %}
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
   <head>
@@ -66,11 +66,13 @@
                   </li>
                 </ul>
               </div>
+              {% if request.user|has_group:"Management" %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'dashboard' %}" role="button">
                   لوحة التحكم
                 </a>
               </li>
+              {% endif %}
               {% else %}
               {% endif %}
             </ul>

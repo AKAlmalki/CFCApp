@@ -1,16 +1,16 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, supporter_operation, entity, individual, Dependent_income, Beneficiary_attachment, Entity_supporter_operation, Individual_supporter_beneficiary_sponsorship, Individual_supporter, CustomUser, Beneficiary_request
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment
 # from .forms import CustomUserCreationForm
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import login, logout, authenticate
-
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from dateutil.relativedelta import relativedelta
 import logging
 import os
 import json
@@ -20,7 +20,7 @@ from openpyxl import Workbook
 from openpyxl.styles import *
 import decimal
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import send_mail, EmailMessage, BadHeaderError
 from cfc_app import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -29,6 +29,10 @@ from django.utils.encoding import force_bytes, force_str
 from .tokens import generate_token
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.models import User
+from django.db.models.query_utils import Q
+from .decorators import group_required
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -38,6 +42,15 @@ logger = logging.getLogger(__name__)
 IPP_DASHBOARD_REQUESTS = 10  # IPP stands for Item Per Page
 IPP_SUPPORTER_FORM = 8
 IPP_DASHBOARD_REPORTS = 10
+
+duration_factors = {
+    "": 0,
+    "شهر واحد": 1,
+    "3 أشهر": 3,
+    "6 أشهر": 6,
+    "سنة كاملة": 12,
+    # Add more duration types and their factors as needed
+}
 
 # Utility functions =======================================
 
@@ -71,16 +84,8 @@ def is_ajax(request):
 # View Handlers ==============================================
 
 
-def individual2test(request):
-    return render(request, 'main/individual2.html')
-
-
-def individualtest(request):
-    return render(request, 'main/individual.html')
-
-
-def test2(request):
-    return render(request, "main/index2.html")
+def forbidden(request):
+    return render(request, 'errors/403.html')
 
 
 def home(request):
@@ -210,8 +215,6 @@ def sign_up(request):
 
 def activate(request, uidb64, token):
 
-    print(uidb64, token)
-
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         myuser = CustomUser.objects.get(pk=uid)
@@ -226,7 +229,7 @@ def activate(request, uidb64, token):
         login(request, myuser)
         return redirect('home')
     else:
-        return render(request, 'activation_failed.html')
+        return render(request, 'auth/activation_failed.html')
 
 
 def resend_activation_email_view(request):
@@ -261,7 +264,7 @@ def resend_activation_email_view(request):
         if request.user.is_authenticated:
             return redirect('home')
 
-    return render(request, "resend_activation_email.html")
+    return render(request, "auth/resend_activation_email.html")
 
 
 def resend_activation_email(request):
@@ -274,7 +277,7 @@ def resend_activation_email(request):
             current_site = get_current_site(request)
             email_subject = "تفعيل حسابك في جمعية الاصدقاء"
 
-            message = render_to_string('email_confirmation.html', {
+            message = render_to_string('auth/email_confirmation.html', {
                 'name': user.first_name,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -361,6 +364,50 @@ def logout_user(request):
     return redirect("home")
 
 
+def password_reset_request(request):
+
+    if request.method == 'POST':
+
+        password_form = PasswordResetForm(request.POST)
+
+        if password_form.is_valid():
+            # Get the email sent with the user request
+            data = password_form.cleaned_data['email']
+
+            # Ensure that the email exists
+            user_email = CustomUser.objects.filter(Q(email=data))
+            if user_email.exists():
+                for user in user_email:
+                    subject = "تغيير كلمة المرور"
+                    email_template_name = "auth/password_reset_msg.txt",
+                    parameters = {
+                        "email": user.email,
+                        "username": user.username,
+                        "first_name": user.first_name,
+                        "domain": "127.0.0.1:8000",
+                        "protocol": "http",
+                        "site_name": "جمعية اصدقاء المجتمع",
+                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                        "token": default_token_generator.make_token(user),
+                    }
+                    email = render_to_string(email_template_name, parameters)
+                    try:
+                        send_mail(subject, email, '', [
+                            user.email], fail_silently=False)
+                    except BadHeaderError:
+                        return HttpResponse('Invalid Header')
+
+                    return redirect('password_reset_done')
+    else:
+        password_form = PasswordResetForm()
+
+    context = {
+        "password_form": password_form,
+    }
+
+    return render(request, "auth/password_reset_form.html", context)
+
+
 def validate_email(request):
 
     email = request.POST.get('email', None)
@@ -412,28 +459,58 @@ def validate_phonenumber(request):
         return HttpResponse(data)
 
 
+@group_required("Management")
 @login_required(login_url="/login")
 def dashboard(request):
     # insights for the dashboard
     beneficiaries_num = beneficiary.objects.count()
-    supporter_operations_num = supporter_operation.objects.count()
-    entities_num = entity.objects.count()
+    # supporter_operations_num = supporter_operation.objects.count()
+    # entities_num = entity.objects.count()
 
     context = {
         "beneficiaries_num": beneficiaries_num,
-        "supporter_operations_num": supporter_operations_num,
-        "entities_num": entities_num
+        "supporter_operations_num": 0,
+        "entities_num": 0
     }
 
-    return render(request, "dashboard.html", context)
+    return render(request, "dashboard/dashboard_home.html", context)
 
 
-def new_dashboard(request):
-    return render(request, "dashboard/dashboard2.html")
-
-
+@group_required("Management")
 @login_required(login_url="/login")
-def dashboard_requests(request):
+def dashboard_supporters_requests(request):
+
+    context = {}
+
+    try:
+        # List of supporters requests
+        supporters_request_list = Supporter_request.objects.all()
+
+        paginator = Paginator(supporters_request_list, IPP_DASHBOARD_REQUESTS)
+        page_number = request.GET.get('page')
+        supporter_request_pag_list = paginator.get_page(page_number)
+
+        # List of beneficiaries
+        beneficiary_list = beneficiary.objects.all()
+
+        # List of supporters
+        supporters_list = Supporter.objects.all()
+
+        context = {
+            'beneficiaries': beneficiary_list,
+            'supporters': supporters_list,
+            'supporters_requests': supporter_request_pag_list,
+        }
+    except ObjectDoesNotExist:
+        print("[Error] - Object does not exist, dashboard_supporters_request.")
+        return JsonResponse({"message": "Object does not exist!", "code": "404"})
+
+    return render(request, "dashboard/supporters_requests.html", context)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def dashboard_beneficiaries_requests(request):
 
     Beneficiary_request_list = Beneficiary_request.objects.all()
     # beneficiary_obj = beneficiary.objects.all()
@@ -442,12 +519,13 @@ def dashboard_requests(request):
     Beneficiary_request_list = paginator.get_page(page_number)
     context = {
         "beneficiary_requests": Beneficiary_request_list,
-        "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'المُراجع', 'التعليقات', 'الاجراءات'],
+        "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'تاريخ الإرسال', 'مُراجع الطلب', 'التعليقات', 'الإجراءات'],
     }
 
-    return render(request, "requests.html", context)
+    return render(request, "dashboard/beneficiaries_requests.html", context)
 
 
+@group_required("Management")
 @login_required(login_url="/login")
 def dashboard_reports(request):
 
@@ -526,12 +604,13 @@ def dashboard_reports(request):
             "is_qualified": is_qualified_val,
         }
 
-        return render(request, "reports.html", context)
+        return render(request, "dashboard/generate_reports.html", context)
 
     else:
-        return render(request, "reports.html")
+        return render(request, "dashboard/generate_reports.html")
 
 
+@group_required("Management")
 @login_required(login_url="/login")
 def dashboard_reports_post(request):
 
@@ -610,12 +689,13 @@ def dashboard_reports_post(request):
             "is_qualified": is_qualified_val,
         }
 
-        return render(request, "reports.html", context)
+        return render(request, "dashboard/generate_reports.html", context)
 
     else:
-        return render(request, "reports.html")
+        return render(request, "dashboard/generate_reports.html")
 
 
+@group_required("Management")
 @login_required(login_url="/login")
 def export_excel(request):
 
@@ -835,9 +915,6 @@ def beneficiary_indiv(request, user_id):
             'fileNationalIDForBeneficiaryDependents')
         social_warranty_inquiry_file = request.FILES.getlist(
             'fileSocialWarrantyInquiry')
-
-        print("\n\n1", data)
-        print("\n\n2", files)
 
         # Accessing the data for beneficiary
         first_name = data.get('personalinfo_first_name', None)
@@ -1109,8 +1186,6 @@ def beneficiary_indiv(request, user_id):
 
         dependent_table = data.get('dependents-table', None)
 
-        print("\n\n\n", dependent_table)
-
         # Parse the JSON string into a Python object
         try:
             dependents_list = json.loads(dependent_table)
@@ -1119,7 +1194,6 @@ def beneficiary_indiv(request, user_id):
             dependents_list = []
 
         # Now, you can iterate over the list of dependents
-        print(dependents_list)
 
         for dep in dependents_list:
             # Extract the data for each field
@@ -1198,8 +1272,8 @@ def beneficiary_indiv(request, user_id):
         new_beneficiary_request = Beneficiary_request(
             user=logged_in_user,
             beneficiary=beneficiary_obj,
-            status="waiting",
-            request_type="new",
+            status="انتظار",
+            request_type="جديد",
         )
         new_beneficiary_request.save()
 
@@ -1230,7 +1304,7 @@ def beneficiary_indiv(request, user_id):
                 return redirect('home')
             else:
 
-                return render(request, "main/index2.html")
+                return render(request, "main/beneficiary_form.html")
         except ObjectDoesNotExist:
             messages.error(request, "المستخدم غير موجود!")
             return redirect('home')
@@ -1245,44 +1319,51 @@ def beneficiary_details(request, beneficiary_id):
         try:
             beneficiary_obj = beneficiary.objects.get(id=beneficiary_id)
 
-            beneficiary_housing_obj = beneficiary_house.objects.get(
-                beneficiary_id=beneficiary_id)
+            beneficiary_housing_obj = beneficiary_house.objects.filter(
+                beneficiary_id=beneficiary_id).first()
 
-            housing_data = {
-                'building_number': beneficiary_housing_obj.building_number,
-                'street_name': beneficiary_housing_obj.street_name,
-                'neighborhood': beneficiary_housing_obj.neighborhood,
-                'city': beneficiary_housing_obj.city,
-                'postal_code': beneficiary_housing_obj.postal_code,
-                'additional_number': beneficiary_housing_obj.additional_number,
-                'unit': beneficiary_housing_obj.unit,
-                'location_url': beneficiary_housing_obj.location_url,
-                'housing_type': beneficiary_housing_obj.housing_type,
-                'housing_ownership': beneficiary_housing_obj.housing_ownership
-            }
+            housing_data = {}
 
-            beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
-                beneficiary_id=beneficiary_id)
+            if beneficiary_housing_obj is not None:
 
-            income_expense_data = {
-                'salary_in': beneficiary_income_expense_obj.salary_in,
-                'social_insurance_in': beneficiary_income_expense_obj.social_insurance_in,
-                'charity_in': beneficiary_income_expense_obj.charity_in,
-                'social_warranty_in': beneficiary_income_expense_obj.social_warranty_in,
-                'pension_agency_in': beneficiary_income_expense_obj.pension_agency_in,
-                'citizen_account_in': beneficiary_income_expense_obj.citizen_account_in,
-                'benefactor_in': beneficiary_income_expense_obj.benefactor_in,
-                'other_in': beneficiary_income_expense_obj.other_in,
-                'housing_rent_ex': beneficiary_income_expense_obj.housing_rent_ex,
-                'electricity_bills_ex': beneficiary_income_expense_obj.electricity_bills_ex,
-                'water_bills_ex': beneficiary_income_expense_obj.water_bills_ex,
-                'transportation_ex': beneficiary_income_expense_obj.transportation_ex,
-                'health_supplies_ex': beneficiary_income_expense_obj.health_supplies_ex,
-                'food_supplies_ex': beneficiary_income_expense_obj.food_supplies_ex,
-                'educational_supplies_ex': beneficiary_income_expense_obj.educational_supplies_ex,
-                'proven_debts_ex': beneficiary_income_expense_obj.proven_debts_ex,
-                'other_ex': beneficiary_income_expense_obj.other_ex
-            }
+                housing_data = {
+                    'building_number': beneficiary_housing_obj.building_number,
+                    'street_name': beneficiary_housing_obj.street_name,
+                    'neighborhood': beneficiary_housing_obj.neighborhood,
+                    'city': beneficiary_housing_obj.city,
+                    'postal_code': beneficiary_housing_obj.postal_code,
+                    'additional_number': beneficiary_housing_obj.additional_number,
+                    'unit': beneficiary_housing_obj.unit,
+                    'location_url': beneficiary_housing_obj.location_url,
+                    'housing_type': beneficiary_housing_obj.housing_type,
+                    'housing_ownership': beneficiary_housing_obj.housing_ownership
+                }
+
+            beneficiary_income_expense_obj = beneficiary_income_expense.objects.filter(
+                beneficiary_id=beneficiary_id).first()
+
+            income_expense_data = {}
+
+            if beneficiary_income_expense_obj is not None:
+                income_expense_data = {
+                    'salary_in': beneficiary_income_expense_obj.salary_in,
+                    'social_insurance_in': beneficiary_income_expense_obj.social_insurance_in,
+                    'charity_in': beneficiary_income_expense_obj.charity_in,
+                    'social_warranty_in': beneficiary_income_expense_obj.social_warranty_in,
+                    'pension_agency_in': beneficiary_income_expense_obj.pension_agency_in,
+                    'citizen_account_in': beneficiary_income_expense_obj.citizen_account_in,
+                    'benefactor_in': beneficiary_income_expense_obj.benefactor_in,
+                    'other_in': beneficiary_income_expense_obj.other_in,
+                    'housing_rent_ex': beneficiary_income_expense_obj.housing_rent_ex,
+                    'electricity_bills_ex': beneficiary_income_expense_obj.electricity_bills_ex,
+                    'water_bills_ex': beneficiary_income_expense_obj.water_bills_ex,
+                    'transportation_ex': beneficiary_income_expense_obj.transportation_ex,
+                    'health_supplies_ex': beneficiary_income_expense_obj.health_supplies_ex,
+                    'food_supplies_ex': beneficiary_income_expense_obj.food_supplies_ex,
+                    'educational_supplies_ex': beneficiary_income_expense_obj.educational_supplies_ex,
+                    'proven_debts_ex': beneficiary_income_expense_obj.proven_debts_ex,
+                    'other_ex': beneficiary_income_expense_obj.other_ex
+                }
 
             dependent_list = dependent.objects.filter(
                 beneficiary_id=beneficiary_id).all()
@@ -1425,18 +1506,27 @@ def supporter_indiv(request):
 
         beneficiary_data = []
 
+        in_ex_diff = 0
+
         for beneficiary_indiv in beneficiary_obj:
             # Retrieve beneficiary income and expenses information
             try:
-                beneficiary_income_expenses_obj = beneficiary_income_expense.objects.get(
-                    beneficiary_id=beneficiary_indiv.id)
+                beneficiary_income_expenses_obj = beneficiary_income_expense.objects.filter(
+                    beneficiary_id=beneficiary_indiv.id).first()
+
+                if beneficiary_income_expenses_obj is not None:
+                    in_ex_diff = beneficiary_income_expenses_obj.in_ex_diff
+                else:
+                    print("income is not available.")
+
             except ObjectDoesNotExist:
                 beneficiary_income_expenses_obj = None
+
             # Collect the data and add them to the object
             beneficiary_data.append({
                 'id': beneficiary_indiv.id,
                 'gender': beneficiary_indiv.gender,
-                'in_ex_diff': beneficiary_income_expenses_obj.in_ex_diff,
+                'in_ex_diff': in_ex_diff,
                 'category': beneficiary_indiv.category,
                 'health_status': beneficiary_indiv.health_status,
                 'age': beneficiary_indiv.age,
@@ -1452,7 +1542,7 @@ def supporter_indiv(request):
             'beneficiary_headers': ['#', 'الجنس', 'نسبة الاحتياج', 'التصنيف', 'الحالة الصحية', 'العمر', 'الجنسية'],
             'beneficiary_data': beneficiary_data,
         }
-        return render(request, "supporter_form(indiv).html", context)
+        return render(request, "main/supporter_form(indiv).html", context)
 
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
@@ -1468,28 +1558,154 @@ def supporter_indiv_post(request):
         post_data = request.POST
         files_data = request.FILES
 
-        # ... retrieve other form fields as needed
+        # Supporter information
+        first_name = post_data.get('personalinfo_first_name', None)
+        second_name = post_data.get('personalinfo_second_name', None)
+        last_name = post_data.get('personalinfo_last_name', None)
+        date_of_birth_data = post_data.get('personalinfo_date_of_birth', None)
+        date_of_birth = None
+        # Check if the date string exists and is not empty
+        if date_of_birth_data:
+            # Convert the date string to a date object
+            date_of_birth = datetime.strptime(
+                date_of_birth_data, '%Y-%m-%d').date()
+        else:
+            print("No valid date found in JSON")
+        gender = post_data.get('personalinfo_gender', None)
+        national_id = post_data.get('personalinfo_national_id', None)
+        national_id_exp_date_data = post_data.get(
+            'personalinfo_national_id_exp_date', None)
+        national_id_exp_date = convert_to_date(
+            national_id_exp_date_data)
+        nationality = post_data.get('personalinfo_nationality', None)
+        marital_status = post_data.get('personalinfo_marital_status', None)
+        educational_level = post_data.get(
+            'personalinfo_educational_level', None)
+        work_status = post_data.get('personalinfo_work_status', None)
+        employer = post_data.get('personalinfo_employer', None)
+        phone_number = post_data.get('personalinfo_phone_number', None)
+        email = post_data.get('personalinfo_email', None)
+
+        # Supporter preferences
+        was_sponsor = request.POST.get(
+            'sponsorship_info_was_sponsor_check', None)
+        status_notify = request.POST.get(
+            'sponsorship_info_status_notify_check', None)
+        invite_beneficiary = request.POST.get(
+            'sponsorship_info_invite_beneficiary_check', None)
+        visit_beneficiary = request.POST.get(
+            'sponsorship_info_visit_beneficiary_check', None)
+
+        supporter_obj = Supporter(
+            first_name=first_name,
+            second_name=second_name,
+            last_name=last_name,
+            date_of_birth=date_of_birth,
+            gender=gender,
+            national_id=national_id,
+            national_id_exp_date=national_id_exp_date,
+            nationality=nationality,
+            marital_status=marital_status,
+            educational_level=educational_level,
+            work_status=work_status,
+            employer=employer,
+            phone_number=phone_number,
+            email=email,
+            status="غير مفعل",
+            was_sponsor=was_sponsor,
+            status_notify=status_notify,
+            invite_beneficiary=invite_beneficiary,
+            visit_beneficiary=visit_beneficiary,
+        )
+        supporter_obj.save()
+
+        # Total price is the same either in personal or charity choice
+        total_price = request.POST.get('total_price', None)
+
         # This field represent user option either to let the selection for the charity or do it by himself
         beneficiary_choice = request.POST.get('beneficiaries_choice')
 
-        # Retrieve selected rows' data
-        try:
-            selected_rows_data = json.loads(
-                request.POST.get('selectedRowsData'))
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON format in selectedRowsData'}, status=400)
-
         # Now you can access the data from form and selected rows
         if beneficiary_choice == "id_personal_choice":
-            print("personal choice")
+
+            duration = request.POST.get('sponsorship_info_duration', None)
+            donation_type = request.POST.get(
+                'sponsorship_info_donation_type', None)
+
+            # Retrieve selected rows' data
+            try:
+                selected_rows_data = json.loads(
+                    request.POST.get('selectedRowsData'))
+            except json.JSONDecodeError:
+                return JsonResponse({'error': 'Invalid JSON format in selectedRowsData'}, status=400)
+
+            # A dictionary of beneficiary objects
+            beneficiary_list = []
+
+            for selected_row in selected_rows_data:
+
+                beneficiary_list.append({
+                    "id": selected_row[1],
+                    "health_status": selected_row[5],
+                    "category": selected_row[4],
+                    "in_ex_diff": selected_row[3],
+                    "gender": selected_row[2],
+                    "age": selected_row[6],
+                    "nationality": selected_row[7],
+                })
+
+            supporter_request_obj = Supporter_request(
+                supporter=supporter_obj,
+                status="انتظار",
+                request_type="جديد",
+                total_amount=total_price,
+                selection_type="شخصي",
+                duration=duration,
+                donation_type=donation_type,
+                beneficiary_list=beneficiary_list,
+            )
+            supporter_request_obj.save()
+
         else:
-            print("charity choice")
 
-        print('Selected rows data:', selected_rows_data)
+            orphan_number = request.POST.get(
+                'charitychoice_orphan_number', None)
+            orphan_donation_type = request.POST.get(
+                'charitychoice_orphan_donation_type', None)
+            widower_number = request.POST.get(
+                'charitychoice_widower_number', None)
+            widower_donation_type = request.POST.get(
+                'charitychoice_widower_donation_type', None)
 
-        # Print or log the data
-        print("POST Data:", post_data)
-        print("Files Data:", files_data)
+            supporter_request_obj = Supporter_request(
+                supporter=supporter_obj,
+                status="انتظار",
+                request_type="جديد",
+                total_amount=total_price,
+                selection_type="الجمعية",
+                orphan_number=orphan_number,
+                orphan_donation_type=orphan_donation_type,
+                widower_number=widower_number,
+                widower_donation_type=widower_donation_type,
+            )
+            supporter_request_obj.save()
+
+        bank_transfer_file = files_data.getlist(
+            'file_bank_transfer')
+
+        file_list = []
+
+        # Loop for every file object to add to file_list
+        for file_obj in bank_transfer_file:
+            file_list.append(Supporter_request_attachment(
+                supporter_request=supporter_request_obj,
+                file_type="bank_transfer",
+                file_object=file_obj,
+            ))
+
+        # Create the attachment objects for supporter request
+        if file_list:
+            Supporter_request_attachment.objects.bulk_create(file_list)
 
         # Return a JSON response as needed
         return JsonResponse({'success': True})
@@ -1497,30 +1713,165 @@ def supporter_indiv_post(request):
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
-# just for testing
-def supporter_test(request):
+@group_required("Management")
+@login_required(login_url="/login")
+def supporter_request_details(request, supporter_id, s_request_id):
 
-    # Including only necessary part
-    beneficiaries = beneficiary.objects.all()
-    paginator = Paginator(beneficiaries, 6)
-    page = request.GET.get('page')
-    try:
-        beneficiaries = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        beneficiaries = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range, deliver last page of results.
-        beneficiaries = paginator.page(paginator.num_pages)
+    supporter_obj = Supporter.objects.get(id=supporter_id)
+
+    supporter_request_obj = Supporter_request.objects.filter(
+        supporter=supporter_id, id=s_request_id).first()
+
+    supporter_request_attachment_obj = Supporter_request_attachment.objects.filter(
+        supporter_request=supporter_request_obj.id).all()
+
+    # List of attachments for the supporter request
+    supporter_request_attachment_list = []
+
+    # Loop to add specific attributes to each attachment object
+    for attachment in supporter_request_attachment_obj:
+        # A variable that holds the attachment type in Arabic
+        attachment_type_ar = ""
+
+        if attachment.file_type == "bank_transfer":
+            attachment_type_ar = "صورة إيصال الحوالة البنكية"
+        else:
+            attachment_type_ar = attachment.file_type
+
+        supporter_request_attachment_list.append({
+            'file_path': attachment.file_object.url,
+            'file_extension': file_extension(attachment.file_object.url),
+            'file_name': attachment.filename().split(".")[0],
+            'file_size': attachment.file_size,
+            'attachment_type': attachment_type_ar,
+        })
+
+    beneficiary_list = []
+
+    # Retrieve information about each beneficiary for this request (in case of personal selection)
+    for beneficiary_obj in supporter_request_obj.beneficiary_list:
+
+        # Retrieve beneficiary information from DB
+        beneficiary_temp = beneficiary.objects.get(
+            id=beneficiary_obj['id'])
+
+        # Retrieve beneficiary income and expenses information from DB
+        beneficiary_income_expenses_temp = beneficiary_income_expense.objects.filter(
+            beneficiary_id=beneficiary_temp.id).first()
+
+        in_ex_diff = 0
+
+        if beneficiary_income_expenses_temp is not None:
+            in_ex_diff = beneficiary_income_expenses_temp.in_ex_diff
+
+        beneficiary_list.append({
+            "id": beneficiary_obj['id'],
+            "full_name": (beneficiary_temp.first_name + ' ' + beneficiary_temp.second_name + ' ' + beneficiary_temp.last_name),
+            "category": beneficiary_obj['category'],
+            "in_ex_diff": in_ex_diff,
+        })
 
     context = {
-        'beneficiaries': beneficiaries
+        "supporter": supporter_obj,
+        "supporter_request": supporter_request_obj,
+        "supporter_request_attachments": supporter_request_attachment_list,
+        "beneficiary_list": beneficiary_list,
     }
 
-    if is_ajax(request=request):
-        return render(request, 'main/table.html', context)
-    # else
-    return render(request, 'main/individual2.html', context)
+    return render(request, "dashboard/supporter_details.html", context)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def supporter_request_confirm(request, supporter_id, s_request_id):
+    if request.method == "POST":
+
+        print(request.POST)
+        request_status = request.POST.get('request_status', None)
+        print(request_status)
+        request_comment = request.POST.get('request_comment', None)
+
+        supporter_obj = Supporter.objects.get(id=supporter_id)
+
+        supporter_request_obj = Supporter_request.objects.filter(
+            supporter=supporter_id, id=s_request_id).first()
+
+        # Update object data
+        supporter_request_obj.status = "مقبول"
+        supporter_request_obj.comment = request_comment
+        supporter_request_obj.reviewed_by = request.user
+        supporter_request_obj.reviewed_at = datetime.now()
+
+        # Save the changes
+        supporter_request_obj.save()
+
+        # Get the current date
+        current_date = date.today()
+
+        # Get the date after the specified months
+        date_after = current_date + \
+            relativedelta(
+                months=+duration_factors[supporter_request_obj.duration])
+
+        # Retrieve information about each beneficiary for this request (in case of personal selection)
+        for beneficiary_obj in supporter_request_obj.beneficiary_list:
+
+            # Retrieve beneficiary information from DB
+            beneficiary_temp = beneficiary.objects.get(
+                id=beneficiary_obj['id'])
+
+            # In case of other categories
+            amount_donated_per_month = 400.0
+
+            # In case of orphan family, the total amount will change
+            if beneficiary_temp.category == 'أسرة أيتام':
+                amount_donated_per_month = 600.0
+
+            total_amount_per_beneficiary = amount_donated_per_month * \
+                duration_factors[supporter_request_obj.duration]
+
+            # Create a relation between each beneficiary in the list of this supporter request
+            sponsorship = Supporter_beneficiary_sponsorship(
+                amount_donated_monthly=amount_donated_per_month,
+                total_amount_donated=total_amount_per_beneficiary,
+                start_date=current_date,
+                end_date=date_after,
+                beneficiary=beneficiary_temp,
+                supporter=supporter_obj,
+            )
+            sponsorship.save()
+
+        messages.success(request, "لقد تم قبول طلب الداعم بنجاح!")
+        return redirect("dashboard_supporters_requests")
+
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Method Not Allowed'}, status=405)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def supporter_request_update(request, supporter_id, s_request_id):
+    if request.method == "POST":
+
+        request_status = request.POST.get('request_status', None)
+        request_comment = request.POST.get('request_comment', None)
+
+        supporter_obj = Supporter.objects.get(id=supporter_id)
+
+        supporter_request_obj = Supporter_request.objects.filter(
+            supporter=supporter_id, id=s_request_id).first()
+
+        # Update object data
+        supporter_request_obj.status = request_status
+        supporter_request_obj.comment = request_comment
+        supporter_request_obj.reviewed_by = request.user
+        supporter_request_obj.reviewed_at = datetime.now()
+
+        # Save the changes
+        supporter_request_obj.save()
+
+        messages.success(request, "لقد تم تحديث بيانات طلب الداعم بنجاح!")
+        return redirect("dashboard_supporters_requests")
 
 
 @login_required(login_url='/login')
@@ -1546,7 +1897,7 @@ def beneficiary_profile(request, user_id):
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
-    return render(request, 'beneficiary_profile.html', context)
+    return render(request, 'main/beneficiary_profile.html', context)
 
 
 @login_required(login_url='/login')
@@ -1576,7 +1927,7 @@ def beneficiary_requests(request, user_id):
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
-    return render(request, 'beneficiary_requests.html', context)
+    return render(request, 'main/beneficiary_requests.html', context)
 
 
 @login_required(login_url='/login')
@@ -1711,7 +2062,7 @@ def beneficiary_request_details(request, user_id):
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
-    return render(request, "beneficiary_request_details.html", context)
+    return render(request, "main/beneficiary_request_details.html", context)
 
 
 @login_required(login_url="/login")
@@ -1746,9 +2097,9 @@ def beneficiary_request_update(request, user_id):
         if is_beneficiary_request:
             last_beneficiary_request = Beneficiary_request.objects.latest(
                 'created_at')
-            if last_beneficiary_request.request_type == "update" and last_beneficiary_request.status == "waiting":
+            if last_beneficiary_request.status == "تحت المراجعة" or last_beneficiary_request.status == "انتظار":
                 messages.error(
-                    request, "لديك طلب تحديث بيانات سابق! لا يمكنك إنشاء طلب جديد الى ان يتم الرد من قبل فريق العمل على الطلب الأخير.")
+                    request, "لديك طلب سابق غير مكتمل! لا يمكنك إنشاء طلب جديد حتى يكتمل الطلب السابق.")
                 return redirect('home')
 
         else:
@@ -1904,7 +2255,7 @@ def beneficiary_request_update(request, user_id):
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
-    return render(request, "beneficiary_request_update.html", context)
+    return render(request, "main/beneficiary_request_update.html", context)
 
 
 @csrf_exempt
@@ -1915,6 +2266,7 @@ def beneficiary_request_update_confirm(request, user_id):
     logged_in_user = request.user
 
     context = {}
+
     try:
         data = request.POST
         files = request.FILES
@@ -2091,8 +2443,8 @@ def beneficiary_request_update_confirm(request, user_id):
         new_beneficiary_request = Beneficiary_request(
             user=user,
             beneficiary=beneficiary_obj,
-            status="waiting",
-            request_type="update",
+            status="انتظار",
+            request_type="تحديث",
         )
         new_beneficiary_request.save()
 
@@ -2339,7 +2691,7 @@ def beneficiary_request_update_confirm(request, user_id):
 @login_required(login_url="/login")
 def confirm_beneficiary_request_update(request):
 
-    return render(request, "beneficiary_update_request_confirm.html")
+    return render(request, "main/beneficiary_update_request_confirm.html")
 
 
 def validate_national_id_dependent(request, user_id):
@@ -2361,14 +2713,51 @@ def validate_national_id_dependent(request, user_id):
         return HttpResponse(data)
 
 
+def validate_national_id_new_beneficiary(request, user_id):
+
+    national_id = request.POST.get('national_id', None)
+
+    if national_id is None:
+        return HttpResponse("true")
+    else:
+
+        data = not beneficiary.objects.filter(
+            national_id=national_id).exists()
+        # in case of national_id doesn't exist before
+        if data is True:
+            data = "true"
+        else:
+            data = "false"
+
+        return HttpResponse(data)
+
+
+def validate_phonenumber_new_beneficiary(request, user_id):
+
+    phonenumber = request.POST.get('phonenumber', None)
+
+    if phonenumber is None:
+        return HttpResponse("true")
+    else:
+
+        data = not beneficiary.objects.filter(
+            phone_number=phonenumber).exists()
+        # in case of national_id doesn't exist before
+        if data is True:
+            data = "true"
+        else:
+            data = "false"
+
+        return HttpResponse(data)
+
 # This handles that case of edit dependent where the national_id may equal to the current national_id.
 # base_national_id is the national_id of the dependent before edit
+
+
 def validate_national_id_edit_dependent(request, user_id):
 
     national_id = request.POST.get('national_id', None)
     base_nid = request.POST.get('base_nid', None)
-
-    print(request.POST)
 
     if national_id is None:
         return HttpResponse("true")
@@ -2387,3 +2776,20 @@ def validate_national_id_edit_dependent(request, user_id):
                 data = "false"
 
         return HttpResponse(data)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def supporter_beneficiary_sponsorship(request):
+
+    sponsorships_list = Supporter_beneficiary_sponsorship.objects.all()
+    paginator = Paginator(sponsorships_list, IPP_DASHBOARD_REQUESTS)
+    page_number = request.GET.get('page')
+    sponsorships = paginator.get_page(page_number)
+    for spon in sponsorships:
+        print(spon.beneficiary.first_name)
+    context = {
+        "sponsorships": sponsorships,
+    }
+
+    return render(request, "dashboard/sponsorships.html", context)

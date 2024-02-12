@@ -1,5 +1,5 @@
 from django import forms
-from .models import beneficiary, individual, dependent
+from .models import beneficiary, dependent
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser
 

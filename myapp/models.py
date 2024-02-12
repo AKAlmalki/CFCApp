@@ -19,76 +19,11 @@ def beneficiary_file_directory(instance, filename):
     return "beneficiaries/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
 
 
-# def dependent_file_directory(instance, filename):
-#     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-#     return "dependents/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
-
-# all below methods must be removed (it is not needed anymore)
-
-
-def beneficiary_national_id_directory_path(instance, filename):
+def supporter_request_file_directory(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_national_id/{1}".format(instance.national_id, filename)
+    return "supporters/{0}/requests/{1}/{2}/{3}".format(instance.supporter_request.supporter.id, instance.supporter_request.id, instance.file_type, filename)
 
 
-def beneficiary_national_address_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_national_address/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_debt_instrument_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_debt_instrument/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_pension_social_insurance_inquiry_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_pension_social_insurance_inquiry/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_father_husband_death_certificate_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_father_husband_death_certificate/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_letter_from_prison_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_letter_from_prison/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_divorce_deed_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_divorce_deed/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_children_responsibility_deed_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_children_responsibility_deed/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_other_files_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_other_files/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_lease_contract_title_deed_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_lease_contract_title_deed/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_water_electricity_bills_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_water_electricity_bills/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_national_id_dependents_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_national_id_dependents/{1}".format(instance.national_id, filename)
-
-
-def beneficiary_social_warranty_inquiry_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/beneficiary_social_warranty_inquiry/{1}".format(instance.national_id, filename)
 #########################################################
 
 
@@ -104,26 +39,6 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
-
-
-class entity(models.Model):
-    name = models.CharField(max_length=55)
-    account = models.CharField(max_length=55, null=True)
-    total_amount = models.DecimalField(
-        decimal_places=2, max_digits=55, default=0)
-
-
-class individual(models.Model):
-    name = models.CharField(max_length=55)
-    account = models.CharField(max_length=55, null=True)
-    total_amount = models.DecimalField(
-        decimal_places=2, max_digits=55, default=0)
-
-
-class supporter_operation(models.Model):
-    amount = models.DecimalField(decimal_places=2, max_digits=55, default=0)
-    category = models.CharField(max_length=55)
-    # entity_id = models.ForeignKey(entity, on_delete=models.CASCADE)
 
 
 class beneficiary(models.Model):
@@ -305,6 +220,7 @@ class Beneficiary_request(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     reviewed_by = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name='reviewed_beneficiary_set', null=True)
+    reviewed_at = models.DateTimeField(null=True)
     comment = models.CharField(max_length=512, null=True)
 
 
@@ -354,8 +270,9 @@ class Dependent_income(models.Model):
 #     def filename(self):
 #         return os.path.basename(self.file_object.name)
 
-class Individual_supporter(models.Model):
-    db_table = "individual_supporter"
+
+class Supporter(models.Model):
+    db_table = "supporter"
     first_name = models.CharField(max_length=55)
     second_name = models.CharField(max_length=55)
     last_name = models.CharField(max_length=55)
@@ -370,27 +287,70 @@ class Individual_supporter(models.Model):
     employer = models.CharField(max_length=128, null=True)
     phone_number = models.CharField(max_length=15)
     email = models.EmailField()
+    status = models.CharField(max_length=55, null=True)
+    was_sponsor = models.CharField(max_length=55, null=True)
+    status_notify = models.CharField(max_length=55, null=True)
+    invite_beneficiary = models.CharField(max_length=55, null=True)
+    visit_beneficiary = models.CharField(max_length=55, null=True)
 
-    orphan_number = models.DecimalField(
-        decimal_places=2, max_digits=15, default=0)
+
+class Supporter_request(models.Model):
+    db_table = "supporter_request"
+    supporter = models.ForeignKey(
+        Supporter, on_delete=models.CASCADE)
+    status = models.CharField(max_length=55)
+    request_type = models.CharField(max_length=55, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_by = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='reviewed_supporter_set', null=True)
+    reviewed_at = models.DateTimeField(null=True)
+    comment = models.CharField(max_length=512, null=True)
+    total_amount = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0, null=True)
+    selection_type = models.CharField(max_length=55, null=True)
+
+    # Fields for charity beneficiary selection
+    orphan_number = models.PositiveIntegerField(
+        default=0, null=True)
+    orphan_donation_type = models.CharField(max_length=55, null=True)
+    widower_number = models.PositiveIntegerField(
+        default=0, null=True)
+    widower_donation_type = models.CharField(max_length=55, null=True)
+
+    # Fields for personal beneficiary selection
+    duration = models.CharField(max_length=55, null=True)
+    donation_type = models.CharField(max_length=55, null=True)
+    beneficiary_list = JSONField(default=list)
+
+
+class Supporter_request_attachment(models.Model):
+    db_table = "supporter_request_attachment"
+    supporter_request = models.ForeignKey(
+        Supporter_request, on_delete=models.CASCADE)
+    file_type = models.CharField(max_length=256, null=True)
+    file_object = models.FileField(
+        upload_to=supporter_request_file_directory, blank=True, null=True)
+
+    @property
+    def file_size(self):
+        return self.file_object.size
+
+    # Returns file name with its extension
+    def filename(self):
+        return os.path.basename(self.file_object.name)
 
 
 # A table that link between the beneficiary and the supporter which represents the support operation
-class Individual_supporter_beneficiary_sponsorship(models.Model):
-    db_table = "individual_supporter_beneficiary_sponsorship"
+class Supporter_beneficiary_sponsorship(models.Model):
+    db_table = "supporter_beneficiary_sponsorship"
     created_at = models.DateTimeField(auto_now_add=True)
-    amount = models.DecimalField(decimal_places=2, max_digits=15, default=0)
+    total_amount_donated = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    amount_donated_monthly = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
+    start_date = models.DateField()
+    end_date = models.DateField()
     beneficiary = models.ForeignKey(
         beneficiary, on_delete=models.CASCADE)
-    individual_supporter = models.ForeignKey(
-        Individual_supporter, on_delete=models.CASCADE)
-
-
-class Entity_supporter_operation(models.Model):
-    db_table = "entity_supporter_operation"
-    status = models.CharField(max_length=55, default=1)
-    amount = models.DecimalField(decimal_places=2, max_digits=55, default=0)
-    date = models.DateTimeField(auto_now_add=True)
-    supporter_operation_id = models.ForeignKey(
-        supporter_operation, on_delete=models.CASCADE)
-    entity_id = models.ForeignKey(entity, on_delete=models.CASCADE)
+    supporter = models.ForeignKey(
+        Supporter, on_delete=models.CASCADE)

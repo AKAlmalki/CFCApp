@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'myapp',
     'formtools',
     'crispy_forms',
-    'widget_tweaks'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
@@ -134,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Riyadh'
 
 USE_I18N = True
 

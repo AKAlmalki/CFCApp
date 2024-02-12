@@ -2842,6 +2842,7 @@
 
     var $modalForm = $("#editModalForm");
     var $saveChangesButton = $("#saveChanges");
+    var csrfTokenDepForm = $('#myform input[name=csrfmiddlewaretoken]').val();
 
     $.validator.addMethod(
       "fullNameRegex",
@@ -2991,10 +2992,16 @@
       errorClass: "invalid-feedback",
       highlight: function (element, errorClass, validClass) {
         //$(element).addClass('is-invalid');
-        $(element).closest(".form-group").removeClass("has-error");
+        $(element).closest(".form-group").addClass("has-error");
+
+        $(element).addClass("is-invalid");
+        $(element).removeClass("is-valid");
       },
       unhighlight: function (element, errorClass, validClass) {
         $(element).closest(".form-group").removeClass("has-error");
+
+        $(element).removeClass("is-invalid");
+        $(element).addClass("is-valid");
       },
       errorPlacement: function (error, element) {
         // Check if the element is inside an input-group
@@ -3563,6 +3570,8 @@
       min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
     });
 
+    var excludedFields = ["id_dependent_info_income_source", "id_dependent_info_monthly_income"]; // IDs of fields to exclude
+
     // When ".next" button is clicked, the following function is executed
     $(".next").click(function () {
       // Check if on the dependent information step
@@ -3585,9 +3594,21 @@
           //$(element).fadeOut(function() {
           //  $(element).fadeIn();
           //  });
+
+          // Check if the field is excluded
+          if (excludedFields.indexOf(element.id) === -1) {
+            $(element).addClass("is-invalid");
+            $(element).removeClass("is-valid");
+          }
         },
         unhighlight: function (element, errorClass, validClass) {
           $(element).closest(".form-group").removeClass("has-error");
+
+          // Check if the field is excluded
+          if (excludedFields.indexOf(element.id) === -1) {
+            $(element).removeClass("is-invalid");
+            $(element).addClass("is-valid");
+          }
         },
         errorPlacement: function (error, element) {
           // Check if the element is inside an input-group
@@ -3631,6 +3652,16 @@
           personalinfo_national_id: {
             required: true,
             nationalidRegex: true,
+            remote: {
+              url: '/beneficiaries/' + {{ request.user.id }}  + '/new/validate_national_id_beneficiary/',
+              type: 'post',
+              data: {
+                national_id: function() {
+                  return $('#id_personalinfo_national_id').val();
+                },
+                csrfmiddlewaretoken: csrfTokenDepForm,  // Include CSRF token
+              },
+            },
           },
           personalinfo_national_id_exp_date: {
             required: true,
@@ -3671,15 +3702,34 @@
           personalinfo_phone_number: {
             required: true,
             saudiPhoneRegex: true,
+            remote: {
+              url: '/beneficiaries/' + {{ request.user.id }}  + '/new/validate_phonenumber_beneficiary/',
+              type: 'post',
+              data: {
+                phonenumber: function() {
+                  return $('#id_personalinfo_phone_number').val();
+                },
+                csrfmiddlewaretoken: csrfTokenDepForm,  // Include CSRF token
+              },
+            },
           },
           personalinfo_email: {
             required: true,
             //emailRegex: true,
           },
           // dependent_information ---------
-          dependent_info_name: {
+          dependent_info_first_name: {
             required: true,
-            fullNameRegex: true,
+            minlength: 2,
+            maxlength: 50,
+          },
+          dependent_info_second_name: {
+            required: true,
+            minlength: 2,
+            maxlength: 50,
+          },
+          dependent_info_last_name: {
+            required: true,
             minlength: 2,
             maxlength: 50,
           },
@@ -3689,6 +3739,16 @@
           dependent_info_national_id: {
             required: true,
             nationalidRegex: true,
+            remote: {
+              url: '{% url 'validate_national_id_dependent' user_id=request.user.id %}',
+              type: 'post',
+              data: {
+                national_id: function() {
+                  return $('#id_dependent_info_national_id').val();
+                },
+                csrfmiddlewaretoken: csrfTokenDepForm,  // Include CSRF token
+              },
+            },
           },
           dependent_info_national_id_exp_date: {
             required: true,
@@ -3868,6 +3928,15 @@
           personalinfo_first_name: {
             required: "هذا الحقل مطلوب.",
           },
+          personalinfo_national_id: {
+            remote: "رقم الهوية / الإقامة تم استخدامه بالفعل!",
+          },
+          personalinfo_phone_number: {
+            remote: "رقم الجوال تم استخدامه بالفعل!",
+          },
+          dependent_info_national_id: {
+            remote: "رقم الهوية / الإقامة تم استخدامه بالفعل!",
+          },
           password: {
             required: "Password required",
           },
@@ -4016,17 +4085,18 @@
 
       // Get all checkboxes within the specified container
       var checkboxes = document.querySelectorAll('#id_dependent_info_needs_type input[type="checkbox"]');
-      
+        
       // Check if at least one checkbox is selected
       var atLeastOneChecked = Array.from(checkboxes).some(function(checkbox) {
         return checkbox.checked;
       });
 
-      if (!atLeastOneChecked) {
+      //if (!atLeastOneChecked) {
         // Display an error message or perform any other action to indicate the requirement
-        displayMinChoiceCountErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
-        return;
-      }
+      //  displayMinChoiceCountErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+      //  $("#myform").validate();
+      // return;
+      //}
 
       // Collecting and storing dependent needs type values
       var dependentNeedsTypeArray = [];
@@ -4034,7 +4104,15 @@
         dependentNeedsTypeArray.push($(this).val());
       });
 
+
       if ($("#myform").valid() === true) {
+
+        if (!atLeastOneChecked) {
+          // Display an error message or perform any other action to indicate the requirement
+          displayMinChoiceCountErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+          return;
+        }
+
         var $row = $("<tr></tr>");
         $row.append(
           $("<td></td>")
@@ -4198,12 +4276,22 @@
         // Clear existing rows in the income table
         $("#incomeInfoTableBody").empty();
 
+        // Remove is-valid and is-invalid classes from all dependent information fields
+        $("#dependent_information input, #dependent_information select, #dependent_information textarea").removeClass("is-valid is-invalid");
+
         // Remove error messages
         removeMaxRowErrorMessage();
         removeMinChoiceCountErrorMessage();
 
       } else {
         alert("الرجاء إدخال تفاصيل المرافقين!");
+
+        if (!atLeastOneChecked) {
+          // Display an error message or perform any other action to indicate the requirement
+          displayMinChoiceCountErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+          $("#myform").validate();
+          return;
+        }
       }
     });
 

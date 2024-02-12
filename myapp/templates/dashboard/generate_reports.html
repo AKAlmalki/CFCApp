@@ -4,7 +4,7 @@
   
   <div class="mt-5">
     <h2 class="pb-3">بناء التقارير</h2>
-    <form action="/dashboard/reports/new" method="GET">
+    <form action="{% url 'dashboard_generate_reports_post' %}" method="GET">
       {% csrf_token %}
       <div class="form-group pb-3 row">
         <div class="col-4">
@@ -48,8 +48,8 @@
         </div>
       </div>
       <button type="submit" class="btn btn-success px-5 py-2">ابحث</button>
-      <a href="{% url 'export_excel' %}" class="btn btn-primary px-5 py-2">استخراج (اكسل)</a>
-      <a href="/dashboard/reports" class="btn btn-secondary px-3 py-2">البدء من جديد</a>
+      <a href="{% url 'dashboard_generate_reports_export_excel' %}" class="btn btn-primary px-5 py-2">استخراج (اكسل)</a>
+      <a href="{% url 'dashboard_generate_reports' %}" class="btn btn-secondary px-3 py-2">البدء من جديد</a>
     </form>
   </div>
 

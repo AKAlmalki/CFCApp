@@ -2,8 +2,14 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    path(
+        "403/",
+        views.forbidden,
+        name="403",
+    ),
     path(
         "",
         views.home_redirect,
@@ -15,14 +21,19 @@ urlpatterns = [
         name="home"
     ),
     path(
-        "index2/",
-        views.test2,
-        name="index"
-    ),
-    path(
         "beneficiaries/<int:user_id>/new",
         views.beneficiary_indiv,
         name="beneficiary_new"
+    ),
+    path(
+        "beneficiaries/<int:user_id>/new/validate_national_id_beneficiary/",
+        views.validate_national_id_new_beneficiary,
+        name="validate_national_id_new_beneficiary"
+    ),
+    path(
+        "beneficiaries/<int:user_id>/new/validate_phonenumber_beneficiary/",
+        views.validate_phonenumber_new_beneficiary,
+        name="validate_phonenumber_new_beneficiary"
     ),
     path(
         "beneficiary_details/<int:beneficiary_id>",
@@ -34,25 +45,15 @@ urlpatterns = [
         views.confirmBeneficiaryRequestView,
         name="beneficiary_confirmation"
     ),
-    # path(
-    #     "supporters/entities/new",
-    #     views.supporter_entity,
-    #     name="supporter_entity"
-    # ),
     path(
-        "supporters/individuals/new",
+        "supporters/new",
         views.supporter_indiv,
         name="supporter_indiv"
     ),
     path(
-        "supporters/individuals/new_request",
+        "supporters/new_request/",
         views.supporter_indiv_post,
         name="supporter_indiv_post"
-    ),
-    path(
-        "supporters/individuals/test",
-        views.supporter_test,
-        name="supporter_indiv_test"
     ),
     path(
         "dashboard/",
@@ -60,24 +61,49 @@ urlpatterns = [
         name="dashboard"
     ),
     path(
-        "dashboard/requests",
-        views.dashboard_requests,
-        name="requests"
+        "dashboard/beneficiaries/requests/",
+        views.dashboard_beneficiaries_requests,
+        name="dashboard_beneficiaries_requests"
     ),
     path(
-        "dashboard/reports",
+        "dashboard/supporters/requests/",
+        views.dashboard_supporters_requests,
+        name="dashboard_supporters_requests"
+    ),
+    path(
+        "dashboard/supporters/<int:supporter_id>/requests/<int:s_request_id>/",
+        views.supporter_request_details,
+        name="supporter_request_details"
+    ),
+    path(
+        "dashboard/supporters/<int:supporter_id>/requests/<int:s_request_id>/confirm",
+        views.supporter_request_confirm,
+        name="supporter_request_confirm"
+    ),
+    path(
+        "dashboard/supporters/<int:supporter_id>/requests/<int:s_request_id>/update",
+        views.supporter_request_update,
+        name="supporter_request_update"
+    ),
+    path(
+        "dashboard/reports/",
         views.dashboard_reports,
-        name="reports"
+        name="dashboard_generate_reports"
     ),
     path(
         "dashboard/reports/new",
         views.dashboard_reports_post,
-        name="reports_post"
+        name="dashboard_generate_reports_post"
     ),
     path(
         'export_excel',
         views.export_excel,
-        name="export_excel"
+        name="dashboard_generate_reports_export_excel"
+    ),
+    path(
+        "dashboard/sponsorships/",
+        views.supporter_beneficiary_sponsorship,
+        name="supporter_beneficiary_sponsorship"
     ),
     path(
         'beneficiaries/<int:user_id>/',
@@ -110,7 +136,7 @@ urlpatterns = [
         name="validate_national_id_edit_dependent"
     ),
     path(
-        'beneficiaries/<int:user_id>/confirm/',
+        'beneficiaries/<int:user_id>/update/confirm/',
         views.beneficiary_request_update_confirm,
         name="beneficiary_request_update_confirm"
     ),
@@ -163,5 +189,30 @@ urlpatterns = [
         'resend-activation-email/',
         views.resend_activation_email_view,
         name="resend_activation_email_view"
+    ),
+
+    path(
+        'password_reset/',
+        views.password_reset_request,
+        name="password_reset"
+    ),
+    path(
+        'password_reset/done/',
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="auth/password_reset_done.html"
+        ),
+        name="password_reset_done"
+    ),
+    path(
+        'password_reset_confirm/<uidb64>/<token>/',
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="auth/password_reset_confirm.html"),
+        name="password_reset_confirm"
+    ),
+    path(
+        'password_reset/complete/',
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="auth/password_reset_complete.html"),
+        name="password_reset_complete"
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

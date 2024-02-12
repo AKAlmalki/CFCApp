@@ -1,4 +1,4 @@
-{% extends "dashboard/dbase.html" %} {% load humanize %} {% block title %} الصفحة الرئيسية {% endblock %}
+{% extends "dashboard/dbase.html" %} {% load humanize %} {% block title %} طلبات المستفيدين {% endblock %}
 {% block head %}
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -7,43 +7,58 @@
 <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
   <div class="col row-gap-3 justify-content-md-center mb-5">
       <div class="col-md-auto p-1 pt-3 mt-4 bg-dark rounded-3 d-flex flex-column justify-content-center align-self-center table-responsive text-nowrap" style="overflow-x: scroll">
-        <p class="text-light ms-2 fs-3">طلبات الكفلاء</p>
+        <p class="text-light ms-2 fs-3">طلبات المستفيدين</p>
         <table class="table table-striped-columns mb-1">
           <thead class="">
             <tr>
-              <th scope="col">#</th>
-              {% for header in beneficiaries_headers %}
+              {% for header in beneficiary_request_headers %}
               <th scope="col">{{ header }}</th>
               {% endfor %}
             </tr>
           </thead>
           <tbody>
-            {% for row in beneficiary_obj %}
+            {% for row in beneficiary_requests %}
             <tr>
               <th scope="row">{{ row.id }}</th>
-              <td class="col">{{ row.file_no }}</td>
-              <td class="col">{{ row.first_name }}</td>
-              <td class="col">{{ row.last_name }}</td>
-              <td class="col">{{ row.category }}</td>
-              <td class="col">{{ row.health_status }}</td>
-              <td class="col">{{ row.receivedAt }}</td>
-              <td class="col">{{ row.marital_status }}</td>
-              {% if row.is_qualified == 0 %}
-              <td class="col"><p class="badge text-bg-warning">انتظار</p></td>
+              {% if row.request_type == "جديد" %}
+              <td class="col"><span class="badge text-bg-success">{{ row.request_type }}</span></td>
+              {% elif row.request_type == "تحديث" %}
+              <td class="col"><span class="badge text-bg-info">{{ row.request_type }}</span></td>
               {% else %}
-              <td class="col"><p class="badge text-bg-success">مقبول</p></td>
+              <td class="col">{{ row.request_type }}</td>
               {% endif %}
-              {% comment %} <td>{{ row }}</td>  {% endcomment %}
+              {% if row.status == "تحت المراجعة" %}
+              <td class="col"><span class="badge text-bg-primary">{{ row.status }}</span></td>
+              {% elif row.status == "انتظار" %}
+              <td class="col"><span class="badge text-bg-warning">{{ row.status }}</span></td>
+              {% elif row.status == "مقبول" %}
+              <td class="col"><span class="badge text-bg-success">{{ row.status }}</span></td>
+              {% elif row.status == "مرفوض" %}
+              <td class="col"><span class="badge text-bg-danger">{{ row.status }}</span></td>
+              {% else %}
+              <td class="col"><span class="badge text-bg-primary">{{ row.status }}</span></td>
+              {% endif %}
+              <td class="col">{{ row.created_at }}</td>
+              {% if row.reviewed_by %}
+              <td class="col">{{ row.reviewed_by }}</td>
+              {% else %}
+              <td class="col">----</td>
+              {% endif %}
+              {% if row.comment %}
+              <td class="col">{{ row.comment }}</td>
+              {% else %}
+              <td class="col">----</td>
+              {% endif %}
               <td class="col"><!-- Button trigger modal -->
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+                {% comment %} <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal2">
                   الغاء
                 </button>
 
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal3">
                   قبول
-                </button>
+                </button> {% endcomment %}
 
-                <button type="button" class="btn btn-primary btn-details" data-bs-toggle="modal" data-bs-target="#beneficiaryDetailsModal" data-id="{{ row.id }}">
+                <button type="button" class="btn btn-primary btn-details" data-bs-toggle="modal" data-bs-target="#beneficiaryDetailsModal" data-id="{{ row.beneficiary.id }}">
                   تفاصيل الطلب
                 </button>
                 
@@ -718,7 +733,25 @@
                           </div>
                           <div class="mb-3">
                             <label for="id_modal_needs_descriptions" class="col form-label">وصف الاحتياج</label>
-                            <textarea class="form-control" id="id_modal_needs_descriptions"></textarea>
+                            <textarea class="form-control" id="id_modal_needs_descriptions" rows="5"></textarea>
+                          </div>
+                          <hr>
+                          <div class="mb-3">
+                            <label for="id_modal_request_comment" class="col form-label">التعليقات</label>
+                            <textarea class="form-control" id="id_modal_request_comment" rows="5" name="modal_request_comment"></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label for="id_modal_request_status" class="col form-label">حالة الطلب</label>
+                            <select class="form-select" id="id_modal_request_status" rows="5" name="modal_request_status">
+                              <option value selected>---------</option>
+                              <option value="new">جديد</option>
+                              <option value="under review">تحت المراجعة</option>
+                              <option value="waiting">انتظار</option>
+                              <option value="not complete">غير مكتمل</option>
+                              <option value="rejected">مرفوض</option>
+                              <option value="accepted">مقبول</option>
+                              <option value="needs update">يحتاج تحديث</option>
+                            </select>
                           </div>
                         </form>
                       </div>
@@ -775,23 +808,23 @@
       </div>
       <nav class="mt-3" aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
-          {% if beneficiary_obj.has_previous %}
+          {% if beneficiary_requests.has_previous %}
           <li class="page-item">
             <a class="page-link" href="?page=1">الاول</a>
           </li>
           <li class="page-item">
-            <a class="page-link" href="?page={{ beneficiary_obj.previous_page_number }}">السابق</a>
+            <a class="page-link" href="?page={{ beneficiary_requests.previous_page_number }}">السابق</a>
           </li>
           {% endif %}
 
-          <li class="page-item disabled"><a class="page-link" >{{ beneficiary_obj.number }} من {{ beneficiary_obj.paginator.num_pages }}</a></li>
+          <li class="page-item disabled"><a class="page-link" >{{ beneficiary_requests.number }} من {{ beneficiary_requests.paginator.num_pages }}</a></li>
 
-          {% if beneficiary_obj.has_next %}
+          {% if beneficiary_requests.has_next %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ beneficiary_obj.next_page_number }}">التالي</a>
+            <a class="page-link" href="?page={{ beneficiary_requests.next_page_number }}">التالي</a>
           </li>
           <li class="page-item">
-            <a class="page-link" href="?page={{ beneficiary_obj.paginator.num_pages }}">الأخير</a>
+            <a class="page-link" href="?page={{ beneficiary_requests.paginator.num_pages }}">الأخير</a>
           </li>
           {% endif %}
         </ul>
@@ -1045,8 +1078,8 @@
                               <div class="table-responsive">
                                 <table class="table">
                                   <tr>
-                                    <th scope="col">نوع المرفق</th>
                                     <th scope="col">اسم الملف</th>
+                                    <th scope="col">نوع المرفق</th>
                                     <th scope="col">نوع الملف</th>
                                     <th scope="col">الإجراءات</th>
                                   </tr>

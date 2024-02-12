@@ -1,0 +1,431 @@
+{% extends "dashboard/dbase.html" %} {% load humanize %} {% block title %} طلبات الكفلاء {% endblock %}
+{% block head %}
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+  {% if messages %}
+  <script>
+    // Execute the following JavaScript code when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show the modal when there are messages
+      var modal = new bootstrap.Modal(document.getElementById('errorModal'));
+      modal.show();
+    });
+  </script>
+  {% endif %}
+
+  {% for message in messages %}
+  <div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">رسالة</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ message }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="col row-gap-3 justify-content-md-center mb-5">
+    <div class="col-md-auto p-1 pt-3 mt-4 bg-dark rounded-3 d-flex flex-column justify-content-center align-self-center table-responsive text-nowrap" style="overflow-x: scroll">
+      <p class="text-light ms-2 fs-3">طلبات الكفلاء</p>
+      <table class="table table-striped-columns mb-1">
+        <thead class="">
+          <tr>
+            <th scope="col">رقم الطلب</th>
+            <th scope="col">نوع الطلب</th>
+            <th scope="col">الحالة</th>
+            <th scope="col">تاريخ الإرسال</th>
+            <th scope="col">مُراجع الطلب</th>
+            <th scope="col">التعليقات</th>
+            <th scope="col">الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for supporter_request in supporters_requests %}
+          <tr>
+            <th scope="row">{{ supporter_request.id }}</th>
+            {% if supporter_request.request_type == "جديد" %}
+            <td class="col"><span class="badge text-bg-success">جديد</span></td>
+            {% elif supporter_request.request_type == "تحديث" %}
+            <td class="col"><span class="badge text-bg-info">تحديث</span></td>
+            {% else %}
+            <td class="col">{{ supporter_request.request_type }}</td>
+            {% endif %}
+            {% if supporter_request.status == "تحت المراجعة" %}
+            <td class="col"><span class="badge text-bg-primary">{{ supporter_request.status }}</span></td>
+            {% elif supporter_request.status == "انتظار" %}
+            <td class="col"><span class="badge text-bg-warning">{{ supporter_request.status }}</span></td>
+            {% elif supporter_request.status == "مقبول" %}
+            <td class="col"><span class="badge text-bg-success">{{ supporter_request.status }}</span></td>
+            {% elif supporter_request.status == "مرفوض" %}
+            <td class="col"><span class="badge text-bg-danger">{{ supporter_request.status }}</span></td>
+            {% else %}
+            <td class="col"><span class="badge text-bg-primary">{{ supporter_request.status }}</span></td>
+            {% endif %}
+            <td class="col">{{ supporter_request.created_at }}</td>
+            {% if supporter_request.reviewed_by %}
+            <td class="col">{{ supporter_request.reviewed_by }}</td>
+            {% else %}
+            <td class="col">----</td>
+            {% endif %}
+            
+            {% if supporter_request.comment %}
+            <td class="col">{{ supporter_request.comment }}</td>
+            {% else %}
+            <td class="col">----</td>
+            {% endif %}
+            <td class="col"><!-- Button trigger modal -->
+
+              <a type="button" class="btn btn-primary btn-details" href="{% url 'supporter_request_details' supporter_id=supporter_request.supporter.id s_request_id=supporter_request.id %}" data-id="{{ supporter_request.supporter.id }}">
+                تفاصيل الطلب
+              </a>
+              
+              <!-- Modal -->
+              <div class="modal fade" id="beneficiaryDetailsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="beneficiaryDetailsModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title fw-bold" id="beneficiaryDetailsModalLabel">تفاصيل الطلب</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form>
+                        <h4 class="fw-bold mb-4">المعلومات الأساسية</h4>
+                        {% csrf_token %}
+                        <div class="accordion" id="id_beneficiary_accordion">
+                          <div class="accordion-item">
+                            <h2 class="accordion-header">
+                              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_personal_info_collapseOne{{ supporter_request.id }}" aria-expanded="false" aria-controls="beneficiary_personal_info_collapseOne{{ supporter_request.id }}">
+                                معلومات مقدم الطلب
+                              </button>
+                            </h2>
+                            <div id="beneficiary_personal_info_collapseOne{{ supporter_request.id }}" class="accordion-collapse collapse">
+                              <div class="accordion-body">
+                                <div class="row row-cols-lg-2 row-cols-xl-4">
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_file_no">رقم الملف</h6>
+                                    <input type="text" class="form-control" id="id_modal_file_no" name="file_no" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_first_name">الأسم الأول</h6>
+                                    <input type="text" class="form-control" id="id_modal_first_name" name="first_name" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_second_name">الأسم الثاني</h6>
+                                    <input type="text" class="form-control" id="id_modal_second_name" name="second_name" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_last_name">الأسم الأخير</h6>
+                                    <input type="text" class="form-control" id="id_modal_last_name" name="last_name" disabled readonly>
+                                  </div>
+                                </div>
+
+                                <div class="row row-cols-lg-2 row-cols-xl-4">
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_gender">الجنس</h6>
+                                    <input type="text" class="form-control" id="id_modal_gender" name="gender" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_date_of_birth">تاريخ الميلاد</h6>
+                                    <input type="text" class="form-control" id="id_modal_date_of_birth" name="date_of_birth" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_phone_number">رقم الجوال</h6>
+                                    <input type="text" class="form-control" id="id_modal_phone_number" name="phone_number" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_email">الايميل الالكتروني</h6>
+                                    <input type="email" class="form-control" id="id_modal_email" name="email" disabled readonly>
+                                  </div>
+                                </div>
+
+                                <div class="row row-cols-md-1 row-cols-xl-3">
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_nationality">الجنسية</h6>
+                                    <input type="text" class="form-control" id="id_modal_nationality" name="nationality" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_national_id">رقم الهوية/الإقامة</h6>
+                                    <input type="text" class="form-control" id="id_modal_national_id" name="national_id" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة</h6>
+                                    <input type="text" class="form-control" id="id_modal_national_id_exp_date" name="national_id_exp_date" disabled readonly>
+                                  </div>
+                                </div>
+
+                                <div class="row row-cols-md-1 row-cols-lg-3">
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_category">التصنيف الرئيسي</h6>
+                                    <input type="text" class="form-control" id="id_modal_category" name="category" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_marital_status">الحالة الاجتماعية</h6>
+                                    <input type="text" class="form-control" id="id_modal_marital_status" name="marital_status" disabled readonly>
+                                  </div>
+      
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_educational_level">المستوى التعليمي</h6>
+                                    <input type="text" class="form-control" id="id_modal_educational_level" name="educational_level" disabled readonly>
+                                  </div>
+                                </div>
+
+                                <div class="row row-cols-lg-2 row-cols-xl-4">
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_health_status">الحالة الصحية</h6>
+                                    <input type="text" class="form-control" id="id_modal_health_status" name="health_status" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_disease_type">نوع المرض</h6>
+                                    <input type="text" class="form-control" id="id_modal_disease_type" name="disease_type" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_work_status">هل يعمل؟</h6>
+                                    <input type="text" class="form-control" id="id_modal_work_status" name="work_status" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_employer">جهة العمل</h6>
+                                    <input type="text" class="form-control" id="id_modal_employer" name="employer" disabled readonly>
+                                  </div>
+                                </div>
+    
+                                <div class="row row-cols-lg-2">
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_death_date_father_husband">تاريخ وفاة الأب/الزوج</h6>
+                                    <input type="text" class="form-control" id="id_modal_death_date_father_husband" name="death_date_father_husband" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_washing_place">المغسلة التي تم التجهيز فيها</h6>
+                                    <input type="text" class="form-control" id="id_modal_washing_place" name="washing_place" disabled readonly>
+                                  </div>
+                                </div>
+                                
+                                <div class="row row-cols-lg-2">
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_bank_type">أسم البنك</h6>
+                                    <input type="text" class="form-control" id="id_modal_bank_type" name="bank_type" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_bank_iban">رقم الإيبان</h6>
+                                    <input type="text" class="form-control" id="id_modal_bank_iban" name="bank_iban" disabled readonly>
+                                  </div>
+                                </div>
+    
+                                <div class="row row-cols-xl-2">
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_family_issues">المشاكل التي تعاني منها الأسرة</h6>
+                                    <input type="text" class="form-control" id="id_modal_family_issues" name="family_issues" disabled readonly>
+                                  </div>
+                                  <div class="mb-3">
+                                    <h6 class="col form-label" for="id_modal_family_needs">احتياجات الأسرة</h6>
+                                    <input type="text" class="form-control" id="id_modal_family_needs" name="family_needs" disabled readonly>
+                                  </div>
+                                </div>
+
+                              </div>
+                            </div>
+                          </div>
+                          
+                        </div>
+                        <hr>
+
+                        {% comment %} dependents data displayed below {% endcomment %}
+                        <div id="dependentsAccordion"></div>
+
+                        <hr>
+
+                        <h4 class="fw-bold mt-4 mb-4">معلومات مُراجع الطلب</h4>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_modal_received_at">تاريخ الاستلام</h6>
+                          <input type="datetime" class="form-control" id="id_modal_received_at" name="received_at" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_modal_reviewd_at">تاريخ المراجعة</h6>
+                          <input type="text" class="form-control" id="id_modal_reviewd_at" name="reviewd_at" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_modal_is_qualified">مؤهل؟</h6>
+                          <input type="text" class="form-control" id="id_modal_is_qualified" name="is_qualified" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_modal_is_benefiting">مستفيد؟</h6>
+                          <input type="text" class="form-control" id="id_modal_is_benefiting" name="is_benefiting" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <label for="id_modal_needs_descriptions" class="col form-label">وصف الاحتياج</label>
+                          <textarea class="form-control" id="id_modal_needs_descriptions" rows="5"></textarea>
+                        </div>
+                        <hr>
+                        <div class="mb-3">
+                          <label for="id_modal_request_comment" class="col form-label">التعليقات</label>
+                          <textarea class="form-control" id="id_modal_request_comment" rows="5" name="modal_request_comment"></textarea>
+                        </div>
+                        <div class="mb-3">
+                          <label for="id_modal_request_status" class="col form-label">حالة الطلب</label>
+                          <select class="form-select" id="id_modal_request_status" rows="5" name="modal_request_status">
+                            <option value selected>---------</option>
+                            <option value="new">جديد</option>
+                            <option value="under review">تحت المراجعة</option>
+                            <option value="waiting">انتظار</option>
+                            <option value="not complete">غير مكتمل</option>
+                            <option value="rejected">مرفوض</option>
+                            <option value="accepted">مقبول</option>
+                            <option value="needs update">يحتاج تحديث</option>
+                          </select>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                      <button type="button" class="btn btn-primary">قبول الطلب</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {% comment %} exampleModal 2 {% endcomment %}
+              <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">تأكيد</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p class="fs-4 text-center">هل أنت متأكد؟</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                      <button type="button" class="btn btn-danger">نعم, متأكد!</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {% comment %} exampleModal 3 {% endcomment %}
+              <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">تأكيد</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p class="fs-4 text-center">هل أنت متأكد؟</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                      <button type="button" class="btn btn-success">نعم, متأكد!</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <nav class="mt-3" aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        {% if supporters_requests.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page=1">الاول</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ supporters_requests.previous_page_number }}">السابق</a>
+        </li>
+        {% endif %}
+
+        <li class="page-item disabled"><a class="page-link" >{{ supporters_requests.number }} من {{ supporters_requests.paginator.num_pages }}</a></li>
+
+        {% if supporters_requests.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ supporters_requests.next_page_number }}">التالي</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ supporters_requests.paginator.num_pages }}">الأخير</a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+
+  {% comment %} <div>
+    <h2>Support Relations</h2>
+
+    <!-- Form to add new support relation -->
+    <form method="post" action="">
+      {% csrf_token %}
+      <!-- Add form fields for selecting beneficiary, supporter, relationship type, etc. -->
+      <!-- Example: -->
+      <label for="beneficiary">Beneficiary:</label>
+      <select name="beneficiary">
+        {% for beneficiary in beneficiaries %}
+          <option value="{{ beneficiary.id }}">{{ beneficiary.first_name }} {{ beneficiary.last_name }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="supporter">Supporter:</label>
+      <select name="supporter">
+        {% for supporter in supporters %}
+          <option value="{{ supporter.id }}">{{ supporter.first_name }} {{ supporter.last_name }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="relationship_type">Relationship Type:</label>
+      <input type="text" name="relationship_type" required>
+
+      <label for="start_date">Start Date:</label>
+      <input type="date" name="start_date" required>
+
+      <label for="end_date">End Date:</label>
+      <input type="date" name="end_date">
+
+      <label for="amount_donated">Amount Donated:</label>
+      <input type="number" name="amount_donated" step="0.01">
+
+      <button type="submit">Add Relationship</button>
+    </form>
+
+    <!-- Table to display existing support relations -->
+    <table>
+      <thead>
+        <tr>
+          <th>Beneficiary</th>
+          <th>Supporter</th>
+          <th>Relationship Type</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Amount Donated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for relation in support_relations %}
+          <tr>
+            <td>{{ relation.beneficiary.first_name }} {{ relation.beneficiary.last_name }}</td>
+            <td>{{ relation.supporter.first_name }} {{ relation.supporter.last_name }}</td>
+            <td>{{ relation.relationship_type }}</td>
+            <td>{{ relation.start_date }}</td>
+            <td>{{ relation.end_date }}</td>
+            <td>{{ relation.amount_donated }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table> 
+  </div> {% endcomment %}
+</div>
+<script>
+</script>
+{% endblock %}
