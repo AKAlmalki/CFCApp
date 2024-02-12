@@ -3570,6 +3570,8 @@
       min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
     });
 
+    var excludedFields = ["id_dependent_info_income_source", "id_dependent_info_monthly_income"]; // IDs of fields to exclude
+
     // When ".next" button is clicked, the following function is executed
     $(".next").click(function () {
       // Check if on the dependent information step
@@ -3592,14 +3594,21 @@
           //$(element).fadeOut(function() {
           //  $(element).fadeIn();
           //  });
-          $(element).addClass("is-invalid");
-          $(element).removeClass("is-valid");
+
+          // Check if the field is excluded
+          if (excludedFields.indexOf(element.id) === -1) {
+            $(element).addClass("is-invalid");
+            $(element).removeClass("is-valid");
+          }
         },
         unhighlight: function (element, errorClass, validClass) {
           $(element).closest(".form-group").removeClass("has-error");
 
-          $(element).removeClass("is-invalid");
-          $(element).addClass("is-valid");
+          // Check if the field is excluded
+          if (excludedFields.indexOf(element.id) === -1) {
+            $(element).removeClass("is-invalid");
+            $(element).addClass("is-valid");
+          }
         },
         errorPlacement: function (error, element) {
           // Check if the element is inside an input-group
@@ -3709,9 +3718,8 @@
             //emailRegex: true,
           },
           // dependent_information ---------
-          dependent_info_name: {
+          dependent_info_first_name: {
             required: true,
-            fullNameRegex: true,
             minlength: 2,
             maxlength: 50,
           },
@@ -4054,17 +4062,18 @@
 
       // Get all checkboxes within the specified container
       var checkboxes = document.querySelectorAll('#id_dependent_info_needs_type input[type="checkbox"]');
-      
+        
       // Check if at least one checkbox is selected
       var atLeastOneChecked = Array.from(checkboxes).some(function(checkbox) {
         return checkbox.checked;
       });
 
-      if (!atLeastOneChecked) {
+      //if (!atLeastOneChecked) {
         // Display an error message or perform any other action to indicate the requirement
-        displayMinChoiceCountErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
-        return;
-      }
+      //  displayMinChoiceCountErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+      //  $("#myform").validate();
+      // return;
+      //}
 
       // Collecting and storing dependent needs type values
       var dependentNeedsTypeArray = [];
@@ -4072,7 +4081,15 @@
         dependentNeedsTypeArray.push($(this).val());
       });
 
+
       if ($("#myform").valid() === true) {
+
+        if (!atLeastOneChecked) {
+          // Display an error message or perform any other action to indicate the requirement
+          displayMinChoiceCountErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+          return;
+        }
+
         var $row = $("<tr></tr>");
         $row.append(
           $("<td></td>")
@@ -4236,12 +4253,22 @@
         // Clear existing rows in the income table
         $("#incomeInfoTableBody").empty();
 
+        // Remove is-valid and is-invalid classes from all dependent information fields
+        $("#dependent_information input, #dependent_information select, #dependent_information textarea").removeClass("is-valid is-invalid");
+
         // Remove error messages
         removeMaxRowErrorMessage();
         removeMinChoiceCountErrorMessage();
 
       } else {
         alert("الرجاء إدخال تفاصيل المرافقين!");
+
+        if (!atLeastOneChecked) {
+          // Display an error message or perform any other action to indicate the requirement
+          displayMinChoiceCountErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+          $("#myform").validate();
+          return;
+        }
       }
     });
 
