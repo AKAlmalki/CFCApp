@@ -2842,6 +2842,7 @@
 
     var $modalForm = $("#editModalForm");
     var $saveChangesButton = $("#saveChanges");
+    var csrfTokenEditDepForm = $('#myform input[name=csrfmiddlewaretoken]').val();
 
     $.validator.addMethod(
       "fullNameRegex",
@@ -3631,6 +3632,16 @@
           personalinfo_national_id: {
             required: true,
             nationalidRegex: true,
+            remote: {
+              url: '/beneficiaries/' + {{ request.user.id }}  + '/new/validate_national_id_beneficiary/',
+              type: 'post',
+              data: {
+                national_id: function() {
+                  return $('#id_personalinfo_national_id').val();
+                },
+                csrfmiddlewaretoken: csrfTokenEditDepForm,  // Include CSRF token
+              },
+            },
           },
           personalinfo_national_id_exp_date: {
             required: true,
@@ -3671,6 +3682,16 @@
           personalinfo_phone_number: {
             required: true,
             saudiPhoneRegex: true,
+            remote: {
+              url: '/beneficiaries/' + {{ request.user.id }}  + '/new/validate_phonenumber_beneficiary/',
+              type: 'post',
+              data: {
+                phonenumber: function() {
+                  return $('#id_personalinfo_phone_number').val();
+                },
+                csrfmiddlewaretoken: csrfTokenEditDepForm,  // Include CSRF token
+              },
+            },
           },
           personalinfo_email: {
             required: true,
@@ -3867,6 +3888,12 @@
         messages: {
           personalinfo_first_name: {
             required: "هذا الحقل مطلوب.",
+          },
+          personalinfo_national_id: {
+            remote: "رقم الهوية / الإقامة تم استخدامه بالفعل!",
+          },
+          personalinfo_phone_number: {
+            remote: "رقم الجوال تم استخدامه بالفعل!",
           },
           password: {
             required: "Password required",

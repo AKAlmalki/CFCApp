@@ -2712,8 +2712,47 @@ def validate_national_id_dependent(request, user_id):
         return HttpResponse(data)
 
 
+def validate_national_id_new_beneficiary(request, user_id):
+
+    national_id = request.POST.get('national_id', None)
+
+    if national_id is None:
+        return HttpResponse("true")
+    else:
+
+        data = not beneficiary.objects.filter(
+            national_id=national_id).exists()
+        # in case of national_id doesn't exist before
+        if data is True:
+            data = "true"
+        else:
+            data = "false"
+
+        return HttpResponse(data)
+
+
+def validate_phonenumber_new_beneficiary(request, user_id):
+
+    phonenumber = request.POST.get('phonenumber', None)
+
+    if phonenumber is None:
+        return HttpResponse("true")
+    else:
+
+        data = not beneficiary.objects.filter(
+            phone_number=phonenumber).exists()
+        # in case of national_id doesn't exist before
+        if data is True:
+            data = "true"
+        else:
+            data = "false"
+
+        return HttpResponse(data)
+
 # This handles that case of edit dependent where the national_id may equal to the current national_id.
 # base_national_id is the national_id of the dependent before edit
+
+
 def validate_national_id_edit_dependent(request, user_id):
 
     national_id = request.POST.get('national_id', None)
