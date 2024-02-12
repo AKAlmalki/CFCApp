@@ -2842,7 +2842,7 @@
 
     var $modalForm = $("#editModalForm");
     var $saveChangesButton = $("#saveChanges");
-    var csrfTokenEditDepForm = $('#myform input[name=csrfmiddlewaretoken]').val();
+    var csrfTokenDepForm = $('#myform input[name=csrfmiddlewaretoken]').val();
 
     $.validator.addMethod(
       "fullNameRegex",
@@ -3659,7 +3659,7 @@
                 national_id: function() {
                   return $('#id_personalinfo_national_id').val();
                 },
-                csrfmiddlewaretoken: csrfTokenEditDepForm,  // Include CSRF token
+                csrfmiddlewaretoken: csrfTokenDepForm,  // Include CSRF token
               },
             },
           },
@@ -3709,7 +3709,7 @@
                 phonenumber: function() {
                   return $('#id_personalinfo_phone_number').val();
                 },
-                csrfmiddlewaretoken: csrfTokenEditDepForm,  // Include CSRF token
+                csrfmiddlewaretoken: csrfTokenDepForm,  // Include CSRF token
               },
             },
           },
@@ -3723,12 +3723,32 @@
             minlength: 2,
             maxlength: 50,
           },
+          dependent_info_second_name: {
+            required: true,
+            minlength: 2,
+            maxlength: 50,
+          },
+          dependent_info_last_name: {
+            required: true,
+            minlength: 2,
+            maxlength: 50,
+          },
           dependent_info_relationship: {
             required: true,
           },
           dependent_info_national_id: {
             required: true,
             nationalidRegex: true,
+            remote: {
+              url: '{% url 'validate_national_id_dependent' user_id=request.user.id %}',
+              type: 'post',
+              data: {
+                national_id: function() {
+                  return $('#id_dependent_info_national_id').val();
+                },
+                csrfmiddlewaretoken: csrfTokenDepForm,  // Include CSRF token
+              },
+            },
           },
           dependent_info_national_id_exp_date: {
             required: true,
@@ -3913,6 +3933,9 @@
           },
           personalinfo_phone_number: {
             remote: "رقم الجوال تم استخدامه بالفعل!",
+          },
+          dependent_info_national_id: {
+            remote: "رقم الهوية / الإقامة تم استخدامه بالفعل!",
           },
           password: {
             required: "Password required",
