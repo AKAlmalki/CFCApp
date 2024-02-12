@@ -2266,6 +2266,7 @@ def beneficiary_request_update_confirm(request, user_id):
     logged_in_user = request.user
 
     context = {}
+
     try:
         data = request.POST
         files = request.FILES
@@ -2775,3 +2776,20 @@ def validate_national_id_edit_dependent(request, user_id):
                 data = "false"
 
         return HttpResponse(data)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def supporter_beneficiary_sponsorship(request):
+
+    sponsorships_list = Supporter_beneficiary_sponsorship.objects.all()
+    paginator = Paginator(sponsorships_list, IPP_DASHBOARD_REQUESTS)
+    page_number = request.GET.get('page')
+    sponsorships = paginator.get_page(page_number)
+    for spon in sponsorships:
+        print(spon.beneficiary.first_name)
+    context = {
+        "sponsorships": sponsorships,
+    }
+
+    return render(request, "dashboard/sponsorships.html", context)

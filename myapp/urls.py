@@ -101,6 +101,11 @@ urlpatterns = [
         name="dashboard_generate_reports_export_excel"
     ),
     path(
+        "dashboard/sponsorships/",
+        views.supporter_beneficiary_sponsorship,
+        name="supporter_beneficiary_sponsorship"
+    ),
+    path(
         'beneficiaries/<int:user_id>/',
         views.beneficiary_profile,
         name="beneficiary_profile"
