@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
 from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment
 # from .forms import CustomUserCreationForm
-from django.db.models import Q
+# from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
@@ -2786,10 +2786,41 @@ def supporter_beneficiary_sponsorship(request):
     paginator = Paginator(sponsorships_list, IPP_DASHBOARD_REQUESTS)
     page_number = request.GET.get('page')
     sponsorships = paginator.get_page(page_number)
-    for spon in sponsorships:
-        print(spon.beneficiary.first_name)
+
     context = {
         "sponsorships": sponsorships,
     }
 
     return render(request, "dashboard/sponsorships.html", context)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def dashboard_beneficiaries_list(request):
+
+    beneficiaries_list = beneficiary.objects.all()
+    paginator = Paginator(beneficiaries_list, IPP_DASHBOARD_REQUESTS)
+    page_number = request.GET.get('page')
+    beneficiaries = paginator.get_page(page_number)
+
+    context = {
+        "beneficiaries": beneficiaries,
+    }
+
+    return render(request, "dashboard/beneficiaries.html", context)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def dashboard_supporters_list(request):
+
+    supporters_list = Supporter.objects.all()
+    paginator = Paginator(supporters_list, IPP_DASHBOARD_REQUESTS)
+    page_number = request.GET.get('page')
+    supporters = paginator.get_page(page_number)
+
+    context = {
+        "supporters": supporters,
+    }
+
+    return render(request, "dashboard/supporters.html", context)

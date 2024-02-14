@@ -106,6 +106,16 @@ urlpatterns = [
         name="supporter_beneficiary_sponsorship"
     ),
     path(
+        "dashboard/beneficiaries/",
+        views.dashboard_beneficiaries_list,
+        name="beneficiaries_list"
+    ),
+    path(
+        "dashboard/supporters/",
+        views.dashboard_supporters_list,
+        name="supporters_list"
+    ),
+    path(
         'beneficiaries/<int:user_id>/',
         views.beneficiary_profile,
         name="beneficiary_profile"
