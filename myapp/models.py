@@ -29,6 +29,7 @@ def supporter_request_file_directory(instance, filename):
 
 # Adjust the original user modal to have other fields
 class CustomUser(AbstractUser):
+    second_name = models.CharField(max_length=150, blank=True)
     date_of_birth = models.DateField(null=True)
     gender = models.CharField(max_length=5, null=True)
     phonenumber = models.CharField(max_length=15, null=True, unique=True)

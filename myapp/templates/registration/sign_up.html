@@ -20,6 +20,11 @@
       integrity="sha384-nU14brUcp6StFntEOOEBvcJm4huWjB0OcIeQ3fltAfSmuZFrkAif0T+UtNGlKKQv"
       crossorigin="anonymous"
     /> {% endcomment %}
+    <!-- favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static '/imgs/favicon_io/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static '/imgs/favicon_io/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static '/imgs/favicon_io/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static '/imgs/favicon_io/site.webmanifest' %}">
     {% comment %} arabic fonts {% endcomment %}
     {% block head %}{% endblock %}
     <!-- Include jQuery -->
@@ -92,16 +97,22 @@
             <form method="post" id="sign-up-form">
               {% csrf_token %}
               {% comment %} {{form}} {% endcomment %}
-              <div class="row row-cols-1 row-cols-sm-2">
-                <div class="col mb-3">
+              <div class="row row-cols-1">
+                <div class="col-sm-6 mb-3">
                   <label for="id_first_name" class="form-label"
                     >الأسم الأول</label
                   >
                   <input type="text" name="first_name" class="form-control" autofocus id="id_first_name" value="{{ first_name }}">
                 </div>
+                <div class="col-sm-6 mb-3">
+                  <label for="id_second_name" class="form-label"
+                    >الأسم الثاني</label
+                  >
+                  <input type="text" name="second_name" class="form-control" autofocus id="id_second_name" value="{{ second_name }}">
+                </div>
                 <div class="col mb-3">
                   <label for="id_last_name" class="form-label"
-                    >الأسم الأخير</label
+                    >الأسم الأخير (العائلة)</label
                   >
                   <input type="text" name="last_name" class="form-control" autofocus id="id_last_name" value="{{ last_name }}">
                 </div>
@@ -410,7 +421,7 @@
           "usernameRegex",
           function (value, element) {
             return (
-              this.optional(element) || /^[a-zA-Z0-9_]{2,20}$/i.test(value)
+              this.optional(element) || /^[a-zA-Z0-9_]{4,20}$/i.test(value)
             );
           },
         );
@@ -472,6 +483,8 @@
           min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
         });
 
+        var excludedFields = ["ID_of_element"]; // IDs of fields to exclude
+
         // When ".next" button is clicked, the following function is executed
         $("#sign_up_btn").click(function () {
           var form = $("#sign-up-form");
@@ -480,12 +493,21 @@
             errorClass: "help-block invalid-feedback",
             highlight: function (element, errorClass, validClass) {
               $(element).closest(".form-group").addClass("has-error");
-              //$(element).fadeOut(function() {
-              //  $(element).fadeIn();
-              //  });
+              
+              // Check if the field is excluded
+              if (excludedFields.indexOf(element.id) === -1) {
+                $(element).addClass("is-invalid");
+                $(element).removeClass("is-valid");
+              }
             },
             unhighlight: function (element, errorClass, validClass) {
               $(element).closest(".form-group").removeClass("has-error");
+
+              // Check if the field is excluded
+              if (excludedFields.indexOf(element.id) === -1) {
+                $(element).removeClass("is-invalid");
+                $(element).addClass("is-valid");
+              }
             },
             errorPlacement: function (error, element) {
               // Check if the element is inside an input-group
@@ -507,6 +529,12 @@
                 minlength: 2,
                 maxlength: 20,
               },
+              second_name: {
+                required: true,
+                nameRegex: true,
+                minlength: 2,
+                maxlength: 20,
+              },
               last_name: {
                 required: true,
                 nameRegex: true,
@@ -514,10 +542,10 @@
                 maxlength: 20,
               },
               username: {
-                usernameRegex: true,
                 minlength: 3,
                 maxlength: 15,
                 required: true,
+                usernameRegex: true,
                 remote: {
                   url: '/sign-up/validate_username/',
                   type: 'post',
