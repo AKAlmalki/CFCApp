@@ -109,6 +109,7 @@ def sign_up(request):
 
         # Retrieve request data
         first_name = request.POST['first_name']
+        second_name = request.POST['second_name']
         last_name = request.POST['last_name']
         date_of_birth = request.POST['date_of_birth']
         gender = request.POST['gender']
@@ -124,6 +125,7 @@ def sign_up(request):
         if username_exists:
             # Pass request data back
             request.session['first_name'] = first_name
+            request.session['second_name'] = second_name
             request.session['last_name'] = last_name
             request.session['date_of_birth'] = date_of_birth
             request.session['gender'] = gender
@@ -142,6 +144,7 @@ def sign_up(request):
         if email_exists:
             # Pass request data back
             request.session['first_name'] = first_name
+            request.session['second_name'] = second_name
             request.session['last_name'] = last_name
             request.session['date_of_birth'] = date_of_birth
             request.session['gender'] = gender
@@ -160,6 +163,7 @@ def sign_up(request):
             username=username,
             email=email,
             first_name=first_name,
+            second_name=second_name,
             last_name=last_name,
             gender=gender,
             nationality=nationality,
