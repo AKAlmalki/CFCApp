@@ -1778,7 +1778,7 @@ def supporter_request_details(request, supporter_id, s_request_id):
         "beneficiary_list": beneficiary_list,
     }
 
-    return render(request, "dashboard/supporter_details.html", context)
+    return render(request, "dashboard/supporter_request_details.html", context)
 
 
 @group_required("Management")
@@ -2824,3 +2824,174 @@ def dashboard_supporters_list(request):
     }
 
     return render(request, "dashboard/supporters.html", context)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def dashboard_beneficiary_details(request, b_id):
+
+    if request.method == "GET":
+
+        beneficiary_obj = beneficiary.objects.get(id=b_id)
+
+        beneficiary_housing_obj = beneficiary_house.objects.filter(
+            beneficiary_id=beneficiary_obj.id).first()
+
+        housing_data = {}
+
+        if beneficiary_housing_obj is not None:
+
+            housing_data = {
+                'building_number': beneficiary_housing_obj.building_number,
+                'street_name': beneficiary_housing_obj.street_name,
+                'neighborhood': beneficiary_housing_obj.neighborhood,
+                'city': beneficiary_housing_obj.city,
+                'postal_code': beneficiary_housing_obj.postal_code,
+                'additional_number': beneficiary_housing_obj.additional_number,
+                'unit': beneficiary_housing_obj.unit,
+                'location_url': beneficiary_housing_obj.location_url,
+                'housing_type': beneficiary_housing_obj.housing_type,
+                'housing_ownership': beneficiary_housing_obj.housing_ownership
+            }
+
+        beneficiary_income_expense_obj = beneficiary_income_expense.objects.filter(
+            beneficiary_id=beneficiary_obj.id).first()
+
+        income_expense_data = {}
+
+        if beneficiary_income_expense_obj is not None:
+            income_expense_data = {
+                'salary_in': beneficiary_income_expense_obj.salary_in,
+                'social_insurance_in': beneficiary_income_expense_obj.social_insurance_in,
+                'charity_in': beneficiary_income_expense_obj.charity_in,
+                'social_warranty_in': beneficiary_income_expense_obj.social_warranty_in,
+                'pension_agency_in': beneficiary_income_expense_obj.pension_agency_in,
+                'citizen_account_in': beneficiary_income_expense_obj.citizen_account_in,
+                'benefactor_in': beneficiary_income_expense_obj.benefactor_in,
+                'other_in': beneficiary_income_expense_obj.other_in,
+                'housing_rent_ex': beneficiary_income_expense_obj.housing_rent_ex,
+                'electricity_bills_ex': beneficiary_income_expense_obj.electricity_bills_ex,
+                'water_bills_ex': beneficiary_income_expense_obj.water_bills_ex,
+                'transportation_ex': beneficiary_income_expense_obj.transportation_ex,
+                'health_supplies_ex': beneficiary_income_expense_obj.health_supplies_ex,
+                'food_supplies_ex': beneficiary_income_expense_obj.food_supplies_ex,
+                'educational_supplies_ex': beneficiary_income_expense_obj.educational_supplies_ex,
+                'proven_debts_ex': beneficiary_income_expense_obj.proven_debts_ex,
+                'other_ex': beneficiary_income_expense_obj.other_ex
+            }
+
+        dependent_list = dependent.objects.filter(
+            beneficiary_id=beneficiary_obj.id).all()
+
+        dependent_data = []
+
+        for dependent_obj in dependent_list:
+
+            # Initialize dependent income list with every dependent
+            dependent_income_data = []
+
+            # Retrieve the dependent income infomration
+            dependent_income_list = Dependent_income.objects.filter(
+                dependent=dependent_obj).all()
+
+            # Add the data into the dependent income list
+            for dependent_income_obj in dependent_income_list:
+                dependent_income_data.append({
+                    'income_source': dependent_income_obj.source,
+                    'income_amount': dependent_income_obj.amount,
+                })
+
+            dependent_data.append({
+                'dependent_id': dependent_obj.id,
+                'dependent_first_name': dependent_obj.first_name,
+                'dependent_second_name': dependent_obj.second_name,
+                'dependent_last_name': dependent_obj.last_name,
+                'dependent_gender': dependent_obj.gender,
+                'dependent_relationship': dependent_obj.relationship,
+                'dependent_educational_status': dependent_obj.educational_status,
+                'dependent_marital_status': dependent_obj.marital_status,
+                'dependent_national_id': dependent_obj.national_id,
+                'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                'dependent_health_status': dependent_obj.health_status,
+                'dependent_needs_type': dependent_obj.needs_type,
+                'dependent_educational_degree': dependent_obj.educational_degree,
+                'dependent_date_of_birth': dependent_obj.date_of_birth,
+                'dependent_needs_description': dependent_obj.needs_description,
+                'dependent_educational_level': dependent_obj.educational_level,
+                'dependent_disease_type': dependent_obj.disease_type,
+                'dependent_income_data': dependent_income_data,
+            })
+
+        beneficiary_attachment_list = []
+
+        attachments_list = Beneficiary_attachment.objects.filter(
+            beneficiary_id=beneficiary_obj.id).all()
+
+        for attachment in attachments_list:
+            # A variable that holds the attachment type in Arabic
+            attachment_type_ar = ""
+
+            if attachment.file_type == "national_id":
+                attachment_type_ar = "صورة الهوية الوطنية/الإقامة"
+            elif attachment.file_type == "national_address":
+                attachment_type_ar = "العنوان الوطني"
+            elif attachment.file_type == "dept_instrument":
+                attachment_type_ar = "صك الدين"
+            elif attachment.file_type == "pension_social_insurance":
+                attachment_type_ar = "مشهد التقاعد أو التأمينات الاجتماعية"
+            elif attachment.file_type == "father_husband_death_cert":
+                attachment_type_ar = "شهادة الوفاة للزوج / الأب"
+            elif attachment.file_type == "letter_from_prison":
+                attachment_type_ar = "خطاب من السجن"
+            elif attachment.file_type == "divorce_deed":
+                attachment_type_ar = "صك الطلاق"
+            elif attachment.file_type == "children_responsibility_deed":
+                attachment_type_ar = "صك إعالة الأبناء"
+            elif attachment.file_type == "other_files":
+                attachment_type_ar = "مستندات أخرى"
+            elif attachment.file_type == "lease_contract_title_deed":
+                attachment_type_ar = "عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية"
+            elif attachment.file_type == "water_or_electricity_bills":
+                attachment_type_ar = "الفواتير (كهرباء - ماء)"
+            elif attachment.file_type == "dependent_national_id":
+                attachment_type_ar = "صورة الهوية الوطنية/الإقامة للمرافقين"
+            elif attachment.file_type == "social_warranty_inquiry":
+                attachment_type_ar = "مشهد الضمان الاجتماعي"
+            else:
+                attachment_type_ar = attachment.file_type
+
+            beneficiary_attachment_list.append({
+                'file_path': attachment.file_object.url,
+                'file_extension': file_extension(attachment.file_object.url),
+                'file_name': attachment.filename().split(".")[0],
+                'file_size': attachment.file_size,
+                'attachment_type': attachment_type_ar,
+            })
+        # print("attachments: ", beneficiary_attachment_list)
+
+        context = {
+            'beneficiary': beneficiary_obj,
+            'dependent_list': dependent_data,
+            'beneficiary_house': housing_data,
+            'beneficiary_income_expense': income_expense_data,
+            'beneficiary_attachments': beneficiary_attachment_list
+        }
+
+        return render(request, "dashboard/beneficiary_details.html", context)
+
+    else:
+        pass
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def dashboard_supporter_details(request, s_id):
+
+    supporter = Supporter.objects.filter(id=s_id).first()
+
+    print(supporter)
+
+    context = {
+        "supporter": supporter,
+    }
+    return render(request, "dashboard/supporter_details.html", context)

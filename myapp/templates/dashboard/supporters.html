@@ -68,9 +68,9 @@
             <!-- Add action buttons as needed -->
             <td>
               <!-- Button trigger modal -->
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#supporterDetailsModal{{ supporter.id }}">
+              <a type="button" class="btn btn-primary" href="{% url 'supporter_details' s_id=supporter.id %}">
                 عرض التفاصيل
-              </button>
+              </a>
             </td>
           </tr>
         

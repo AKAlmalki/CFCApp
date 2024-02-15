@@ -10,10 +10,10 @@
     <link rel="stylesheet" href="{% static '/css/bootstrap.rtl.min.css'%}" />
     <link rel="stylesheet" href="{% static '/css/dbase.css'%}" />
     <!-- favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static '/imgs/favicon-io/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static '/imgs/favicon-io/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static '/imgs/favicon-io/favicon-16x16.png' %}">
-    <link rel="manifest" href="{% static '/imgs/favicon-io/site.webmanifest' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static '/imgs/favicon_io/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static '/imgs/favicon_io/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static '/imgs/favicon_io/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static '/imgs/favicon_io/site.webmanifest' %}">
 
     <style>
       .bd-placeholder-img {
@@ -248,7 +248,7 @@
               </button>
               <div class="collapse {% if request.path == '/dashboard/beneficiaries/requests/' or request.path == '/dashboard/supporters/requests/' %}show{% endif %}" id="dashboard-requests">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                  <li><a href="{% url 'dashboard_supporters_requests' %}" class="{% if request.path == '/dashboard/supporters/requests/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">الكفلاء</a></li>
+                  <li><a href="{% url 'dashboard_supporters_requests' %}" class="{% if request.path == '/dashboard/supporters/requests/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">الداعمين</a></li>
                   <li><a href="{% url 'dashboard_beneficiaries_requests' %}" class="{% if request.path == '/dashboard/beneficiaries/requests/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">المستفيدين</a></li>
                 </ul>
               </div>
@@ -263,7 +263,7 @@
               </button>
               <div class="collapse {% if request.path == '/dashboard/beneficiaries/' or request.path == '/dashboard/supporters/' or request.path == '/dashboard/sponsorships/' %}show{% endif %}" id="dashboard-records">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                  <li><a href="{% url 'supporters_list' %}" class="{% if request.path == '/dashboard/supporters/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">الكفلاء</a></li>
+                  <li><a href="{% url 'supporters_list' %}" class="{% if request.path == '/dashboard/supporters/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">الداعمين</a></li>
                   <li><a href="{% url 'beneficiaries_list' %}" class="{% if request.path == '/dashboard/beneficiaries/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">المستفيدين</a></li>
                   <li><a href="{% url 'supporter_beneficiary_sponsorship' %}" class="{% if request.path == '/dashboard/sponsorships/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">الكفالات</a></li>
                 </ul>
