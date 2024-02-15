@@ -88,8 +88,8 @@
                   <p>المبلغ الشهري: {{ sponsorship.amount_donated_monthly }}</p>
                   <p>تاريخ البداية: {{ sponsorship.start_date }}</p>
                   <p>تاريخ الانتهاء: {{ sponsorship.end_date }}</p>
-                  <p>رقم المستفيد: {{ sponsorship.beneficiary.id }}</p>
-                  <p>رقم الداعم: {{ sponsorship.supporter.id }}</p>
+                  <a class="btn btn-primary" href="{% url 'beneficiary_details' b_id=sponsorship.beneficiary.id %}" target="_blank">عرض ملف المستفيد</a>
+                  <a class="btn btn-primary" href="{% url 'supporter_details' s_id=sponsorship.supporter.id %}" target="_blank">عرض ملف الداعم</a>
                   <!-- Add more details as needed -->
                 </div>
                 <div class="modal-footer">
