@@ -2352,9 +2352,9 @@
         <!-- Loading state content -->
         <div id="loadingStateEditModal" style="display: none; text-align: center;">
           <div class="spinner-border text-primary mt-5" role="status">
-            <span class="sr-only visually-hidden">Loading...</span>
+            <span class="sr-only visually-hidden">انتظار...</span>
           </div>
-          <p>Loading...</p>
+          <p>انتظار...</p>
         </div>
 
         <!-- Actual modal content -->
@@ -4471,8 +4471,8 @@
             // Add rows for each income information object in the array
             incomeInfoArray.forEach(function (incomeInfo) {
               var $incomeRow = $("<tr></tr>");
-              $incomeRow.append($("<td></td>").text(incomeInfo.monthlyIncome));
-              $incomeRow.append($("<td></td>").text(incomeInfo.incomeSource));
+              $incomeRow.append($("<td></td>").text(incomeInfo.income_amount));
+              $incomeRow.append($("<td></td>").text(incomeInfo.income_source));
 
               // Add a delete button to each row
               var $deleteButton = $("<button>حذف</button>").addClass('btn btn-danger btn-sm removeIncomeEditInfoRow');
