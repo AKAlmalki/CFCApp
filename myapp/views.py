@@ -419,9 +419,13 @@ def validate_email(request):
     if email is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not CustomUser.objects.filter(email__iexact=email).exists()
-        if data is True:
+        cu_data = not CustomUser.objects.filter(email__iexact=email).exists()
+        b_data = not beneficiary.objects.filter(email_iexact=email).exists()
+        s_data = not Supporter.objects.filter(email_iexact=email).exists()
+
+        if cu_data or b_data or s_data:
             data = "true"
         else:
             data = "false"
@@ -448,14 +452,21 @@ def validate_username(request):
 
 def validate_phonenumber(request):
 
-    email = request.POST.get('email', None)
+    phone_number = request.POST.get('phone_number', None)
 
-    if email is None:
+    if phone_number is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not CustomUser.objects.filter(email__iexact=email).exists()
-        if data is True:
+        cu_data = not CustomUser.objects.filter(
+            phone_number=phone_number).exists()
+        s_data = not Supporter.objects.filter(
+            phone_number=phone_number).exists()
+        b_data = not beneficiary.objects.filter(
+            phone_number=phone_number).exists()
+
+        if cu_data or s_data or b_data:
             data = "true"
         else:
             data = "false"
@@ -2705,11 +2716,17 @@ def validate_national_id_dependent(request, user_id):
     if national_id is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not dependent.objects.filter(
+        d_data = not dependent.objects.filter(
             national_id=national_id).exists()
+        b_data = not beneficiary.objects.filter(
+            national_id=national_id).exists()
+        s_data = not Supporter.objects.filter(
+            national_id=national_id).exists()
+
         # in case of national_id doesn't exist before
-        if data is True:
+        if d_data or b_data or s_data:
             data = "true"
         else:
             data = "false"
@@ -2724,11 +2741,17 @@ def validate_national_id_new_beneficiary(request, user_id):
     if national_id is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not beneficiary.objects.filter(
+        d_data = not dependent.objects.filter(
             national_id=national_id).exists()
+        b_data = not beneficiary.objects.filter(
+            national_id=national_id).exists()
+        s_data = not Supporter.objects.filter(
+            national_id=national_id).exists()
+
         # in case of national_id doesn't exist before
-        if data is True:
+        if d_data or b_data or s_data:
             data = "true"
         else:
             data = "false"
@@ -2743,11 +2766,15 @@ def validate_phonenumber_new_beneficiary(request, user_id):
     if phonenumber is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not beneficiary.objects.filter(
+        b_data = not beneficiary.objects.filter(
             phone_number=phonenumber).exists()
+        s_data = not Supporter.objects.filter(
+            phone_number=phonenumber).exists()
+
         # in case of national_id doesn't exist before
-        if data is True:
+        if b_data or s_data:
             data = "true"
         else:
             data = "false"
@@ -2766,11 +2793,17 @@ def validate_national_id_edit_dependent(request, user_id):
     if national_id is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not dependent.objects.filter(
+        d_data = not dependent.objects.filter(
             national_id=national_id).exists()
+        b_data = not beneficiary.objects.filter(
+            national_id=national_id).exists()
+        s_data = not Supporter.objects.filter(
+            national_id=national_id).exists()
+
         # in case of national_id doesn't exist before
-        if data is True:
+        if d_data or b_data or s_data:
             data = "true"
         else:
             # in case of national_id exists before but it is equal to the base_national_id
