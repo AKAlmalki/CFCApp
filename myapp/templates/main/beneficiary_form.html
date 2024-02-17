@@ -2903,6 +2903,8 @@
       "يحتوي الأسم على حروف فقط."
     );
 
+    var excludedFieldsEditModal = ["id_dependent_edit_info_income_source", "id_dependent_edit_info_monthly_income"]; // IDs of fields to exclude
+
     // Define your validation rules here
     $modalForm.validate({
       // Your validation rules
@@ -2994,14 +2996,20 @@
         //$(element).addClass('is-invalid');
         $(element).closest(".form-group").addClass("has-error");
 
-        $(element).addClass("is-invalid");
-        $(element).removeClass("is-valid");
+        // Check if the field is excluded
+        if (excludedFields.indexOf(element.id) === -1) {
+          $(element).addClass("is-invalid");
+          $(element).removeClass("is-valid");
+        }
       },
       unhighlight: function (element, errorClass, validClass) {
         $(element).closest(".form-group").removeClass("has-error");
 
-        $(element).removeClass("is-invalid");
-        $(element).addClass("is-valid");
+        // Check if the field is excluded
+        if (excludedFields.indexOf(element.id) === -1) {
+          $(element).removeClass("is-invalid");
+          $(element).addClass("is-valid");
+        }
       },
       errorPlacement: function (error, element) {
         // Check if the element is inside an input-group
@@ -4020,6 +4028,29 @@
       current_fs.hide();
     });
 
+    // A function to check whether the provided national id exists before in the family table or not
+    function isNationalIdExists(nationalId) {
+      var nationalIdExists = false; // Flag variable to indicate whether the national ID exists
+
+      // Iterate through each row in the table body
+      $('#family-table tbody tr').each(function() {
+          // Get the national ID value from the current row
+          var existingNationalId = $(this).find('td[data-attr="dependent_edit_info_national_id"]').text().trim();
+  
+          console.log(existingNationalId);
+  
+          // Compare the existing national ID with the input national ID
+          if (existingNationalId === nationalId) {
+              // Set the flag variable to true if the national ID already exists
+              nationalIdExists = true;
+              return false; // Exit the loop early since we found a match
+          }
+      });
+  
+      // Return the flag variable indicating whether the national ID exists
+      return nationalIdExists;
+    }
+
     // When "add Child button" is clicked, the following function is called
     $(".addChildBtn").click(function () {
       // This line prevents the form from submitting
@@ -4057,6 +4088,12 @@
       var DependentNeedsDescription = $(
         "#id_dependent_info_needs_description"
       ).val();
+
+      // Alert the user if the provided national ID is added before in the family table
+      if (isNationalIdExists(dependentNationalID)) {
+          alert("رقم الهوية/الإقامة للمرافق تم إضافته بالفعل في قائمة المرافقين!");
+          return;
+      }
 
       // Collect dependent income information by looping over the income table
       function getDependentIncomeTableDataAsJSON() {
@@ -4517,8 +4554,8 @@
 
         // Create a JSON object to store income information
         var incomeInfo = {
-          monthlyIncome: cells[0].innerText,
-          incomeSource: cells[1].innerText,
+          income_amount: cells[0].innerText,
+          income_source: cells[1].innerText,
         };
 
         incomeInfoArray.push(incomeInfo);
@@ -4531,6 +4568,8 @@
     // Onclick function to save the changes made to the dependent info
     $("#saveChanges").click(function (event) {
       event.preventDefault();
+
+      var duplicateNationalIdFound = false; // Flag to indicate whether a duplicate national ID is found
 
       // Get all checkboxes within the specified container
       var checkboxes = document.querySelectorAll('#id_dependent_edit_info_needs_type input[type="checkbox"]');
@@ -4555,6 +4594,16 @@
           var inputName = $(this).attr("name");
           // Select the cell in the corresponding row of the dependent with data-attr as inputName
           var $cell = $rowToEdit.find('td[data-attr="' + inputName + '"]');
+
+          // Retrieve the data for national id in the edit form
+          if ($(this).attr("name") == "dependent_edit_info_national_id") {
+              // Alert the user if the provided national ID is added before in the family table
+              if (isNationalIdExists($(this).val())) {
+                alert("رقم الهوية/الإقامة للمرافق تم إضافته بالفعل في قائمة المرافقين!");
+                duplicateNationalIdFound = true; // Set the flag to true
+                return false; // Exit the loop early since we found a duplicate
+              }
+          }
           
           if ($(this).attr('type') === 'checkbox') {
               // If it's a checkbox, gather all checked values with this name
@@ -4570,6 +4619,11 @@
               $cell.text($(this).val());
           }
       });
+
+      // If a duplicate national ID is found, don't proceed with saving changes
+      if (duplicateNationalIdFound) {
+        return;
+      }
 
       // Get dependent income information from incomeEditInfoTable
       let dependentIncomeJSON = getDependentIncomeTableDataAsJSON();
