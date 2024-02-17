@@ -1425,27 +1425,6 @@
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col mb-4 form-group">
-                <label for="id_incomeinfo_total" class="form-label"
-                  >إجمالي الدخل</label
-                >
-                <div class="input-group mb-3">
-                  <input
-                    type="number"
-                    name="incomeinfo_total"
-                    min="0.00"
-                    max="99999999.00"
-                    step="0.01"
-                    class="form-control"
-                    id="id_incomeinfo_total"
-                    disabled
-                    readonly
-                  />
-                  <span class="input-group-text" id="basic-addon1">ر.س.</span>
-                </div>
-              </div>
-            </div>
 
             <hr />
 
@@ -1597,7 +1576,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-6 mb-4 form-group">
+              <div class="col mb-4 form-group">
                 <label for="id_expensesinfo_other" class="form-label"
                   >أخرى<span style="color: red"
                   >*</span
@@ -1611,24 +1590,6 @@
                     max="99999999.00"
                     class="form-control"
                     id="id_expensesinfo_other"
-                  />
-                  <span class="input-group-text" id="basic-addon1">ر.س.</span>
-                </div>
-              </div>
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_expensesinfo_total" class="form-label"
-                  >إجمالي المصروفات</label
-                >
-                <div class="input-group mb-3">
-                  <input
-                    type="number"
-                    name="expensesinfo_total"
-                    min="0.00"
-                    max="99999999.00"
-                    class="form-control"
-                    id="id_expensesinfo_total"
-                    disabled
-                    readonly
                   />
                   <span class="input-group-text" id="basic-addon1">ر.س.</span>
                 </div>
@@ -3343,54 +3304,6 @@
       },
       "الرجاء إدخال رقم إيبان صحيح"
     );
-
-    // The Code segment to calculate the incomeinfo
-
-    // Select all your input fields
-    var incomeinfo_inputs = document.querySelectorAll(
-      "input[type=number][name^=incomeinfo_]:not([name=incomeinfo_total])"
-    );
-
-    // Function to calculate the sum
-    function calculateSumIncome() {
-      let sum = 0;
-      incomeinfo_inputs.forEach((input) => {
-        const value = parseFloat(input.value) || 0;
-        sum += value;
-      });
-      document.getElementById("id_incomeinfo_total").value = sum.toFixed(2);
-    }
-
-    // Add event listeners to all input fields
-    incomeinfo_inputs.forEach((input) =>
-      input.addEventListener("input", calculateSumIncome)
-    );
-
-    // Code segment ends
-
-    // The Code segment to calculate the expensesinfo
-
-    // Select all your input fields
-    var expensesinfo_inputs = document.querySelectorAll(
-      "input[type=number][name^=expensesinfo_]:not([name=expensesinfo_total])"
-    );
-
-    // Function to calculate the sum
-    function calculateSumExpenses() {
-      let sum = 0;
-      expensesinfo_inputs.forEach((input) => {
-        const value = parseFloat(input.value) || 0;
-        sum += value;
-      });
-      document.getElementById("id_expensesinfo_total").value = sum.toFixed(2);
-    }
-
-    // Add event listeners to all input fields
-    expensesinfo_inputs.forEach((input) =>
-      input.addEventListener("input", calculateSumExpenses)
-    );
-
-    // Code segment ends
 
     /**
      * Mark all form steps as unfinished.
