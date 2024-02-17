@@ -3980,7 +3980,7 @@
         "#id_dependent_info_educational_status"
       ).val();
       var dependentMaritalStatus = $("#id_dependent_info_marital_status").val();
-      var dependentNationalID = $("#id_dependent_info_national_id").val();
+      var dependentNationalID = $("#id_dependent_info_national_id").val().trim();
 
       var dependentHealthStatus = $("#id_dependent_info_health_status").val();
       var dependentMonthlyIncome = $("#id_dependent_info_monthly_income").val();
@@ -4007,6 +4007,13 @@
       if (isNationalIdExists(dependentNationalID)) {
           alert("رقم الهوية/الإقامة للمرافق تم إضافته بالفعل في قائمة المرافقين!");
           return;
+      }
+
+      var applierNationalID = $("#id_personalinfo_national_id").val().trim();
+      // Alert the user if the provided national ID is equal to the applier national ID (in the first step)
+      if (dependentNationalID === applierNationalID) {
+        alert("رقم الهوية/الإقامة للمرافق لا يمكن أن يكون مماثلًا لرقم الهوية/الإقامة لمقدم الطلب!!");
+        return;
       }
 
       // Collect dependent income information by looping over the income table
