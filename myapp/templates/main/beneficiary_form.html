@@ -3889,6 +3889,31 @@
           current_fs = $("#dependent_information");
           next_fs = $("#housing_income_need_information");
         } else if ($("#housing_income_need_information").is(":visible")) {
+          
+          // Count the number of checked checkboxes within the specified div
+          var checked_count_needs_type = $("#id_familyinfo_needs_type input[type='checkbox']:checked").length;
+
+          var checked_count_family_issues = $("#id_familyinfo_family_issues input[type='checkbox']:checked").length;
+
+          // Check if at least one checkbox is checked
+          if (checked_count_needs_type < 1) {
+              displayMinChoiceCountNeedsTypeErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+              if (checked_count_family_issues < 1) {
+                displayMinChoiceCountFamilyIssuesErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+                return false;
+            }
+              return false;
+          }
+
+          if (checked_count_family_issues < 1) {
+              displayMinChoiceCountFamilyIssuesErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+              if (checked_count_needs_type < 1) {
+                displayMinChoiceCountNeedsTypeErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+                return false;
+            }
+              return false;
+          } 
+
           current_fs = $("#housing_income_need_information");
           next_fs = $("#attachments_information");
         } else if ($("#attachments_information").is(":visible")) {
@@ -3916,6 +3941,114 @@
         current_fs.hide();
       }
     });
+
+    // Function to display an error message
+    function displayMinChoiceCountNeedsTypeErrorMessage(message, duration) {
+      // Check if the error message element already exists
+      var errorMessageElement = document.getElementById('minChoiceCountNeedsTypeErrorMessage');
+      
+      // If not, create a new element and append it to the page
+      if (!errorMessageElement) {
+        errorMessageElement = document.createElement('div');
+        errorMessageElement.id = 'minChoiceCountNeedsTypeErrorMessage';
+        errorMessageElement.classList.add('alert', 'alert-danger');
+
+        // Get the parent node of the dependent income table
+        var parentElement = document.getElementById('id_familyinfo_needs_type').parentNode;
+
+        // Insert the error message element at the top of the parent node
+        parentElement.insertBefore(errorMessageElement, parentElement.firstChild);
+
+        // Focus on the error message
+        errorMessageElement.focus();
+
+        // Remove the error message after a specified duration
+        //setTimeout(function () {
+        //  removeMaxRowErrorMessage();
+        //}, duration);
+      }
+
+      // Listen for changes in the checkboxes to update the error message
+      var checkboxes = document.querySelectorAll('#id_familyinfo_needs_type input[type="checkbox"]');
+      checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+          // Check if more than one checkbox is checked
+          var checkedCount = Array.from(checkboxes).filter(function (checkbox) {
+            return checkbox.checked;
+          }).length;
+
+          // If more than one checkbox is checked, remove the error message
+          if (checkedCount > 0) {
+            removeMinChoiceCountNeedsTypeErrorMessage();
+          }
+        });
+      });
+
+      // Set the error message text
+      errorMessageElement.textContent = message;
+    }
+
+    // Function to remove the error message
+    function removeMinChoiceCountNeedsTypeErrorMessage() {
+      var errorMessageElement = document.getElementById('minChoiceCountNeedsTypeErrorMessage');
+      if (errorMessageElement) {
+        errorMessageElement.remove();
+      }
+    }
+
+    // Function to display an error message
+    function displayMinChoiceCountFamilyIssuesErrorMessage(message, duration) {
+      // Check if the error message element already exists
+      var errorMessageElement = document.getElementById('minChoiceCountFamilyIssuesErrorMessage');
+      
+      // If not, create a new element and append it to the page
+      if (!errorMessageElement) {
+        errorMessageElement = document.createElement('div');
+        errorMessageElement.id = 'minChoiceCountFamilyIssuesErrorMessage';
+        errorMessageElement.classList.add('alert', 'alert-danger');
+
+        // Get the parent node of the dependent income table
+        var parentElement = document.getElementById('id_familyinfo_family_issues').parentNode;
+
+        // Insert the error message element at the top of the parent node
+        parentElement.insertBefore(errorMessageElement, parentElement.firstChild);
+
+        // Focus on the error message
+        errorMessageElement.focus();
+
+        // Remove the error message after a specified duration
+        //setTimeout(function () {
+        //  removeMaxRowErrorMessage();
+        //}, duration);
+      }
+
+      // Listen for changes in the checkboxes to update the error message
+      var checkboxes = document.querySelectorAll('#id_familyinfo_family_issues input[type="checkbox"]');
+      checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+          // Check if more than one checkbox is checked
+          var checkedCount = Array.from(checkboxes).filter(function (checkbox) {
+            return checkbox.checked;
+          }).length;
+
+          // If more than one checkbox is checked, remove the error message
+          if (checkedCount > 0) {
+            removeMinChoiceCountFamilyIssuesErrorMessage();
+          }
+        });
+      });
+
+      // Set the error message text
+      errorMessageElement.textContent = message;
+    }
+
+    // Function to remove the error message
+    function removeMinChoiceCountFamilyIssuesErrorMessage() {
+      var errorMessageElement = document.getElementById('minChoiceCountFamilyIssuesErrorMessage');
+      if (errorMessageElement) {
+        errorMessageElement.remove();
+      }
+    }
 
     // When ".previous" button is clicked, the following function is called
     $(".previous").click(function () {
