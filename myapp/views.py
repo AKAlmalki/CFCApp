@@ -2468,6 +2468,7 @@ def beneficiary_request_update_confirm(request, user_id):
 
         dependent_table = data.get('dependents-table', None)
 
+        print(data.get('dependents-table', None))
         # Parse the JSON string into a Python object
         try:
             dependents_list = json.loads(dependent_table)
@@ -2560,40 +2561,33 @@ def beneficiary_request_update_confirm(request, user_id):
 
                 # Get list of all Dependent_income objects from the DB
                 dependent_income_db_list = Dependent_income.objects.filter(
-                    dependent=dependent_obj).all()
+                    dependent=dependent_obj)
 
-                if dependent_income_db_list is not None:
+                # Delete existing dependent income records
+                dependent_income_db_list.delete()
 
-                    # Store list of dependent income to create -------------------
-                    dependent_income_list = []
+                # Store list of dependent income to create
+                dependent_income_list = []
 
-                    # Traverse the list of dependent income from the request body
-                    for entry in dependent_income_table:
-                        # Extract the monthly income and remove commas
-                        income_amount_str = entry.get('income_amount', '')
-                        income_amount = Decimal(
-                            income_amount_str.replace(',', ''))
-                        income_source = entry.get('income_source', '')
+                # Traverse the list of dependent income from the request body
+                for entry in dependent_income_table:
+                    # Extract the monthly income and remove commas
+                    income_amount_str = entry.get('income_amount', '')
+                    income_amount = Decimal(income_amount_str.replace(',', ''))
+                    income_source = entry.get('income_source', '')
 
-                        # Travers the list of dependent income exists in the DB
-                        for dependent_income in dependent_income_db_list:
+                    # Initialize dependent income object
+                    dependent_income_obj = Dependent_income(
+                        source=income_source,
+                        amount=income_amount,
+                        dependent=dependent_obj
+                    )
+                    # Add the new dependent income object to the list
+                    dependent_income_list.append(dependent_income_obj)
 
-                            # In case of dependent income already doesn't exist in DB
-                            if not (income_amount == dependent_income.amount and income_source == dependent_income.source):
-
-                                # Initialize dependent income list
-                                dependent_income_obj = Dependent_income(
-                                    source=income_source,
-                                    amount=income_amount,
-                                    dependent=dependent_obj
-                                )
-                                dependent_income_list.append(
-                                    dependent_income_obj)
-
-                    # Save dependent income objects
-                    if dependent_income_list:
-                        Dependent_income.objects.bulk_create(
-                            dependent_income_list)
+                # Save dependent income objects
+                if dependent_income_list:
+                    Dependent_income.objects.bulk_create(dependent_income_list)
 
             # In case of Non-existing national id
             else:
