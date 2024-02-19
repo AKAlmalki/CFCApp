@@ -4277,19 +4277,12 @@
             .attr("data-bs-toggle", "modal")
             .attr("data-bs-target", "#editModal")
             .attr("id", "editModalButton")
-            .click(function (event) {
-                event.preventDefault();
-                // Populate the modal fields with data from $row
-                populateEditModal(newRow);
-            });
+            .click(createEditButtonClickHandler(newRow));
 
             // Delete Button
             var $deleteButton = $('<button type="button">حذف</button>')
                 .addClass("delete btn btn-danger")
-                .click(function (event) {
-                    event.preventDefault();
-                    newRow.remove();
-                });
+                .click(createDeleteButtonClickHandler(newRow));
 
             // Action cell that contains Delete & Edit buttons
             var $actionsCell = $(
@@ -4301,6 +4294,23 @@
 
             // Append the row to the table
             tableBody.append(newRow);
+        }
+
+        // Function to handle edit button click
+        function createEditButtonClickHandler(row) {
+          return function(event) {
+              event.preventDefault();
+              // Populate the modal fields with data from the clicked row
+              populateEditModal(row);
+          };
+        }
+
+        // Function to handle delete button click
+        function createDeleteButtonClickHandler(row) {
+          return function(event) {
+              event.preventDefault();
+              row.remove(); // Remove the clicked row
+          };
         }
     }
 
