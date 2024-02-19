@@ -3555,8 +3555,14 @@
           // Clear existing rows in the income table
           $("#incomeInfoTableBody").empty();
 
-          // Remove is-valid and is-invalid classes from all dependent information fields
-          $("#family-form input, #family-form select, #family-form textarea").removeClass("is-valid is-invalid");
+          // Remove "is-valid" and "is-invalid" classes from input elements within #family-form container
+          $('#family-form input').removeClass('is-valid is-invalid');
+
+          // Remove "is-valid" and "is-invalid" classes from select elements within #family-form container
+          $('#family-form select').removeClass('is-valid is-invalid');
+
+          // Remove "is-valid" and "is-invalid" classes from textarea elements within #family-form container
+          $('#family-form textarea').removeClass('is-valid is-invalid');
 
           // Remove error messages
           removeMaxRowErrorMessage();
@@ -3789,6 +3795,9 @@
           // Retrieve the data for national id in the edit form
           if ($(this).attr("name") == "dependent_edit_info_national_id") {
 
+            // Get the value of data-attr-base-nid attribute
+            var baseNid = $(this).data("attr-base-nid");
+
             // Check whether the provided national ID equal to the applier national ID
             if ($(this).val() === applierNationalID) {
               alert("رقم الهوية/الإقامة للمرافق لا يمكن أن يكون مماثلًا لرقم الهوية/الإقامة لمقدم الطلب!!");
@@ -3798,9 +3807,13 @@
 
             // Alert the user if the provided national ID is added before in the family table
             if (isNationalIdExists($(this).val())) {
-              alert("رقم الهوية/الإقامة للمرافق تم إضافته بالفعل في قائمة المرافقين!");
-              duplicateNationalIdFound = true; // Set the flag to true
-              return false; // Exit the loop early since we found a duplicate
+
+              // Check whether the national ID equals to the base national ID
+              if (baseNid != $(this).val()) {
+                alert("رقم الهوية/الإقامة للمرافق تم إضافته بالفعل في قائمة المرافقين!");
+                duplicateNationalIdFound = true; // Set the flag to true
+                return false; // Exit the loop early since we found a duplicate
+              }
             }
           }
 
@@ -4337,8 +4350,6 @@
         alert("رقم الهوية/الإقامة لمقدم الطلب لا يمكن ان يكون مماثلاً لرقم الهوية/الإقامة لاحد المرافقين!")
         return;
       }
-
-      return false;
   
       // Select the form element
       const form = document.getElementById('edit_beneficiary_request_form');

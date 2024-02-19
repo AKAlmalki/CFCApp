@@ -2475,6 +2475,26 @@ def beneficiary_request_update_confirm(request, user_id):
             print("Error parsing JSON")
             dependents_list = []
 
+        # Retrieve all dependents related to this beneficiary_obj
+        beneficiary_dependents_db = dependent.objects.filter(
+            beneficiary_id=beneficiary_obj.id).all()
+
+        if beneficiary_dependents_db.exists():
+            # Iterate over the dependents
+            for dependent_obj in beneficiary_dependents_db:
+                # Check if the dependent exists in the response
+                dependent_exists_in_response = any(
+                    dependent_obj.national_id == dependent_data.get('nationalID') for dependent_data in dependents_list)
+
+                # If the dependent doesn't exist in the response, delete it
+                if not dependent_exists_in_response:
+                    dependent_obj.delete()
+        else:
+            # Handle the case when there are no dependents for the beneficiary
+            # For example, you can display a message or perform other actions
+            print(
+                "[Warning] - There are no dependents associated with this beneficiary.")
+
         for dep in dependents_list:
             # Extract the data for each field
             first_name = dep.get('firstName', '')

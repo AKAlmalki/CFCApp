@@ -4739,11 +4739,18 @@
           // Retrieve the data for national id in the edit form
           if ($(this).attr("name") == "dependent_edit_info_national_id") {
 
+              // Get the value of data-attr-base-nid attribute
+              var baseNid = $(this).data("attr-base-nid");
+
               // Check whether the provided national ID equal to the applier national ID
               if ($(this).val() === applierNationalID) {
-                alert("رقم الهوية/الإقامة للمرافق لا يمكن أن يكون مماثلًا لرقم الهوية/الإقامة لمقدم الطلب!!");
-                isEqualToApplierNationalId = true; // Set the flag to true
-                return false; // Exit the loop early since we found a duplicate
+
+                // Check whether the national ID equals to the base national ID
+                if (baseNid != $(this).val()) {
+                  alert("رقم الهوية/الإقامة للمرافق لا يمكن أن يكون مماثلًا لرقم الهوية/الإقامة لمقدم الطلب!!");
+                  isEqualToApplierNationalId = true; // Set the flag to true
+                  return false; // Exit the loop early since we found a duplicate
+                }
               }
 
               // Alert the user if the provided national ID is added before in the family table
