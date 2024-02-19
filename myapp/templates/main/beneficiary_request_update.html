@@ -3135,8 +3135,6 @@
           // Get the national ID value from the current row
           var existingNationalId = $(this).find('td[data-attr="dependent_edit_info_national_id"]').text().trim();
   
-          console.log(existingNationalId);
-  
           // Compare the existing national ID with the input national ID
           if (existingNationalId === nationalId) {
               // Set the flag variable to true if the national ID already exists
@@ -3790,7 +3788,7 @@
 
           // Retrieve the data for national id in the edit form
           if ($(this).attr("name") == "dependent_edit_info_national_id") {
-            
+
             // Check whether the provided national ID equal to the applier national ID
             if ($(this).val() === applierNationalID) {
               alert("رقم الهوية/الإقامة للمرافق لا يمكن أن يكون مماثلًا لرقم الهوية/الإقامة لمقدم الطلب!!");
@@ -4331,6 +4329,16 @@
 
     document.getElementById('submit-btn').addEventListener('click', function(e) {
       e.preventDefault();
+
+      var personal_national_id = $("#id_personalinfo_national_id").val().trim();
+
+      
+      if (isNationalIdExists(personal_national_id)) {
+        alert("رقم الهوية/الإقامة لمقدم الطلب لا يمكن ان يكون مماثلاً لرقم الهوية/الإقامة لاحد المرافقين!")
+        return;
+      }
+
+      return false;
   
       // Select the form element
       const form = document.getElementById('edit_beneficiary_request_form');
