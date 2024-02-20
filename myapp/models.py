@@ -242,6 +242,8 @@ class dependent(models.Model):
     work_status = models.CharField(max_length=64, null=True)
     employer = models.CharField(max_length=128, null=True)
     contribute_to_family_income = models.CharField(max_length=64, null=True)
+    disability_check = models.CharField(max_length=64, null=True)
+    disability_type = models.CharField(max_length=64, null=True)
     needs_description = models.TextField(max_length=300)
     educational_level = models.CharField(max_length=64, null=True)
     disease_type = models.CharField(max_length=100, null=True)
