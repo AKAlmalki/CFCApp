@@ -49,11 +49,27 @@ function workCheckDependent(that) {
   }
 }
 
+function workCheckEditDependent(that) {
+  if (that.value == "نعم") {
+      document.getElementById("id_dependent_edit_info_employer_group_info").style.display = "block";
+  } else {
+      document.getElementById("id_dependent_edit_info_employer_group_info").style.display = "none";
+  }
+}
+
 function dependentInfoDisabilityCheck(that) {
   if (that.value == "نعم") {
       document.getElementById("id_dependentinfo_disability_type_group_info").style.display = "block";
   } else {
       document.getElementById("id_dependentinfo_disability_type_group_info").style.display = "none";
+  }
+}
+
+function editDependentInfoDisabilityCheck(that) {
+  if (that.value == "نعم") {
+      document.getElementById("id_dependent_edit_info_disability_type_group_info").style.display = "block";
+  } else {
+      document.getElementById("id_dependent_edit_info_disability_type_group_info").style.display = "none";
   }
 }
 
