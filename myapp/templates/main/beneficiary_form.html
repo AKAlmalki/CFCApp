@@ -724,6 +724,7 @@
           <div class="mt-3">
             <div id="family-form">
               <div class="row row-cols-md-2 row-cols-xl-4">
+
                 <div class="col-md-6 mb-4 form-group">
                   <label for="id_dependent_info_first_name" class="form-label"
                     >الأسم الأول<span style="color: red">*</span
@@ -2463,9 +2464,8 @@
             <div class="row row-cols-md-2 row-cols-xl-4">
               <div class="col-md-6 mb-4 form-group">
                 <label for="id_dependent_edit_info_first_name" class="form-label"
-                  >الأسم الأول<span style="color: red">*</span
-                  ></label
-                >
+                  >الأسم الأول<span style="color: red">*</span>
+                </label>
                 <input
                   type="text"
                   id="id_dependent_edit_info_first_name"
@@ -3095,7 +3095,7 @@
       "يحتوي الأسم على حروف فقط."
     );
 
-    var excludedFieldsEditModal = ["id_dependent_edit_info_income_source", "id_dependent_edit_info_monthly_income"]; // IDs of fields to exclude
+    var includedFieldsEditModal = ["id_dependent_edit_info_national_id"]; // IDs of fields to include
 
     // Define your validation rules here
     $modalForm.validate({
@@ -3124,11 +3124,7 @@
         dependent_edit_info_relationship: {
           required: true,
         },
-        dependent_edit_info_national_id: {
-          required: true,
-          nationalidRegex: true,
-        },
-        dependent_edit_info_national_id_exp_date: {
+        dependent_edit_info_date_of_birth: {
           required: true,
           dateISO: true,
         },
@@ -3153,12 +3149,34 @@
         dependent_edit_info_disease_type: {
           required: true,
         },
-        dependent_edit_info_date_of_birth: {
+        dependent_edit_info_national_id: {
+          required: true,
+          nationalidRegex: true,
+        },
+        dependent_edit_info_national_id_exp_date: {
           required: true,
           dateISO: true,
         },
+        dependent_edit_info_work_status: {
+          required: true,
+        },
+        dependent_edit_info_employer: {
+          required: true,
+        },
+        dependent_edit_info_contribute_to_family_income: {
+          required: true,
+        },
+        dependent_edit_info_is_disabled: {
+          required: true,
+        },
+        dependent_edit_info_disability_type: {
+          required: true,
+        },
         dependent_edit_info_needs_type: {
           required: true,
+        },
+        dependent_edit_info_needs_description: {
+          required: false,
         },
       },
       messages: {
@@ -3189,7 +3207,7 @@
         $(element).closest(".form-group").addClass("has-error");
 
         // Check if the field is excluded
-        if (excludedFields.indexOf(element.id) === -1) {
+        if (includedFieldsEditModal.indexOf(element.id) !== -1) {
           $(element).addClass("is-invalid");
           $(element).removeClass("is-valid");
         }
@@ -3198,7 +3216,7 @@
         $(element).closest(".form-group").removeClass("has-error");
 
         // Check if the field is excluded
-        if (excludedFields.indexOf(element.id) === -1) {
+        if (includedFieldsEditModal.indexOf(element.id) !== -1) {
           $(element).removeClass("is-invalid");
           $(element).addClass("is-valid");
         }
@@ -3771,7 +3789,7 @@
       min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
     });
 
-    var excludedFields = ["id_dependent_info_income_source", "id_dependent_info_monthly_income"]; // IDs of fields to exclude
+    var includedFields = ["id_dependent_info_national_id", "id_personalinfo_phone_number", "id_personalinfo_email", "id_personalinfo_national_id"]; // IDs of fields to exclude
 
     // When ".next" button is clicked, the following function is executed
     $(".next").click(function () {
@@ -3797,7 +3815,7 @@
           //  });
 
           // Check if the field is excluded
-          if (excludedFields.indexOf(element.id) === -1) {
+          if (includedFields.indexOf(element.id) !== -1) {
             $(element).addClass("is-invalid");
             $(element).removeClass("is-valid");
           }
@@ -3806,7 +3824,7 @@
           $(element).closest(".form-group").removeClass("has-error");
 
           // Check if the field is excluded
-          if (excludedFields.indexOf(element.id) === -1) {
+          if (includedFields.indexOf(element.id) !== -1) {
             $(element).removeClass("is-invalid");
             $(element).addClass("is-valid");
           }
@@ -3955,6 +3973,12 @@
             required: true,
             dateISO: true,
           },
+          dependent_info_work_status: {
+            required: true,
+          },
+          dependent_info_employer: {
+            required: true,
+          },
           dependent_info_gender: {
             required: true,
           },
@@ -3981,6 +4005,18 @@
             dateISO: true,
           },
           dependent_info_needs_type: {
+            required: true,
+          },
+          dependentinfo_needs_description: {
+            required: true,
+          },
+          dependent_info_contribute_to_family_income: {
+            required: true,
+          },
+          dependent_info_is_disabled: {
+            required: true,
+          },
+          dependent_info_disability_type: {
             required: true,
           },
           // housing_income_need_information ---------
@@ -4157,6 +4193,15 @@
       // In case of a valid form inputs, ".next" button will show the next step in the form
       if (form.valid() === true) {
         if ($("#personal_information").is(":visible")) {
+
+          var personalNationalID = $("#id_personalinfo_national_id").val();
+          
+          // Alert the user if the provided national ID is added before in the family table
+          if (isNationalIdExists(personalNationalID)) {
+            alert("رقم الهوية/الإقامة لمقدم الطلب تم إضافته بالفعل في قائمة المرافقين!");
+            return;
+          }
+
           current_fs = $("#personal_information");
           // Check if the 'Skip the second step' checkbox is checked
           if ($("#skip-step").is(":checked")) {
