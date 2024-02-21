@@ -724,10 +724,6 @@
                             <input type="text" class="form-control" id="id_modal_reviewd_at" name="reviewd_at" disabled readonly>
                           </div>
                           <div class="mb-3">
-                            <h6 class="col form-label" for="id_modal_is_qualified">مؤهل؟</h6>
-                            <input type="text" class="form-control" id="id_modal_is_qualified" name="is_qualified" disabled readonly>
-                          </div>
-                          <div class="mb-3">
                             <h6 class="col form-label" for="id_modal_is_benefiting">مستفيد؟</h6>
                             <input type="text" class="form-control" id="id_modal_is_benefiting" name="is_benefiting" disabled readonly>
                           </div>
@@ -741,16 +737,32 @@
                             <textarea class="form-control" id="id_modal_request_comment" rows="5" name="modal_request_comment"></textarea>
                           </div>
                           <div class="mb-3">
+                            <label for="id_modal_diagnosis" class="col form-label">التشخيص</label>
+                            <textarea class="form-control" id="id_modal_diagnosis" rows="5" name="modal_diagnosis"></textarea>
+                          </div>
+                          <div class="mb-3">
                             <label for="id_modal_request_status" class="col form-label">حالة الطلب</label>
-                            <select class="form-select" id="id_modal_request_status" rows="5" name="modal_request_status">
+                            <select class="form-select" id="id_modal_request_status" name="modal_request_status">
                               <option value selected>---------</option>
-                              <option value="new">جديد</option>
-                              <option value="under review">تحت المراجعة</option>
-                              <option value="waiting">انتظار</option>
-                              <option value="not complete">غير مكتمل</option>
-                              <option value="rejected">مرفوض</option>
-                              <option value="accepted">مقبول</option>
-                              <option value="needs update">يحتاج تحديث</option>
+                              <option value="جديد">جديد</option>
+                              <option value="تحت المراجعة">تحت المراجعة</option>
+                              <option value="انتظار">انتظار</option>
+                              <option value="غير مكتمل">غير مكتمل</option>
+                              <option value="مكتمل">مكتمل</option>
+                              <option value="مرفوض">مرفوض</option>
+                              <option value="مقبول">مقبول</option>
+                              <option value="بحاجة الى تحديث">بحاجة الى تحديث</option>
+                            </select>
+                          </div>
+                          <div class="mb-3">
+                            <label for="id_modal_beneficiary_file_status" class="col form-label">حالة الملف</label>
+                            <select class="form-select" id="id_modal_beneficiary_file_status" name="modal_beneficiary_file_status">
+                              <option value selected>---------</option>
+                              <option value="تم الدعم">تم الدعم</option>
+                              <option value="قيد التنفيذ">قيد التنفيذ</option>
+                              <option value="تحت الدراسة">تحت الدراسة</option>
+                              <option value="ملغي">ملغي</option>
+                              <option value="مؤرشف">مؤرشف</option>
                             </select>
                           </div>
                         </form>
@@ -863,7 +875,6 @@
                 national_id_exp_date = data.national_id_exp_date.substring(0, 10);
               }
               document.getElementById('id_modal_national_id_exp_date').value = national_id_exp_date;
-              document.getElementById('id_modal_is_qualified').value = data.is_qualified;
               document.getElementById('id_modal_category').value = data.category;
               document.getElementById('id_modal_marital_status').value = data.marital_status;
               document.getElementById('id_modal_educational_level').value = data.educational_level;
@@ -878,7 +889,11 @@
               }
               document.getElementById('id_modal_death_date_father_husband').value = death_date_father_husband;
               document.getElementById('id_modal_washing_place').value = data.washing_place;
-              document.getElementById('id_modal_is_benefiting').value = data.is_benefiting;
+              if (data.is_benefiting) {
+                document.getElementById('id_modal_is_benefiting').value = "نعم";
+               } else {
+                document.getElementById('id_modal_is_benefiting').value = "لا";
+               }
               // Convert ISO 8601 date into Date objects
               var receive_date = new Date(data.received_at);
               var review_date = new Date(data.reviewed_at);
