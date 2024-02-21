@@ -1819,8 +1819,8 @@ def supporter_request_confirm(request, supporter_id, s_request_id):
     if request.method == "POST":
 
         print(request.POST)
+
         request_status = request.POST.get('request_status', None)
-        print(request_status)
         request_comment = request.POST.get('request_comment', None)
 
         supporter_obj = Supporter.objects.get(id=supporter_id)
@@ -1829,7 +1829,7 @@ def supporter_request_confirm(request, supporter_id, s_request_id):
             supporter=supporter_id, id=s_request_id).first()
 
         # Update object data
-        supporter_request_obj.status = "مقبول"
+        supporter_request_obj.status = request_status
         supporter_request_obj.comment = request_comment
         supporter_request_obj.reviewed_by = request.user
         supporter_request_obj.reviewed_at = datetime.now()
@@ -1840,40 +1840,46 @@ def supporter_request_confirm(request, supporter_id, s_request_id):
         # Get the current date
         current_date = date.today()
 
-        # Get the date after the specified months
-        date_after = current_date + \
-            relativedelta(
-                months=+duration_factors[supporter_request_obj.duration])
+        if supporter_request_obj.selection_type == 'شخصي' and (request_status == 'مقبول' or request_status == 'مكتمل'):
 
-        # Retrieve information about each beneficiary for this request (in case of personal selection)
-        for beneficiary_obj in supporter_request_obj.beneficiary_list:
+            # Get the date after the specified months
+            date_after = current_date + \
+                relativedelta(
+                    months=+duration_factors[supporter_request_obj.duration])
 
-            # Retrieve beneficiary information from DB
-            beneficiary_temp = beneficiary.objects.get(
-                id=beneficiary_obj['id'])
+            # Retrieve information about each beneficiary for this request (in case of personal selection)
+            for beneficiary_obj in supporter_request_obj.beneficiary_list:
 
-            # In case of other categories
-            amount_donated_per_month = 400.0
+                # Retrieve beneficiary information from DB
+                beneficiary_temp = beneficiary.objects.get(
+                    id=beneficiary_obj['id'])
 
-            # In case of orphan family, the total amount will change
-            if beneficiary_temp.category == 'أسرة أيتام':
-                amount_donated_per_month = 600.0
+                # In case of other categories
+                amount_donated_per_month = 400.0
 
-            total_amount_per_beneficiary = amount_donated_per_month * \
-                duration_factors[supporter_request_obj.duration]
+                # In case of widower family, the total amount will change
+                if beneficiary_temp.category == 'أسرة أرملة':
+                    amount_donated_per_month = 600.0
 
-            # Create a relation between each beneficiary in the list of this supporter request
-            sponsorship = Supporter_beneficiary_sponsorship(
-                amount_donated_monthly=amount_donated_per_month,
-                total_amount_donated=total_amount_per_beneficiary,
-                start_date=current_date,
-                end_date=date_after,
-                beneficiary=beneficiary_temp,
-                supporter=supporter_obj,
-            )
-            sponsorship.save()
+                total_amount_per_beneficiary = amount_donated_per_month * \
+                    duration_factors[supporter_request_obj.duration]
 
-        messages.success(request, "لقد تم قبول طلب الداعم بنجاح!")
+                # Create a relation between each beneficiary in the list of this supporter request
+                sponsorship = Supporter_beneficiary_sponsorship(
+                    amount_donated_monthly=amount_donated_per_month,
+                    total_amount_donated=total_amount_per_beneficiary,
+                    start_date=current_date,
+                    end_date=date_after,
+                    beneficiary=beneficiary_temp,
+                    supporter=supporter_obj,
+                )
+                sponsorship.save()
+
+            # Update the request status
+            supporter_request_obj.status = "مكتمل"
+            supporter_request_obj.save()
+
+        messages.success(request, "لقد تم تحديث حالة طلب الداعم بنجاح!")
         return redirect("dashboard_supporters_requests")
 
     else:
@@ -2982,6 +2988,102 @@ def supporter_beneficiary_sponsorship(request):
     }
 
     return render(request, "dashboard/sponsorships.html", context)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def add_sponsorship(request):
+
+    if request.method == 'POST':
+
+        supporter_request_id = request.POST.get('supporter_request', None)
+        # Parse JSON data from the hidden input field
+        beneficiary_data_json = request.POST.get('beneficiary_data')
+        beneficiary_data = json.loads(beneficiary_data_json)
+
+        supporter_request_obj = Supporter_request.objects.filter(
+            pk=supporter_request_id).first()
+
+        support_obj = Supporter.objects.filter(
+            pk=supporter_request_obj.supporter.id).first()
+
+        # Get the current date
+        current_date = date.today()
+
+        # Now you can access the beneficiary data as a list of dictionaries
+        for beneficiary_obj in beneficiary_data:
+            beneficiary_temp = beneficiary.objects.filter(
+                pk=beneficiary_obj['id']).first()
+
+            # In case of orphan family, the total amount will change
+            if beneficiary_temp.category == 'أسرة أرملة':
+
+                # Get the date after the specified months
+                date_after = current_date + \
+                    relativedelta(
+                        months=+duration_factors[supporter_request_obj.widower_donation_type])
+
+                amount_donated_per_month = 600.0
+
+                total_amount_per_beneficiary = amount_donated_per_month * \
+                    duration_factors[supporter_request_obj.widower_donation_type]
+
+                sponsorship = Supporter_beneficiary_sponsorship(
+                    total_amount_donated=supporter_request_obj.total_amount,
+                    amount_donated_monthly=total_amount_per_beneficiary,
+                    start_date=current_date,
+                    end_date=date_after,
+                    beneficiary=beneficiary_temp,
+                    supporter=support_obj,
+                )
+                sponsorship.save()
+
+            else:
+
+                # Get the date after the specified months
+                date_after = current_date + \
+                    relativedelta(
+                        months=+duration_factors[supporter_request_obj.orphan_donation_type])
+
+                # In case of other categories
+                amount_donated_per_month = 400.0
+
+                total_amount_per_beneficiary = amount_donated_per_month * \
+                    duration_factors[supporter_request_obj.orphan_donation_type]
+
+                sponsorship = Supporter_beneficiary_sponsorship(
+                    total_amount_donated=supporter_request_obj.total_amount,
+                    amount_donated_monthly=total_amount_per_beneficiary,
+                    start_date=current_date,
+                    end_date=date_after,
+                    beneficiary=beneficiary_temp,
+                    supporter=support_obj,
+                )
+                sponsorship.save()
+
+        # Update the request status
+        supporter_request_obj.status = "مكتمل"
+        supporter_request_obj.save()
+
+        messages.success(request, "لقد تم إنشاء كفالة جديدة بنجاح!")
+        return redirect("supporter_beneficiary_sponsorship")
+
+    elif request.method == 'GET':
+
+        # Retrieve only supporter requests with "charity selection"
+        supporter_requests_list = Supporter_request.objects.filter(
+            selection_type="الجمعية").all()
+
+        beneficiary_list = beneficiary.objects.filter().all()
+
+        context = {
+            "supporter_requests": supporter_requests_list,
+            "beneficiaries": beneficiary_list,
+        }
+
+        return render(request, "dashboard/add_sponsorship.html", context)
+
+    return render(request, "dashboard/add_sponsorship.html", context)
 
 
 @group_required("Management")
