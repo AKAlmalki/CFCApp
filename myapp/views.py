@@ -139,7 +139,7 @@ def sign_up(request):
 
             return redirect('sign-up')
 
-        email_exists = CustomUser.objects.filter(email=email).exists()
+        email_exists = CustomUser.objects.filter(email__iexact=email).exists()
 
         if email_exists:
             # Pass request data back
@@ -422,8 +422,8 @@ def validate_email(request):
         data = "false"
 
         cu_data = not CustomUser.objects.filter(email__iexact=email).exists()
-        b_data = not beneficiary.objects.filter(email_iexact=email).exists()
-        s_data = not Supporter.objects.filter(email_iexact=email).exists()
+        b_data = not beneficiary.objects.filter(email__iexact=email).exists()
+        s_data = not Supporter.objects.filter(email__iexact=email).exists()
 
         if cu_data or b_data or s_data:
             data = "true"
