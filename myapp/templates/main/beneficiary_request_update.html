@@ -73,22 +73,22 @@
                       <h6 class="col form-label" for="id_personalinfo_file_no">رقم الملف</h6>
                       <input type="text" class="form-control" id="id_personalinfo_file_no" name="personalinfo_file_no" value="{{ beneficiary.file_no }}" disabled readonly>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_first_name">الأسم الأول<span style="color: red">*</span></h6>
                       <input type="text" class="form-control" id="id_personalinfo_first_name" name="personalinfo_first_name" data-bs-title="الأسم الأول" value="{{ beneficiary.first_name }}">
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_second_name">الأسم الثاني<span style="color: red">*</span></h6>
                       <input type="text" class="form-control" id="id_personalinfo_second_name" name="personalinfo_second_name" data-bs-title="الأسم الثاني" value="{{ beneficiary.second_name }}">
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_last_name">الأسم الأخير<span style="color: red">*</span></h6>
                       <input type="text" class="form-control" id="id_personalinfo_last_name" name="personalinfo_last_name" data-bs-title="الأسم الأخير" value="{{ beneficiary.last_name }}">
                     </div>
                   </div>
         
                   <div class="row row-cols-lg-2 row-cols-xl-4">
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_gender">الجنس<span style="color: red">*</span></h6>
                       <select
                         name="personalinfo_gender"
@@ -101,7 +101,7 @@
                         <option value="انثى">انثى</option>
                       </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_date_of_birth">تاريخ الميلاد<span style="color: red">*</span></h6>
                       <input type="date" class="form-control" id="id_personalinfo_date_of_birth" name="personalinfo_date_of_birth" data-bs-title="تاريخ الميلاد">
                     </div>
@@ -123,7 +123,7 @@
                       </div>
                       <div class="form-text" id="basic-addon4">يبدا رقم الجوال بدون الصفر, مثال (512345678)</div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_email">البريد الالكتروني<span style="color: red">*</span></h6>
                       <input type="email" class="form-control" id="id_personalinfo_email" name="personalinfo_email" data-bs-title="البريد الالكتروني" value="{{ beneficiary.email }}">
                     </div>
@@ -132,7 +132,7 @@
                   <hr>
         
                   <div class="row row-cols-md-1 row-cols-xl-3">
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_nationality">الجنسية<span style="color: red">*</span></h6>
                       <select
                         name="personalinfo_nationality"
@@ -351,11 +351,11 @@
                         <option value="زيمبابوي">زيمبابوي</option>
                       </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_national_id">رقم الهوية/الإقامة<span style="color: red">*</span></h6>
                       <input type="text" class="form-control convert-to-english" id="id_personalinfo_national_id" name="personalinfo_national_id" data-bs-title="رقم الهوية / الإقامة" value="{{ beneficiary.national_id }}">
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة<span style="color: red">*</span></h6>
                       <input type="date" class="form-control" id="id_personalinfo_national_id_exp_date" name="personalinfo_national_id_exp_date"
                       data-bs-title="تاريخ انتهاء الهوية / الإقامة">
@@ -363,7 +363,7 @@
                   </div>
         
                   <div class="row row-cols-md-1 row-cols-lg-3">
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_category">التصنيف الرئيسي<span style="color: red">*</span></h6>
                       <select
                         name="personalinfo_category"
@@ -381,7 +381,7 @@
                         <option value="فرد">فرد</option>
                       </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_marital_status">الحالة الاجتماعية<span style="color: red">*</span></h6>
                       <select
                         name="personalinfo_marital_status"
@@ -399,7 +399,7 @@
                       </select>
                     </div>
         
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_educational_level">المستوى التعليمي<span style="color: red">*</span></h6>
                       <select
                         name="personalinfo_educational_level"
@@ -432,12 +432,12 @@
 
                   <div class="row row-cols-lg-2" id="id_personalinfo_widower_group_info"
                   {% if beneficiary_death_date_father_husband or beneficiary.washing_place %}{% else %}style="display: none !important"{% endif %}>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_death_date_father_husband">تاريخ وفاة الأب/الزوج</h6>
                       <input type="date" class="form-control" id="id_personalinfo_death_date_father_husband" name="personalinfo_death_date_father_husband"
                       data-bs-title="تاريخ وفاة الأب/الزوج">
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_washing_place">المغسلة التي تم التجهيز فيها</h6>
                       <select
                         name="personalinfo_washing_place"
@@ -465,7 +465,7 @@
                   <hr id="widower_hr" style="display: none"/>
         
                   <div class="row row-cols-lg-2 row-cols-xl-4">
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_health_status">الحالة الصحية<span style="color: red">*</span></h6>
                       <select
                         name="personalinfo_health_status"
@@ -479,12 +479,12 @@
                         <option value="غير جيدة">غير جيدة</option>
                       </select>
                     </div>
-                    <div class="mb-3" id="id_personalinfo_disease_type_group_info"
+                    <div class="mb-3 form-group" id="id_personalinfo_disease_type_group_info"
                     {% if beneficiary.disease_type %}{% else %}style="display: none !important"{% endif %}>
                       <h6 class="col form-label" for="id_personalinfo_disease_type">نوع المرض</h6>
                       <input type="text" class="form-control" id="id_personalinfo_disease_type" name="personalinfo_disease_type" data-bs-title="نوع المرض" value="{{ beneficiary.disease_type }}">
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_work_status">هل يعمل؟<span style="color: red">*</span></h6>
                       <select
                         name="personalinfo_work_status"
@@ -498,7 +498,7 @@
                         <option value="لا">لا</option>
                       </select>
                     </div>
-                    <div class="mb-3" id="id_personalinfo_employer_group_info"
+                    <div class="mb-3 form-group" id="id_personalinfo_employer_group_info"
                     {% if beneficiary.employer %}{% else %}style="display: none !important"{% endif %}>
                       <h6 class="col form-label" for="id_personalinfo_employer">جهة العمل</h6>
                       <input type="text" class="form-control" id="id_personalinfo_employer" name="personalinfo_employer" data-bs-title="جهة العمل" value="{{ beneficiary.employer }}">
@@ -506,11 +506,11 @@
                   </div>
                   
                   <div class="row row-cols-lg-2">
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_bank_iban">رقم الإيبان<span style="color: red">*</span></h6>
                       <input type="text" class="form-control convert-to-english" id="id_personalinfo_bank_iban" name="personalinfo_bank_iban" data-bs-title="رقم الإيبان" value="{{ beneficiary.bank_iban }}">
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_bank_type">أسم البنك<span style="color: red">*</span></h6>
                       <select
                         name="personalinfo_bank_type"
@@ -3014,9 +3014,9 @@
         errorMessages = [];
 
         form.find(".help-block.invalid-feedback").each(function () {
-          var fieldName = $(this).prevAll("input, select, textarea").attr("data-bs-title");
+          var fieldName = $(this).closest('.form-group').find("input, select, textarea").attr("data-bs-title");
           var errorMessage = $(this).text().trim(); // Get the trimmed text content
-
+          
           // Check if the errorMessage is not empty before pushing it
           if (errorMessage !== "") {
             errorMessages.push("<li>" + fieldName + ": " + errorMessage + "</li>");
