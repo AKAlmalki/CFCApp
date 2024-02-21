@@ -812,40 +812,32 @@
                                     <input type="text" class="form-control" id="id_modal_reviewd_at" name="reviewd_at" disabled readonly>
                                   </div>
                                   <div class="mb-3">
-                                    <h6 class="col form-label" for="id_modal_is_qualified">مؤهل؟</h6>
-                                    <input type="text" class="form-control" id="id_modal_is_qualified" name="is_qualified" disabled readonly>
-                                  </div>
-                                  <div class="mb-3">
                                     <h6 class="col form-label" for="id_modal_is_benefiting">مستفيد؟</h6>
                                     <input type="text" class="form-control" id="id_modal_is_benefiting" name="is_benefiting" disabled readonly>
                                   </div>
                                   <div class="mb-3">
-                                    <label for="id_modal_needs_descriptions" class="col form-label">وصف الاحتياج</label>
-                                    <textarea class="form-control" id="id_modal_needs_descriptions" rows="5" disabled readonly></textarea>
+                                    <label for="id_modal_case_study" class="col form-label">دراسة الحالة</label>
+                                    <textarea class="form-control" id="id_modal_case_study" name="modal_case_study" rows="5" disabled readonly></textarea>
                                   </div>
                                   <hr>
                                   <div class="mb-3">
-                                    <label for="id_modal_request_comment" class="col form-label">التعليقات</label>
+                                    <label for="id_modal_request_comment" class="col form-label">الملاحظات</label>
                                     <textarea class="form-control" disabled readonly id="id_modal_request_comment" rows="5" name="modal_request_comment"></textarea>
                                   </div>
-                                  <div class="mb-3">
-                                    <label for="id_modal_request_status" class="col form-label">حالة الطلب</label>
-                                    <select class="form-select" id="id_modal_request_status" rows="5" name="modal_request_status" disabled readonly>
-                                      <option value selected>---------</option>
-                                      <option value="new">جديد</option>
-                                      <option value="under review">تحت المراجعة</option>
-                                      <option value="waiting">انتظار</option>
-                                      <option value="not complete">غير مكتمل</option>
-                                      <option value="rejected">مرفوض</option>
-                                      <option value="accepted">مقبول</option>
-                                      <option value="needs update">يحتاج تحديث</option>
-                                    </select>
+                                  <div class="row row-cols-lg-2">
+                                    <div class="mb-3">
+                                      <label for="id_modal_request_status" class="col form-label">حالة الطلب</label>
+                                      <input class="form-control" id="id_modal_request_status" name="modal_request_status" disabled readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                      <label for="id_modal_beneficiary_file_status" class="col form-label">حالة الملف</label>
+                                      <input type="text" class="form-control" id="id_modal_beneficiary_file_status" name="modal_beneficiary_file_status" disabled readonly>
+                                    </div>
                                   </div>
                                 </form>
                               </div>
                               <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
-                                <button type="button" class="btn btn-primary">قبول الطلب</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
                               </div>
                             </div>
                           </div>
@@ -975,8 +967,7 @@
           >
             {% csrf_token %}
             <!-- the below fields determine the action url depending on the clicked button -->
-            <input type="hidden" id="accept_url" value="{% url 'supporter_request_confirm' supporter_id=supporter.id s_request_id=supporter_request.id %}">
-            <input type="hidden" id="change_status_url" value="{% url 'supporter_request_update' supporter_id=supporter.id s_request_id=supporter_request.id %}">
+            <input type="hidden" id="change_status_url" value="{% url 'supporter_request_confirm' supporter_id=supporter.id s_request_id=supporter_request.id %}">
 
             <h4 class="fw-bold mt-4 mb-4">معلومات مُراجع الطلب</h4>
             <div class="mb-3">
@@ -986,6 +977,10 @@
             <div class="mb-3">
               <h6 class="col form-label" for="id_reviewd_at">تاريخ المراجعة</h6>
               <input type="text" class="form-control" id="id_reviewd_at" name="reviewd_at" disabled readonly value="{% if supporter_request.reviewed_at %}{{ supporter_request.reviewed_at }}{% else %}----{% endif %}">
+            </div>
+            <div class="mb-3">
+              <h6 class="col form-label" for="id_reviewed_by">مُراجع الطلب</h6>
+              <input type="text" class="form-control" id="id_reviewed_by" name="reviewed_by" disabled readonly value="{% if supporter_request.reviewed_by %}{{ supporter_request.reviewed_by }}{% else %}----{% endif %}">
             </div>
             <div class="mb-3">
               <h6 class="col form-label" for="id_total_amount">المبلغ الإجمالي</h6>
@@ -1009,20 +1004,21 @@
             </div>
             <div class="mb-3">
               <label for="id_request_status" class="col form-label">حالة الطلب</label>
-              <select class="form-select" id="id_request_status" rows="5" name="request_status" {% if supporter_request.status == "مقبول" %}disabled readonly{% endif %}>
+              <select class="form-select" id="id_request_status" rows="5" name="request_status">
                 <option value selected>---------</option>
                 <option value="جديد">جديد</option>
                 <option value="تحت المراجعة">تحت المراجعة</option>
                 <option value="انتظار">انتظار</option>
                 <option value="غير مكتمل">غير مكتمل</option>
+                <option value="مكتمل">مكتمل</option>
                 <option value="مرفوض">مرفوض</option>
                 <option value="مقبول">مقبول</option>
                 <option value="بحاجة الى تحديث">بحاجة الى تحديث</option>
               </select>
             </div>
             <div class="mb-3">
-              <label for="id_request_comment" class="col form-label">التعليقات</label>
-              <textarea class="form-control" id="id_request_comment" rows="5" name="request_comment" value="{% if supporter_request.comment %}{{ supporter_request.comment }}{% else %}{% endif %}" {% if supporter_request.status == "مقبول" %}disabled readonly{% endif %}></textarea>
+              <label for="id_request_comment" class="col form-label">الملاحظات</label>
+              <textarea class="form-control" id="id_request_comment" rows="5" name="request_comment" value="{% if supporter_request.comment %}{{ supporter_request.comment }}{% else %}{% endif %}"></textarea>
             </div>
 
             <hr class="mt-4">
@@ -1031,8 +1027,8 @@
               <div class="">
                 <a type="button" class="btn btn-secondary" href="{% url 'dashboard_supporters_requests' %}">الرجوع لصفحة الطلبات</a>
 
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmationModal" {% if supporter_request.status == "مقبول" %}disabled{% endif %}>
-                  قبول الطلب
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmationModal">
+                  تحديث حالة الطلب
                 </button>
 
                 {% comment %} <a type="button" class="btn btn-primary" onclick="setActionAndSubmit('#change_status_url')">
@@ -1052,7 +1048,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
-                        <button type="button" class="btn btn-success" onclick="setActionAndSubmit('#accept_url')">نعم, متأكد!</button>
+                        <button type="button" class="btn btn-success" onclick="setActionAndSubmit('#change_status_url')">نعم, متأكد!</button>
                       </div>
                     </div>
                   </div>
@@ -1106,7 +1102,6 @@
                national_id_exp_date = data.national_id_exp_date.substring(0, 10);
              }
              document.getElementById('id_modal_national_id_exp_date').value = national_id_exp_date;
-             document.getElementById('id_modal_is_qualified').value = data.is_qualified;
              document.getElementById('id_modal_category').value = data.category;
              document.getElementById('id_modal_marital_status').value = data.marital_status;
              document.getElementById('id_modal_educational_level').value = data.educational_level;
@@ -1121,7 +1116,13 @@
              }
              document.getElementById('id_modal_death_date_father_husband').value = death_date_father_husband;
              document.getElementById('id_modal_washing_place').value = data.washing_place;
-             document.getElementById('id_modal_is_benefiting').value = data.is_benefiting;
+             console.log(data.is_benefiting);
+             if (data.is_benefiting) {
+              document.getElementById('id_modal_is_benefiting').value = "نعم";
+             } else {
+              document.getElementById('id_modal_is_benefiting').value = "لا";
+             }
+             
              // Convert ISO 8601 date into Date objects
              var receive_date = new Date(data.received_at);
              var review_date = new Date(data.reviewed_at);
