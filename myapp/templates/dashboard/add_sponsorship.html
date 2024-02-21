@@ -1,0 +1,203 @@
+{% extends "dashboard/dbase.html" %} {% load humanize %} {% block title %} إنشاء كفالة {% endblock %}
+{% block head %}
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <!-- Include jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+  {% if messages %}
+  <script>
+    // Execute the following JavaScript code when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show the modal when there are messages
+      var modal = new bootstrap.Modal(document.getElementById('errorModal'));
+      modal.show();
+    });
+  </script>
+  {% endif %}
+
+  {% for message in messages %}
+  <div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">رسالة</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ message }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="row mt-3">
+    <div class="nav-breadcrumb mb-2">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">لوحة القيادة</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'supporter_beneficiary_sponsorship' %}">سجل الكفالات</a></li>
+          <li class="breadcrumb-item active" aria-current="page">إنشاء كفالة</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="card mb-4 bg-light">
+      <div class="card-body">
+        <form
+          id="myform"
+          name="myform"
+          method="POST"
+          action="{% url 'add_sponsorship' %}"
+          class="needs-validation"
+          novalidate
+        >
+        {% csrf_token %}
+          <div>
+            <h2 class="card-title fw-bold"><a class="nav-link d-inline" href="{% url 'supporter_beneficiary_sponsorship' %}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi-arrow-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+              </svg>
+            </a>إنشاء كفالة</h2>
+            <small class="text-muted">طلب جديد</small>
+          </div>
+            <hr>
+            <div class="personal_info">
+              <h3 class="mt-4 mb-4">المعلومات الشخصية</h3>
+              <div class="row row-cols-md-1">
+                <div class="mb-3">
+                  <h6 class="col form-label" for="id_supporter_request">طلب الداعم</h6>
+                  <select class="form-select" id="id_supporter_request" name="supporter_request" required>
+                    <option value selected>---------</option>
+                      {% for supporter_request in supporter_requests %}
+                      <option value="{{ supporter_request.id }}">{{ supporter_request.supporter.national_id }} - {{ supporter_request.supporter.first_name }} {{ supporter_request.supporter.last_name }}</option>
+                      {% endfor %}
+                  </select>
+                </div>
+                <div class="row row-cols-md-2">
+                  <div class="mb-3">
+                    <h6 class="col form-label" for="id_beneficiary_selection">المستفيد</h6>
+                    <select class="form-select" id="id_beneficiary_selection" name="beneficiary_selection">
+                      <option value selected>---------</option>
+                      {% for beneficiary in beneficiaries %}
+                      <option value="{{ beneficiary.id }}|{{ beneficiary.first_name }}|{{ beneficiary.last_name}}|{{ beneficiary.national_id }}|{{ beneficiary.email }}">{{ beneficiary.national_id }} - {{ beneficiary.first_name }} {{ beneficiary.last_name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <a id="addBeneficiaryBtn" class="btn btn-primary px-5 mt-4">إضافة المستفيد</a>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="mb-3 table-responsive ">
+                <h4 class="col form-label mt-3">قائمة المستفيدين</h4>
+                <div class="mt-3">
+                  <table class="table table-striped-columns mb-1 border" id="beneficiariesTable">
+                    <thead>
+                      <tr>
+                        <th>رقم المستفيد</th>
+                        <th>الاسم كامل</th>
+                        <th>رقم الهوية</th>
+                        <th>الإجراءات</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- here all added beneficiaries -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Hidden input field to store beneficiary table data -->
+              <input type="hidden" id="beneficiary_data" name="beneficiary_data" value="">
+
+            </div> <!-- end line personal info -->
+
+            <hr class="mt-4">
+
+            <a type="button" class="btn btn-secondary" href="{% url 'supporter_beneficiary_sponsorship' %}">الرجوع لسجل الكفالات</a>
+            <button type="submit" class="btn btn-success">إنشاء كفالة جديدة</button>
+        </form>
+      </div> <!-- end line card body -->
+    </div> <!-- end line card -->
+  </div> <!-- end line container -->
+
+</div>
+<script>
+  $(document).ready(function() {
+    $('#addBeneficiaryBtn').click(function() {
+      var selectedBeneficiary = $('#id_beneficiary_selection option:selected');
+      if (selectedBeneficiary.val() === '') {
+        alert('يرجى تحديد مستفيد أولاً.');
+        return;
+      }
+  
+      var beneficiaryData = selectedBeneficiary.val().split('|');
+
+      var beneficiaryId = beneficiaryData[0];
+      var beneficiaryFirstName = beneficiaryData[1];
+      var beneficiaryLastName = beneficiaryData[2];
+      var beneficiaryNationalId = beneficiaryData[3];
+
+      var beneficiaryRow = '<tr data-id="' + beneficiaryId + '"><td>' + beneficiaryId + '</td><td>' + beneficiaryFirstName + ' ' + beneficiaryLastName + '</td><td>' + beneficiaryNationalId + '</td><td><button class="btn btn-danger deleteBtn">حذف</button></td></tr>';
+      $('#beneficiariesTable tbody').append(beneficiaryRow);
+
+      // Remove the selected option from the select element
+      selectedBeneficiary.remove();
+    });
+
+    $(document).on('click', '.deleteBtn', function() {
+      var row = $(this).closest('tr');
+      var beneficiaryId = row.data('id');
+      var beneficiaryFullName = row.find('td:eq(1)').text();
+      var beneficiaryNationalId = row.find('td:eq(2)').text();
+
+      // Recreate the option with all original values 
+      var beneficiaryOption = '<option value="' + beneficiaryId + '">' + beneficiaryNationalId + ' - ' + beneficiaryFullName + '</option>';
+      
+      // Add the removed option back to the select element
+      $('#id_beneficiary_selection').append(beneficiaryOption);
+
+      $(this).closest('tr').remove();
+    });
+
+    $('#myform').submit(function(event) {
+      if ($('#beneficiariesTable tbody tr').length === 0) {
+        event.preventDefault();
+        alert('يرجى إضافة مستفيد واحد على الأقل.');
+      }
+
+      // Prepare beneficiary table data as JSON
+      var beneficiaryData = [];
+      $('#beneficiariesTable tbody tr').each(function() {
+        var row = $(this);
+        var beneficiary = {
+          'id': row.find('td:eq(0)').text(),
+          'full_name': row.find('td:eq(1)').text(),
+          'national_id': row.find('td:eq(2)').text()
+        };
+        beneficiaryData.push(beneficiary);
+      });
+      $('#beneficiary_data').val(JSON.stringify(beneficiaryData));
+
+      // Check if the supporter request field is not selected
+      var supporterRequestField = $('#id_supporter_request');
+      if (supporterRequestField.val() === '') {
+        event.preventDefault();
+        alert('يرجى اختيار طلب الداعم.');
+        supporterRequestField.focus();
+        return;
+      }
+    });
+  });
+</script>
+{% endblock %}
