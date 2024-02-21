@@ -2237,6 +2237,7 @@ def beneficiary_request_update(request, user_id):
                 attachment_type_ar = attachment.file_type
 
             beneficiary_attachment_list.append({
+                'id': attachment.id,
                 'file_path': attachment.file_object.url,
                 'file_extension': file_extension(attachment.file_object.url),
                 'file_name': attachment.filename().split(".")[0],
@@ -2495,7 +2496,7 @@ def beneficiary_request_update_confirm(request, user_id):
 
         dependent_table = data.get('dependents-table', None)
 
-        print(data.get('dependents-table', None))
+        # print(data.get('dependents-table', None))
         # Parse the JSON string into a Python object
         try:
             dependents_list = json.loads(dependent_table)
@@ -2681,7 +2682,26 @@ def beneficiary_request_update_confirm(request, user_id):
                 if dependent_income_list:
                     Dependent_income.objects.bulk_create(dependent_income_list)
 
-        # beneficiary_attachment_list = []
+        # Get filesToDelete array from request.POST (data)
+        files_to_delete = json.loads(data.get('filesToDelete', '[]'))
+
+        for file_id in files_to_delete:
+            try:
+                # Query Beneficiary_attachment object by its ID
+                attachment = Beneficiary_attachment.objects.get(pk=file_id)
+
+                # Delete file from storage
+                if attachment.file_object:
+                    # This will delete the file from storage
+                    attachment.file_object.delete(save=False)
+
+                # Delete the Beneficiary_attachment object
+                attachment.delete()
+            except Beneficiary_attachment.DoesNotExist:
+                # Handle case where the Beneficiary_attachment object does not exist
+                print('[Error] - Attchment to delete is not found!')
+
+        beneficiary_attachment_list = []
 
         # for attachment in beneficiary_attachment_obj:
         #     # A variable that holds the attachment type in Arabic
@@ -2723,28 +2743,6 @@ def beneficiary_request_update_confirm(request, user_id):
         #         'file_size': attachment.file_size,
         #         'attachment_type': attachment_type_ar,
         #     })
-
-        # # Convert date of birth to be populated in the template
-        # dob = date(
-        #     beneficiary_obj.date_of_birth.year,
-        #     beneficiary_obj.date_of_birth.month,
-        #     beneficiary_obj.date_of_birth.day
-        # )
-
-        # # Convert date of birth to be populated in the template
-        # national_id_exp_date = date(
-        #     beneficiary_obj.national_id_exp_date.year,
-        #     beneficiary_obj.national_id_exp_date.month,
-        #     beneficiary_obj.national_id_exp_date.day
-        # )
-
-        # death_date_father_husband = None
-        # if beneficiary_obj.death_date_father_husband is not None:
-        #     death_date_father_husband = date(
-        #         beneficiary_obj.death_date_father_husband.year,
-        #         beneficiary_obj.death_date_father_husband.month,
-        #         beneficiary_obj.death_date_father_husband.day
-        #     )
 
         context = {
             'user_info': user,
