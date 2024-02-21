@@ -15,6 +15,14 @@
   #submit_confirmation {
     display: none;
   }
+
+  .file-names-list {
+    list-style-type: none;
+  }
+
+  .file-names-list li {
+    max-width: 350px;
+  }
 </style>
 {% endblock %} {% block content %}
 <div class="container mt-5 px-0 mb-4 p-5 rounded-3">
@@ -496,6 +504,8 @@
                       id="id_personalinfo_educational_level"
                     >
                       <option value="" selected>---------</option>
+                      <option value="أُمّيّ (لا يقرأ ولا يكتب)">أُمّيّ (لا يقرأ ولا يكتب)</option>
+                      <option value="يقرأ ويكتب">يقرأ ويكتب</option>
                       <option value="أول ابتدائي">أول ابتدائي</option>
                       <option value="ثاني ابتدائي">ثاني ابتدائي</option>
                       <option value="ثالث ابتدائي">ثالث ابتدائي</option>
@@ -509,7 +519,6 @@
                       <option value="ثاني ثانوي">ثاني ثانوي</option>
                       <option value="ثالث ثانوي">ثالث ثانوي</option>
                       <option value="جامعي">جامعي</option>
-                      <option value="لا يدرس">لا يدرس</option>
                     </select>
                   </div>
                 </div>
@@ -715,6 +724,7 @@
           <div class="mt-3">
             <div id="family-form">
               <div class="row row-cols-md-2 row-cols-xl-4">
+
                 <div class="col-md-6 mb-4 form-group">
                   <label for="id_dependent_info_first_name" class="form-label"
                     >الأسم الأول<span style="color: red">*</span
@@ -818,7 +828,6 @@
                     id="id_dependent_info_marital_status"
                   >
                     <option value selected>---------</option>
-                    <option value="طالب/ـة">طالب/ـة</option>
                     <option value="طفل/ـة">طفل/ـة</option>
                     <option value="ربة منزل">ربة منزل</option>
                     <option value="متزوج/ـة">متزوج/ـة</option>
@@ -889,7 +898,8 @@
                     id="id_dependent_info_educational_degree"
                   >
                     <option value selected>---------</option>
-                    <option value="لا يوجد">لا يوجد</option>
+                    <option value="أُمّيّ (لا يقرأ ولا يكتب)">أُمّيّ (لا يقرأ ولا يكتب)</option>
+                    <option value="يقرأ ويكتب">يقرأ ويكتب</option>
                     <option value="ابتدائي">ابتدائي</option>
                     <option value="متوسط">متوسط</option>
                     <option value="ثانوي">ثانوي</option>
@@ -932,7 +942,45 @@
                 </div>
               </div>
 
-              <hr />
+              <hr/>
+
+              <div class="row">
+                <div class="col-md-6 mb-4 form-group">
+                  <label for="id_dependent_info_work_status" class="form-label"
+                    >هل تعمل؟<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="dependent_info_work_status"
+                    class="form-select"
+                    required
+                    id="id_dependent_info_work_status"
+                    onchange="workCheckDependent(this);"
+                  >
+                    <option value="" selected>---------</option>
+                    <option value="نعم">نعم</option>
+                    <option value="لا">لا</option>
+                  </select>
+                </div>
+                <div
+                  class="col-md-6 mb-4 form-group"
+                  id="id_dependent_info_employer_group_info"
+                  style="display: none"
+                >
+                  <label for="id_dependent_info_employer" class="form-label"
+                    >جهة العمل<span style="color: red">*</span> (عند اختيار
+                    نعم)</label
+                  >
+                  <input
+                    type="text"
+                    name="dependent_info_employer"
+                    maxlength="100"
+                    class="form-control"
+                    id="id_dependent_info_employer"
+                  />
+                </div>
+              </div>
+
+              <hr/>
 
               <h4 class="mb-4">مصادر الدخل</h4>
               <div class="row justify-content-center">
@@ -981,6 +1029,26 @@
 
               <div class="row">
                 <div class="col-md-6 mb-4 form-group">
+                  <label for="id_dependent_info_contribute_to_family_income" class="form-label"
+                    >هل يساهم المرافق في دخل الأسرة؟<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="dependent_info_contribute_to_family_income"
+                    class="form-select"
+                    required
+                    id="id_dependent_info_contribute_to_family_income"
+                  >
+                    <option value="" selected>---------</option>
+                    <option value="نعم">نعم</option>
+                    <option value="لا">لا</option>
+                  </select>
+                </div>
+              </div>
+
+              <hr/>
+
+              <div class="row">
+                <div class="col-md-6 mb-4 form-group">
                   <label
                     for="id_dependent_info_health_status"
                     class="form-label"
@@ -1013,6 +1081,48 @@
                     class="form-control"
                     id="id_dependent_info_disease_type"
                   />
+                </div>
+              </div>
+
+              <hr />
+
+              <div class="row">
+                <div class="col-md-6 mb-4 form-group">
+                  <label
+                    for="id_dependent_info_is_disabled"
+                    class="form-label"
+                    >هل المرافق من ذوي الاعاقة؟<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="dependent_info_is_disabled"
+                    class="form-select"
+                    id="id_dependent_info_is_disabled"
+                    onchange="dependentInfoDisabilityCheck(this);"
+                  >
+                    <option value selected>---------</option>
+                    <option value="نعم">نعم</option>
+                    <option value="لا">لا</option>
+                  </select>
+                </div>
+                <div
+                  class="col-md-6 mb-4 form-group"
+                  id="id_dependentinfo_disability_type_group_info"
+                  style="display: none"
+                >
+                  <label for="id_dependent_info_disability_type" class="form-label"
+                    >نوع الإعاقة<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="dependent_info_disability_type"
+                    class="form-select"
+                    id="id_dependent_info_disability_type"
+                  >
+                    <option value selected>---------</option>
+                    <option value="حركية">حركية</option>
+                    <option value="سمعية">سمعية</option>
+                    <option value="بصرية">بصرية</option>
+                    <option value="عقلية">عقلية</option>
+                  </select>
                 </div>
               </div>
 
@@ -1276,6 +1386,7 @@
                   <option value="ملك">ملك</option>
                   <option value="وقف">وقف</option>
                   <option value="إيجار">إيجار</option>
+                  <option value="سكن تنموي (منتهي بالتمليك)">سكن تنموي (منتهي بالتمليك)</option>
                 </select>
               </div>
             </div>
@@ -1420,27 +1531,6 @@
                     max="99999999.00"
                     class="form-control"
                     id="id_incomeinfo_other"
-                  />
-                  <span class="input-group-text" id="basic-addon1">ر.س.</span>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col mb-4 form-group">
-                <label for="id_incomeinfo_total" class="form-label"
-                  >إجمالي الدخل</label
-                >
-                <div class="input-group mb-3">
-                  <input
-                    type="number"
-                    name="incomeinfo_total"
-                    min="0.00"
-                    max="99999999.00"
-                    step="0.01"
-                    class="form-control"
-                    id="id_incomeinfo_total"
-                    disabled
-                    readonly
                   />
                   <span class="input-group-text" id="basic-addon1">ر.س.</span>
                 </div>
@@ -1597,7 +1687,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-6 mb-4 form-group">
+              <div class="col mb-4 form-group">
                 <label for="id_expensesinfo_other" class="form-label"
                   >أخرى<span style="color: red"
                   >*</span
@@ -1611,24 +1701,6 @@
                     max="99999999.00"
                     class="form-control"
                     id="id_expensesinfo_other"
-                  />
-                  <span class="input-group-text" id="basic-addon1">ر.س.</span>
-                </div>
-              </div>
-              <div class="col-md-6 mb-4 form-group">
-                <label for="id_expensesinfo_total" class="form-label"
-                  >إجمالي المصروفات</label
-                >
-                <div class="input-group mb-3">
-                  <input
-                    type="number"
-                    name="expensesinfo_total"
-                    min="0.00"
-                    max="99999999.00"
-                    class="form-control"
-                    id="id_expensesinfo_total"
-                    disabled
-                    readonly
                   />
                   <span class="input-group-text" id="basic-addon1">ر.س.</span>
                 </div>
@@ -1789,95 +1861,107 @@
           <div class="row mt-3">
 
             <div
-              class="alert alert-warning mt-3"
+              class="alert alert-warning mb-2"
               role="alert"
               id="checkboxError"
             >
-              جميع المرفقات ادناه مطلوبة وهي إلزامية لإكمال الطلب
+              جميع المرفقات المحددة بنجمة حمراء (<span style="color: red">*</span>) مطلوبة وهي إلزامية لإكمال الطلب
+            </div>
+
+            <div
+              class="alert alert-danger mt-1 mb-4"
+              role="alert"
+              id="checkboxError"
+            >
+              الحجم الاقصى للملف الواحد لجميع المرفقات هو ١ ميجابايت <span dir="ltr">(1 MB)</span>, بحيث انه يمكن رفع اكثر من ملف لبعض المرفقات بما لا يتجاوز حجم 1 ميجابايت للملف الواحد
             </div>
 
             <div class="col-12 col-lg-6 row-gap-3 mb-3 mt-2">
 
               <div class="mb-4 row column-gap-4 fileInputContainer">
-                <div class="col d-flex flex-column">
-                  <label class="form-label" id="id_beneficiaryNationalIDTitle"
+                <div class="row pe-0">
+                  <label class="form-label col pt-3" id="id_beneficiaryNationalIDTitle"
                     >صورة الهوية الوطنية/الإقامة<span style="color: red">*</span></label
                   >
-                  <div
-                    class="col text-muted"
-                    id="id_fileNamesBeneficiaryNationalID"
-                  ></div>
-                  <!--- Place of showing file names -->
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileBeneficiaryNationalID"
+                      >إرفاق ملف</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileBeneficiaryNationalID"
+                    name="fileBeneficiaryNationalID"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                  />
+                  
                 </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileBeneficiaryNationalID"
-                    >إرفاق ملف</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileBeneficiaryNationalID"
-                  name="fileBeneficiaryNationalID"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                />
+                <div
+                  class="col text-muted"
+                  id="id_fileNamesBeneficiaryNationalID"
+                ></div>
+                <!--- Place of showing file names -->
+                
               </div>
 
               <hr />
 
               <div class="mb-4 row column-gap-4 fileInputContainer">
-                <div class="col d-flex flex-column">
-                  <label class="form-label">العنوان الوطني<span style="color: red">*</span></label>
-                  <div
-                    class="col text-muted"
-                    id="id_fileNamesNationalAddress"
-                  ></div>
-                  <!--- Place of showing file names -->
+                <div class="row pe-0">
+                  <label class="form-label col pt-3">العنوان الوطني<span style="color: red">*</span></label>
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileBeneficiaryNationalAddress"
+                      >إرفاق ملف</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileBeneficiaryNationalAddress"
+                    name="fileBeneficiaryNationalAddress"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                  />
                 </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileBeneficiaryNationalAddress"
-                    >إرفاق ملف</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileBeneficiaryNationalAddress"
-                  name="fileBeneficiaryNationalAddress"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                />
+                <div
+                  class="col text-muted"
+                  id="id_fileNamesNationalAddress"
+                ></div>
+                <!--- Place of showing file names -->
+
               </div>
 
               <hr />
 
               <div class="mb-4 row column-gap-4 fileInputContainer">
-                <div class="col d-flex flex-column">
-                  <label class="form-label">صك الدين<span style="color: red">*</span> (في حال وجود دين)</label>
-                  <div
-                    class="col text-muted"
-                    id="id_fileNamesDeptInstrument"
-                  ></div>
-                  <!--- Place of showing file names -->
+                <div class="row pe-0">
+                  <label class="form-label col pt-3">صك الدين<span style="color: red">*</span> (في حال وجود دين)</label>
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileDeptInstrument"
+                      >إرفاق ملفات</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileDeptInstrument"
+                    name="fileDeptInstrument"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                    multiple
+                  />
                 </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileDeptInstrument"
-                    >إرفاق ملفات</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileDeptInstrument"
-                  name="fileDeptInstrument"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                  multiple
-                />
+                <div
+                  class="col text-muted"
+                  id="id_fileNamesDeptInstrument"
+                ></div>
+                <!--- Place of showing file names -->
+
               </div>
 
               <hr />
@@ -1887,33 +1971,34 @@
                 id="id_attachmentPensionOrSocialInsuranceInquiry_group_info"
                 style="display: none"
               >
-                <div class="col d-flex flex-column">
+                <div class="row pe-0">
                   <label
-                    class="form-label"
+                    class="form-label col pt-3"
                     id="id_PensionOrSocialInsuranceInquiryTitle"
                     >مشهد التقاعد أو التأمينات الاجتماعية<span style="color: red">*</span></label
                   >
-                  <div
-                    class="col text-muted"
-                    id="id_fileNamesPensionOrSocialInsuranceInquiry"
-                  ></div>
-                  <!--- Place of showing file names -->
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFilePensionOrSocialInsuranceInquiry"
+                      >إرفاق ملفات</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFilePensionOrSocialInsuranceInquiry"
+                    name="filePensionOrSocialInsuranceInquiry"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                    multiple
+                  />
                 </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFilePensionOrSocialInsuranceInquiry"
-                    >إرفاق ملفات</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFilePensionOrSocialInsuranceInquiry"
-                  name="filePensionOrSocialInsuranceInquiry"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                  multiple
-                />
+                <div
+                  class="col text-muted"
+                  id="id_fileNamesPensionOrSocialInsuranceInquiry"
+                ></div>
+                <!--- Place of showing file names -->
+
               </div>
 
               <hr
@@ -1926,28 +2011,29 @@
                 id="id_attachmentFatherOrHusbandDeathCertificate_group_info"
                 style="display: none"
               >
-                <div class="col d-flex flex-column">
-                  <label class="form-label">شهادة الوفاة للزوج / الأب<span style="color: red">*</span></label>
-                  <div
-                    class="col text-muted"
-                    id="id_fileNamesFatherOrHusbandDeathCertificate"
-                  ></div>
-                  <!--- Place of showing file names -->
+                <div class="row pe-0">
+                  <label class="form-label col pt-3">شهادة الوفاة للزوج / الأب<span style="color: red">*</span></label>
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileFatherOrHusbandDeathCertificate"
+                      >إرفاق ملف</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileFatherOrHusbandDeathCertificate"
+                    name="fileFatherOrHusbandDeathCertificate"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                  />
                 </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileFatherOrHusbandDeathCertificate"
-                    >إرفاق ملف</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileFatherOrHusbandDeathCertificate"
-                  name="fileFatherOrHusbandDeathCertificate"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                />
+                <div
+                  class="col text-muted"
+                  id="id_fileNamesFatherOrHusbandDeathCertificate"
+                ></div>
+                <!--- Place of showing file names -->
+
               </div>
 
               <hr
@@ -1960,31 +2046,32 @@
                 id="id_attachmentLetterFromPrison_group_info"
                 style="display: none"
               >
-                <div class="col d-flex flex-column">
-                  <label class="form-label"
+                <div class="row pe-0">
+                  <label class="form-label col pt-3"
                     >خطاب من السجن<span style="color: red">*</span> (في حال أسرة سجين)</label
                   >
-                  <div
-                    class="col text-muted"
-                    id="id_fileNamesLetterFromPrison"
-                  ></div>
-                  <!--- Place of showing file names -->
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileLetterFromPrison"
+                      >إرفاق ملفات</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileLetterFromPrison"
+                    name="fileLetterFromPrison"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                    multiple
+                  />
                 </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileLetterFromPrison"
-                    >إرفاق ملفات</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileLetterFromPrison"
-                  name="fileLetterFromPrison"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                  multiple
-                />
+                <div
+                  class="col text-muted"
+                  id="id_fileNamesLetterFromPrison"
+                ></div>
+                <!--- Place of showing file names -->
+
               </div>
 
               <hr
@@ -1997,28 +2084,28 @@
                 id="id_attachmentDivorceDeed_group_info"
                 style="display: none"
               >
-                <div class="col d-flex flex-column">
-                  <label class="form-label">صك الطلاق<span style="color: red">*</span></label>
-                  <div
-                    class="col text-muted"
-                    id="id_fileNamesDivorceDeed"
-                  ></div>
-                  <!--- Place of showing file names -->
+                <div class="row pe-0">
+                  <label class="form-label col pt-3">صك الطلاق<span style="color: red">*</span></label>
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileDivorceDeed"
+                      >إرفاق ملف</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileDivorceDeed"
+                    name="fileDivorceDeed"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                  />
                 </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileDivorceDeed"
-                    >إرفاق ملف</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileDivorceDeed"
-                  name="fileDivorceDeed"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                />
+                <div
+                  class="col text-muted"
+                  id="id_fileNamesDivorceDeed"
+                ></div>
+                <!--- Place of showing file names -->
               </div>
 
               <hr
@@ -2031,31 +2118,32 @@
                 id="id_attachmentChildrenResponsibilityDeed_group_info"
                 style="display: none"
               >
-                <div class="col d-flex flex-column">
-                  <label class="form-label"
+                <div class="row pe-0">
+                  <label class="form-label col pt-3"
                     >صك إعالة الأبناء<span style="color: red">*</span> (في حال كانوا مرافقين)</label
                   >
-                  <div
-                    class="col text-muted"
-                    id="id_fileNamesChildrenResponsibilityDeed"
-                  ></div>
-                  <!--- Place of showing file names -->
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileChildrenResponsibilityDeed"
+                      >إرفاق ملفات</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileChildrenResponsibilityDeed"
+                    name="fileChildrenResponsibilityDeed"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                    multiple
+                  />
                 </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileChildrenResponsibilityDeed"
-                    >إرفاق ملفات</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileChildrenResponsibilityDeed"
-                  name="fileChildrenResponsibilityDeed"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                  multiple
-                />
+                <div
+                  class="col text-muted"
+                  id="id_fileNamesChildrenResponsibilityDeed"
+                ></div>
+                <!--- Place of showing file names -->
+
               </div>
 
               <hr
@@ -2064,26 +2152,27 @@
               />
 
               <div class="mb-4 row column-gap-4 fileInputContainer">
-                <div class="col d-flex flex-column">
-                  <label class="form-label">إرفاق مستندات أخرى<span style="color: red">*</span></label>
-                  <div class="col text-muted" id="id_fileNamesOther"></div>
+                <div class="row pe-0">
+                  <label class="form-label col pt-3">إرفاق مستندات أخرى</label>
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileOther"
+                      >إرفاق ملفات</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileOther"
+                    name="fileOther"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                    multiple
+                  />
+                </div>
+                <div class="col text-muted" id="id_fileNamesOther"></div>
                   <!--- Place of showing file names -->
-                </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileOther"
-                    >إرفاق ملفات</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileOther"
-                  name="fileOther"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                  multiple
-                />
+                
               </div>
 
               <hr />
@@ -2092,59 +2181,61 @@
             <div class="col-12 col-lg-6 row-gap-3 mb-3 mt-2">
 
               <div class="mb-4 row column-gap-4 fileInputContainer">
-                <div class="col d-flex flex-column">
-                  <label class="form-label"
+                <div class="row pe-0">
+                  <label class="form-label col pt-3"
                     >عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية<span style="color: red">*</span></label
                   >
-                  <div
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileLeaseContractOrTitleDeed"
+                      >إرفاق ملفات</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileLeaseContractOrTitleDeed"
+                    name="fileLeaseContractOrTitleDeed"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                    multiple
+                  />
+                </div>
+                <div
                     class="col text-muted"
                     id="id_fileNamesLeaseContractOrTitleDeed"
                   ></div>
                   <!--- Place of showing file names -->
-                </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileLeaseContractOrTitleDeed"
-                    >إرفاق ملفات</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileLeaseContractOrTitleDeed"
-                  name="fileLeaseContractOrTitleDeed"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                  multiple
-                />
+
               </div>
 
               <hr />
 
               <div class="mb-4 row column-gap-4 fileInputContainer">
-                <div class="col d-flex flex-column">
-                  <label class="form-label">الفواتير<span style="color: red">*</span> (كهرباء - ماء)</label>
-                  <div
+                <div class="row pe-0">
+                  <label class="form-label col pt-3">الفواتير<span style="color: red">*</span> (كهرباء - ماء)</label>
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileWaterOrElectricityBills"
+                      >إرفاق ملفات</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileWaterOrElectricityBills"
+                    name="fileWaterOrElectricityBills"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                    multiple
+                  />
+                </div>
+                <div
                     class="col text-muted"
                     id="id_fileNamesWaterOrElectricityBills"
                   ></div>
                   <!--- Place of showing file names -->
-                </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileWaterOrElectricityBills"
-                    >إرفاق ملفات</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileWaterOrElectricityBills"
-                  name="fileWaterOrElectricityBills"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                  multiple
-                />
+
               </div>
 
               <hr />
@@ -2154,33 +2245,34 @@
                 id="id_attachmentNationalIDForBeneficiaryForDependents_group_info"
                 style="display: none"
               >
-                <div class="col d-flex flex-column">
+                <div class="row pe-0">
                   <label
-                    class="form-label"
+                    class="form-label col pt-3"
                     id="id_NationalIDForBeneficiaryForDependentsTitle"
                     >صورة الهوية الوطنية/الإقامة للمرافقين<span style="color: red">*</span></label
                   >
-                  <div
-                    class="col text-muted"
-                    id="id_fileNamesNationalIDForBeneficiaryForDependents"
-                  ></div>
-                  <!--- Place of showing file names -->
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileNationalIDForBeneficiaryForDependents"
+                      >إرفاق ملفات</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileNationalIDForBeneficiaryForDependents"
+                    name="fileNationalIDForBeneficiaryDependents"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                    multiple
+                  />
                 </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileNationalIDForBeneficiaryForDependents"
-                    >إرفاق ملفات</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileNationalIDForBeneficiaryForDependents"
-                  name="fileNationalIDForBeneficiaryDependents"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                  multiple
-                />
+                <div
+                  class="col text-muted"
+                  id="id_fileNamesNationalIDForBeneficiaryForDependents"
+                ></div>
+                <!--- Place of showing file names -->
+                
               </div>
 
               <hr
@@ -2193,31 +2285,32 @@
                 id="id_attachmentSocialWarrantyInquiry_group_info"
                 style="display: none"
               >
-                <div class="col d-flex flex-column">
-                  <label class="form-label" id="id_SocialWarrantyInquiryTitle"
+                <div class="row pe-0">
+                  <label class="form-label col pt-3" id="id_SocialWarrantyInquiryTitle"
                     >مشهد الضمان الاجتماعي<span style="color: red">*</span></label
                   >
-                  <div
-                    class="col text-muted"
-                    id="id_fileNamesSocialWarrantyInquiry"
-                  ></div>
-                  <!--- Place of showing file names -->
+                  <div class="col-4 d-flex justify-content-center">
+                    <label
+                      class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                      for="id_formFileSocialWarrantyInquiry"
+                      >إرفاق ملفات</label
+                    >
+                  </div>
+                  <input
+                    class="form-control d-none"
+                    type="file"
+                    id="id_formFileSocialWarrantyInquiry"
+                    name="fileSocialWarrantyInquiry"
+                    accept="application/pdf,image/png, image/jpg, image/jpeg"
+                    multiple
+                  />
                 </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label
-                    class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                    for="id_formFileSocialWarrantyInquiry"
-                    >إرفاق ملفات</label
-                  >
-                </div>
-                <input
-                  class="form-control d-none"
-                  type="file"
-                  id="id_formFileSocialWarrantyInquiry"
-                  name="fileSocialWarrantyInquiry"
-                  accept="application/pdf,image/png, image/jpg, image/jpeg"
-                  multiple
-                />
+                <div
+                  class="col text-muted"
+                  id="id_fileNamesSocialWarrantyInquiry"
+                ></div>
+                <!--- Place of showing file names -->
+                
               </div>
 
               <hr
@@ -2235,7 +2328,7 @@
               السابق
             </button>
             <button
-              class="col button btn-navigate-form-step next"
+              class="col button btn-navigate-form-step next next-attachment"
               type="button"
               step_number="5"
             >
@@ -2352,9 +2445,9 @@
         <!-- Loading state content -->
         <div id="loadingStateEditModal" style="display: none; text-align: center;">
           <div class="spinner-border text-primary mt-5" role="status">
-            <span class="sr-only visually-hidden">Loading...</span>
+            <span class="sr-only visually-hidden">انتظار...</span>
           </div>
-          <p>Loading...</p>
+          <p>انتظار...</p>
         </div>
 
         <!-- Actual modal content -->
@@ -2371,9 +2464,8 @@
             <div class="row row-cols-md-2 row-cols-xl-4">
               <div class="col-md-6 mb-4 form-group">
                 <label for="id_dependent_edit_info_first_name" class="form-label"
-                  >الأسم الأول<span style="color: red">*</span
-                  ></label
-                >
+                  >الأسم الأول<span style="color: red">*</span>
+                </label>
                 <input
                   type="text"
                   id="id_dependent_edit_info_first_name"
@@ -2472,7 +2564,6 @@
                   id="id_dependent_edit_info_marital_status"
                 >
                   <option value selected>---------</option>
-                  <option value="طالب/ـة">طالب/ـة</option>
                   <option value="طفل/ـة">طفل/ـة</option>
                   <option value="ربة منزل">ربة منزل</option>
                   <option value="متزوج/ـة">متزوج/ـة</option>
@@ -2543,7 +2634,8 @@
                   id="id_dependent_edit_info_educational_degree"
                 >
                   <option value selected>---------</option>
-                  <option value="لا يوجد">لا يوجد</option>
+                  <option value="أُمّيّ (لا يقرأ ولا يكتب)">أُمّيّ (لا يقرأ ولا يكتب)</option>
+                  <option value="يقرأ ويكتب">يقرأ ويكتب</option>
                   <option value="ابتدائي">ابتدائي</option>
                   <option value="متوسط">متوسط</option>
                   <option value="ثانوي">ثانوي</option>
@@ -2586,50 +2678,108 @@
               </div>
             </div>
 
-            <hr />
+            <hr/>
+
+            <div class="row">
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_dependent_edit_info_work_status" class="form-label"
+                  >هل تعمل؟<span style="color: red">*</span></label
+                >
+                <select
+                  name="dependent_edit_info_work_status"
+                  class="form-select"
+                  required
+                  id="id_dependent_edit_info_work_status"
+                  onchange="workCheckEditDependent(this);"
+                >
+                  <option value="" selected>---------</option>
+                  <option value="نعم">نعم</option>
+                  <option value="لا">لا</option>
+                </select>
+              </div>
+              <div
+                class="col-md-6 mb-4 form-group"
+                id="id_dependent_edit_info_employer_group_info"
+                style="display: none"
+              >
+                <label for="id_dependent_edit_info_employer" class="form-label"
+                  >جهة العمل<span style="color: red">*</span> (عند اختيار
+                  نعم)</label
+                >
+                <input
+                  type="text"
+                  name="dependent_edit_info_employer"
+                  maxlength="100"
+                  class="form-control"
+                  id="id_dependent_edit_info_employer"
+                />
+              </div>
+            </div>
+
+            <hr/>
 
             <h4 class="mb-4">مصادر الدخل</h4>
-                <div class="row row-cols-xl-3 justify-content-center">
-                  <div class="col-md-4 mb-2 form-group">
-                    <label for="id_dependent_edit_info_monthly_income" class="form-label">دخل المرافق (شهريا)</label>
-                    <div class="input-group mb-3">
-                      <input type="number" name="dependent_edit_info_monthly_income" max="9999999999999999" min="0" class="form-control" id="id_dependent_edit_info_monthly_income" />
-                      <span class="input-group-text" id="basic-addon1">ر.س.</span>
-                    </div>
-                  </div>
-                  <div class="col-md-4 col-lg-5 mb-2 form-group">
-                    <label for="id_dependent_edit_info_income_source" class="form-label">مصدر الدخل للمرافق</label>
-                    <select name="dependent_edit_info_income_source" class="form-select" id="id_dependent_edit_info_income_source">
-                      <option value selected>---------</option>
-                      <option value="الراتب">الراتب</option>
-                      <option value="التأمينات الاجتماعية">التأمينات الاجتماعية</option>
-                      <option value="الضمان الاجتماعي">الضمان الاجتماعي</option>
-                      <option value="مصلحة التقاعد">مصلحة التقاعد</option>
-                      <option value="حساب المواطن">حساب المواطن</option>
-                      <option value="التأهيل الشامل">التأهيل الشامل</option>
-                      <option value="جمعية خيرية">جمعية خيرية</option>
-                      <option value="فاعل خير">فاعل خير</option>
-                      <option value="اخرى">اخرى</option>
-                    </select>
-                  </div>
-                  <div class="col-md-4 col-lg-3 mb-sm-5 mb-md-3 mb-3 mt-4 row justify-content-center align-items-center" id="id_add_row_edit_income_table">
-                    <button type="button" class="btn btn-primary" id="id_add_row_income_edit_info" onclick="addRowToIncomeEditInfoTable()">إضافة مصدر الدخل</button>
-                  </div>
+            <div class="row row-cols-xl-3 justify-content-center">
+              <div class="col-md-4 mb-2 form-group">
+                <label for="id_dependent_edit_info_monthly_income" class="form-label">دخل المرافق (شهريا)</label>
+                <div class="input-group mb-3">
+                  <input type="number" name="dependent_edit_info_monthly_income" max="9999999999999999" min="0" class="form-control" id="id_dependent_edit_info_monthly_income" />
+                  <span class="input-group-text" id="basic-addon1">ر.س.</span>
                 </div>
-                
-                {% comment %} Dependent Income Table {% endcomment %}
-                <table class="table table-striped table-hover mb-5" id="incomeEditInfoTable">
-                  <thead>
-                    <tr>
-                      <th scope="col">دخل المرافق الشهري (ر.س.)</th>
-                      <th scope="col">مصدر الدخل</th>
-                      <th scope="col">الإجراءات</th>
-                    </tr>
-                  </thead>
-                  <tbody id="incomeEditInfoTableBody"></tbody>
-                </table>
+              </div>
+              <div class="col-md-4 col-lg-5 mb-2 form-group">
+                <label for="id_dependent_edit_info_income_source" class="form-label">مصدر الدخل للمرافق</label>
+                <select name="dependent_edit_info_income_source" class="form-select" id="id_dependent_edit_info_income_source">
+                  <option value selected>---------</option>
+                  <option value="الراتب">الراتب</option>
+                  <option value="التأمينات الاجتماعية">التأمينات الاجتماعية</option>
+                  <option value="الضمان الاجتماعي">الضمان الاجتماعي</option>
+                  <option value="مصلحة التقاعد">مصلحة التقاعد</option>
+                  <option value="حساب المواطن">حساب المواطن</option>
+                  <option value="التأهيل الشامل">التأهيل الشامل</option>
+                  <option value="جمعية خيرية">جمعية خيرية</option>
+                  <option value="فاعل خير">فاعل خير</option>
+                  <option value="اخرى">اخرى</option>
+                </select>
+              </div>
+              <div class="col-md-4 col-lg-3 mb-sm-5 mb-md-3 mb-3 mt-4 row justify-content-center align-items-center" id="id_add_row_edit_income_table">
+                <button type="button" class="btn btn-primary" id="id_add_row_income_edit_info" onclick="addRowToIncomeEditInfoTable()">إضافة مصدر الدخل</button>
+              </div>
+            </div>
+            
+            {% comment %} Dependent Income Table {% endcomment %}
+            <table class="table table-striped table-hover mb-5" id="incomeEditInfoTable">
+              <thead>
+                <tr>
+                  <th scope="col">دخل المرافق الشهري (ر.س.)</th>
+                  <th scope="col">مصدر الدخل</th>
+                  <th scope="col">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="incomeEditInfoTableBody"></tbody>
+            </table>
 
             <hr />
+
+            <div class="row">
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_dependent_edit_info_contribute_to_family_income" class="form-label"
+                  >هل يساهم المرافق في دخل الأسرة؟<span style="color: red">*</span></label
+                >
+                <select
+                  name="dependent_edit_info_contribute_to_family_income"
+                  class="form-select"
+                  required
+                  id="id_dependent_edit_info_contribute_to_family_income"
+                >
+                  <option value="" selected>---------</option>
+                  <option value="نعم">نعم</option>
+                  <option value="لا">لا</option>
+                </select>
+              </div>
+            </div>
+
+            <hr/>
 
             <div class="row">
               <div class="col-md-6 mb-4 form-group">
@@ -2670,6 +2820,48 @@
                   class="form-control"
                   id="id_dependent_edit_info_disease_type"
                 />
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+              <div class="col-md-6 mb-4 form-group">
+                <label
+                  for="id_dependent_edit_info_is_disabled"
+                  class="form-label"
+                  >هل المرافق من ذوي الاعاقة؟<span style="color: red">*</span></label
+                >
+                <select
+                  name="dependent_edit_info_is_disabled"
+                  class="form-select"
+                  id="id_dependent_edit_info_is_disabled"
+                  onchange="editDependentInfoDisabilityCheck(this);"
+                >
+                  <option value selected>---------</option>
+                  <option value="نعم">نعم</option>
+                  <option value="لا">لا</option>
+                </select>
+              </div>
+              <div
+                class="col-md-6 mb-4 form-group"
+                id="id_dependent_edit_info_disability_type_group_info"
+                style="display: none"
+              >
+                <label for="id_dependent_edit_info_disability_type" class="form-label"
+                  >نوع الإعاقة<span style="color: red">*</span></label
+                >
+                <select
+                  name="dependent_edit_info_disability_type"
+                  class="form-select"
+                  id="id_dependent_edit_info_disability_type"
+                >
+                  <option value selected>---------</option>
+                  <option value="حركية">حركية</option>
+                  <option value="سمعية">سمعية</option>
+                  <option value="بصرية">بصرية</option>
+                  <option value="عقلية">عقلية</option>
+                </select>
               </div>
             </div>
 
@@ -2770,6 +2962,11 @@
                 needsDescription: cells[14].innerText,
                 educationalLevel: cells[15].innerText,
                 diseaseType: cells[16].innerText,
+                workStatus: cells[17].innerText,
+                employer: cells[18].innerText,
+                contributeToFamilyIncome: cells[19].innerText,
+                disabilityCheck: cells[20].innerText,
+                disabilityType: cells[21].innerText,
             };
             dependentsData.push(dependent);
         }
@@ -2903,6 +3100,8 @@
       "يحتوي الأسم على حروف فقط."
     );
 
+    var includedFieldsEditModal = ["id_dependent_edit_info_national_id"]; // IDs of fields to include
+
     // Define your validation rules here
     $modalForm.validate({
       // Your validation rules
@@ -2930,11 +3129,7 @@
         dependent_edit_info_relationship: {
           required: true,
         },
-        dependent_edit_info_national_id: {
-          required: true,
-          nationalidRegex: true,
-        },
-        dependent_edit_info_national_id_exp_date: {
+        dependent_edit_info_date_of_birth: {
           required: true,
           dateISO: true,
         },
@@ -2959,12 +3154,49 @@
         dependent_edit_info_disease_type: {
           required: true,
         },
-        dependent_edit_info_date_of_birth: {
+        dependent_edit_info_national_id: {
+          required: true,
+          nationalidRegex: true,
+          remote: {
+            url: '/beneficiaries/' + {{ request.user.id }}  + '/update/validate_national_id_edit_dependent/',
+            type: 'post',
+            data: {
+              national_id: function() {
+                return $('#id_dependent_edit_info_national_id').val();
+              },
+              csrfmiddlewaretoken: csrfTokenEditDepForm,  // Include CSRF token
+              base_nid: function() { 
+                // Get the value from the data-attr-base-nid attribute using plain JavaScript
+                var element = document.getElementById('id_dependent_edit_info_national_id');
+                return element.getAttribute('data-attr-base-nid');
+              },
+            },
+          },
+        },
+        dependent_edit_info_national_id_exp_date: {
           required: true,
           dateISO: true,
         },
+        dependent_edit_info_work_status: {
+          required: true,
+        },
+        dependent_edit_info_employer: {
+          required: true,
+        },
+        dependent_edit_info_contribute_to_family_income: {
+          required: true,
+        },
+        dependent_edit_info_is_disabled: {
+          required: true,
+        },
+        dependent_edit_info_disability_type: {
+          required: true,
+        },
         dependent_edit_info_needs_type: {
           required: true,
+        },
+        dependent_edit_info_needs_description: {
+          required: false,
         },
       },
       messages: {
@@ -2994,14 +3226,20 @@
         //$(element).addClass('is-invalid');
         $(element).closest(".form-group").addClass("has-error");
 
-        $(element).addClass("is-invalid");
-        $(element).removeClass("is-valid");
+        // Check if the field is excluded
+        if (includedFieldsEditModal.indexOf(element.id) !== -1) {
+          $(element).addClass("is-invalid");
+          $(element).removeClass("is-valid");
+        }
       },
       unhighlight: function (element, errorClass, validClass) {
         $(element).closest(".form-group").removeClass("has-error");
 
-        $(element).removeClass("is-invalid");
-        $(element).addClass("is-valid");
+        // Check if the field is excluded
+        if (includedFieldsEditModal.indexOf(element.id) !== -1) {
+          $(element).removeClass("is-invalid");
+          $(element).addClass("is-valid");
+        }
       },
       errorPlacement: function (error, element) {
         // Check if the element is inside an input-group
@@ -3210,20 +3448,69 @@
       */
     ];
 
+    // Function to validate file sizes
+    function validateFileSizes() {
+      var files = document.querySelectorAll('input[type="file"]');
+      var maxSize = 1 * 1024 * 1024; // 1MB in bytes
+
+      for (var i = 0; i < files.length; i++) {
+          var fileInput = files[i];
+          var fileList = fileInput.files;
+
+          for (var j = 0; j < fileList.length; j++) {
+              var file = fileList[j];
+
+              // Check if file size exceeds the limit
+              if (file.size > maxSize) {
+                  alert('حجم الملف يجب ألا يتجاوز 1 ميجابايت.');
+                  return false;
+              }
+          }
+      }
+
+      return true; // All files are within the size limit
+    }
+
     // Function to update the names of the uploaded files for each file input
     function updateFileNamesDisplay(fileInputId, fileNamesDivId) {
       var fileInput = document.getElementById(fileInputId);
       var fileNamesDiv = document.getElementById(fileNamesDivId);
+      
 
       // Initialize with a message indicating no file is uploaded
       fileNamesDiv.innerHTML = "[لم يتم إرفاق أي ملفات]";
 
       fileInput.addEventListener("change", function () {
-        if (this.files.length > 0) {
+        var fileList = fileInput.files;
+
+        if (fileList.length > 0) {
           fileNamesDiv.innerHTML = ""; // Clear the initial message
-          for (var i = 0; i < this.files.length; i++) {
-            fileNamesDiv.innerHTML += this.files[i].name + "<br>";
+          var ul = document.createElement("ul"); // Create unordered list element
+          ul.classList.add("file-names-list", "ps-1", "mt-3"); // Add classes to the list
+
+          for (var i = 0; i < fileList.length; i++) {
+            var fileSize = fileList[i].size;
+            var sizeLabel = "";
+
+            if (fileSize < 1024 * 1024) {
+              sizeLabel = (fileSize / 1024).toFixed(2) + " KB";
+            } else {
+              sizeLabel = (fileSize / (1024 * 1024)).toFixed(2) + " MB";
+            }
+
+            // Add CSS class to size label if file size exceeds 1 MB
+            var sizeClass = fileSize > 1024 * 1024 ? "text-bg-danger" : "text-bg-secondary";
+            sizeLabel = "<span class='badge " + sizeClass + " d-inline'>" + sizeLabel + "</span>";
+
+            // Create list item and append to the unordered list
+            var li = document.createElement("li");
+            li.innerHTML = fileList[i].name + " " + sizeLabel;
+            li.classList.add("mb-3", "text-truncate"); // Add class to list item
+            ul.appendChild(li);
           }
+
+           // Append the unordered list to the fileNamesDiv
+          fileNamesDiv.appendChild(ul);
         } else {
           // Show the no files uploaded message if no file is selected
           fileNamesDiv.innerHTML = "[لم يتم إرفاق أي ملفات]";
@@ -3335,54 +3622,6 @@
       },
       "الرجاء إدخال رقم إيبان صحيح"
     );
-
-    // The Code segment to calculate the incomeinfo
-
-    // Select all your input fields
-    var incomeinfo_inputs = document.querySelectorAll(
-      "input[type=number][name^=incomeinfo_]:not([name=incomeinfo_total])"
-    );
-
-    // Function to calculate the sum
-    function calculateSumIncome() {
-      let sum = 0;
-      incomeinfo_inputs.forEach((input) => {
-        const value = parseFloat(input.value) || 0;
-        sum += value;
-      });
-      document.getElementById("id_incomeinfo_total").value = sum.toFixed(2);
-    }
-
-    // Add event listeners to all input fields
-    incomeinfo_inputs.forEach((input) =>
-      input.addEventListener("input", calculateSumIncome)
-    );
-
-    // Code segment ends
-
-    // The Code segment to calculate the expensesinfo
-
-    // Select all your input fields
-    var expensesinfo_inputs = document.querySelectorAll(
-      "input[type=number][name^=expensesinfo_]:not([name=expensesinfo_total])"
-    );
-
-    // Function to calculate the sum
-    function calculateSumExpenses() {
-      let sum = 0;
-      expensesinfo_inputs.forEach((input) => {
-        const value = parseFloat(input.value) || 0;
-        sum += value;
-      });
-      document.getElementById("id_expensesinfo_total").value = sum.toFixed(2);
-    }
-
-    // Add event listeners to all input fields
-    expensesinfo_inputs.forEach((input) =>
-      input.addEventListener("input", calculateSumExpenses)
-    );
-
-    // Code segment ends
 
     /**
      * Mark all form steps as unfinished.
@@ -3570,7 +3809,7 @@
       min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
     });
 
-    var excludedFields = ["id_dependent_info_income_source", "id_dependent_info_monthly_income"]; // IDs of fields to exclude
+    var includedFields = ["id_dependent_info_national_id", "id_personalinfo_phone_number", "id_personalinfo_email", "id_personalinfo_national_id", "id_beneficiaryinfo_iban"]; // IDs of fields to exclude
 
     // When ".next" button is clicked, the following function is executed
     $(".next").click(function () {
@@ -3596,7 +3835,7 @@
           //  });
 
           // Check if the field is excluded
-          if (excludedFields.indexOf(element.id) === -1) {
+          if (includedFields.indexOf(element.id) !== -1) {
             $(element).addClass("is-invalid");
             $(element).removeClass("is-valid");
           }
@@ -3605,7 +3844,7 @@
           $(element).closest(".form-group").removeClass("has-error");
 
           // Check if the field is excluded
-          if (excludedFields.indexOf(element.id) === -1) {
+          if (includedFields.indexOf(element.id) !== -1) {
             $(element).removeClass("is-invalid");
             $(element).addClass("is-valid");
           }
@@ -3754,6 +3993,12 @@
             required: true,
             dateISO: true,
           },
+          dependent_info_work_status: {
+            required: true,
+          },
+          dependent_info_employer: {
+            required: true,
+          },
           dependent_info_gender: {
             required: true,
           },
@@ -3780,6 +4025,18 @@
             dateISO: true,
           },
           dependent_info_needs_type: {
+            required: true,
+          },
+          dependentinfo_needs_description: {
+            required: false,
+          },
+          dependent_info_contribute_to_family_income: {
+            required: true,
+          },
+          dependent_info_is_disabled: {
+            required: true,
+          },
+          dependent_info_disability_type: {
             required: true,
           },
           // housing_income_need_information ---------
@@ -3956,6 +4213,15 @@
       // In case of a valid form inputs, ".next" button will show the next step in the form
       if (form.valid() === true) {
         if ($("#personal_information").is(":visible")) {
+
+          var personalNationalID = $("#id_personalinfo_national_id").val();
+
+          // Alert the user if the provided national ID is added before in the family table
+          if (isNationalIdExists(personalNationalID)) {
+            alert("رقم الهوية/الإقامة لمقدم الطلب تم إضافته بالفعل في قائمة المرافقين!");
+            return;
+          }
+
           current_fs = $("#personal_information");
           // Check if the 'Skip the second step' checkbox is checked
           if ($("#skip-step").is(":checked")) {
@@ -3967,6 +4233,31 @@
           current_fs = $("#dependent_information");
           next_fs = $("#housing_income_need_information");
         } else if ($("#housing_income_need_information").is(":visible")) {
+          
+          // Count the number of checked checkboxes within the specified div
+          var checked_count_needs_type = $("#id_familyinfo_needs_type input[type='checkbox']:checked").length;
+
+          var checked_count_family_issues = $("#id_familyinfo_family_issues input[type='checkbox']:checked").length;
+
+          // Check if at least one checkbox is checked
+          if (checked_count_needs_type < 1) {
+              displayMinChoiceCountNeedsTypeErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+              if (checked_count_family_issues < 1) {
+                displayMinChoiceCountFamilyIssuesErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+                return false;
+            }
+              return false;
+          }
+
+          if (checked_count_family_issues < 1) {
+              displayMinChoiceCountFamilyIssuesErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+              if (checked_count_needs_type < 1) {
+                displayMinChoiceCountNeedsTypeErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+                return false;
+            }
+              return false;
+          } 
+
           current_fs = $("#housing_income_need_information");
           next_fs = $("#attachments_information");
         } else if ($("#attachments_information").is(":visible")) {
@@ -3975,6 +4266,11 @@
 
           // Iterate over visible div containers with file input fields
           $('.fileInputContainer:visible input[type="file"]').each(function () {
+            // Skip over the "other attachments" file input container
+            if ($(this).attr('id') === 'id_formFileOther') {
+                return true; // Continue to the next iteration
+            }
+
             if (this.files.length === 0) {
                 allAttachmentsValid = false;
                 return false; // Exit the loop early since we already found an invalid attachment
@@ -3986,6 +4282,10 @@
               return false;
           }
 
+          if (!validateFileSizes()) {
+              return false;
+          }
+
           current_fs = $("#attachments_information");
           next_fs = $("#submit_confirmation");
         }
@@ -3994,6 +4294,114 @@
         current_fs.hide();
       }
     });
+
+    // Function to display an error message
+    function displayMinChoiceCountNeedsTypeErrorMessage(message, duration) {
+      // Check if the error message element already exists
+      var errorMessageElement = document.getElementById('minChoiceCountNeedsTypeErrorMessage');
+      
+      // If not, create a new element and append it to the page
+      if (!errorMessageElement) {
+        errorMessageElement = document.createElement('div');
+        errorMessageElement.id = 'minChoiceCountNeedsTypeErrorMessage';
+        errorMessageElement.classList.add('alert', 'alert-danger');
+
+        // Get the parent node of the dependent income table
+        var parentElement = document.getElementById('id_familyinfo_needs_type').parentNode;
+
+        // Insert the error message element at the top of the parent node
+        parentElement.insertBefore(errorMessageElement, parentElement.firstChild);
+
+        // Focus on the error message
+        errorMessageElement.focus();
+
+        // Remove the error message after a specified duration
+        //setTimeout(function () {
+        //  removeMaxRowErrorMessage();
+        //}, duration);
+      }
+
+      // Listen for changes in the checkboxes to update the error message
+      var checkboxes = document.querySelectorAll('#id_familyinfo_needs_type input[type="checkbox"]');
+      checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+          // Check if more than one checkbox is checked
+          var checkedCount = Array.from(checkboxes).filter(function (checkbox) {
+            return checkbox.checked;
+          }).length;
+
+          // If more than one checkbox is checked, remove the error message
+          if (checkedCount > 0) {
+            removeMinChoiceCountNeedsTypeErrorMessage();
+          }
+        });
+      });
+
+      // Set the error message text
+      errorMessageElement.textContent = message;
+    }
+
+    // Function to remove the error message
+    function removeMinChoiceCountNeedsTypeErrorMessage() {
+      var errorMessageElement = document.getElementById('minChoiceCountNeedsTypeErrorMessage');
+      if (errorMessageElement) {
+        errorMessageElement.remove();
+      }
+    }
+
+    // Function to display an error message
+    function displayMinChoiceCountFamilyIssuesErrorMessage(message, duration) {
+      // Check if the error message element already exists
+      var errorMessageElement = document.getElementById('minChoiceCountFamilyIssuesErrorMessage');
+      
+      // If not, create a new element and append it to the page
+      if (!errorMessageElement) {
+        errorMessageElement = document.createElement('div');
+        errorMessageElement.id = 'minChoiceCountFamilyIssuesErrorMessage';
+        errorMessageElement.classList.add('alert', 'alert-danger');
+
+        // Get the parent node of the dependent income table
+        var parentElement = document.getElementById('id_familyinfo_family_issues').parentNode;
+
+        // Insert the error message element at the top of the parent node
+        parentElement.insertBefore(errorMessageElement, parentElement.firstChild);
+
+        // Focus on the error message
+        errorMessageElement.focus();
+
+        // Remove the error message after a specified duration
+        //setTimeout(function () {
+        //  removeMaxRowErrorMessage();
+        //}, duration);
+      }
+
+      // Listen for changes in the checkboxes to update the error message
+      var checkboxes = document.querySelectorAll('#id_familyinfo_family_issues input[type="checkbox"]');
+      checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+          // Check if more than one checkbox is checked
+          var checkedCount = Array.from(checkboxes).filter(function (checkbox) {
+            return checkbox.checked;
+          }).length;
+
+          // If more than one checkbox is checked, remove the error message
+          if (checkedCount > 0) {
+            removeMinChoiceCountFamilyIssuesErrorMessage();
+          }
+        });
+      });
+
+      // Set the error message text
+      errorMessageElement.textContent = message;
+    }
+
+    // Function to remove the error message
+    function removeMinChoiceCountFamilyIssuesErrorMessage() {
+      var errorMessageElement = document.getElementById('minChoiceCountFamilyIssuesErrorMessage');
+      if (errorMessageElement) {
+        errorMessageElement.remove();
+      }
+    }
 
     // When ".previous" button is clicked, the following function is called
     $(".previous").click(function () {
@@ -4020,6 +4428,27 @@
       current_fs.hide();
     });
 
+    // A function to check whether the provided national id exists before in the family table or not
+    function isNationalIdExists(nationalId) {
+      var nationalIdExists = false; // Flag variable to indicate whether the national ID exists
+
+      // Iterate through each row in the table body
+      $('#family-table tbody tr').each(function() {
+          // Get the national ID value from the current row
+          var existingNationalId = $(this).find('td[data-attr="dependent_edit_info_national_id"]').text().trim();
+  
+          // Compare the existing national ID with the input national ID
+          if (existingNationalId === nationalId) {
+              // Set the flag variable to true if the national ID already exists
+              nationalIdExists = true;
+              return false; // Exit the loop early since we found a match
+          }
+      });
+  
+      // Return the flag variable indicating whether the national ID exists
+      return nationalIdExists;
+    }
+
     // When "add Child button" is clicked, the following function is called
     $(".addChildBtn").click(function () {
       // This line prevents the form from submitting
@@ -4035,7 +4464,7 @@
         "#id_dependent_info_educational_status"
       ).val();
       var dependentMaritalStatus = $("#id_dependent_info_marital_status").val();
-      var dependentNationalID = $("#id_dependent_info_national_id").val();
+      var dependentNationalID = $("#id_dependent_info_national_id").val().trim();
 
       var dependentHealthStatus = $("#id_dependent_info_health_status").val();
       var dependentMonthlyIncome = $("#id_dependent_info_monthly_income").val();
@@ -4053,10 +4482,31 @@
         "#id_dependent_info_national_id_exp_date"
       ).val();
 
-      var DependentDiseaseType = $("#id_dependent_info_disease_type").val();
-      var DependentNeedsDescription = $(
+      var dependentDiseaseType = $("#id_dependent_info_disease_type").val();
+      var dependentNeedsDescription = $(
         "#id_dependent_info_needs_description"
       ).val();
+
+      var dependentWorkStatus = $("#id_dependent_info_work_status").val();
+      var dependentEmployer = $("#id_dependent_info_employer").val().trim();
+
+      var dependentContributeToFamilyIncome = $("#id_dependent_info_contribute_to_family_income").val();
+      
+      var dependentDisabilityCheck = $("#id_dependent_info_is_disabled").val();
+      var dependentDisabilityType = $("#id_dependent_info_disability_type").val();
+
+      // Alert the user if the provided national ID is added before in the family table
+      if (isNationalIdExists(dependentNationalID)) {
+          alert("رقم الهوية/الإقامة للمرافق تم إضافته بالفعل في قائمة المرافقين!");
+          return;
+      }
+
+      var applierNationalID = $("#id_personalinfo_national_id").val().trim();
+      // Alert the user if the provided national ID is equal to the applier national ID (in the first step)
+      if (dependentNationalID === applierNationalID) {
+        alert("رقم الهوية/الإقامة للمرافق لا يمكن أن يكون مماثلًا لرقم الهوية/الإقامة لمقدم الطلب!!");
+        return;
+      }
 
       // Collect dependent income information by looping over the income table
       function getDependentIncomeTableDataAsJSON() {
@@ -4155,6 +4605,7 @@
           $("<td></td>")
             .text(dependentNationalID)
             .attr("data-attr", "dependent_edit_info_national_id")
+            .attr("data-attr-base-nid", dependentNationalID)
         );
         $row.append(
           $("<td></td>")
@@ -4202,7 +4653,7 @@
         );
         $row.append(
           $("<td></td>")
-            .text(DependentNeedsDescription)
+            .text(dependentNeedsDescription)
             .addClass("d-none")
             .attr("data-attr", "dependent_edit_info_needs_description")
         );
@@ -4214,11 +4665,41 @@
         );
         $row.append(
           $("<td></td>")
-            .text(DependentDiseaseType)
+            .text(dependentDiseaseType)
             .addClass("d-none")
             .attr("data-attr", "dependent_edit_info_disease_type")
         );
 
+        $row.append(
+          $("<td></td>")
+            .text(dependentWorkStatus)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_work_status")
+        );
+        $row.append(
+          $("<td></td>")
+            .text(dependentEmployer)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_employer")
+        );
+        $row.append(
+          $("<td></td>")
+            .text(dependentContributeToFamilyIncome)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_contribute_to_family_income")
+        );
+        $row.append(
+          $("<td></td>")
+            .text(dependentDisabilityCheck)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_is_disabled")
+        );
+        $row.append(
+          $("<td></td>")
+            .text(dependentDisabilityType)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_disability_type")
+        );
 
         // Edit Button
         var $editButton = $("<button>تفاصيل</button>")
@@ -4272,6 +4753,11 @@
         $("#id_dependent_info_national_id_exp_date").val("");
         $("#id_dependent_info_needs_description").val("");
         $("#id_dependent_info_disease_type").val("");
+        $("#id_dependent_info_work_status").val("");
+        $("#id_dependent_info_employer").val("");
+        $("#id_dependent_info_contribute_to_family_income").val("");
+        $("#id_dependent_info_is_disabled").val("");
+        $("#id_dependent_info_disability_type").val("");
 
         // Clear existing rows in the income table
         $("#incomeInfoTableBody").empty();
@@ -4454,6 +4940,13 @@
                   }
               } else {
                   $(this).val(cellText);
+
+                  // If the input is the national id field, add a data attribute
+                  if ($(this).attr('name') === 'dependent_edit_info_national_id') {
+
+                    // Assuming you want to add a data attribute named 'custom-data'
+                    $(this).attr('data-attr-base-nid', cellText);
+                  }
               }
           });
 
@@ -4471,8 +4964,8 @@
             // Add rows for each income information object in the array
             incomeInfoArray.forEach(function (incomeInfo) {
               var $incomeRow = $("<tr></tr>");
-              $incomeRow.append($("<td></td>").text(incomeInfo.monthlyIncome));
-              $incomeRow.append($("<td></td>").text(incomeInfo.incomeSource));
+              $incomeRow.append($("<td></td>").text(incomeInfo.income_amount));
+              $incomeRow.append($("<td></td>").text(incomeInfo.income_source));
 
               // Add a delete button to each row
               var $deleteButton = $("<button>حذف</button>").addClass('btn btn-danger btn-sm removeIncomeEditInfoRow');
@@ -4517,8 +5010,8 @@
 
         // Create a JSON object to store income information
         var incomeInfo = {
-          monthlyIncome: cells[0].innerText,
-          incomeSource: cells[1].innerText,
+          income_amount: cells[0].innerText,
+          income_source: cells[1].innerText,
         };
 
         incomeInfoArray.push(incomeInfo);
@@ -4531,6 +5024,10 @@
     // Onclick function to save the changes made to the dependent info
     $("#saveChanges").click(function (event) {
       event.preventDefault();
+
+      var duplicateNationalIdFound = false; // Flag to indicate whether a duplicate national ID is found
+
+      var isEqualToApplierNationalId = false; // Flag to indicate whether the dependent national ID is equal to applier national ID
 
       // Get all checkboxes within the specified container
       var checkboxes = document.querySelectorAll('#id_dependent_edit_info_needs_type input[type="checkbox"]');
@@ -4555,6 +5052,33 @@
           var inputName = $(this).attr("name");
           // Select the cell in the corresponding row of the dependent with data-attr as inputName
           var $cell = $rowToEdit.find('td[data-attr="' + inputName + '"]');
+
+          var applierNationalID = $("#id_personalinfo_national_id").val().trim();
+
+          // Retrieve the data for national id in the edit form
+          if ($(this).attr("name") == "dependent_edit_info_national_id") {
+
+            // Get the value of data-attr-base-nid attribute
+            var baseNid = $(this).data("attr-base-nid");
+
+            // Check whether the provided national ID equal to the applier national ID
+            if ($(this).val() === applierNationalID) {
+              alert("رقم الهوية/الإقامة للمرافق لا يمكن أن يكون مماثلًا لرقم الهوية/الإقامة لمقدم الطلب!!");
+              isEqualToApplierNationalId = true; // Set the flag to true
+              return false; // Exit the loop early since we found a duplicate
+            }
+
+            // Alert the user if the provided national ID is added before in the family table
+            if (isNationalIdExists($(this).val())) {
+
+              // Check whether the national ID equals to the base national ID
+              if (baseNid != $(this).val()) {
+                alert("رقم الهوية/الإقامة للمرافق تم إضافته بالفعل في قائمة المرافقين!");
+                duplicateNationalIdFound = true; // Set the flag to true
+                return false; // Exit the loop early since we found a duplicate
+              }
+            }
+          }
           
           if ($(this).attr('type') === 'checkbox') {
               // If it's a checkbox, gather all checked values with this name
@@ -4570,6 +5094,11 @@
               $cell.text($(this).val());
           }
       });
+
+      // If a duplicate national ID is found, don't proceed with saving changes
+      if (duplicateNationalIdFound || isEqualToApplierNationalId) {
+        return;
+      }
 
       // Get dependent income information from incomeEditInfoTable
       let dependentIncomeJSON = getDependentIncomeTableDataAsJSON();
@@ -4660,6 +5189,11 @@
 
       // Remove the 'disabled' attribute
       saveChangesButton.setAttribute('disabled', 'disabled');
+
+      // Show loading state
+      document.getElementById('loadingStateEditModal').style.display = 'block';
+      // Hide actual content
+      document.getElementById('editModalContent').style.display = 'none';
     });
 
 
@@ -4755,6 +5289,44 @@
       }
     }
 
+    // Function to handle the input event on the work status dropdown
+    function handleWorkStatusEditInput() {
+      // Get the selected value
+      var selectedValue = document.getElementById('id_dependent_edit_info_work_status').value;
+      
+      // Get the elements representing work status sections
+      var employerGroup = document.getElementById('id_dependent_edit_info_employer_group_info');
+
+      // Show or hide the sections based on the selected value
+      if (selectedValue === 'نعم') {
+        employerGroup.style.display = 'block';
+      } else if (selectedValue === 'لا') {
+        employerGroup.style.display = 'none';
+      } else {
+        // If none is selected, hide both sections
+        employerGroup.style.display = 'none';
+      }
+    }
+
+    // Function to handle the input event on the is disability dropdown
+    function handleIsDisabledEditInput() {
+      // Get the selected value
+      var selectedValue = document.getElementById('id_dependent_edit_info_is_disabled').value;
+      
+      // Get the elements representing is disability sections
+      var disabilityTypeGroup = document.getElementById('id_dependent_edit_info_disability_type_group_info');
+
+      // Show or hide the sections based on the selected value
+      if (selectedValue === 'نعم') {
+        disabilityTypeGroup.style.display = 'block';
+      } else if (selectedValue === 'لا') {
+        disabilityTypeGroup.style.display = 'none';
+      } else {
+        // If none is selected, hide both sections
+        disabilityTypeGroup.style.display = 'none';
+      }
+    }
+
     // Function to handle the modal's shown event
     function handleModalShown() {
       // Show loading state
@@ -4771,16 +5343,24 @@
         // Call the function on the educational status dropdown to set the initial visibility
         handleEducationalStatusEditInput.call(educationalStatusDropdown);
         handleHealthStatusEditInput.call();
-      }, 2000); // Replace 2000 with the actual time it takes to load data
+        handleWorkStatusEditInput.call();
+        handleIsDisabledEditInput.call();
+      }, 2000); // 2000 = 2 seconds timeout
       
     }
 
     // Add event listener to the educational status dropdown for the input event
-    var educationalStatusDropdown = document.getElementById('id_dependent_info_educational_status');
+    var educationalStatusDropdown = document.getElementById('id_dependent_info_educational_status'); // It may need to be changed to "_edit_info_"
     educationalStatusDropdown.addEventListener('input', handleEducationalStatusEditInput);
 
     var healthStatusDropdown = document.getElementById('id_dependent_edit_info_health_status');
     healthStatusDropdown.addEventListener('input', handleHealthStatusEditInput);
+
+    var workStatusDropdown = document.getElementById('id_dependent_edit_info_work_status');
+    workStatusDropdown.addEventListener('input', handleWorkStatusEditInput);
+
+    var disabilityTypeDropdown = document.getElementById('id_dependent_edit_info_is_disabled');
+    disabilityTypeDropdown.addEventListener('input', handleIsDisabledEditInput);
 
     // Get the modal element
     var editModal = new bootstrap.Modal(document.getElementById('editModal'));

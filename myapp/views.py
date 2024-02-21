@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect, JsonResponse
 from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment
 # from .forms import CustomUserCreationForm
-from django.db.models import Q
+# from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
@@ -109,6 +109,7 @@ def sign_up(request):
 
         # Retrieve request data
         first_name = request.POST['first_name']
+        second_name = request.POST['second_name']
         last_name = request.POST['last_name']
         date_of_birth = request.POST['date_of_birth']
         gender = request.POST['gender']
@@ -124,6 +125,7 @@ def sign_up(request):
         if username_exists:
             # Pass request data back
             request.session['first_name'] = first_name
+            request.session['second_name'] = second_name
             request.session['last_name'] = last_name
             request.session['date_of_birth'] = date_of_birth
             request.session['gender'] = gender
@@ -142,6 +144,7 @@ def sign_up(request):
         if email_exists:
             # Pass request data back
             request.session['first_name'] = first_name
+            request.session['second_name'] = second_name
             request.session['last_name'] = last_name
             request.session['date_of_birth'] = date_of_birth
             request.session['gender'] = gender
@@ -160,6 +163,7 @@ def sign_up(request):
             username=username,
             email=email,
             first_name=first_name,
+            second_name=second_name,
             last_name=last_name,
             gender=gender,
             nationality=nationality,
@@ -415,9 +419,13 @@ def validate_email(request):
     if email is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not CustomUser.objects.filter(email__iexact=email).exists()
-        if data is True:
+        cu_data = not CustomUser.objects.filter(email__iexact=email).exists()
+        b_data = not beneficiary.objects.filter(email_iexact=email).exists()
+        s_data = not Supporter.objects.filter(email_iexact=email).exists()
+
+        if cu_data or b_data or s_data:
             data = "true"
         else:
             data = "false"
@@ -444,14 +452,21 @@ def validate_username(request):
 
 def validate_phonenumber(request):
 
-    email = request.POST.get('email', None)
+    phone_number = request.POST.get('phone_number', None)
 
-    if email is None:
+    if phone_number is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not CustomUser.objects.filter(email__iexact=email).exists()
-        if data is True:
+        cu_data = not CustomUser.objects.filter(
+            phone_number=phone_number).exists()
+        s_data = not Supporter.objects.filter(
+            phone_number=phone_number).exists()
+        b_data = not beneficiary.objects.filter(
+            phone_number=phone_number).exists()
+
+        if cu_data or s_data or b_data:
             data = "true"
         else:
             data = "false"
@@ -894,26 +909,26 @@ def beneficiary_indiv(request, user_id):
         files = request.FILES
 
         # Get all the attachments of beneficiary
-        national_id_file = request.FILES.get('fileBeneficiaryNationalID', None)
-        national_address_file = request.FILES.get(
+        national_id_file = files.get('fileBeneficiaryNationalID', None)
+        national_address_file = files.get(
             'fileBeneficiaryNationalAddress', None)
-        dept_instrument_file = request.FILES.getlist('fileDeptInstrument')
-        pension_social_insurance_file = request.FILES.getlist(
+        dept_instrument_file = files.getlist('fileDeptInstrument')
+        pension_social_insurance_file = files.getlist(
             'filePensionOrSocialInsuranceInquiry')
-        father_husband_death_certificate_file = request.FILES.get(
+        father_husband_death_certificate_file = files.get(
             'fileFatherOrHusbandDeathCertificate', None)
-        letter_from_prison_file = request.FILES.getlist('fileLetterFromPrison')
-        divorce_deed_file = request.FILES.get('fileDivorceDeed', None)
-        children_responsibility_deed_file = request.FILES.getlist(
+        letter_from_prison_file = files.getlist('fileLetterFromPrison')
+        divorce_deed_file = files.get('fileDivorceDeed', None)
+        children_responsibility_deed_file = files.getlist(
             'fileChildrenResponsibilityDeed')
-        other_files = request.FILES.getlist('fileOther')
-        lease_contract_or_title_deed_file = request.FILES.getlist(
+        other_files = files.getlist('fileOther')
+        lease_contract_or_title_deed_file = files.getlist(
             'fileLeaseContractOrTitleDeed')
-        water_or_electricity_bills_file = request.FILES.getlist(
+        water_or_electricity_bills_file = files.getlist(
             'fileWaterOrElectricityBills')
-        dependent_national_id_file = request.FILES.getlist(
+        dependent_national_id_file = files.getlist(
             'fileNationalIDForBeneficiaryDependents')
-        social_warranty_inquiry_file = request.FILES.getlist(
+        social_warranty_inquiry_file = files.getlist(
             'fileSocialWarrantyInquiry')
 
         # Accessing the data for beneficiary
@@ -1221,6 +1236,13 @@ def beneficiary_indiv(request, user_id):
             dependent_income_table = json.loads(
                 dep.get('dependentIncomeTable', []))
 
+            work_status = dep.get('workStatus', None)
+            employer = dep.get('employer', None)
+            contribute_to_family_income = dep.get(
+                'contributeToFamilyIncome', None)
+            disability_check = dep.get('disabilityCheck', None)
+            disability_type = dep.get('disabilityType', None)
+
             # Create a new dependent object and save it to the database
             new_dependent = dependent(
                 first_name=first_name,
@@ -1239,6 +1261,11 @@ def beneficiary_indiv(request, user_id):
                 needs_type=needs_type,
                 educational_degree=educational_degree,
                 needs_description=needs_description,
+                work_status=work_status,
+                employer=employer,
+                contribute_to_family_income=contribute_to_family_income,
+                disability_check=disability_check,
+                disability_type=disability_type,
                 beneficiary_id=beneficiary_obj
             )
             new_dependent.save()
@@ -1404,6 +1431,11 @@ def beneficiary_details(request, beneficiary_id):
                     'dependent_needs_description': dependent_obj.needs_description,
                     'dependent_educational_level': dependent_obj.educational_level,
                     'dependent_disease_type': dependent_obj.disease_type,
+                    'dependent_work_status': dependent_obj.work_status,
+                    'dependent_employer': dependent_obj.employer,
+                    'dependent_contribute_to_family_income': dependent_obj.contribute_to_family_income,
+                    'dependent_disability_check': dependent_obj.disability_check,
+                    'dependent_disability_type': dependent_obj.disability_type,
                     'dependent_income_data': dependent_income_data,
                 })
 
@@ -1778,7 +1810,7 @@ def supporter_request_details(request, supporter_id, s_request_id):
         "beneficiary_list": beneficiary_list,
     }
 
-    return render(request, "dashboard/supporter_details.html", context)
+    return render(request, "dashboard/supporter_request_details.html", context)
 
 
 @group_required("Management")
@@ -1916,8 +1948,12 @@ def beneficiary_requests(request, user_id):
             messages.error(request, "ليس لديك الصلاحية اللازمة!")
             return redirect('home')
 
-        beneficiary_requests = Beneficiary_request.objects.filter(
+        beneficiary_requests_list = Beneficiary_request.objects.filter(
             user=user.id).all()
+        paginator = Paginator(beneficiary_requests_list,
+                              5)
+        page_number = request.GET.get('page')
+        beneficiary_requests = paginator.get_page(page_number)
         context = {
             'user_info': user,
             'beneficiary_requests': beneficiary_requests,
@@ -2003,6 +2039,11 @@ def beneficiary_request_details(request, user_id):
                 'dependent_needs_description': dependent_obj.needs_description,
                 'dependent_educational_level': dependent_obj.educational_level,
                 'dependent_disease_type': dependent_obj.disease_type,
+                'dependent_work_status': dependent_obj.work_status,
+                'dependent_employer': dependent_obj.employer,
+                'dependent_contribute_to_family_income': dependent_obj.contribute_to_family_income,
+                'dependent_disability_check': dependent_obj.disability_check,
+                'dependent_disability_type': dependent_obj.disability_type,
                 'dependent_income_data': dependent_income_data,
             })
 
@@ -2156,6 +2197,11 @@ def beneficiary_request_update(request, user_id):
                 'dependent_needs_description': dependent_obj.needs_description,
                 'dependent_educational_level': dependent_obj.educational_level,
                 'dependent_disease_type': dependent_obj.disease_type,
+                'dependent_work_status': dependent_obj.work_status,
+                'dependent_employer': dependent_obj.employer,
+                'dependent_contribute_to_family_income': dependent_obj.contribute_to_family_income,
+                'dependent_disability_check': dependent_obj.disability_check,
+                'dependent_disability_type': dependent_obj.disability_type,
                 'dependent_income_data': dependent_income_data,
             })
 
@@ -2195,6 +2241,7 @@ def beneficiary_request_update(request, user_id):
                 attachment_type_ar = attachment.file_type
 
             beneficiary_attachment_list.append({
+                'id': attachment.id,
                 'file_path': attachment.file_object.url,
                 'file_extension': file_extension(attachment.file_object.url),
                 'file_name': attachment.filename().split(".")[0],
@@ -2453,6 +2500,7 @@ def beneficiary_request_update_confirm(request, user_id):
 
         dependent_table = data.get('dependents-table', None)
 
+        # print(data.get('dependents-table', None))
         # Parse the JSON string into a Python object
         try:
             dependents_list = json.loads(dependent_table)
@@ -2460,7 +2508,28 @@ def beneficiary_request_update_confirm(request, user_id):
             print("Error parsing JSON")
             dependents_list = []
 
+        # Retrieve all dependents related to this beneficiary_obj
+        beneficiary_dependents_db = dependent.objects.filter(
+            beneficiary_id=beneficiary_obj.id).all()
+
+        if beneficiary_dependents_db.exists():
+            # Iterate over the dependents
+            for dependent_obj in beneficiary_dependents_db:
+                # Check if the dependent exists in the response
+                dependent_exists_in_response = any(
+                    dependent_obj.national_id == dependent_data.get('nationalID') for dependent_data in dependents_list)
+
+                # If the dependent doesn't exist in the response, delete it
+                if not dependent_exists_in_response:
+                    dependent_obj.delete()
+        else:
+            # Handle the case when there are no dependents for the beneficiary
+            # For example, you can display a message or perform other actions
+            print(
+                "[Warning] - There are no dependents associated with this beneficiary.")
+
         for dep in dependents_list:
+
             # Extract the data for each field
             first_name = dep.get('firstName', '')
             second_name = dep.get('secondName', '')
@@ -2486,6 +2555,13 @@ def beneficiary_request_update_confirm(request, user_id):
             needs_description = dep.get('needsDescription', '')
             educational_level = dep.get('educationalLevel', None)
             disease_type = dep.get('diseaseType', None)
+
+            work_status = dep.get('workStatus', None)
+            employer = dep.get('employer', None)
+            contribute_to_family_income = dep.get(
+                'contributeToFamilyIncome', None)
+            disability_check = dep.get('disabilityCheck', None)
+            disability_type = dep.get('disabilityType', None)
 
             dependent_income_table = json.loads(
                 dep.get('dependentIncomeTable', []))
@@ -2518,6 +2594,11 @@ def beneficiary_request_update_confirm(request, user_id):
                 dependent_obj.needs_type = needs_type
                 dependent_obj.educational_degree = educational_degree
                 dependent_obj.needs_description = needs_description
+                dependent_obj.work_status = work_status
+                dependent_obj.employer = employer
+                dependent_obj.contribute_to_family_income = contribute_to_family_income
+                dependent_obj.disability_check = disability_check
+                dependent_obj.disability_type = disability_type
                 dependent_obj.beneficiary_id = beneficiary_obj
 
                 # Save the changes
@@ -2525,40 +2606,33 @@ def beneficiary_request_update_confirm(request, user_id):
 
                 # Get list of all Dependent_income objects from the DB
                 dependent_income_db_list = Dependent_income.objects.filter(
-                    dependent=dependent_obj).all()
+                    dependent=dependent_obj)
 
-                if dependent_income_db_list is not None:
+                # Delete existing dependent income records
+                dependent_income_db_list.delete()
 
-                    # Store list of dependent income to create -------------------
-                    dependent_income_list = []
+                # Store list of dependent income to create
+                dependent_income_list = []
 
-                    # Traverse the list of dependent income from the request body
-                    for entry in dependent_income_table:
-                        # Extract the monthly income and remove commas
-                        income_amount_str = entry.get('income_amount', '')
-                        income_amount = Decimal(
-                            income_amount_str.replace(',', ''))
-                        income_source = entry.get('income_source', '')
+                # Traverse the list of dependent income from the request body
+                for entry in dependent_income_table:
+                    # Extract the monthly income and remove commas
+                    income_amount_str = entry.get('income_amount', '')
+                    income_amount = Decimal(income_amount_str.replace(',', ''))
+                    income_source = entry.get('income_source', '')
 
-                        # Travers the list of dependent income exists in the DB
-                        for dependent_income in dependent_income_db_list:
+                    # Initialize dependent income object
+                    dependent_income_obj = Dependent_income(
+                        source=income_source,
+                        amount=income_amount,
+                        dependent=dependent_obj
+                    )
+                    # Add the new dependent income object to the list
+                    dependent_income_list.append(dependent_income_obj)
 
-                            # In case of dependent income already doesn't exist in DB
-                            if not (income_amount == dependent_income.amount and income_source == dependent_income.source):
-
-                                # Initialize dependent income list
-                                dependent_income_obj = Dependent_income(
-                                    source=income_source,
-                                    amount=income_amount,
-                                    dependent=dependent_obj
-                                )
-                                dependent_income_list.append(
-                                    dependent_income_obj)
-
-                    # Save dependent income objects
-                    if dependent_income_list:
-                        Dependent_income.objects.bulk_create(
-                            dependent_income_list)
+                # Save dependent income objects
+                if dependent_income_list:
+                    Dependent_income.objects.bulk_create(dependent_income_list)
 
             # In case of Non-existing national id
             else:
@@ -2581,7 +2655,12 @@ def beneficiary_request_update_confirm(request, user_id):
                     needs_type=needs_type,
                     educational_degree=educational_degree,
                     needs_description=needs_description,
-                    beneficiary_id=beneficiary_obj
+                    work_status=work_status,
+                    employer=employer,
+                    contribute_to_family_income=contribute_to_family_income,
+                    disability_check=disability_check,
+                    disability_type=disability_type,
+                    beneficiary_id=beneficiary_obj,
                 )
                 new_dependent.save()
 
@@ -2607,76 +2686,165 @@ def beneficiary_request_update_confirm(request, user_id):
                 if dependent_income_list:
                     Dependent_income.objects.bulk_create(dependent_income_list)
 
-        # beneficiary_attachment_list = []
+        # Get filesToDelete array from request.POST (data)
+        files_to_delete = json.loads(data.get('filesToDelete', '[]'))
 
-        # for attachment in beneficiary_attachment_obj:
-        #     # A variable that holds the attachment type in Arabic
-        #     attachment_type_ar = ""
+        for file_id in files_to_delete:
+            try:
+                # Query Beneficiary_attachment object by its ID
+                attachment = Beneficiary_attachment.objects.get(pk=file_id)
 
-        #     if attachment.file_type == "national_id":
-        #         attachment_type_ar = "صورة الهوية الوطنية/الإقامة"
-        #     elif attachment.file_type == "national_address":
-        #         attachment_type_ar = "العنوان الوطني"
-        #     elif attachment.file_type == "dept_instrument":
-        #         attachment_type_ar = "صك الدين"
-        #     elif attachment.file_type == "pension_social_insurance":
-        #         attachment_type_ar = "مشهد التقاعد أو التأمينات الاجتماعية"
-        #     elif attachment.file_type == "father_husband_death_cert":
-        #         attachment_type_ar = "شهادة الوفاة للزوج / الأب"
-        #     elif attachment.file_type == "letter_from_prison":
-        #         attachment_type_ar = "خطاب من السجن"
-        #     elif attachment.file_type == "divorce_deed":
-        #         attachment_type_ar = "صك الطلاق"
-        #     elif attachment.file_type == "children_responsibility_deed":
-        #         attachment_type_ar = "صك إعالة الأبناء"
-        #     elif attachment.file_type == "other_files":
-        #         attachment_type_ar = "مستندات أخرى"
-        #     elif attachment.file_type == "lease_contract_title_deed":
-        #         attachment_type_ar = "عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية"
-        #     elif attachment.file_type == "water_or_electricity_bills":
-        #         attachment_type_ar = "الفواتير (كهرباء - ماء)"
-        #     elif attachment.file_type == "dependent_national_id":
-        #         attachment_type_ar = "صورة الهوية الوطنية/الإقامة للمرافقين"
-        #     elif attachment.file_type == "social_warranty_inquiry":
-        #         attachment_type_ar = "مشهد الضمان الاجتماعي"
-        #     else:
-        #         attachment_type_ar = attachment.file_type
+                # Delete file from storage
+                if attachment.file_object:
+                    # This will delete the file from storage
+                    attachment.file_object.delete(save=False)
 
-        #     beneficiary_attachment_list.append({
-        #         'file_path': attachment.file_object.url,
-        #         'file_extension': file_extension(attachment.file_object.url),
-        #         'file_name': attachment.filename().split(".")[0],
-        #         'file_size': attachment.file_size,
-        #         'attachment_type': attachment_type_ar,
-        #     })
+                # Delete the Beneficiary_attachment object
+                attachment.delete()
+            except Beneficiary_attachment.DoesNotExist:
+                # Handle case where the Beneficiary_attachment object does not exist
+                print('[Error] - Attchment to delete is not found!')
 
-        # # Convert date of birth to be populated in the template
-        # dob = date(
-        #     beneficiary_obj.date_of_birth.year,
-        #     beneficiary_obj.date_of_birth.month,
-        #     beneficiary_obj.date_of_birth.day
-        # )
+        # Get all the attachments of beneficiary
+        national_id_file = files.get('fileBeneficiaryNationalID', None)
+        national_address_file = files.get(
+            'fileBeneficiaryNationalAddress', None)
+        dept_instrument_file = files.getlist('fileDeptInstrument')
+        pension_social_insurance_file = files.getlist(
+            'filePensionOrSocialInsuranceInquiry')
+        father_husband_death_certificate_file = files.get(
+            'fileFatherOrHusbandDeathCertificate', None)
+        letter_from_prison_file = files.getlist('fileLetterFromPrison')
+        divorce_deed_file = files.get('fileDivorceDeed', None)
+        children_responsibility_deed_file = files.getlist(
+            'fileChildrenResponsibilityDeed')
+        other_files = files.getlist('fileOther')
+        lease_contract_or_title_deed_file = files.getlist(
+            'fileLeaseContractOrTitleDeed')
+        water_or_electricity_bills_file = files.getlist(
+            'fileWaterOrElectricityBills')
+        dependent_national_id_file = files.getlist(
+            'fileNationalIDForBeneficiaryDependents')
+        social_warranty_inquiry_file = files.getlist(
+            'fileSocialWarrantyInquiry')
 
-        # # Convert date of birth to be populated in the template
-        # national_id_exp_date = date(
-        #     beneficiary_obj.national_id_exp_date.year,
-        #     beneficiary_obj.national_id_exp_date.month,
-        #     beneficiary_obj.national_id_exp_date.day
-        # )
+        print(files)
 
-        # death_date_father_husband = None
-        # if beneficiary_obj.death_date_father_husband is not None:
-        #     death_date_father_husband = date(
-        #         beneficiary_obj.death_date_father_husband.year,
-        #         beneficiary_obj.death_date_father_husband.month,
-        #         beneficiary_obj.death_date_father_husband.day
-        #     )
+        # Store attachments of beneficiary -------------------
+        # Store all file objects in a list
+        file_list = []
 
-        context = {
-            'user_info': user,
-            'beneficiary_requests': beneficiary_requests,
-            'beneficiary': beneficiary_obj,
-        }
+        # Create beneficiary attachment for "national id"
+        if national_id_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="national_id",
+                file_object=national_id_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
+
+        # Create beneficiary attachment for "national address"
+        if national_address_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="national_address",
+                file_object=national_address_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
+
+        # Create beneficiary attachment for "dept instrument"
+        for file_obj in dept_instrument_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="dept_instrument",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "pension or social insurance"
+        for file_obj in pension_social_insurance_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="pension_social_insurance",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "father or husband death certificate"
+        if father_husband_death_certificate_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="father_husband_death_cert",
+                file_object=father_husband_death_certificate_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
+
+        # Create beneficiary attachment for "letter from prison"
+        for file_obj in letter_from_prison_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="letter_from_prison",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "Divorce Deed"
+        if divorce_deed_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="divorce_deed",
+                file_object=divorce_deed_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
+
+        # Create beneficiary attachment for "children responsibility deed"
+        for file_obj in children_responsibility_deed_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="children_responsibility_deed",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "other files"
+        for file_obj in other_files:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="other_files",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "lease contract or title deed"
+        for file_obj in lease_contract_or_title_deed_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="lease_contract_title_deed",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "water or electricity bills"
+        for file_obj in water_or_electricity_bills_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="water_or_electricity_bills",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "dependent national id"
+        for file_obj in dependent_national_id_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="dependent_national_id",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "social warranty inquiry"
+        for file_obj in social_warranty_inquiry_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="social_warranty_inquiry",
+                file_object=file_obj
+            ))
+
+        # instead of creating and saving each file separately, store them in a list, and save them all at once.
+        if file_list:
+            Beneficiary_attachment.objects.bulk_create(file_list)
 
     except ObjectDoesNotExist:
         messages.error(request, "المستخدم غير موجود!")
@@ -2701,11 +2869,17 @@ def validate_national_id_dependent(request, user_id):
     if national_id is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not dependent.objects.filter(
+        d_data = not dependent.objects.filter(
             national_id=national_id).exists()
+        b_data = not beneficiary.objects.filter(
+            national_id=national_id).exists()
+        s_data = not Supporter.objects.filter(
+            national_id=national_id).exists()
+
         # in case of national_id doesn't exist before
-        if data is True:
+        if d_data or b_data or s_data:
             data = "true"
         else:
             data = "false"
@@ -2720,11 +2894,17 @@ def validate_national_id_new_beneficiary(request, user_id):
     if national_id is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not beneficiary.objects.filter(
+        d_data = not dependent.objects.filter(
             national_id=national_id).exists()
+        b_data = not beneficiary.objects.filter(
+            national_id=national_id).exists()
+        s_data = not Supporter.objects.filter(
+            national_id=national_id).exists()
+
         # in case of national_id doesn't exist before
-        if data is True:
+        if d_data or b_data or s_data:
             data = "true"
         else:
             data = "false"
@@ -2739,11 +2919,15 @@ def validate_phonenumber_new_beneficiary(request, user_id):
     if phonenumber is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not beneficiary.objects.filter(
+        b_data = not beneficiary.objects.filter(
             phone_number=phonenumber).exists()
+        s_data = not Supporter.objects.filter(
+            phone_number=phonenumber).exists()
+
         # in case of national_id doesn't exist before
-        if data is True:
+        if b_data or s_data:
             data = "true"
         else:
             data = "false"
@@ -2762,11 +2946,17 @@ def validate_national_id_edit_dependent(request, user_id):
     if national_id is None:
         return HttpResponse("true")
     else:
+        data = "false"
 
-        data = not dependent.objects.filter(
+        d_data = not dependent.objects.filter(
             national_id=national_id).exists()
+        b_data = not beneficiary.objects.filter(
+            national_id=national_id).exists()
+        s_data = not Supporter.objects.filter(
+            national_id=national_id).exists()
+
         # in case of national_id doesn't exist before
-        if data is True:
+        if d_data or b_data or s_data:
             data = "true"
         else:
             # in case of national_id exists before but it is equal to the base_national_id
@@ -2786,10 +2976,217 @@ def supporter_beneficiary_sponsorship(request):
     paginator = Paginator(sponsorships_list, IPP_DASHBOARD_REQUESTS)
     page_number = request.GET.get('page')
     sponsorships = paginator.get_page(page_number)
-    for spon in sponsorships:
-        print(spon.beneficiary.first_name)
+
     context = {
         "sponsorships": sponsorships,
     }
 
     return render(request, "dashboard/sponsorships.html", context)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def dashboard_beneficiaries_list(request):
+
+    beneficiaries_list = beneficiary.objects.all()
+    paginator = Paginator(beneficiaries_list, IPP_DASHBOARD_REQUESTS)
+    page_number = request.GET.get('page')
+    beneficiaries = paginator.get_page(page_number)
+
+    context = {
+        "beneficiaries": beneficiaries,
+    }
+
+    return render(request, "dashboard/beneficiaries.html", context)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def dashboard_supporters_list(request):
+
+    supporters_list = Supporter.objects.all()
+    paginator = Paginator(supporters_list, IPP_DASHBOARD_REQUESTS)
+    page_number = request.GET.get('page')
+    supporters = paginator.get_page(page_number)
+
+    context = {
+        "supporters": supporters,
+    }
+
+    return render(request, "dashboard/supporters.html", context)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def dashboard_beneficiary_details(request, b_id):
+
+    if request.method == "GET":
+
+        beneficiary_obj = beneficiary.objects.get(id=b_id)
+
+        beneficiary_housing_obj = beneficiary_house.objects.filter(
+            beneficiary_id=beneficiary_obj.id).first()
+
+        housing_data = {}
+
+        if beneficiary_housing_obj is not None:
+
+            housing_data = {
+                'building_number': beneficiary_housing_obj.building_number,
+                'street_name': beneficiary_housing_obj.street_name,
+                'neighborhood': beneficiary_housing_obj.neighborhood,
+                'city': beneficiary_housing_obj.city,
+                'postal_code': beneficiary_housing_obj.postal_code,
+                'additional_number': beneficiary_housing_obj.additional_number,
+                'unit': beneficiary_housing_obj.unit,
+                'location_url': beneficiary_housing_obj.location_url,
+                'housing_type': beneficiary_housing_obj.housing_type,
+                'housing_ownership': beneficiary_housing_obj.housing_ownership
+            }
+
+        beneficiary_income_expense_obj = beneficiary_income_expense.objects.filter(
+            beneficiary_id=beneficiary_obj.id).first()
+
+        income_expense_data = {}
+
+        if beneficiary_income_expense_obj is not None:
+            income_expense_data = {
+                'salary_in': beneficiary_income_expense_obj.salary_in,
+                'social_insurance_in': beneficiary_income_expense_obj.social_insurance_in,
+                'charity_in': beneficiary_income_expense_obj.charity_in,
+                'social_warranty_in': beneficiary_income_expense_obj.social_warranty_in,
+                'pension_agency_in': beneficiary_income_expense_obj.pension_agency_in,
+                'citizen_account_in': beneficiary_income_expense_obj.citizen_account_in,
+                'benefactor_in': beneficiary_income_expense_obj.benefactor_in,
+                'other_in': beneficiary_income_expense_obj.other_in,
+                'housing_rent_ex': beneficiary_income_expense_obj.housing_rent_ex,
+                'electricity_bills_ex': beneficiary_income_expense_obj.electricity_bills_ex,
+                'water_bills_ex': beneficiary_income_expense_obj.water_bills_ex,
+                'transportation_ex': beneficiary_income_expense_obj.transportation_ex,
+                'health_supplies_ex': beneficiary_income_expense_obj.health_supplies_ex,
+                'food_supplies_ex': beneficiary_income_expense_obj.food_supplies_ex,
+                'educational_supplies_ex': beneficiary_income_expense_obj.educational_supplies_ex,
+                'proven_debts_ex': beneficiary_income_expense_obj.proven_debts_ex,
+                'other_ex': beneficiary_income_expense_obj.other_ex
+            }
+
+        dependent_list = dependent.objects.filter(
+            beneficiary_id=beneficiary_obj.id).all()
+
+        dependent_data = []
+
+        for dependent_obj in dependent_list:
+
+            # Initialize dependent income list with every dependent
+            dependent_income_data = []
+
+            # Retrieve the dependent income infomration
+            dependent_income_list = Dependent_income.objects.filter(
+                dependent=dependent_obj).all()
+
+            # Add the data into the dependent income list
+            for dependent_income_obj in dependent_income_list:
+                dependent_income_data.append({
+                    'income_source': dependent_income_obj.source,
+                    'income_amount': dependent_income_obj.amount,
+                })
+
+            dependent_data.append({
+                'dependent_id': dependent_obj.id,
+                'dependent_first_name': dependent_obj.first_name,
+                'dependent_second_name': dependent_obj.second_name,
+                'dependent_last_name': dependent_obj.last_name,
+                'dependent_gender': dependent_obj.gender,
+                'dependent_relationship': dependent_obj.relationship,
+                'dependent_educational_status': dependent_obj.educational_status,
+                'dependent_marital_status': dependent_obj.marital_status,
+                'dependent_national_id': dependent_obj.national_id,
+                'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                'dependent_health_status': dependent_obj.health_status,
+                'dependent_needs_type': dependent_obj.needs_type,
+                'dependent_educational_degree': dependent_obj.educational_degree,
+                'dependent_date_of_birth': dependent_obj.date_of_birth,
+                'dependent_needs_description': dependent_obj.needs_description,
+                'dependent_educational_level': dependent_obj.educational_level,
+                'dependent_disease_type': dependent_obj.disease_type,
+                'dependent_work_status': dependent_obj.work_status,
+                'dependent_employer': dependent_obj.employer,
+                'dependent_contribute_to_family_income': dependent_obj.contribute_to_family_income,
+                'dependent_disability_check': dependent_obj.disability_check,
+                'dependent_disability_type': dependent_obj.disability_type,
+                'dependent_income_data': dependent_income_data,
+            })
+
+        beneficiary_attachment_list = []
+
+        attachments_list = Beneficiary_attachment.objects.filter(
+            beneficiary_id=beneficiary_obj.id).all()
+
+        for attachment in attachments_list:
+            # A variable that holds the attachment type in Arabic
+            attachment_type_ar = ""
+
+            if attachment.file_type == "national_id":
+                attachment_type_ar = "صورة الهوية الوطنية/الإقامة"
+            elif attachment.file_type == "national_address":
+                attachment_type_ar = "العنوان الوطني"
+            elif attachment.file_type == "dept_instrument":
+                attachment_type_ar = "صك الدين"
+            elif attachment.file_type == "pension_social_insurance":
+                attachment_type_ar = "مشهد التقاعد أو التأمينات الاجتماعية"
+            elif attachment.file_type == "father_husband_death_cert":
+                attachment_type_ar = "شهادة الوفاة للزوج / الأب"
+            elif attachment.file_type == "letter_from_prison":
+                attachment_type_ar = "خطاب من السجن"
+            elif attachment.file_type == "divorce_deed":
+                attachment_type_ar = "صك الطلاق"
+            elif attachment.file_type == "children_responsibility_deed":
+                attachment_type_ar = "صك إعالة الأبناء"
+            elif attachment.file_type == "other_files":
+                attachment_type_ar = "مستندات أخرى"
+            elif attachment.file_type == "lease_contract_title_deed":
+                attachment_type_ar = "عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية"
+            elif attachment.file_type == "water_or_electricity_bills":
+                attachment_type_ar = "الفواتير (كهرباء - ماء)"
+            elif attachment.file_type == "dependent_national_id":
+                attachment_type_ar = "صورة الهوية الوطنية/الإقامة للمرافقين"
+            elif attachment.file_type == "social_warranty_inquiry":
+                attachment_type_ar = "مشهد الضمان الاجتماعي"
+            else:
+                attachment_type_ar = attachment.file_type
+
+            beneficiary_attachment_list.append({
+                'file_path': attachment.file_object.url,
+                'file_extension': file_extension(attachment.file_object.url),
+                'file_name': attachment.filename().split(".")[0],
+                'file_size': attachment.file_size,
+                'attachment_type': attachment_type_ar,
+            })
+        # print("attachments: ", beneficiary_attachment_list)
+
+        context = {
+            'beneficiary': beneficiary_obj,
+            'dependent_list': dependent_data,
+            'beneficiary_house': housing_data,
+            'beneficiary_income_expense': income_expense_data,
+            'beneficiary_attachments': beneficiary_attachment_list
+        }
+
+        return render(request, "dashboard/beneficiary_details.html", context)
+
+    else:
+        pass
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def dashboard_supporter_details(request, s_id):
+
+    supporter = Supporter.objects.filter(id=s_id).first()
+
+    print(supporter)
+
+    context = {
+        "supporter": supporter,
+    }
+    return render(request, "dashboard/supporter_details.html", context)

@@ -11,7 +11,13 @@
     {% comment %} Bootstrp CSS {% endcomment %} {% comment %} {% load bootstrap5
     %} {% endcomment %} {% comment %} {% bootstrap_css %} {% endcomment %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.rtl.min.css' %}" />
-    {% comment %} <link rel="stylesheet" href="{% static 'css/bootstrap.rtl.css' %}" /> {% endcomment %}
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" integrity="sha384-jLKHWM3JRmfMU0A5x5AkjWkw/EYfGUAGagvnfryNV3F9VqM98XiIH7VBGVoxVSc7" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href=
+"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}" />
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     {% comment %} <script src="{% static 'js/bootstrap.min.js' %}"></script> {% endcomment %}
     {% comment %} <link
@@ -20,8 +26,14 @@
       integrity="sha384-nU14brUcp6StFntEOOEBvcJm4huWjB0OcIeQ3fltAfSmuZFrkAif0T+UtNGlKKQv"
       crossorigin="anonymous"
     /> {% endcomment %}
+    <!-- favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static '/imgs/favicon_io/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static '/imgs/favicon_io/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static '/imgs/favicon_io/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static '/imgs/favicon_io/site.webmanifest' %}">
     {% comment %} arabic fonts {% endcomment %}
     {% block head %}{% endblock %}
+    <script src='https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js'></script> 
     <!-- Include jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Include jQuery Validation Plugin -->
@@ -92,16 +104,22 @@
             <form method="post" id="sign-up-form">
               {% csrf_token %}
               {% comment %} {{form}} {% endcomment %}
-              <div class="row row-cols-1 row-cols-sm-2">
-                <div class="col mb-3">
+              <div class="row row-cols-1">
+                <div class="col-sm-6 mb-3">
                   <label for="id_first_name" class="form-label"
                     >الأسم الأول</label
                   >
                   <input type="text" name="first_name" class="form-control" autofocus id="id_first_name" value="{{ first_name }}">
                 </div>
+                <div class="col-sm-6 mb-3">
+                  <label for="id_second_name" class="form-label"
+                    >الأسم الثاني</label
+                  >
+                  <input type="text" name="second_name" class="form-control" autofocus id="id_second_name" value="{{ second_name }}">
+                </div>
                 <div class="col mb-3">
                   <label for="id_last_name" class="form-label"
-                    >الأسم الأخير</label
+                    >الأسم الأخير (العائلة)</label
                   >
                   <input type="text" name="last_name" class="form-control" autofocus id="id_last_name" value="{{ last_name }}">
                 </div>
@@ -382,13 +400,36 @@
                 <label for="id_password1" class="form-label"
                   >كلمة المرور</label
                 >
-                <input type="password" name="password1" class="form-control" id="id_password1">
+                <div class="input-group mb-3">
+                  <input type="password" class="form-control" autocomplete="off" aria-autocomplete="list" aria-label="Password" aria-describedby="passwordHelp" id="id_password1" name="password1">
+                  <a class="btn pt-1" role="button" id="togglePassword"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="28" fill="currentColor" class="" viewBox="0 0 16 16">
+                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                  </svg></a>
+                  
+                </div>
+
+                <div class="password-meter">
+                    <div class="meter-section rounded me-2"></div>
+                    <div class="meter-section rounded me-2"></div>
+                    <div class="meter-section rounded me-2"></div>
+                    <div class="meter-section rounded"></div>
+                </div>
+                <div id="passwordHelp" class="form-text text-muted">استخدم 8 حروف أو اكثر تحتوى على حروف كبيرة وصغيرة, أرقام, ورموز.
+                </div>
               </div>
               <div class="col mb-3">
                 <label for="id_password2" class="form-label"
                   >تأكيد كلمة المرور</label
                 >
-                <input type="password" name="password2" class="form-control" id="id_password2">
+                <div class="input-group mb-3">
+                  <input type="password" class="form-control" autocomplete="off" id="id_password2" name="password2">
+                  <a class="btn pt-1" role="button" id="togglePassword2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="28" fill="currentColor" class="btn-outline-secondary" viewBox="0 0 16 16">
+                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                  </svg></a>
+                  
+                </div>
               </div>
               
               <button type="submit" class="w-100 btn btn-lg btn-primary mt-3" id="sign_up_btn">تسجيل جديد</button>
@@ -410,7 +451,7 @@
           "usernameRegex",
           function (value, element) {
             return (
-              this.optional(element) || /^[a-zA-Z0-9_]{2,20}$/i.test(value)
+              this.optional(element) || /^[a-zA-Z0-9_]{4,20}$/i.test(value)
             );
           },
         );
@@ -424,6 +465,15 @@
             );
           },
           "يحتوي الأسم على حروف فقط."
+        );
+
+        // Define a custom method for strong password validation
+        $.validator.addMethod(
+          "strongPassword",
+          function(value, element) {
+              return this.optional(element) || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-]).{8,}$/.test(value);
+          },
+          "كلمة المرور يجب أن تحتوي على حرف كبير وحرف صغير ورقم ورمز خاص ويجب أن تكون على الأقل 8 أحرف باللغة الانجليزية."
         );
 
         // Validator method for the phone number [Saudi Arabia Only]
@@ -472,6 +522,8 @@
           min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
         });
 
+        var excludedFields = ["ID_of_element"]; // IDs of fields to exclude
+
         // When ".next" button is clicked, the following function is executed
         $("#sign_up_btn").click(function () {
           var form = $("#sign-up-form");
@@ -480,12 +532,21 @@
             errorClass: "help-block invalid-feedback",
             highlight: function (element, errorClass, validClass) {
               $(element).closest(".form-group").addClass("has-error");
-              //$(element).fadeOut(function() {
-              //  $(element).fadeIn();
-              //  });
+              
+              // Check if the field is excluded
+              if (excludedFields.indexOf(element.id) === -1) {
+                $(element).addClass("is-invalid");
+                $(element).removeClass("is-valid");
+              }
             },
             unhighlight: function (element, errorClass, validClass) {
               $(element).closest(".form-group").removeClass("has-error");
+
+              // Check if the field is excluded
+              if (excludedFields.indexOf(element.id) === -1) {
+                $(element).removeClass("is-invalid");
+                $(element).addClass("is-valid");
+              }
             },
             errorPlacement: function (error, element) {
               // Check if the element is inside an input-group
@@ -507,6 +568,12 @@
                 minlength: 2,
                 maxlength: 20,
               },
+              second_name: {
+                required: true,
+                nameRegex: true,
+                minlength: 2,
+                maxlength: 20,
+              },
               last_name: {
                 required: true,
                 nameRegex: true,
@@ -514,10 +581,10 @@
                 maxlength: 20,
               },
               username: {
-                usernameRegex: true,
                 minlength: 3,
                 maxlength: 15,
                 required: true,
+                usernameRegex: true,
                 remote: {
                   url: '/sign-up/validate_username/',
                   type: 'post',
@@ -531,6 +598,7 @@
               },
               password1: {
                 required: true,
+                strongPassword: true,
               },
               password2: {
                 required: true,
@@ -592,6 +660,120 @@
         });
 
       }); // (document).ready() end line
+      
+      const passwordInput = document.getElementById('id_password1');
+      const meterSections = document.querySelectorAll('.meter-section');
+
+      const togglePassword = document
+            .querySelector('#togglePassword');
+        const password = document.querySelector('#id_password1');
+        togglePassword.addEventListener('click', () => {
+            // Toggle the type attribute using
+            // getAttribure() method
+            const type = password
+                .getAttribute('type') === 'password' ?
+                'text' : 'password';
+            password.setAttribute('type', type);
+
+            togglePassword.classList.toggle("active");
+        });
+
+      passwordInput.addEventListener('input', updateMeter);
+
+      function updateMeter() {
+          const password = passwordInput.value;
+          let strength = calculatePasswordStrength(password);
+
+          // Remove all strength classes
+          meterSections.forEach((section) => {
+              section.classList.remove('weak', 'medium', 'strong', 'very-strong');
+          });
+
+          // Add the appropriate strength class based on the strength value
+          if (strength >= 1) {
+              meterSections[0].classList.add('weak');
+          }
+          if (strength >= 2) {
+              meterSections[1].classList.add('medium');
+          }
+          if (strength >= 3) {
+              meterSections[2].classList.add('strong');
+          }
+          if (strength >= 4) {
+              meterSections[3].classList.add('very-strong');
+          }
+      }
+
+      function calculatePasswordStrength(password) {
+          const lengthWeight = 0.2;
+          const uppercaseWeight = 0.5;
+          const lowercaseWeight = 0.5;
+          const numberWeight = 0.7;
+          const symbolWeight = 1;
+
+          let strength = 0;
+
+          // Calculate the strength based on the password length
+          strength += password.length * lengthWeight;
+
+          // Calculate the strength based on uppercase letters
+          if (/[A-Z]/.test(password)) {
+              strength += uppercaseWeight;
+          }
+
+          // Calculate the strength based on lowercase letters
+          if (/[a-z]/.test(password)) {
+              strength += lowercaseWeight;
+          }
+
+          // Calculate the strength based on numbers
+          if (/\d/.test(password)) {
+              strength += numberWeight;
+          }
+
+          // Calculate the strength based on symbols
+          if (/[^A-Za-z0-9]/.test(password)) {
+              strength += symbolWeight;
+          }
+
+          return strength;
+      }
+
+      // Add event listener for input event
+      passwordInput.addEventListener("input", function(event) {
+          var inputValue = event.target.value;
+          var englishLettersPattern = /^[A-Za-z0-9!@#$%^&*()_~-]+$/; // Adjusted pattern to include additional characters for the strong password
+          if (!englishLettersPattern.test(inputValue)) {
+              event.target.value = inputValue.replace(/[^A-Za-z0-9!@#$%^&*()_~-]/g, ''); // Replace non-matching characters with an empty string
+          }
+      });
+
+      // Add the functionality and checkers of password 1 to password 2 field
+      const passwordInput2 = document.getElementById('id_password2');
+
+      const togglePassword2 = document
+      .querySelector('#togglePassword2');
+      const password2 = document.querySelector('#id_password2');
+      togglePassword2.addEventListener('click', () => {
+          // Toggle the type attribute using
+          // getAttribure() method
+          const type = password2
+              .getAttribute('type') === 'password' ?
+              'text' : 'password';
+          password2.setAttribute('type', type);
+
+          // Toggle the active class of the button to indicate its state
+          togglePassword2.classList.toggle("active");
+      });
+
+      // Add event listener for input event
+      passwordInput2.addEventListener("input", function(event) {
+        var inputValue = event.target.value;
+        var englishLettersPattern = /^[A-Za-z0-9!@#$%^&*()_~-]+$/; // Adjusted pattern to include additional characters for the strong password
+        if (!englishLettersPattern.test(inputValue)) {
+            event.target.value = inputValue.replace(/[^A-Za-z0-9!@#$%^&*()_~-]/g, ''); // Replace non-matching characters with an empty string
+        }
+    });
     </script>
   </body>
 </html>

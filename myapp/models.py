@@ -29,6 +29,7 @@ def supporter_request_file_directory(instance, filename):
 
 # Adjust the original user modal to have other fields
 class CustomUser(AbstractUser):
+    second_name = models.CharField(max_length=150, blank=True)
     date_of_birth = models.DateField(null=True)
     gender = models.CharField(max_length=5, null=True)
     phonenumber = models.CharField(max_length=15, null=True, unique=True)
@@ -238,6 +239,11 @@ class dependent(models.Model):
     educational_degree = models.CharField(max_length=128, null=True)
     date_of_birth = models.DateField()
     national_id_exp_date = models.DateField(null=True)
+    work_status = models.CharField(max_length=64, null=True)
+    employer = models.CharField(max_length=128, null=True)
+    contribute_to_family_income = models.CharField(max_length=64, null=True)
+    disability_check = models.CharField(max_length=64, null=True)
+    disability_type = models.CharField(max_length=64, null=True)
     needs_description = models.TextField(max_length=300)
     educational_level = models.CharField(max_length=64, null=True)
     disease_type = models.CharField(max_length=100, null=True)
