@@ -1236,6 +1236,13 @@ def beneficiary_indiv(request, user_id):
             dependent_income_table = json.loads(
                 dep.get('dependentIncomeTable', []))
 
+            work_status = dep.get('workStatus', None)
+            employer = dep.get('employer', None)
+            contribute_to_family_income = dep.get(
+                'contributeToFamilyIncome', None)
+            disability_check = dep.get('disabilityCheck', None)
+            disability_type = dep.get('disabilityType', None)
+
             # Create a new dependent object and save it to the database
             new_dependent = dependent(
                 first_name=first_name,
@@ -1254,6 +1261,11 @@ def beneficiary_indiv(request, user_id):
                 needs_type=needs_type,
                 educational_degree=educational_degree,
                 needs_description=needs_description,
+                work_status=work_status,
+                employer=employer,
+                contribute_to_family_income=contribute_to_family_income,
+                disability_check=disability_check,
+                disability_type=disability_type,
                 beneficiary_id=beneficiary_obj
             )
             new_dependent.save()
@@ -1419,6 +1431,11 @@ def beneficiary_details(request, beneficiary_id):
                     'dependent_needs_description': dependent_obj.needs_description,
                     'dependent_educational_level': dependent_obj.educational_level,
                     'dependent_disease_type': dependent_obj.disease_type,
+                    'dependent_work_status': dependent_obj.work_status,
+                    'dependent_employer': dependent_obj.employer,
+                    'dependent_contribute_to_family_income': dependent_obj.contribute_to_family_income,
+                    'dependent_disability_check': dependent_obj.disability_check,
+                    'dependent_disability_type': dependent_obj.disability_type,
                     'dependent_income_data': dependent_income_data,
                 })
 
@@ -2018,6 +2035,11 @@ def beneficiary_request_details(request, user_id):
                 'dependent_needs_description': dependent_obj.needs_description,
                 'dependent_educational_level': dependent_obj.educational_level,
                 'dependent_disease_type': dependent_obj.disease_type,
+                'dependent_work_status': dependent_obj.work_status,
+                'dependent_employer': dependent_obj.employer,
+                'dependent_contribute_to_family_income': dependent_obj.contribute_to_family_income,
+                'dependent_disability_check': dependent_obj.disability_check,
+                'dependent_disability_type': dependent_obj.disability_type,
                 'dependent_income_data': dependent_income_data,
             })
 
@@ -2993,6 +3015,11 @@ def dashboard_beneficiary_details(request, b_id):
                 'dependent_needs_description': dependent_obj.needs_description,
                 'dependent_educational_level': dependent_obj.educational_level,
                 'dependent_disease_type': dependent_obj.disease_type,
+                'dependent_work_status': dependent_obj.work_status,
+                'dependent_employer': dependent_obj.employer,
+                'dependent_contribute_to_family_income': dependent_obj.contribute_to_family_income,
+                'dependent_disability_check': dependent_obj.disability_check,
+                'dependent_disability_type': dependent_obj.disability_type,
                 'dependent_income_data': dependent_income_data,
             })
 
