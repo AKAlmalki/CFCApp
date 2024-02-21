@@ -1948,8 +1948,12 @@ def beneficiary_requests(request, user_id):
             messages.error(request, "ليس لديك الصلاحية اللازمة!")
             return redirect('home')
 
-        beneficiary_requests = Beneficiary_request.objects.filter(
+        beneficiary_requests_list = Beneficiary_request.objects.filter(
             user=user.id).all()
+        paginator = Paginator(beneficiary_requests_list,
+                              5)
+        page_number = request.GET.get('page')
+        beneficiary_requests = paginator.get_page(page_number)
         context = {
             'user_info': user,
             'beneficiary_requests': beneficiary_requests,
