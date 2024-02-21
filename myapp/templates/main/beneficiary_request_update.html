@@ -408,6 +408,8 @@
                         data-bs-title="المستوى التعليمي"
                       >
                         <option value>---------</option>
+                        <option value="أُمّيّ (لا يقرأ ولا يكتب)">أُمّيّ (لا يقرأ ولا يكتب)</option>
+                        <option value="يقرأ ويكتب">يقرأ ويكتب</option>
                         <option value="أول ابتدائي">أول ابتدائي</option>
                         <option value="ثاني ابتدائي">ثاني ابتدائي</option>
                         <option value="ثالث ابتدائي">ثالث ابتدائي</option>
@@ -421,7 +423,7 @@
                         <option value="ثاني ثانوي">ثاني ثانوي</option>
                         <option value="ثالث ثانوي">ثالث ثانوي</option>
                         <option value="جامعي">جامعي</option>
-                        <option value="لا يدرس">لا يدرس</option>
+                        
                       </select>
                     </div>
                   </div>
@@ -767,6 +769,7 @@
                         <option value="ملك">ملك</option>
                         <option value="وقف">وقف</option>
                         <option value="إيجار">إيجار</option>
+                        <option value="سكن تنموي (منتهي بالتمليك)">سكن تنموي (منتهي بالتمليك)</option>
                       </select>
                     </div>
                   </div>
@@ -927,27 +930,6 @@
                     </div>
                   </div>
         
-                  <div class="row">
-                    <div class="mb-3 form-group">
-                      <label for="id_incomeinfo_total" class="form-label"
-                        >إجمالي الدخل</label>
-                      <div class="input-group mb-3">
-                        <input
-                          type="number"
-                          name="incomeinfo_total"
-                          min="0.00"
-                          max="99999999.00"
-                          step="0.01"
-                          class="form-control"
-                          id="id_incomeinfo_total"
-                          value="{{ beneficiary_income_expense.total_in }}"
-                          disabled readonly
-                        />
-                        <span class="input-group-text" id="basic-addon1">ر.س.</span>
-                      </div>
-                    </div>
-                  </div>
-        
                   <h4 class="mt-4 mb-3">مصروفات الأسرة (شهريًا)</h4>
                   <div
                     class="alert alert-warning mt-3"
@@ -1102,7 +1084,7 @@
                     </div>
                   </div>
         
-                  <div class="row row-cols-lg-2">
+                  <div class="row">
                     <div class="mb-3 form-group">
                       <label for="id_expensesinfo_other" class="form-label"
                         >أخرى<span style="color: red">*</span></label>
@@ -1120,26 +1102,7 @@
                         <span class="input-group-text" id="basic-addon1">ر.س.</span>
                       </div>
                     </div>
-                    <div class="mb-3 form-group">
-                      <label for="id_expensesinfo_total" class="form-label"
-                        >إجمالي المصروفات</label>
-                      <div class="input-group mb-3">
-                        <input
-                          type="number"
-                          name="expensesinfo_total"
-                          min="0.00"
-                          max="99999999.00"
-                          class="form-control"
-                          id="id_expensesinfo_total"
-                          value="{{ beneficiary_income_expense.total_ex }}"
-                          disabled readonly
-                        />
-                        <span class="input-group-text" id="basic-addon1">ر.س.</span>
-                      </div>
-                    </div>
                   </div>
-
-
 
                 </div>
               </div>
@@ -2571,52 +2534,6 @@
         return this.optional(element) || validateIBAN(value);
       },
       "الرجاء إدخال رقم إيبان صحيح"
-    );
-
-    // The Code segment to calculate the incomeinfo
-
-    // Select all your input fields
-    var incomeinfo_inputs = document.querySelectorAll(
-      "input[type=number][name^=incomeinfo_]:not([name=incomeinfo_total])"
-    );
-
-    // Function to calculate the sum
-    function calculateSumIncome() {
-      let sum = 0;
-      incomeinfo_inputs.forEach((input) => {
-        const value = parseFloat(input.value) || 0;
-        sum += value;
-      });
-      document.getElementById("id_incomeinfo_total").value = sum.toFixed(2);
-    }
-
-    // Add event listeners to all input fields
-    incomeinfo_inputs.forEach((input) =>
-      input.addEventListener("input", calculateSumIncome)
-    );
-
-    // Code segment ends
-
-    // The Code segment to calculate the expensesinfo
-
-    // Select all your input fields
-    var expensesinfo_inputs = document.querySelectorAll(
-      "input[type=number][name^=expensesinfo_]:not([name=expensesinfo_total])"
-    );
-
-    // Function to calculate the sum
-    function calculateSumExpenses() {
-      let sum = 0;
-      expensesinfo_inputs.forEach((input) => {
-        const value = parseFloat(input.value) || 0;
-        sum += value;
-      });
-      document.getElementById("id_expensesinfo_total").value = sum.toFixed(2);
-    }
-
-    // Add event listeners to all input fields
-    expensesinfo_inputs.forEach((input) =>
-      input.addEventListener("input", calculateSumExpenses)
     );
 
     // Validator method for first, second, and last name fields in the form
