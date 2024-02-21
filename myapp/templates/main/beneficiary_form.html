@@ -3100,6 +3100,9 @@
       "يحتوي الأسم على حروف فقط."
     );
 
+    // Retrieve the CSRF token from the specific form with id 'editModalForm'
+    var csrfTokenEditDepForm = $('#editModalForm input[name=csrfmiddlewaretoken]').val();
+
     var includedFieldsEditModal = ["id_dependent_edit_info_national_id"]; // IDs of fields to include
 
     // Define your validation rules here
