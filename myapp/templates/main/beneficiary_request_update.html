@@ -44,10 +44,10 @@
               <a class="nav-link text-dark next" id="fill-tab-2" data-bs-toggle="tab" href="#fill-tabpanel-2" role="tab" aria-controls="fill-tabpanel-2" aria-selected="false"> معلومات الدخل والمصروفات </a>
             </li>
             <li class="nav-item" role="presentation">
-              <a class="nav-link text-dark next" id="fill-tab-3" data-bs-toggle="tab" href="#fill-tabpanel-3" role="tab" aria-controls="fill-tabpanel-3" aria-selected="false"> معلومات المرافقين </a>
+              <a class="nav-link text-dark next" id="fill-tab-3" data-bs-toggle="tab" href="#fill-tabpanel-3" role="tab" aria-controls="fill-tabpanel-3" aria-selected="false"> المرفقات </a>
             </li>
             <li class="nav-item" role="presentation">
-              <a class="nav-link text-dark next" id="fill-tab-4" data-bs-toggle="tab" href="#fill-tabpanel-4" role="tab" aria-controls="fill-tabpanel-4" aria-selected="false"> المرفقات </a>
+              <a class="nav-link text-dark next" id="fill-tab-4" data-bs-toggle="tab" href="#fill-tabpanel-4" role="tab" aria-controls="fill-tabpanel-4" aria-selected="false"> معلومات المرافقين </a>
             </li>
           </ul>
 
@@ -1105,9 +1105,533 @@
                 </div>
               </div>
 
+              <div class="tab-pane" id="fill-tabpanel-3" role="tabpanel" aria-labelledby="fill-tab-3">
+
+                <div class="attachment_info">
+                  <h3 class="mt-4 mb-4">المرفقات</h3>
+  
+                  <div
+                    class="alert alert-warning mb-2"
+                    role="alert"
+                    id="checkboxError"
+                  >
+                    يمكن رفع الملفات المطلوبة اسفل الصفحة
+                  </div>
+                    
+                  <div class="mt-4">
+                    {% if beneficiary_attachments %}
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">اسم الملف</th>
+                            <th scope="col">نوع المرفق</th>
+                            <th scope="col">نوع الملف</th>
+                            <th scope="col">الإجراءات</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for attachment in beneficiary_attachments %}
+                          <tr data-bs-toggle="tooltip" title="">
+                            <td>
+                              <span>
+                                {{ attachment.file_name }}
+                              </span>
+                            </td>
+                            <td>
+                              <span>
+                                {{ attachment.attachment_type }}
+                              </span>
+                            </td>
+                            <td>{{ attachment.file_extension }}</td>
+                            <td>
+                              <div class="d-flex align-items-center actions">
+                                <div class="mb-2">
+                                  <a href="{{ attachment.file_path }}" target="_blank" class="btn btn-primary">عرض</a>
+                                  <button class="btn btn-danger delete-file-btn" data-file-id="{{ attachment.id }}">حذف</button>
+                              </div>
+                              </div>
+                            </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    {% else %}
+                    <p>لا يوجد مرفقات </p>
+                    {% endif %}
+                  </div>
+  
+                  <h4 class="mt-4">رفع المرفقات</h4>
+  
+                  <div class="row mt-3">
+  
+                    <div
+                      class="alert alert-warning mb-2"
+                      role="alert"
+                      id="checkboxError"
+                    >
+                      جميع المرفقات المحددة بنجمة حمراء (<span style="color: red">*</span>) مطلوبة وهي إلزامية لإكمال الطلب <strong>ويجب رفع المرفقات المطلوبة اذا لم يتم رفعها بالفعل في الجدول اعلاه</strong>
+                    </div>
+        
+                    <div
+                      class="alert alert-danger mt-1 mb-4"
+                      role="alert"
+                      id="checkboxError"
+                    >
+                      الحجم الاقصى للملف الواحد لجميع المرفقات هو ١ ميجابايت <span dir="ltr">(1 MB)</span>, بحيث انه يمكن رفع اكثر من ملف لبعض المرفقات بما لا يتجاوز حجم 1 ميجابايت للملف الواحد
+                    </div>
+        
+                    <div class="col-12 col-lg-6 row-gap-3 mb-3 mt-2">
+        
+                      <div class="mb-4 row column-gap-4 fileInputContainer">
+                        <div class="row pe-0">
+                          <label class="form-label col pt-3" id="id_beneficiaryNationalIDTitle"
+                            >صورة الهوية الوطنية/الإقامة<span style="color: red">*</span></label
+                          >
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileBeneficiaryNationalID"
+                              >إرفاق ملف</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileBeneficiaryNationalID"
+                            name="fileBeneficiaryNationalID"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                          />
+                          
+                        </div>
+                        <div
+                          class="col text-muted"
+                          id="id_fileNamesBeneficiaryNationalID"
+                        ></div>
+                        <!--- Place of showing file names -->
+                        
+                      </div>
+        
+                      <hr />
+        
+                      <div class="mb-4 row column-gap-4 fileInputContainer">
+                        <div class="row pe-0">
+                          <label class="form-label col pt-3">العنوان الوطني<span style="color: red">*</span></label>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileBeneficiaryNationalAddress"
+                              >إرفاق ملف</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileBeneficiaryNationalAddress"
+                            name="fileBeneficiaryNationalAddress"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                          />
+                        </div>
+                        <div
+                          class="col text-muted"
+                          id="id_fileNamesNationalAddress"
+                        ></div>
+                        <!--- Place of showing file names -->
+        
+                      </div>
+        
+                      <hr />
+        
+                      <div class="mb-4 row column-gap-4 fileInputContainer">
+                        <div class="row pe-0">
+                          <label class="form-label col pt-3">صك الدين<span style="color: red">*</span> (في حال وجود دين)</label>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileDeptInstrument"
+                              >إرفاق ملفات</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileDeptInstrument"
+                            name="fileDeptInstrument"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                            multiple
+                          />
+                        </div>
+                        <div
+                          class="col text-muted"
+                          id="id_fileNamesDeptInstrument"
+                        ></div>
+                        <!--- Place of showing file names -->
+        
+                      </div>
+        
+                      <hr />
+        
+                      <div
+                        class="mb-4 row column-gap-4 fileInputContainer"
+                        id="id_attachmentPensionOrSocialInsuranceInquiry_group_info"
+                        style="display: none"
+                      >
+                        <div class="row pe-0">
+                          <label
+                            class="form-label col pt-3"
+                            id="id_PensionOrSocialInsuranceInquiryTitle"
+                            >مشهد التقاعد أو التأمينات الاجتماعية<span style="color: red">*</span></label
+                          >
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFilePensionOrSocialInsuranceInquiry"
+                              >إرفاق ملفات</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFilePensionOrSocialInsuranceInquiry"
+                            name="filePensionOrSocialInsuranceInquiry"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                            multiple
+                          />
+                        </div>
+                        <div
+                          class="col text-muted"
+                          id="id_fileNamesPensionOrSocialInsuranceInquiry"
+                        ></div>
+                        <!--- Place of showing file names -->
+        
+                      </div>
+        
+                      <hr
+                        id="id_attachmentPensionOrSocialInsuranceInquiry_group_info_hr"
+                        style="display: none"
+                      />
+        
+                      <div
+                        class="mb-4 row column-gap-4 fileInputContainer"
+                        id="id_attachmentFatherOrHusbandDeathCertificate_group_info"
+                        style="display: none"
+                      >
+                        <div class="row pe-0">
+                          <label class="form-label col pt-3">شهادة الوفاة للزوج / الأب<span style="color: red">*</span></label>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileFatherOrHusbandDeathCertificate"
+                              >إرفاق ملف</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileFatherOrHusbandDeathCertificate"
+                            name="fileFatherOrHusbandDeathCertificate"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                          />
+                        </div>
+                        <div
+                          class="col text-muted"
+                          id="id_fileNamesFatherOrHusbandDeathCertificate"
+                        ></div>
+                        <!--- Place of showing file names -->
+        
+                      </div>
+        
+                      <hr
+                        id="id_attachmentFatherOrHusbandDeathCertificate_group_info_hr"
+                        style="display: none"
+                      />
+        
+                      <div
+                        class="mb-4 row column-gap-4 fileInputContainer"
+                        id="id_attachmentLetterFromPrison_group_info"
+                        style="display: none"
+                      >
+                        <div class="row pe-0">
+                          <label class="form-label col pt-3"
+                            >خطاب من السجن<span style="color: red">*</span> (في حال أسرة سجين)</label
+                          >
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileLetterFromPrison"
+                              >إرفاق ملفات</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileLetterFromPrison"
+                            name="fileLetterFromPrison"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                            multiple
+                          />
+                        </div>
+                        <div
+                          class="col text-muted"
+                          id="id_fileNamesLetterFromPrison"
+                        ></div>
+                        <!--- Place of showing file names -->
+        
+                      </div>
+        
+                      <hr
+                        id="id_attachmentLetterFromPrison_group_info_hr"
+                        style="display: none"
+                      />
+        
+                      <div
+                        class="mb-4 row column-gap-4 fileInputContainer"
+                        id="id_attachmentDivorceDeed_group_info"
+                        style="display: none"
+                      >
+                        <div class="row pe-0">
+                          <label class="form-label col pt-3">صك الطلاق<span style="color: red">*</span></label>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileDivorceDeed"
+                              >إرفاق ملف</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileDivorceDeed"
+                            name="fileDivorceDeed"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                          />
+                        </div>
+                        <div
+                          class="col text-muted"
+                          id="id_fileNamesDivorceDeed"
+                        ></div>
+                        <!--- Place of showing file names -->
+                      </div>
+        
+                      <hr
+                        id="id_attachmentDivorceDeed_group_info_hr"
+                        style="display: none"
+                      />
+        
+                      <div
+                        class="mb-4 row column-gap-4 fileInputContainer"
+                        id="id_attachmentChildrenResponsibilityDeed_group_info"
+                        style="display: none"
+                      >
+                        <div class="row pe-0">
+                          <label class="form-label col pt-3"
+                            >صك إعالة الأبناء<span style="color: red">*</span> (في حال كانوا مرافقين)</label
+                          >
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileChildrenResponsibilityDeed"
+                              >إرفاق ملفات</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileChildrenResponsibilityDeed"
+                            name="fileChildrenResponsibilityDeed"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                            multiple
+                          />
+                        </div>
+                        <div
+                          class="col text-muted"
+                          id="id_fileNamesChildrenResponsibilityDeed"
+                        ></div>
+                        <!--- Place of showing file names -->
+        
+                      </div>
+        
+                      <hr
+                        id="id_attachmentChildrenResponsibilityDeed_group_info_hr"
+                        style="display: none"
+                      />
+        
+                      <div class="mb-4 row column-gap-4 fileInputContainer">
+                        <div class="row pe-0">
+                          <label class="form-label col pt-3">إرفاق مستندات أخرى</label>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileOther"
+                              >إرفاق ملفات</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileOther"
+                            name="fileOther"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                            multiple
+                          />
+                        </div>
+                        <div class="col text-muted" id="id_fileNamesOther"></div>
+                          <!--- Place of showing file names -->
+                        
+                      </div>
+        
+                      <hr />
+                    </div>
+        
+                    <div class="col-12 col-lg-6 row-gap-3 mb-3 mt-2">
+        
+                      <div class="mb-4 row column-gap-4 fileInputContainer">
+                        <div class="row pe-0">
+                          <label class="form-label col pt-3"
+                            >عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية<span style="color: red">*</span></label
+                          >
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileLeaseContractOrTitleDeed"
+                              >إرفاق ملفات</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileLeaseContractOrTitleDeed"
+                            name="fileLeaseContractOrTitleDeed"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                            multiple
+                          />
+                        </div>
+                        <div
+                            class="col text-muted"
+                            id="id_fileNamesLeaseContractOrTitleDeed"
+                          ></div>
+                          <!--- Place of showing file names -->
+        
+                      </div>
+        
+                      <hr />
+        
+                      <div class="mb-4 row column-gap-4 fileInputContainer">
+                        <div class="row pe-0">
+                          <label class="form-label col pt-3">الفواتير<span style="color: red">*</span> (كهرباء - ماء)</label>
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileWaterOrElectricityBills"
+                              >إرفاق ملفات</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileWaterOrElectricityBills"
+                            name="fileWaterOrElectricityBills"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                            multiple
+                          />
+                        </div>
+                        <div
+                            class="col text-muted"
+                            id="id_fileNamesWaterOrElectricityBills"
+                          ></div>
+                          <!--- Place of showing file names -->
+        
+                      </div>
+        
+                      <hr />
+        
+                      <div
+                        class="mb-4 row column-gap-4 fileInputContainer"
+                        id="id_attachmentNationalIDForBeneficiaryForDependents_group_info"
+                        style="display: none"
+                      >
+                        <div class="row pe-0">
+                          <label
+                            class="form-label col pt-3"
+                            id="id_NationalIDForBeneficiaryForDependentsTitle"
+                            >صورة الهوية الوطنية/الإقامة للمرافقين<span style="color: red">*</span></label
+                          >
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileNationalIDForBeneficiaryForDependents"
+                              >إرفاق ملفات</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileNationalIDForBeneficiaryForDependents"
+                            name="fileNationalIDForBeneficiaryDependents"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                            multiple
+                          />
+                        </div>
+                        <div
+                          class="col text-muted"
+                          id="id_fileNamesNationalIDForBeneficiaryForDependents"
+                        ></div>
+                        <!--- Place of showing file names -->
+                        
+                      </div>
+        
+                      <hr
+                        id="id_attachmentNationalIDForBeneficiaryForDependents_group_info_hr"
+                        style="display: none"
+                      />
+        
+                      <div
+                        class="mb-4 row column-gap-4 fileInputContainer"
+                        id="id_attachmentSocialWarrantyInquiry_group_info"
+                        style="display: none"
+                      >
+                        <div class="row pe-0">
+                          <label class="form-label col pt-3" id="id_SocialWarrantyInquiryTitle"
+                            >مشهد الضمان الاجتماعي<span style="color: red">*</span></label
+                          >
+                          <div class="col-4 d-flex justify-content-center">
+                            <label
+                              class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
+                              for="id_formFileSocialWarrantyInquiry"
+                              >إرفاق ملفات</label
+                            >
+                          </div>
+                          <input
+                            class="form-control d-none"
+                            type="file"
+                            id="id_formFileSocialWarrantyInquiry"
+                            name="fileSocialWarrantyInquiry"
+                            accept="application/pdf,image/png, image/jpg, image/jpeg"
+                            multiple
+                          />
+                        </div>
+                        <div
+                          class="col text-muted"
+                          id="id_fileNamesSocialWarrantyInquiry"
+                        ></div>
+                        <!--- Place of showing file names -->
+                        
+                      </div>
+        
+                      <hr
+                        id="id_attachmentSocialWarrantyInquiry_group_info_hr"
+                        style="display: none"
+                      />
+                    </div>
+                  </div>
+  
+                </div>
+              </div>
+
             </form> <!-- end line form 1 -->
 
-            <div class="tab-pane" id="fill-tabpanel-3" role="tabpanel" aria-labelledby="fill-tab-3">
+            <div class="tab-pane" id="fill-tabpanel-4" role="tabpanel" aria-labelledby="fill-tab-4">
 
               <div class="dependents">
                 
@@ -1323,7 +1847,7 @@
                           >
                           <input
                             type="text"
-                            class="form-control"
+                            class="form-control convert-to-english"
                             id="id_dependent_info_national_id"
                             maxlength="20"
                             name="dependent_info_national_id"
@@ -1609,529 +2133,7 @@
 
               </div>
             </div>
-            <div class="tab-pane" id="fill-tabpanel-4" role="tabpanel" aria-labelledby="fill-tab-4">
-
-              <div class="attachment_info">
-                <h3 class="mt-4 mb-4">المرفقات</h3>
-
-                <div
-                  class="alert alert-warning mb-2"
-                  role="alert"
-                  id="checkboxError"
-                >
-                  يمكن رفع الملفات المطلوبة اسفل الصفحة
-                </div>
-                  
-                <div class="mt-4">
-                  {% if beneficiary_attachments %}
-                  <div class="table-responsive">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th scope="col">اسم الملف</th>
-                          <th scope="col">نوع المرفق</th>
-                          <th scope="col">نوع الملف</th>
-                          <th scope="col">الإجراءات</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for attachment in beneficiary_attachments %}
-                        <tr data-bs-toggle="tooltip" title="">
-                          <td>
-                            <span>
-                              {{ attachment.file_name }}
-                            </span>
-                          </td>
-                          <td>
-                            <span>
-                              {{ attachment.attachment_type }}
-                            </span>
-                          </td>
-                          <td>{{ attachment.file_extension }}</td>
-                          <td>
-                            <div class="d-flex align-items-center actions">
-                              <div class="mb-2">
-                                <a href="{{ attachment.file_path }}" target="_blank" class="btn btn-primary">عرض</a>
-                                <button class="btn btn-danger delete-file-btn" data-file-id="{{ attachment.id }}">حذف</button>
-                            </div>
-                            </div>
-                          </td>
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
-                  {% else %}
-                  <p>لا يوجد مرفقات </p>
-                  {% endif %}
-                </div>
-
-                <h4 class="mt-4">رفع المرفقات</h4>
-
-                <div class="row mt-3">
-
-                  <div
-                    class="alert alert-warning mb-2"
-                    role="alert"
-                    id="checkboxError"
-                  >
-                    جميع المرفقات المحددة بنجمة حمراء (<span style="color: red">*</span>) مطلوبة وهي إلزامية لإكمال الطلب
-                  </div>
-      
-                  <div
-                    class="alert alert-danger mt-1 mb-4"
-                    role="alert"
-                    id="checkboxError"
-                  >
-                    الحجم الاقصى للملف الواحد لجميع المرفقات هو ١ ميجابايت <span dir="ltr">(1 MB)</span>, بحيث انه يمكن رفع اكثر من ملف لبعض المرفقات بما لا يتجاوز حجم 1 ميجابايت للملف الواحد
-                  </div>
-      
-                  <div class="col-12 col-lg-6 row-gap-3 mb-3 mt-2">
-      
-                    <div class="mb-4 row column-gap-4 fileInputContainer">
-                      <div class="row pe-0">
-                        <label class="form-label col pt-3" id="id_beneficiaryNationalIDTitle"
-                          >صورة الهوية الوطنية/الإقامة<span style="color: red">*</span></label
-                        >
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileBeneficiaryNationalID"
-                            >إرفاق ملف</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileBeneficiaryNationalID"
-                          name="fileBeneficiaryNationalID"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                        />
-                        
-                      </div>
-                      <div
-                        class="col text-muted"
-                        id="id_fileNamesBeneficiaryNationalID"
-                      ></div>
-                      <!--- Place of showing file names -->
-                      
-                    </div>
-      
-                    <hr />
-      
-                    <div class="mb-4 row column-gap-4 fileInputContainer">
-                      <div class="row pe-0">
-                        <label class="form-label col pt-3">العنوان الوطني<span style="color: red">*</span></label>
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileBeneficiaryNationalAddress"
-                            >إرفاق ملف</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileBeneficiaryNationalAddress"
-                          name="fileBeneficiaryNationalAddress"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                        />
-                      </div>
-                      <div
-                        class="col text-muted"
-                        id="id_fileNamesNationalAddress"
-                      ></div>
-                      <!--- Place of showing file names -->
-      
-                    </div>
-      
-                    <hr />
-      
-                    <div class="mb-4 row column-gap-4 fileInputContainer">
-                      <div class="row pe-0">
-                        <label class="form-label col pt-3">صك الدين<span style="color: red">*</span> (في حال وجود دين)</label>
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileDeptInstrument"
-                            >إرفاق ملفات</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileDeptInstrument"
-                          name="fileDeptInstrument"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                          multiple
-                        />
-                      </div>
-                      <div
-                        class="col text-muted"
-                        id="id_fileNamesDeptInstrument"
-                      ></div>
-                      <!--- Place of showing file names -->
-      
-                    </div>
-      
-                    <hr />
-      
-                    <div
-                      class="mb-4 row column-gap-4 fileInputContainer"
-                      id="id_attachmentPensionOrSocialInsuranceInquiry_group_info"
-                      style="display: none"
-                    >
-                      <div class="row pe-0">
-                        <label
-                          class="form-label col pt-3"
-                          id="id_PensionOrSocialInsuranceInquiryTitle"
-                          >مشهد التقاعد أو التأمينات الاجتماعية<span style="color: red">*</span></label
-                        >
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFilePensionOrSocialInsuranceInquiry"
-                            >إرفاق ملفات</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFilePensionOrSocialInsuranceInquiry"
-                          name="filePensionOrSocialInsuranceInquiry"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                          multiple
-                        />
-                      </div>
-                      <div
-                        class="col text-muted"
-                        id="id_fileNamesPensionOrSocialInsuranceInquiry"
-                      ></div>
-                      <!--- Place of showing file names -->
-      
-                    </div>
-      
-                    <hr
-                      id="id_attachmentPensionOrSocialInsuranceInquiry_group_info_hr"
-                      style="display: none"
-                    />
-      
-                    <div
-                      class="mb-4 row column-gap-4 fileInputContainer"
-                      id="id_attachmentFatherOrHusbandDeathCertificate_group_info"
-                      style="display: none"
-                    >
-                      <div class="row pe-0">
-                        <label class="form-label col pt-3">شهادة الوفاة للزوج / الأب<span style="color: red">*</span></label>
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileFatherOrHusbandDeathCertificate"
-                            >إرفاق ملف</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileFatherOrHusbandDeathCertificate"
-                          name="fileFatherOrHusbandDeathCertificate"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                        />
-                      </div>
-                      <div
-                        class="col text-muted"
-                        id="id_fileNamesFatherOrHusbandDeathCertificate"
-                      ></div>
-                      <!--- Place of showing file names -->
-      
-                    </div>
-      
-                    <hr
-                      id="id_attachmentFatherOrHusbandDeathCertificate_group_info_hr"
-                      style="display: none"
-                    />
-      
-                    <div
-                      class="mb-4 row column-gap-4 fileInputContainer"
-                      id="id_attachmentLetterFromPrison_group_info"
-                      style="display: none"
-                    >
-                      <div class="row pe-0">
-                        <label class="form-label col pt-3"
-                          >خطاب من السجن<span style="color: red">*</span> (في حال أسرة سجين)</label
-                        >
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileLetterFromPrison"
-                            >إرفاق ملفات</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileLetterFromPrison"
-                          name="fileLetterFromPrison"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                          multiple
-                        />
-                      </div>
-                      <div
-                        class="col text-muted"
-                        id="id_fileNamesLetterFromPrison"
-                      ></div>
-                      <!--- Place of showing file names -->
-      
-                    </div>
-      
-                    <hr
-                      id="id_attachmentLetterFromPrison_group_info_hr"
-                      style="display: none"
-                    />
-      
-                    <div
-                      class="mb-4 row column-gap-4 fileInputContainer"
-                      id="id_attachmentDivorceDeed_group_info"
-                      style="display: none"
-                    >
-                      <div class="row pe-0">
-                        <label class="form-label col pt-3">صك الطلاق<span style="color: red">*</span></label>
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileDivorceDeed"
-                            >إرفاق ملف</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileDivorceDeed"
-                          name="fileDivorceDeed"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                        />
-                      </div>
-                      <div
-                        class="col text-muted"
-                        id="id_fileNamesDivorceDeed"
-                      ></div>
-                      <!--- Place of showing file names -->
-                    </div>
-      
-                    <hr
-                      id="id_attachmentDivorceDeed_group_info_hr"
-                      style="display: none"
-                    />
-      
-                    <div
-                      class="mb-4 row column-gap-4 fileInputContainer"
-                      id="id_attachmentChildrenResponsibilityDeed_group_info"
-                      style="display: none"
-                    >
-                      <div class="row pe-0">
-                        <label class="form-label col pt-3"
-                          >صك إعالة الأبناء<span style="color: red">*</span> (في حال كانوا مرافقين)</label
-                        >
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileChildrenResponsibilityDeed"
-                            >إرفاق ملفات</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileChildrenResponsibilityDeed"
-                          name="fileChildrenResponsibilityDeed"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                          multiple
-                        />
-                      </div>
-                      <div
-                        class="col text-muted"
-                        id="id_fileNamesChildrenResponsibilityDeed"
-                      ></div>
-                      <!--- Place of showing file names -->
-      
-                    </div>
-      
-                    <hr
-                      id="id_attachmentChildrenResponsibilityDeed_group_info_hr"
-                      style="display: none"
-                    />
-      
-                    <div class="mb-4 row column-gap-4 fileInputContainer">
-                      <div class="row pe-0">
-                        <label class="form-label col pt-3">إرفاق مستندات أخرى</label>
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileOther"
-                            >إرفاق ملفات</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileOther"
-                          name="fileOther"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                          multiple
-                        />
-                      </div>
-                      <div class="col text-muted" id="id_fileNamesOther"></div>
-                        <!--- Place of showing file names -->
-                      
-                    </div>
-      
-                    <hr />
-                  </div>
-      
-                  <div class="col-12 col-lg-6 row-gap-3 mb-3 mt-2">
-      
-                    <div class="mb-4 row column-gap-4 fileInputContainer">
-                      <div class="row pe-0">
-                        <label class="form-label col pt-3"
-                          >عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية<span style="color: red">*</span></label
-                        >
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileLeaseContractOrTitleDeed"
-                            >إرفاق ملفات</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileLeaseContractOrTitleDeed"
-                          name="fileLeaseContractOrTitleDeed"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                          multiple
-                        />
-                      </div>
-                      <div
-                          class="col text-muted"
-                          id="id_fileNamesLeaseContractOrTitleDeed"
-                        ></div>
-                        <!--- Place of showing file names -->
-      
-                    </div>
-      
-                    <hr />
-      
-                    <div class="mb-4 row column-gap-4 fileInputContainer">
-                      <div class="row pe-0">
-                        <label class="form-label col pt-3">الفواتير<span style="color: red">*</span> (كهرباء - ماء)</label>
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileWaterOrElectricityBills"
-                            >إرفاق ملفات</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileWaterOrElectricityBills"
-                          name="fileWaterOrElectricityBills"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                          multiple
-                        />
-                      </div>
-                      <div
-                          class="col text-muted"
-                          id="id_fileNamesWaterOrElectricityBills"
-                        ></div>
-                        <!--- Place of showing file names -->
-      
-                    </div>
-      
-                    <hr />
-      
-                    <div
-                      class="mb-4 row column-gap-4 fileInputContainer"
-                      id="id_attachmentNationalIDForBeneficiaryForDependents_group_info"
-                      style="display: none"
-                    >
-                      <div class="row pe-0">
-                        <label
-                          class="form-label col pt-3"
-                          id="id_NationalIDForBeneficiaryForDependentsTitle"
-                          >صورة الهوية الوطنية/الإقامة للمرافقين<span style="color: red">*</span></label
-                        >
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileNationalIDForBeneficiaryForDependents"
-                            >إرفاق ملفات</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileNationalIDForBeneficiaryForDependents"
-                          name="fileNationalIDForBeneficiaryDependents"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                          multiple
-                        />
-                      </div>
-                      <div
-                        class="col text-muted"
-                        id="id_fileNamesNationalIDForBeneficiaryForDependents"
-                      ></div>
-                      <!--- Place of showing file names -->
-                      
-                    </div>
-      
-                    <hr
-                      id="id_attachmentNationalIDForBeneficiaryForDependents_group_info_hr"
-                      style="display: none"
-                    />
-      
-                    <div
-                      class="mb-4 row column-gap-4 fileInputContainer"
-                      id="id_attachmentSocialWarrantyInquiry_group_info"
-                      style="display: none"
-                    >
-                      <div class="row pe-0">
-                        <label class="form-label col pt-3" id="id_SocialWarrantyInquiryTitle"
-                          >مشهد الضمان الاجتماعي<span style="color: red">*</span></label
-                        >
-                        <div class="col-4 d-flex justify-content-center">
-                          <label
-                            class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                            for="id_formFileSocialWarrantyInquiry"
-                            >إرفاق ملفات</label
-                          >
-                        </div>
-                        <input
-                          class="form-control d-none"
-                          type="file"
-                          id="id_formFileSocialWarrantyInquiry"
-                          name="fileSocialWarrantyInquiry"
-                          accept="application/pdf,image/png, image/jpg, image/jpeg"
-                          multiple
-                        />
-                      </div>
-                      <div
-                        class="col text-muted"
-                        id="id_fileNamesSocialWarrantyInquiry"
-                      ></div>
-                      <!--- Place of showing file names -->
-                      
-                    </div>
-      
-                    <hr
-                      id="id_attachmentSocialWarrantyInquiry_group_info_hr"
-                      style="display: none"
-                    />
-                  </div>
-                </div>
-
-              </div>
-            </div>
+            
           </div>
         </div>
         
@@ -2383,7 +2385,7 @@
                 >
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control convert-to-english"
                   id="id_dependent_edit_info_national_id"
                   maxlength="20"
                   name="dependent_edit_info_national_id"
@@ -3295,56 +3297,7 @@
         },
         personalinfo_email: {
           required: true,
-          //emailRegex: true,
         },
-        // dependent_information ---------
-        /*
-        dependent_info_name: {
-          required: true,
-          fullNameRegex: true,
-          minlength: 2,
-          maxlength: 50,
-        },
-        dependent_info_relationship: {
-          required: true,
-        },
-        dependent_info_national_id: {
-          required: true,
-          nationalidRegex: true,
-        },
-        dependent_info_national_id_exp_date: {
-          required: true,
-          dateISO: true,
-        },
-        dependent_info_gender: {
-          required: true,
-        },
-        dependent_info_marital_status: {
-          required: true,
-        },
-        dependent_info_educational_status: {
-          required: true,
-        },
-        dependent_info_educational_level: {
-          required: true,
-        },
-        dependent_info_educational_degree: {
-          required: true,
-        },
-        dependent_info_health_status: {
-          required: true,
-        },
-        dependent_info_disease_type: {
-          required: true,
-        },
-        dependent_info_date_of_birth: {
-          required: true,
-          dateISO: true,
-        },
-        dependent_info_needs_type: {
-          required: true,
-        },
-        */
         // housing_income_need_information ---------
         houseinfo_building_number: {
           required: true,
@@ -5180,6 +5133,11 @@
       if (isNationalIdExists(personal_national_id)) {
         alert("رقم الهوية/الإقامة لمقدم الطلب لا يمكن ان يكون مماثلاً لرقم الهوية/الإقامة لاحد المرافقين!")
         return;
+      }
+
+      // Alert the user if one of the files exceeds the maximum size
+      if (!validateFileSizes()) {
+        return false;
       }
   
       // Select the form element

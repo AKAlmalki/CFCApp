@@ -909,26 +909,26 @@ def beneficiary_indiv(request, user_id):
         files = request.FILES
 
         # Get all the attachments of beneficiary
-        national_id_file = request.FILES.get('fileBeneficiaryNationalID', None)
-        national_address_file = request.FILES.get(
+        national_id_file = files.get('fileBeneficiaryNationalID', None)
+        national_address_file = files.get(
             'fileBeneficiaryNationalAddress', None)
-        dept_instrument_file = request.FILES.getlist('fileDeptInstrument')
-        pension_social_insurance_file = request.FILES.getlist(
+        dept_instrument_file = files.getlist('fileDeptInstrument')
+        pension_social_insurance_file = files.getlist(
             'filePensionOrSocialInsuranceInquiry')
-        father_husband_death_certificate_file = request.FILES.get(
+        father_husband_death_certificate_file = files.get(
             'fileFatherOrHusbandDeathCertificate', None)
-        letter_from_prison_file = request.FILES.getlist('fileLetterFromPrison')
-        divorce_deed_file = request.FILES.get('fileDivorceDeed', None)
-        children_responsibility_deed_file = request.FILES.getlist(
+        letter_from_prison_file = files.getlist('fileLetterFromPrison')
+        divorce_deed_file = files.get('fileDivorceDeed', None)
+        children_responsibility_deed_file = files.getlist(
             'fileChildrenResponsibilityDeed')
-        other_files = request.FILES.getlist('fileOther')
-        lease_contract_or_title_deed_file = request.FILES.getlist(
+        other_files = files.getlist('fileOther')
+        lease_contract_or_title_deed_file = files.getlist(
             'fileLeaseContractOrTitleDeed')
-        water_or_electricity_bills_file = request.FILES.getlist(
+        water_or_electricity_bills_file = files.getlist(
             'fileWaterOrElectricityBills')
-        dependent_national_id_file = request.FILES.getlist(
+        dependent_national_id_file = files.getlist(
             'fileNationalIDForBeneficiaryDependents')
-        social_warranty_inquiry_file = request.FILES.getlist(
+        social_warranty_inquiry_file = files.getlist(
             'fileSocialWarrantyInquiry')
 
         # Accessing the data for beneficiary
@@ -2701,54 +2701,146 @@ def beneficiary_request_update_confirm(request, user_id):
                 # Handle case where the Beneficiary_attachment object does not exist
                 print('[Error] - Attchment to delete is not found!')
 
-        beneficiary_attachment_list = []
+        # Get all the attachments of beneficiary
+        national_id_file = files.get('fileBeneficiaryNationalID', None)
+        national_address_file = files.get(
+            'fileBeneficiaryNationalAddress', None)
+        dept_instrument_file = files.getlist('fileDeptInstrument')
+        pension_social_insurance_file = files.getlist(
+            'filePensionOrSocialInsuranceInquiry')
+        father_husband_death_certificate_file = files.get(
+            'fileFatherOrHusbandDeathCertificate', None)
+        letter_from_prison_file = files.getlist('fileLetterFromPrison')
+        divorce_deed_file = files.get('fileDivorceDeed', None)
+        children_responsibility_deed_file = files.getlist(
+            'fileChildrenResponsibilityDeed')
+        other_files = files.getlist('fileOther')
+        lease_contract_or_title_deed_file = files.getlist(
+            'fileLeaseContractOrTitleDeed')
+        water_or_electricity_bills_file = files.getlist(
+            'fileWaterOrElectricityBills')
+        dependent_national_id_file = files.getlist(
+            'fileNationalIDForBeneficiaryDependents')
+        social_warranty_inquiry_file = files.getlist(
+            'fileSocialWarrantyInquiry')
 
-        # for attachment in beneficiary_attachment_obj:
-        #     # A variable that holds the attachment type in Arabic
-        #     attachment_type_ar = ""
+        print(files)
 
-        #     if attachment.file_type == "national_id":
-        #         attachment_type_ar = "صورة الهوية الوطنية/الإقامة"
-        #     elif attachment.file_type == "national_address":
-        #         attachment_type_ar = "العنوان الوطني"
-        #     elif attachment.file_type == "dept_instrument":
-        #         attachment_type_ar = "صك الدين"
-        #     elif attachment.file_type == "pension_social_insurance":
-        #         attachment_type_ar = "مشهد التقاعد أو التأمينات الاجتماعية"
-        #     elif attachment.file_type == "father_husband_death_cert":
-        #         attachment_type_ar = "شهادة الوفاة للزوج / الأب"
-        #     elif attachment.file_type == "letter_from_prison":
-        #         attachment_type_ar = "خطاب من السجن"
-        #     elif attachment.file_type == "divorce_deed":
-        #         attachment_type_ar = "صك الطلاق"
-        #     elif attachment.file_type == "children_responsibility_deed":
-        #         attachment_type_ar = "صك إعالة الأبناء"
-        #     elif attachment.file_type == "other_files":
-        #         attachment_type_ar = "مستندات أخرى"
-        #     elif attachment.file_type == "lease_contract_title_deed":
-        #         attachment_type_ar = "عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية"
-        #     elif attachment.file_type == "water_or_electricity_bills":
-        #         attachment_type_ar = "الفواتير (كهرباء - ماء)"
-        #     elif attachment.file_type == "dependent_national_id":
-        #         attachment_type_ar = "صورة الهوية الوطنية/الإقامة للمرافقين"
-        #     elif attachment.file_type == "social_warranty_inquiry":
-        #         attachment_type_ar = "مشهد الضمان الاجتماعي"
-        #     else:
-        #         attachment_type_ar = attachment.file_type
+        # Store attachments of beneficiary -------------------
+        # Store all file objects in a list
+        file_list = []
 
-        #     beneficiary_attachment_list.append({
-        #         'file_path': attachment.file_object.url,
-        #         'file_extension': file_extension(attachment.file_object.url),
-        #         'file_name': attachment.filename().split(".")[0],
-        #         'file_size': attachment.file_size,
-        #         'attachment_type': attachment_type_ar,
-        #     })
+        # Create beneficiary attachment for "national id"
+        if national_id_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="national_id",
+                file_object=national_id_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
 
-        context = {
-            'user_info': user,
-            'beneficiary_requests': beneficiary_requests,
-            'beneficiary': beneficiary_obj,
-        }
+        # Create beneficiary attachment for "national address"
+        if national_address_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="national_address",
+                file_object=national_address_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
+
+        # Create beneficiary attachment for "dept instrument"
+        for file_obj in dept_instrument_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="dept_instrument",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "pension or social insurance"
+        for file_obj in pension_social_insurance_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="pension_social_insurance",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "father or husband death certificate"
+        if father_husband_death_certificate_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="father_husband_death_cert",
+                file_object=father_husband_death_certificate_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
+
+        # Create beneficiary attachment for "letter from prison"
+        for file_obj in letter_from_prison_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="letter_from_prison",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "Divorce Deed"
+        if divorce_deed_file is not None:
+            beneficiary_attachment_obj = Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="divorce_deed",
+                file_object=divorce_deed_file,
+            )
+            file_list.append(beneficiary_attachment_obj)
+
+        # Create beneficiary attachment for "children responsibility deed"
+        for file_obj in children_responsibility_deed_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="children_responsibility_deed",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "other files"
+        for file_obj in other_files:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="other_files",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "lease contract or title deed"
+        for file_obj in lease_contract_or_title_deed_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="lease_contract_title_deed",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "water or electricity bills"
+        for file_obj in water_or_electricity_bills_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="water_or_electricity_bills",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "dependent national id"
+        for file_obj in dependent_national_id_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="dependent_national_id",
+                file_object=file_obj
+            ))
+
+        # Create beneficiary attachment for "social warranty inquiry"
+        for file_obj in social_warranty_inquiry_file:
+            file_list.append(Beneficiary_attachment(
+                beneficiary=beneficiary_obj,
+                file_type="social_warranty_inquiry",
+                file_object=file_obj
+            ))
+
+        # instead of creating and saving each file separately, store them in a list, and save them all at once.
+        if file_list:
+            Beneficiary_attachment.objects.bulk_create(file_list)
 
     except ObjectDoesNotExist:
         messages.error(request, "المستخدم غير موجود!")
