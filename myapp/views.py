@@ -2171,6 +2171,11 @@ def beneficiary_request_update(request, user_id):
                 'dependent_needs_description': dependent_obj.needs_description,
                 'dependent_educational_level': dependent_obj.educational_level,
                 'dependent_disease_type': dependent_obj.disease_type,
+                'dependent_work_status': dependent_obj.work_status,
+                'dependent_employer': dependent_obj.employer,
+                'dependent_contribute_to_family_income': dependent_obj.contribute_to_family_income,
+                'dependent_disability_check': dependent_obj.disability_check,
+                'dependent_disability_type': dependent_obj.disability_type,
                 'dependent_income_data': dependent_income_data,
             })
 
@@ -2497,6 +2502,7 @@ def beneficiary_request_update_confirm(request, user_id):
                 "[Warning] - There are no dependents associated with this beneficiary.")
 
         for dep in dependents_list:
+
             # Extract the data for each field
             first_name = dep.get('firstName', '')
             second_name = dep.get('secondName', '')
@@ -2522,6 +2528,13 @@ def beneficiary_request_update_confirm(request, user_id):
             needs_description = dep.get('needsDescription', '')
             educational_level = dep.get('educationalLevel', None)
             disease_type = dep.get('diseaseType', None)
+
+            work_status = dep.get('workStatus', None)
+            employer = dep.get('employer', None)
+            contribute_to_family_income = dep.get(
+                'contributeToFamilyIncome', None)
+            disability_check = dep.get('disabilityCheck', None)
+            disability_type = dep.get('disabilityType', None)
 
             dependent_income_table = json.loads(
                 dep.get('dependentIncomeTable', []))
@@ -2554,6 +2567,11 @@ def beneficiary_request_update_confirm(request, user_id):
                 dependent_obj.needs_type = needs_type
                 dependent_obj.educational_degree = educational_degree
                 dependent_obj.needs_description = needs_description
+                dependent_obj.work_status = work_status
+                dependent_obj.employer = employer
+                dependent_obj.contribute_to_family_income = contribute_to_family_income
+                dependent_obj.disability_check = disability_check
+                dependent_obj.disability_type = disability_type
                 dependent_obj.beneficiary_id = beneficiary_obj
 
                 # Save the changes
@@ -2610,7 +2628,12 @@ def beneficiary_request_update_confirm(request, user_id):
                     needs_type=needs_type,
                     educational_degree=educational_degree,
                     needs_description=needs_description,
-                    beneficiary_id=beneficiary_obj
+                    work_status=work_status,
+                    employer=employer,
+                    contribute_to_family_income=contribute_to_family_income,
+                    disability_check=disability_check,
+                    disability_type=disability_type,
+                    beneficiary_id=beneficiary_obj,
                 )
                 new_dependent.save()
 

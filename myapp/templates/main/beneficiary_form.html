@@ -2962,6 +2962,11 @@
                 needsDescription: cells[14].innerText,
                 educationalLevel: cells[15].innerText,
                 diseaseType: cells[16].innerText,
+                workStatus: cells[17].innerText,
+                employer: cells[18].innerText,
+                contributeToFamilyIncome: cells[19].innerText,
+                disabilityCheck: cells[20].innerText,
+                disabilityType: cells[21].innerText,
             };
             dependentsData.push(dependent);
         }
@@ -3152,6 +3157,21 @@
         dependent_edit_info_national_id: {
           required: true,
           nationalidRegex: true,
+          remote: {
+            url: '/beneficiaries/' + {{ request.user.id }}  + '/update/validate_national_id_edit_dependent/',
+            type: 'post',
+            data: {
+              national_id: function() {
+                return $('#id_dependent_edit_info_national_id').val();
+              },
+              csrfmiddlewaretoken: csrfTokenEditDepForm,  // Include CSRF token
+              base_nid: function() { 
+                // Get the value from the data-attr-base-nid attribute using plain JavaScript
+                var element = document.getElementById('id_dependent_edit_info_national_id');
+                return element.getAttribute('data-attr-base-nid');
+              },
+            },
+          },
         },
         dependent_edit_info_national_id_exp_date: {
           required: true,
@@ -3789,7 +3809,7 @@
       min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
     });
 
-    var includedFields = ["id_dependent_info_national_id", "id_personalinfo_phone_number", "id_personalinfo_email", "id_personalinfo_national_id"]; // IDs of fields to exclude
+    var includedFields = ["id_dependent_info_national_id", "id_personalinfo_phone_number", "id_personalinfo_email", "id_personalinfo_national_id", "id_beneficiaryinfo_iban"]; // IDs of fields to exclude
 
     // When ".next" button is clicked, the following function is executed
     $(".next").click(function () {
@@ -4008,7 +4028,7 @@
             required: true,
           },
           dependentinfo_needs_description: {
-            required: true,
+            required: false,
           },
           dependent_info_contribute_to_family_income: {
             required: true,
@@ -4195,7 +4215,7 @@
         if ($("#personal_information").is(":visible")) {
 
           var personalNationalID = $("#id_personalinfo_national_id").val();
-          
+
           // Alert the user if the provided national ID is added before in the family table
           if (isNationalIdExists(personalNationalID)) {
             alert("رقم الهوية/الإقامة لمقدم الطلب تم إضافته بالفعل في قائمة المرافقين!");
@@ -5170,9 +5190,9 @@
       // Remove the 'disabled' attribute
       saveChangesButton.setAttribute('disabled', 'disabled');
 
-      // Hide loading state
+      // Show loading state
       document.getElementById('loadingStateEditModal').style.display = 'block';
-      // Show actual content
+      // Hide actual content
       document.getElementById('editModalContent').style.display = 'none';
     });
 
@@ -5325,16 +5345,22 @@
         handleHealthStatusEditInput.call();
         handleWorkStatusEditInput.call();
         handleIsDisabledEditInput.call();
-      }, 2000); // Replace 2000 with the actual time it takes to load data
+      }, 2000); // 2000 = 2 seconds timeout
       
     }
 
     // Add event listener to the educational status dropdown for the input event
-    var educationalStatusDropdown = document.getElementById('id_dependent_info_educational_status');
+    var educationalStatusDropdown = document.getElementById('id_dependent_info_educational_status'); // It may need to be changed to "_edit_info_"
     educationalStatusDropdown.addEventListener('input', handleEducationalStatusEditInput);
 
     var healthStatusDropdown = document.getElementById('id_dependent_edit_info_health_status');
     healthStatusDropdown.addEventListener('input', handleHealthStatusEditInput);
+
+    var workStatusDropdown = document.getElementById('id_dependent_edit_info_work_status');
+    workStatusDropdown.addEventListener('input', handleWorkStatusEditInput);
+
+    var disabilityTypeDropdown = document.getElementById('id_dependent_edit_info_is_disabled');
+    disabilityTypeDropdown.addEventListener('input', handleIsDisabledEditInput);
 
     // Get the modal element
     var editModal = new bootstrap.Modal(document.getElementById('editModal'));
