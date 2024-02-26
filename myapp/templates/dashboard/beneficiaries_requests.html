@@ -5,62 +5,96 @@
 {% endblock %}
 {% block content %}
 <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+  {% if messages %}
+  <script>
+    // Execute the following JavaScript code when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show the modal when there are messages
+      var modal = new bootstrap.Modal(document.getElementById('errorModal'));
+      modal.show();
+    });
+  </script>
+  {% endif %}
+
+  {% for message in messages %}
+  <div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">رسالة</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ message }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
   <div class="col row-gap-3 justify-content-md-center mb-5">
       <div class="col-md-auto p-1 pt-3 mt-4 bg-dark rounded-3 d-flex flex-column justify-content-center align-self-center table-responsive text-nowrap" style="overflow-x: scroll">
         <p class="text-light ms-2 fs-3">طلبات المستفيدين</p>
         <table class="table table-striped-columns mb-1">
           <thead class="">
             <tr>
-              {% for header in beneficiary_request_headers %}
-              <th scope="col">{{ header }}</th>
-              {% endfor %}
+              <th scope="col">رقم الطلب</th>
+              <th scope="col">نوع الطلب</th>
+              <th scope="col">الحالة</th>
+              <th scope="col">تاريخ الإرسال</th>
+              <th scope="col">تاريخ المراجعة</th>
+              <th scope="col">مُراجع الطلب</th>
+              <th scope="col">الملاحظات</th>
+              <th scope="col">الإجراءات</th>
             </tr>
           </thead>
           <tbody>
-            {% for row in beneficiary_requests %}
+            {% for beneficiary_request in beneficiary_requests %}
             <tr>
-              <th scope="row">{{ row.id }}</th>
-              {% if row.request_type == "جديد" %}
-              <td class="col"><span class="badge text-bg-success">{{ row.request_type }}</span></td>
-              {% elif row.request_type == "تحديث" %}
-              <td class="col"><span class="badge text-bg-info">{{ row.request_type }}</span></td>
+              <th scope="row">{{ beneficiary_request.id }}</th>
+              {% if beneficiary_request.request_type == "جديد" %}
+              <td class="col"><span class="badge text-bg-success">{{ beneficiary_request.request_type }}</span></td>
+              {% elif beneficiary_request.request_type == "تحديث" %}
+              <td class="col"><span class="badge text-bg-info">{{ beneficiary_request.request_type }}</span></td>
               {% else %}
-              <td class="col">{{ row.request_type }}</td>
+              <td class="col">{{ beneficiary_request.request_type }}</td>
               {% endif %}
-              {% if row.status == "تحت المراجعة" %}
-              <td class="col"><span class="badge text-bg-primary">{{ row.status }}</span></td>
-              {% elif row.status == "انتظار" %}
-              <td class="col"><span class="badge text-bg-warning">{{ row.status }}</span></td>
-              {% elif row.status == "مقبول" %}
-              <td class="col"><span class="badge text-bg-success">{{ row.status }}</span></td>
-              {% elif row.status == "مرفوض" %}
-              <td class="col"><span class="badge text-bg-danger">{{ row.status }}</span></td>
+              {% if beneficiary_request.status == "تحت المراجعة" %}
+              <td class="col"><span class="badge text-bg-primary">{{ beneficiary_request.status }}</span></td>
+              {% elif beneficiary_request.status == "انتظار" %}
+              <td class="col"><span class="badge text-bg-warning">{{ beneficiary_request.status }}</span></td>
+              {% elif beneficiary_request.status == "مقبول" %}
+              <td class="col"><span class="badge text-bg-success">{{ beneficiary_request.status }}</span></td>
+              {% elif beneficiary_request.status == "مرفوض" %}
+              <td class="col"><span class="badge text-bg-danger">{{ beneficiary_request.status }}</span></td>
               {% else %}
-              <td class="col"><span class="badge text-bg-primary">{{ row.status }}</span></td>
+              <td class="col"><span class="badge text-bg-primary">{{ beneficiary_request.status }}</span></td>
               {% endif %}
-              <td class="col">{{ row.created_at }}</td>
-              {% if row.reviewed_by %}
-              <td class="col">{{ row.reviewed_by }}</td>
-              {% else %}
-              <td class="col">----</td>
-              {% endif %}
-              {% if row.comment %}
-              <td class="col">{{ row.comment }}</td>
+              <td class="col">{{ beneficiary_request.created_at }}</td>
+              {% if beneficiary_request.reviewed_at %}
+              <td class="col">{{ beneficiary_request.reviewed_at }}</td>
               {% else %}
               <td class="col">----</td>
               {% endif %}
-              <td class="col"><!-- Button trigger modal -->
-                {% comment %} <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal2">
-                  الغاء
-                </button>
-
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal3">
-                  قبول
-                </button> {% endcomment %}
-
-                <button type="button" class="btn btn-primary btn-details" data-bs-toggle="modal" data-bs-target="#beneficiaryDetailsModal" data-id="{{ row.beneficiary.id }}">
+              {% if beneficiary_request.reviewed_by %}
+              <td class="col">{{ beneficiary_request.reviewed_by }}</td>
+              {% else %}
+              <td class="col">----</td>
+              {% endif %}
+              {% if beneficiary_request.comment %}
+              <td class="col">{{ beneficiary_request.comment }}</td>
+              {% else %}
+              <td class="col">----</td>
+              {% endif %}
+              <td class="col">
+                
+                <a type="button" class="btn btn-primary btn-details" href="{% url 'dashboard_beneficiary_request_details' beneficiary_id=beneficiary_request.beneficiary.id b_request_id=beneficiary_request.id %}" data-id="{{ beneficiary_request.beneficiary.id }}">
                   تفاصيل الطلب
-                </button>
+                </a>
                 
                 <!-- Modal -->
                 <div class="modal fade" id="beneficiaryDetailsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="beneficiaryDetailsModalLabel" aria-hidden="true">
@@ -77,11 +111,11 @@
                           <div class="accordion" id="id_beneficiary_accordion">
                             <div class="accordion-item">
                               <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_personal_info_collapseOne{{row.id}}" aria-expanded="false" aria-controls="beneficiary_personal_info_collapseOne{{row.id}}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_personal_info_collapseOne{{beneficiary_request.id}}" aria-expanded="false" aria-controls="beneficiary_personal_info_collapseOne{{beneficiary_request.id}}">
                                   معلومات مقدم الطلب
                                 </button>
                               </h2>
-                              <div id="beneficiary_personal_info_collapseOne{{row.id}}" class="accordion-collapse collapse">
+                              <div id="beneficiary_personal_info_collapseOne{{beneficiary_request.id}}" class="accordion-collapse collapse">
                                 <div class="accordion-body">
                                   <div class="row row-cols-lg-2 row-cols-xl-4">
                                     <div class="mb-3">
@@ -209,11 +243,11 @@
                             </div>
                             <div class="accordion-item">
                               <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_housing_info_collapseTwo{{row.id}}" aria-expanded="false" aria-controls="beneficiary_housing_info_collapseTwo{{row.id}}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_housing_info_collapseTwo{{beneficiary_request.id}}" aria-expanded="false" aria-controls="beneficiary_housing_info_collapseTwo{{beneficiary_request.id}}">
                                   معلومات السكن
                                 </button>
                               </h2>
-                              <div id="beneficiary_housing_info_collapseTwo{{row.id}}" class="accordion-collapse collapse">
+                              <div id="beneficiary_housing_info_collapseTwo{{beneficiary_request.id}}" class="accordion-collapse collapse">
                                 <div class="accordion-body">
 
                                   <div class="row row-cols-lg-2 row-cols-xl-4">
@@ -350,11 +384,11 @@
                             </div>
                             <div class="accordion-item">
                               <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_income_expenses_info_collapseThree{{row.id}}" aria-expanded="false" aria-controls="beneficiary_income_expenses_info_collapseThree{{row.id}}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_income_expenses_info_collapseThree{{beneficiary_request.id}}" aria-expanded="false" aria-controls="beneficiary_income_expenses_info_collapseThree{{beneficiary_request.id}}">
                                   معلومات الدخل والمصروفات
                                 </button>
                               </h2>
-                              <div id="beneficiary_income_expenses_info_collapseThree{{row.id}}" class="accordion-collapse collapse">
+                              <div id="beneficiary_income_expenses_info_collapseThree{{beneficiary_request.id}}" class="accordion-collapse collapse">
                                 <div class="accordion-body">
 
                                   <h4 class="mt-2 mb-3">مصادر دخل رب الأسرة (شهريًا)</h4>
@@ -692,11 +726,11 @@
                             </div>
                             <div class="accordion-item">
                               <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_attachments{{row.id}}" aria-expanded="false" aria-controls="beneficiary_attachments{{row.id}}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beneficiary_attachments{{beneficiary_request.id}}" aria-expanded="false" aria-controls="beneficiary_attachments{{beneficiary_request.id}}">
                                   المرفقات
                                 </button>
                               </h2>
-                              <div id="beneficiary_attachments{{row.id}}" class="accordion-collapse collapse">
+                              <div id="beneficiary_attachments{{beneficiary_request.id}}" class="accordion-collapse collapse">
                                 <div class="accordion-body">
                                   {% comment %} Below are the attachments {% endcomment %}
                                   <div id="attachmentsContainer">

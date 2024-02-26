@@ -141,6 +141,16 @@ urlpatterns = [
         name="beneficiary_requests"
     ),
     path(
+        "dashboard/beneficiaries/<int:beneficiary_id>/requests/<int:b_request_id>/",
+        views.dashboard_beneficiary_request_details,
+        name="dashboard_beneficiary_request_details"
+    ),
+    path(
+        "dashboard/beneficiaries/<int:beneficiary_id>/requests/<int:b_request_id>/update/",
+        views.dashboard_beneficiary_request_update,
+        name="dashboard_beneficiary_request_update"
+    ),
+    path(
         'beneficiaries/<int:user_id>/details/',
         views.beneficiary_request_details,
         name="beneficiary_request_details"

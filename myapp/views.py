@@ -534,7 +534,7 @@ def dashboard_beneficiaries_requests(request):
     Beneficiary_request_list = paginator.get_page(page_number)
     context = {
         "beneficiary_requests": Beneficiary_request_list,
-        "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'تاريخ الإرسال', 'مُراجع الطلب', 'التعليقات', 'الإجراءات'],
+        "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'تاريخ الإرسال', 'مُراجع الطلب', 'الملاحظات', 'الإجراءات'],
     }
 
     return render(request, "dashboard/beneficiaries_requests.html", context)
@@ -1817,8 +1817,6 @@ def supporter_request_details(request, supporter_id, s_request_id):
 @login_required(login_url="/login")
 def supporter_request_confirm(request, supporter_id, s_request_id):
     if request.method == "POST":
-
-        print(request.POST)
 
         request_status = request.POST.get('request_status', None)
         request_comment = request.POST.get('request_comment', None)
@@ -3292,3 +3290,154 @@ def dashboard_supporter_details(request, s_id):
         "supporter": supporter,
     }
     return render(request, "dashboard/supporter_details.html", context)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def dashboard_beneficiary_request_update(request, beneficiary_id, b_request_id):
+    if request.method == "POST":
+
+        request_status = request.POST.get('request_status', None)
+        request_comment = request.POST.get('request_comment', None)
+
+        beneficiary_request_obj = Beneficiary_request.objects.filter(
+            beneficiary=beneficiary_id, id=b_request_id).first()
+
+        # Update object data
+        beneficiary_request_obj.status = request_status
+        beneficiary_request_obj.comment = request_comment
+        beneficiary_request_obj.reviewed_by = request.user
+        beneficiary_request_obj.reviewed_at = datetime.now()
+
+        # Save the changes
+        beneficiary_request_obj.save()
+
+        messages.success(request, "لقد تم تحديث حالة طلب الداعم بنجاح!")
+        return redirect("dashboard_beneficiaries_requests")
+
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Method Not Allowed'}, status=405)
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_beneficiary_request_details(request, beneficiary_id, b_request_id):
+
+    context = {}
+
+    beneficiary_request_obj = Beneficiary_request.objects.filter(
+        beneficiary=beneficiary_id, id=b_request_id).first()
+
+    beneficiary_obj = beneficiary.objects.filter(
+        pk=beneficiary_id).first()
+
+    beneficiary_house_obj = beneficiary_house.objects.get(
+        beneficiary_id=beneficiary_obj.id)
+
+    beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
+        beneficiary_id=beneficiary_obj.id)
+
+    beneficiary_attachment_obj = Beneficiary_attachment.objects.filter(
+        beneficiary_id=beneficiary_obj.id).all()
+
+    dependent_list = dependent.objects.filter(
+        beneficiary_id=beneficiary_obj.id).all()
+
+    dependent_data = []
+
+    for dependent_obj in dependent_list:
+
+        # Initialize dependent income list with every dependent
+        dependent_income_data = []
+
+        # Retrieve the dependent income infomration
+        dependent_income_list = Dependent_income.objects.filter(
+            dependent=dependent_obj).all()
+
+        # Add the data into the dependent income list
+        for dependent_income_obj in dependent_income_list:
+            dependent_income_data.append({
+                'id': dependent_income_obj.id,
+                'income_source': dependent_income_obj.source,
+                'income_amount': dependent_income_obj.amount,
+            })
+
+        dependent_data.append({
+            'dependent_id': dependent_obj.id,
+            'dependent_first_name': dependent_obj.first_name,
+            'dependent_second_name': dependent_obj.second_name,
+            'dependent_last_name': dependent_obj.last_name,
+            'dependent_gender': dependent_obj.gender,
+            'dependent_relationship': dependent_obj.relationship,
+            'dependent_educational_status': dependent_obj.educational_status,
+            'dependent_marital_status': dependent_obj.marital_status,
+            'dependent_national_id': dependent_obj.national_id,
+            'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+            'dependent_health_status': dependent_obj.health_status,
+            'dependent_needs_type': dependent_obj.needs_type,
+            'dependent_educational_degree': dependent_obj.educational_degree,
+            'dependent_date_of_birth': dependent_obj.date_of_birth,
+            'dependent_needs_description': dependent_obj.needs_description,
+            'dependent_educational_level': dependent_obj.educational_level,
+            'dependent_disease_type': dependent_obj.disease_type,
+            'dependent_work_status': dependent_obj.work_status,
+            'dependent_employer': dependent_obj.employer,
+            'dependent_contribute_to_family_income': dependent_obj.contribute_to_family_income,
+            'dependent_disability_check': dependent_obj.disability_check,
+            'dependent_disability_type': dependent_obj.disability_type,
+            'dependent_income_data': dependent_income_data,
+        })
+
+    beneficiary_attachment_list = []
+
+    for attachment in beneficiary_attachment_obj:
+        # A variable that holds the attachment type in Arabic
+        attachment_type_ar = ""
+
+        if attachment.file_type == "national_id":
+            attachment_type_ar = "صورة الهوية الوطنية/الإقامة"
+        elif attachment.file_type == "national_address":
+            attachment_type_ar = "العنوان الوطني"
+        elif attachment.file_type == "dept_instrument":
+            attachment_type_ar = "صك الدين"
+        elif attachment.file_type == "pension_social_insurance":
+            attachment_type_ar = "مشهد التقاعد أو التأمينات الاجتماعية"
+        elif attachment.file_type == "father_husband_death_cert":
+            attachment_type_ar = "شهادة الوفاة للزوج / الأب"
+        elif attachment.file_type == "letter_from_prison":
+            attachment_type_ar = "خطاب من السجن"
+        elif attachment.file_type == "divorce_deed":
+            attachment_type_ar = "صك الطلاق"
+        elif attachment.file_type == "children_responsibility_deed":
+            attachment_type_ar = "صك إعالة الأبناء"
+        elif attachment.file_type == "other_files":
+            attachment_type_ar = "مستندات أخرى"
+        elif attachment.file_type == "lease_contract_title_deed":
+            attachment_type_ar = "عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية"
+        elif attachment.file_type == "water_or_electricity_bills":
+            attachment_type_ar = "الفواتير (كهرباء - ماء)"
+        elif attachment.file_type == "dependent_national_id":
+            attachment_type_ar = "صورة الهوية الوطنية/الإقامة للمرافقين"
+        elif attachment.file_type == "social_warranty_inquiry":
+            attachment_type_ar = "مشهد الضمان الاجتماعي"
+        else:
+            attachment_type_ar = attachment.file_type
+
+        beneficiary_attachment_list.append({
+            'file_path': attachment.file_object.url,
+            'file_extension': file_extension(attachment.file_object.url),
+            'file_name': attachment.filename().split(".")[0],
+            'file_size': attachment.file_size,
+            'attachment_type': attachment_type_ar,
+        })
+
+    context = {
+        'beneficiary': beneficiary_obj,
+        'beneficiary_request': beneficiary_request_obj,
+        'beneficiary_house': beneficiary_house_obj,
+        'beneficiary_income_expense': beneficiary_income_expense_obj,
+        'beneficiary_attachments': beneficiary_attachment_list,
+        'dependent_list': dependent_data,
+    }
+
+    return render(request, "dashboard/beneficiary_request_details.html", context)
