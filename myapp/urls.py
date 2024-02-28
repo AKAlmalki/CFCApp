@@ -61,6 +61,11 @@ urlpatterns = [
         name="dashboard"
     ),
     path(
+        "dashboard/users/",
+        views.dashboard_users,
+        name="dashboard_users"
+    ),
+    path(
         "dashboard/beneficiaries/requests/",
         views.dashboard_beneficiaries_requests,
         name="dashboard_beneficiaries_requests"

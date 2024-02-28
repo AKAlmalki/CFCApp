@@ -1,9 +1,9 @@
-{% extends "dashboard/dbase.html" %} {% load humanize %} {% block title %} بناء التقارير {% endblock %}
+{% extends "dashboard/dbase.html" %} {% load humanize %} {% block title %} المستخدمين {% endblock %}
 {% block content %}
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
   
   <div class="mt-5">
-    <h2 class="pb-3">بناء التقارير</h2>
+    <h2 class="pb-3">إدارة المستخدمين</h2>
     <form action="{% url 'dashboard_generate_reports_post' %}" method="GET">
       {% csrf_token %}
       <div class="form-group pb-3 row">
