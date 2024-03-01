@@ -32,7 +32,16 @@
           </div>
           <h5 class="card-title text-center"><a href="#" class="text-gray-800 link-primary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover fw-bold text-hover-primary mb-1">{{ user_obj.first_name }} {{ user_obj.last_name }}</a></h5>
           <div class="text-center">
-            <h5 class="badge text-bg-primary">{{ user_obj.first_name }}</h5>
+            {% if user_groups %}
+                <h3>Groups:</h3>
+                <ul>
+                    {% for group in user_groups %}
+                        <li><h5 class="badge text-bg-primary">{{ group.name }}</h5></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">No groups associated with this user.</p>
+            {% endif %}
           </div>
           <h5 class="fw-bold mt-3">التفاصيل</h5>
           <hr>

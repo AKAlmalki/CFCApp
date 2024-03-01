@@ -3466,17 +3466,25 @@ def dashboard_user_profile(request, user_id):
 
     user_obj = CustomUser.objects.filter(pk=user_id).first()
 
-    # Convert date of birth to be populated in the template
-    dob = date(
-        user_obj.date_of_birth.year,
-        user_obj.date_of_birth.month,
-        user_obj.date_of_birth.day
-    )
+    if user_obj:
+        # Get the groups associated with the user
+        user_groups = user_obj.groups.all()
 
-    context = {
-        'user_obj': user_obj,
-        'user_dob': int(time.mktime(dob.timetuple())) * 1000,
-    }
+        # Convert date of birth to be populated in the template
+        dob = date(
+            user_obj.date_of_birth.year,
+            user_obj.date_of_birth.month,
+            user_obj.date_of_birth.day
+        )
+
+        context = {
+            'user_obj': user_obj,
+            'user_dob': int(time.mktime(dob.timetuple())) * 1000,
+            'user_groups': user_groups,
+        }
+    else:
+        # Handle case when user is not found
+        context['error_message'] = "User not found."
 
     return render(request, "dashboard/user_profile.html", context)
 
