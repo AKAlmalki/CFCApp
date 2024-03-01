@@ -3443,16 +3443,31 @@ def dashboard_beneficiary_request_details(request, beneficiary_id, b_request_id)
     return render(request, "dashboard/beneficiary_request_details.html", context)
 
 
-@group_required("Admin")
+@group_required("Management")
 @login_required(login_url='/login')
 def dashboard_users(request):
 
     context = {}
 
-    users_list = ""
+    users_list = CustomUser.objects.all()
 
     context = {
         'users_list': users_list,
     }
 
     return render(request, "dashboard/users_list.html", context)
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_user_profile(request, user_id):
+
+    context = {}
+
+    user_obj = CustomUser.objects.filter(pk=user_id).first()
+
+    context = {
+        'user_obj': user_obj,
+    }
+
+    return render(request, "dashboard/user_profile.html", context)

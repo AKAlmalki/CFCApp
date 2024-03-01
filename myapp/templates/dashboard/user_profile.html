@@ -1,0 +1,128 @@
+{% extends "dashboard/dbase.html" %} {% load humanize %} {% load static %} {% block title %} ملف المستفيد {% endblock %}
+{% block head %}
+  <!-- Include jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- Include jQuery Validation Plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+{% endblock %}
+{% block content %}
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+  <div class="mt-3 mb-4">
+    <h2 class="mt-4 mb-2">ملف المستخدم {{ user_obj.username }}</h2>
+    <div class="nav-breadcrumb mb-2">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item "><a href="{% url 'dashboard' %}" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">لوحة القيادة</a></li>
+          <li class="breadcrumb-item "><a href="{% url 'dashboard_users' %}" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">المستخدمين</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ user_obj.username }}</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+  
+  <div class="row mb-5">
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="text-center pt-4 pb-3">
+            <div class="bg-light d-inline-block p-3 rounded-circle">
+              <img class="" src="{% static '/imgs/User-avatar.svg.png' %}" alt="Logo" height="80" loading="lazy">
+            </div>
+          </div>
+          <h5 class="card-title text-center"><a href="#" class="text-gray-800 link-primary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover fw-bold text-hover-primary mb-1">{{ user_obj.first_name }} {{ user_obj.last_name }}</a></h5>
+          <div class="text-center">
+            <h5 class="badge text-bg-primary">{{ user_obj.first_name }}</h5>
+          </div>
+          <h5 class="fw-bold mt-3">التفاصيل</h5>
+          <hr>
+          <div class="pb-5 fs-6">
+            <div class="fw-bold mt-3">رقم الحساب</div>
+            <div class="text-body-secondary">ID-{{ user_obj.id }}</div>
+            <div class="fw-bold mt-3">البريد الالكتروني</div>
+            <div><p class="text-body-secondary">{{ user_obj.email }}</p></div>
+            <div class="fw-bold mt-3">الجنسية</div>
+            <div class="text-body-secondary">{{ user_obj.nationality }}</div>
+            <div class="fw-bold mt-3">تاريخ الانضمام</div>
+            <div class="text-body-secondary">{{ user_obj.date_joined }}</div>
+            <div class="fw-bold mt-3">آخر ظهور</div>
+            <div class="text-body-secondary">{% if user_obj.last_login %}{{ user_obj.last_login|naturaltime }}{% else %}----{% endif %}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+      <div class="col-md-8 ps-4">
+        <ul class="nav nav-underline pb-4" id="underline-tab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a class="nav-link text-dark active" aria-current="page" data-bs-toggle="pill" data-bs-target="#tab-overview" type="button" role="tab" aria-controls="tab-overview" aria-selected="true">نظرة عامة</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link text-dark" data-bs-toggle="pill" data-bs-target="#tab-security" type="button" role="tab" aria-controls="tab-security" aria-selected="true">الأمان</a>
+          </li>
+        </ul>
+        <div class="row tab-content" id="pills-tabContent">
+          <div class="row tab-pane fade show active" id="tab-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title fw-bold mb-3 mt-3">تفاصيل المستخدم</h5>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">الاسم الكامل: {{ user_obj.first_name }} {{ user_obj.second_name }} {{ user_obj.last_name }}</li>
+                  <li class="list-group-item">اسم المستخدم: {{ user_obj.username }}</li>
+                  <li class="list-group-item">البريد الإلكتروني: {{ user_obj.email }}</li>
+                  <li class="list-group-item">تاريخ الانضمام: {{ user_obj.date_joined }}</li>
+                  <li class="list-group-item">آخر ظهور: {% if user_obj.last_login %}{{ user_obj.last_login|naturaltime }}{% else %}----{% endif %}</li>
+                  <li class="list-group-item">تاريخ الميلاد: {{ user_obj.date_of_birth }}</li>
+                  <li class="list-group-item">رقم الجوال: {{ user_obj.phonenumber }}</li>
+                  <li class="list-group-item">الجنس: {{ user_obj.gender }}</li>
+                  <li class="list-group-item">الجنسية: {{ user_obj.nationality }}</li>
+                  <li class="list-group-item">آخر تحديث: {% if user_obj.last_updated %}{{ user_obj.last_updated }}{% else %}----{% endif %}</li>
+                  </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row tab-pane fade" id="tab-security" role="tabpanel" aria-labelledby="tab-security" tabindex="1">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title fw-bold mb-3 mt-3">معلومات الأمان</h5>
+                <table class="table align-middle table-row-dashed gy-5" id="kt_table_users_login_session">
+                  <tbody class="fs-6 fw-semibold text-gray-600">
+                      <tr>
+                          <td class="text-body-secondary">البريد الالكتروني</td>
+                          <td class="text-body-secondary">{{ user_obj.email }}</td>
+                          <td class="text-end">
+                            <a href="{% url 'home' %}" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                            </svg></a>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">كلمة المرور</td>
+                          <td class="text-body-secondary">******</td>
+                          <td class="text-end">
+                            <a href="{% url 'home' %}" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                            </svg></a>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">الدور</td>
+                          <td class="text-body-secondary">Administrator</td>
+                          <td class="text-end">
+                            <a href="{% url 'home' %}" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                            </svg></a>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</main>
+{% endblock %}
