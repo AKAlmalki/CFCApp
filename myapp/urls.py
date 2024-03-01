@@ -76,6 +76,16 @@ urlpatterns = [
         name="dashboard_user_delete"
     ),
     path(
+        "dashboard/users/<int:user_id>/edit/",
+        views.dashboard_user_edit_basic_info,
+        name="dashboard_user_edit_basic_info"
+    ),
+    path(
+        "dashboard/users/validate_username/",
+        views.dashboard_user_validate_username,
+        name="dashboard_user_validate_username"
+    ),
+    path(
         "dashboard/beneficiaries/requests/",
         views.dashboard_beneficiaries_requests,
         name="dashboard_beneficiaries_requests"

@@ -3466,8 +3466,16 @@ def dashboard_user_profile(request, user_id):
 
     user_obj = CustomUser.objects.filter(pk=user_id).first()
 
+    # Convert date of birth to be populated in the template
+    dob = date(
+        user_obj.date_of_birth.year,
+        user_obj.date_of_birth.month,
+        user_obj.date_of_birth.day
+    )
+
     context = {
         'user_obj': user_obj,
+        'user_dob': int(time.mktime(dob.timetuple())) * 1000,
     }
 
     return render(request, "dashboard/user_profile.html", context)
@@ -3485,3 +3493,73 @@ def dashboard_user_delete(request, user_id):
         return redirect("dashboard_users")
     else:
         return render(request, "dashboard/users_list.html")
+
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_edit_basic_info(request, user_id):
+
+    data = request.POST
+
+    first_name = data.get("first_name", None)
+    second_name = data.get("second_name", None)
+    last_name = data.get("last_name", None)
+    username = data.get("username", None)
+    date_of_birth = data.get("date_of_birth", None)
+    # Check if the date string exists and is not empty
+    if date_of_birth:
+        # Convert the date string to a date object
+        date_of_birth = datetime.strptime(
+            date_of_birth, '%Y-%m-%d').date()
+    else:
+        print("No valid date found in JSON")
+    gender = data.get("gender", None)
+    nationality = data.get("nationality", None)
+
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    user.first_name = first_name
+    user.second_name = second_name
+    user.last_name = last_name
+    user.username = username
+    user.date_of_birth = date_of_birth
+    user.gender = gender
+    user.nationality = nationality
+
+    user.save()
+
+    if request.method == 'POST':
+        # user.delete()
+        messages.success(request, "تم تعديل معلومات المستخدم بنجاح.")
+        return redirect("dashboard_users")
+    else:
+        return render(request, "dashboard/users_list.html")
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_user_validate_username(request):
+
+    print(request.POST)
+    username = request.POST.get('username', None)
+    b_username = request.POST.get('base_username', None)
+
+    if username is None:
+        return HttpResponse("true")
+    else:
+        data = "false"
+
+        cu_data = not CustomUser.objects.filter(
+            username=username).exists()
+
+        if cu_data:
+            data = "true"
+        else:
+            # in case of username exists before but it is equal to the base_username
+            if username == b_username:
+                data = "true"
+            else:
+                data = "false"
+
+        print(data)
+        return HttpResponse(data)
