@@ -71,6 +71,11 @@ urlpatterns = [
         name="dashboard_user_profile"
     ),
     path(
+        "dashboard/users/<int:user_id>/delete/",
+        views.dashboard_user_delete,
+        name="dashboard_user_delete"
+    ),
+    path(
         "dashboard/beneficiaries/requests/",
         views.dashboard_beneficiaries_requests,
         name="dashboard_beneficiaries_requests"

@@ -3443,7 +3443,7 @@ def dashboard_beneficiary_request_details(request, beneficiary_id, b_request_id)
     return render(request, "dashboard/beneficiary_request_details.html", context)
 
 
-@group_required("Management")
+@group_required("Admin")
 @login_required(login_url='/login')
 def dashboard_users(request):
 
@@ -3458,7 +3458,7 @@ def dashboard_users(request):
     return render(request, "dashboard/users_list.html", context)
 
 
-@group_required("Management")
+@group_required("Admin")
 @login_required(login_url='/login')
 def dashboard_user_profile(request, user_id):
 
@@ -3471,3 +3471,17 @@ def dashboard_user_profile(request, user_id):
     }
 
     return render(request, "dashboard/user_profile.html", context)
+
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_delete(request, user_id):
+
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, "تم حذف المستخدم بنجاح.")
+        return redirect("dashboard_users")
+    else:
+        return render(request, "dashboard/users_list.html")
