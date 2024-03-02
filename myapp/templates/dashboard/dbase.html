@@ -287,6 +287,7 @@
                 التقارير
               </a>
             </li>
+            {% comment %} {% if request.user|has_group:"Admin" %} {% endcomment %}
             <li class="nav-item">
               <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/dashboard/users/' %} text-bg-success {% else %} text-dark {% endif %}" href="{% url 'dashboard_users' %}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
@@ -295,6 +296,7 @@
                 المستخدمين
               </a>
             </li>
+            {% comment %} {% endif %} {% endcomment %}
           </ul>
 
           <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
