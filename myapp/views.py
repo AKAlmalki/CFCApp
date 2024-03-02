@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment, Field_visit, Field_visit_attachment
 # from .forms import CustomUserCreationForm
 # from django.db.models import Q
 from django.contrib import messages
@@ -3669,6 +3669,72 @@ def dashboard_add_support_operation(request):
 
         messages.success(request, "تم إضافة عملية الدعم بنجاح.")
         return redirect("dashboard_support_operations")
+    else:
+        messages.error(request, "لقد حدث خطأ غير متوقع.")
+        return redirect("dashboard")
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_field_visits(request):
+
+    field_visits_list = Field_visit.objects.all()
+
+    beneficiaries_list = beneficiary.objects.all()
+
+    paginator = Paginator(field_visits_list, IPP_DASHBOARD_REQUESTS)
+    page_number = request.GET.get('page')
+    field_visits_list = paginator.get_page(page_number)
+
+    context = {
+        'field_visits_list': field_visits_list,
+        "beneficiaries": beneficiaries_list,
+    }
+
+    return render(request, "dashboard/field_visit.html", context)
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_add_field_visit(request):
+
+    if request.method == 'POST':
+
+        data = request.POST
+        files = request.FILES
+
+        beneficiary_id = data.get("beneficiary", None)
+        report_after_visit = data.get("report_after_visit", None)
+
+        beneficiary_obj = beneficiary.objects.filter(pk=beneficiary_id).first()
+
+        field_visit_obj = Field_visit(
+            beneficiary=beneficiary_obj,
+            specialist=request.user,
+            visit_type="",
+            report_after_visit=report_after_visit,
+        )
+        field_visit_obj.save()
+
+        field_visit_attachments = files.getlist(
+            'field_visit_attachment')
+
+        file_list = []
+
+        # Loop for every file object to add to file_list
+        for file_obj in field_visit_attachments:
+            file_list.append(Field_visit_attachment(
+                field_visit=field_visit_obj,
+                file_type="general",
+                file_object=file_obj,
+            ))
+
+        # Create the attachment objects for Field_visit_attachment
+        if file_list:
+            Field_visit_attachment.objects.bulk_create(file_list)
+
+        messages.success(request, "تم إضافة زيارة ميدانية بنجاح.")
+        return redirect("dashboard_field_visits")
     else:
         messages.error(request, "لقد حدث خطأ غير متوقع.")
         return redirect("dashboard")

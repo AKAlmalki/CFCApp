@@ -1,4 +1,4 @@
-{% extends "dashboard/dbase.html" %} {% load humanize %} {% load static %} {% block title %} عمليات الدعم {% endblock %} {% block head %}
+{% extends "dashboard/dbase.html" %} {% load humanize %} {% load static %} {% block title %} الزيارات الميدانية {% endblock %} {% block head %}
 <!-- Include jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <!-- Include jQuery Validation Plugin -->
@@ -58,7 +58,7 @@
 
   <div class="d-flex justify-content-between align-items-center">
     <div class="mt-4 mb-4">
-      <h1 class="mb-2">عمليات الدعم</h1>
+      <h1 class="mb-2">الزيارات الميدانية</h1>
       <div class="nav-breadcrumb mb-2">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
@@ -70,14 +70,14 @@
               >
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-              عمليات الدعم
+              الزيارات الميدانية
             </li>
           </ol>
         </nav>
       </div>
     </div>
     <div class="me-3">
-      <button href="#" class="btn btn-primary add-sup-op" data-bs-toggle="modal" data-bs-target="#add_sup_op_modal">إضافة عملية دعم</button>
+      <button href="#" class="btn btn-primary add-field-visit" data-bs-toggle="modal" data-bs-target="#add_field_visit_modal">إضافة زيارة ميدانية</button>
     </div>
   </div>
 
@@ -92,13 +92,13 @@
       <div class="card-body pt-0">
         <!--begin::Table-->
         <div
-          id="support_operations_table_wrapper"
+          id="field_visits_table_wrapper"
           class="no-footer"
         >
           <div class="table-responsive">
             <table
               class="table align-middle table-row-dashed fs-6 no-footer"
-              id="support_operations_table"
+              id="field_visits_table"
             >
               <thead>
                 <tr
@@ -108,7 +108,7 @@
                     #
                   </th>
                   <th>
-                    نوع عملية الدعم
+                    نوع الزيارة
                   </th>
                   <th>
                     التاريخ
@@ -117,27 +117,34 @@
                     المستفيد
                   </th>
                   <th>
+                    الاخصائي
+                  </th>
+                  <th>
                     الإجراءات
                   </th>
                 </tr>
               </thead>
               <tbody class="fw-semibold text-body-secondary">
-                {% for support_operation in support_operations %}
+                {% for field_visit in field_visits_list %}
                 <tr class="fw-normal">
                   <td>
-                    <p>{{ support_operation.id }}</p>
+                    <p>{{ field_visit.id }}</p>
                   </td>
 
                   <td>
-                    <p>{{ support_operation.support_type }}</p>
+                    <p>{{ field_visit.visit_type }}</p>
                   </td>
 
                   <td>
-                    <p>{{ support_operation.created_at }}</p>
+                    <p>{{ field_visit.created_at }}</p>
                   </td>
 
                   <td>
-                    <p>{{ support_operation.beneficiary.first_name }} {{ support_operation.beneficiary.last_name }}</p>
+                    <p>{{ field_visit.beneficiary.first_name }} {{ field_visit.beneficiary.last_name }}</p>
+                  </td>
+
+                  <td>
+                    <p>{{ field_visit.specialist.username }}</p>
                   </td>
 
                   <td class="text-end">
@@ -146,9 +153,9 @@
                 </tr>
                 {% empty %}
                 <tr class="">
-                  <td colspan="5">
+                  <td colspan="6">
                     <p class="text-center py-3 fw-light">
-                    لا يوجد عمليات دعم حاليًا
+                    لا يوجد زيارات ميدانية حاليًا
                     </p>
                   </td>
                 </tr>
@@ -159,23 +166,23 @@
 
           <nav class="mt-3" aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
-              {% if support_operations.has_previous %}
+              {% if field_visits_list.has_previous %}
               <li class="page-item">
                 <a class="page-link" href="?page=1">الاول</a>
               </li>
               <li class="page-item">
-                <a class="page-link" href="?page={{ support_operations.previous_page_number }}">السابق</a>
+                <a class="page-link" href="?page={{ field_visits_list.previous_page_number }}">السابق</a>
               </li>
               {% endif %}
       
-              <li class="page-item disabled"><a class="page-link" >{{ support_operations.number }} من {{ support_operations.paginator.num_pages }}</a></li>
+              <li class="page-item disabled"><a class="page-link" >{{ field_visits_list.number }} من {{ field_visits_list.paginator.num_pages }}</a></li>
       
-              {% if support_operations.has_next %}
+              {% if field_visits_list.has_next %}
               <li class="page-item">
-                <a class="page-link" href="?page={{ support_operations.next_page_number }}">التالي</a>
+                <a class="page-link" href="?page={{ field_visits_list.next_page_number }}">التالي</a>
               </li>
               <li class="page-item">
-                <a class="page-link" href="?page={{ support_operations.paginator.num_pages }}">الأخير</a>
+                <a class="page-link" href="?page={{ field_visits_list.paginator.num_pages }}">الأخير</a>
               </li>
               {% endif %}
             </ul>
@@ -189,16 +196,16 @@
 </main>
 
 <!-- Edit User Modal -->
-<div class="modal fade" id="add_sup_op_modal" tabindex="-1" role="dialog" aria-labelledby="add_sup_op_modal_label" aria-hidden="true">
+<div class="modal fade" id="add_field_visit_modal" tabindex="-1" role="dialog" aria-labelledby="add_field_visit_modal_label" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title" id="add_sup_op_modal_label">إضافة عملية دعم</h5>
+              <h5 class="modal-title" id="add_field_visit_modal_label">إضافة زيارة ميدانية</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form 
-            id="add_sup_op_form" 
-            action="{% url 'dashboard_add_support_operation' %}" 
+            id="add_field_visit_form" 
+            action="{% url 'dashboard_add_field_visit' %}" 
             method="POST"
             enctype="multipart/form-data"
             class="needs-validation"
@@ -213,22 +220,7 @@
                 >
                   الحجم الاقصى للملف الواحد لجميع المرفقات هو ١ ميجابايت <span dir="ltr">(1 MB)</span>, بحيث انه يمكن رفع اكثر من ملف لبعض المرفقات بما لا يتجاوز حجم 1 ميجابايت للملف الواحد
                 </div>
-                <div class="row row-cols-lg-3">
-                  <div class="mb-3">
-                      <label for="id_support_operation_type" class="form-label">نوع عملية الدعم<span style="color: red">*</span></label>
-                      <select
-                        name="support_operation_type"
-                        class="form-select"
-                        id="id_support_operation_type"
-                      >
-                        <option value>---------</option>
-                        <option value="تسديد فاتورة">تسديد فاتورة</option>
-                        <option value="شراء اثاث">شراء أثاث</option>
-                        <option value="شراء أجهزة كهربائية">شراء أجهزة كهربائية</option>
-                        <option value="ترميم">ترميم</option>
-                        <option value="أخرى">أخرى</option>
-                      </select>
-                  </div>
+                <div class="row row-cols-lg-1">
                   <div class="mb-3">
                       <label for="id_beneficiary" class="form-label">المستفيد<span style="color: red">*</span></label>
                       <select
@@ -242,24 +234,6 @@
                       {% endfor %}
                       </select>
                   </div>
-                  <div class="mb-4 form-group">
-                    <label
-                      for="id_total_amount"
-                      class="form-label"
-                      >المبلغ الإجمالي<span style="color: red">*</span></label
-                    >
-                    <div class="input-group">
-                      <input
-                        type="number"
-                        name="total_amount"
-                        min="0.00"
-                        max="99999999.00"
-                        class="form-control"
-                        id="id_total_amount"
-                      />
-                      <span class="input-group-text" id="basic-addon1">ر.س.</span>
-                    </div>
-                  </div>
                 </div>
 
                 <div class="mb-3 row column-gap-4 fileInputContainer">
@@ -268,22 +242,22 @@
                     <div class="col-4 d-flex justify-content-center">
                       <label
                         class="btn btn-success w-100 mb-2 mt-2 align-self-baseline"
-                        for="id_support_operation_attachment"
+                        for="id_field_visit_attachment"
                         >إرفاق ملفات</label
                       >
                     </div>
                     <input
                       class="form-control d-none"
                       type="file"
-                      id="id_support_operation_attachment"
-                      name="support_operation_attachment"
+                      id="id_field_visit_attachment"
+                      name="field_visit_attachment"
                       accept="application/pdf,image/png, image/jpg, image/jpeg"
                       multiple
                     />
                   </div>
                   <div
                     class="col text-muted"
-                    id="id_support_operation_attachment_file_names"
+                    id="id_field_visit_attachment_file_names"
                   ></div>
                   <!--- Place of showing file names -->
   
@@ -291,14 +265,14 @@
 
                 <div class="row">
                   <div class="mb-3">
-                      <label for="id_notes" class="form-label">الملاحظات</label>
-                      <textarea rows="5" type="text" class="form-control" id="id_notes" name="notes"></textarea>
+                      <label for="id_report_after_visit" class="form-label">تقرير الزيارة<span style="color: red">*</span></label>
+                      <textarea rows="5" type="text" class="form-control" id="id_report_after_visit" name="report_after_visit"></textarea>
                   </div>
                 </div>
               </div>
               <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
-                  <button type="submit" class="btn btn-success" id="submit_add_sup_op">إضافة عملية الدعم</button>
+                  <button type="submit" class="btn btn-success" id="submit_add_field_visit">إضافة زيارة ميدانية</button>
               </div>
           </form>
       </div>
@@ -380,14 +354,14 @@
 
     // Initialize for each file input (fileInputId, fileNamesDivId)
     updateFileNamesDisplay(
-      "id_support_operation_attachment",
-      "id_support_operation_attachment_file_names"
+      "id_field_visit_attachment",
+      "id_field_visit_attachment_file_names"
     );
 
     // Global variables
-    var add_sup_op_form = $("#add_sup_op_form");
+    var add_field_visit_form = $("#add_field_visit_form");
 
-    $('#submit_add_sup_op').click(function(e) {
+    $('#submit_add_field_visit').click(function(e) {
       e.preventDefault(); // Prevent default form submission
 
       // The below code will change the default validation messages
@@ -410,7 +384,7 @@
         min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
       });
 
-      add_sup_op_form.validate({
+      add_field_visit_form.validate({
           errorElement: "span",
           errorClass: "help-block invalid-feedback",
           highlight: function (element, errorClass, validClass) {
@@ -432,35 +406,32 @@
           focusInvalid: true,
 
           rules: {
-              support_operation_type: {
-                  required: true,
-              },
               beneficiary: {
                   required: true,
               },
-              total_amount: {
+              report_after_visit: {
                   required: true,
               },
           },
       });
 
       // When the modal is opened, validate the form fields
-      $('#add_sup_op_modal').on('show.bs.modal', function (e) {
-          add_sup_op_form.valid(); // Trigger validation
+      $('#add_field_visit_modal').on('show.bs.modal', function (e) {
+        add_field_visit_form.valid(); // Trigger validation
       });
 
       // When any input field is changed, validate the form fields
-      add_sup_op_form.find("input, select, textarea").on("input change", function () {
-          add_sup_op_form.valid(); // Trigger validation
+      add_field_visit_form.find("input, select, textarea").on("input change", function () {
+        add_field_visit_form.valid(); // Trigger validation
       });
 
-      if (add_sup_op_form.valid() === true) {
+      if (add_field_visit_form.valid() === true) {
+        // If validation passes, submit the form
 
         if (!validateFileSizes()) {
           return false;
         }
-        // If validation passes, submit the form
-        $('#add_sup_op_form').submit();
+        $('#add_field_visit_form').submit();
       }
     });
 

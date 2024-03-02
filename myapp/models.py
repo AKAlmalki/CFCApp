@@ -29,6 +29,11 @@ def support_operation_file_directory(instance, filename):
     return "beneficiaries/{0}/support_operations/{1}/{2}/{3}".format(instance.support_operation.beneficiary.national_id, instance.support_operation.id, instance.file_type, filename)
 
 
+def field_visit_file_directory(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/field_visits/{1}/{2}/{3}".format(instance.field_visit.beneficiary.national_id, instance.field_visit.id, instance.file_type, filename)
+
+
 #########################################################
 
 
@@ -284,6 +289,34 @@ class Support_operation_attachment(models.Model):
     file_type = models.CharField(max_length=256, null=True)
     file_object = models.FileField(
         upload_to=support_operation_file_directory, blank=True, null=True)
+
+    @property
+    def file_size(self):
+        return self.file_object.size
+
+    # Returns file name with its extension
+    def filename(self):
+        return os.path.basename(self.file_object.name)
+
+
+class Field_visit(models.Model):
+    db_table = "field_visit"
+    beneficiary = models.ForeignKey(
+        beneficiary, on_delete=models.CASCADE)
+    specialist = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE)
+    report_after_visit = models.CharField(max_length=1024)
+    visit_type = models.CharField(max_length=64)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Field_visit_attachment(models.Model):
+    db_table = "field_visit_attachment"
+    field_visit = models.ForeignKey(
+        Field_visit, on_delete=models.CASCADE)
+    file_type = models.CharField(max_length=256, null=True)
+    file_object = models.FileField(
+        upload_to=field_visit_file_directory, blank=True, null=True)
 
     @property
     def file_size(self):
