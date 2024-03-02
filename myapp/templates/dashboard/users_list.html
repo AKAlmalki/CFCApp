@@ -87,7 +87,7 @@
           <tbody>
               {% for user_obj in users_list %}
               <tr class="">
-                  <td><input type="checkbox" name="selected_users" value="{{ user_obj.id }}"></td>
+                  <td><input class="form-check-input" disabled type="checkbox" name="selected_users" value="{{ user_obj.id }}"></td>
                   <td class="d-flex align-items-center py-4">
                     <!--begin:: Avatar -->
                     <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
@@ -104,7 +104,25 @@
                       <span class="text-muted">{{ user_obj.email }}</span>
                     </div>
                   </td>
-                  <td>{{ user_obj.username }}</td>
+                  <td>
+                    {% if user_obj.groups.all %}
+                      {% for group in user_obj.groups.all %}
+                        {% if group.name == "Admin" %}
+                          <h5 class="badge text-bg-danger">مسؤول</h5>
+                        {% elif group.name == "Management" %}
+                          <h5 class="badge text-bg-warning">إداري</h5>
+                        {% elif group.name == "Developer" %}
+                          <h5 class="badge text-bg-info">مطور</h5>
+                        {% elif group.name == "Beneficiary" %}
+                          <h5 class="badge text-bg-primary">مستفيد</h5>
+                        {% elif group.name == "Supporter" %}
+                          <h5 class="badge text-bg-success">داعم</h5>
+                        {% endif %}
+                      {% endfor %}
+                    {% else %}
+                      <p class="text-muted">------</p>
+                    {% endif %}
+                  </td>
                   <td class="text-start">{% if user_obj.last_login %}{{ user_obj.last_login|naturaltime }}{% else %}----{% endif %}</td>
                   <td>{% if user_obj.last_updated %}{{ user_obj.last_updated }}{% else %}----{% endif %}</td>
                   <td><div class="d-flex align-items-center">{{ user_obj.date_joined }}</div></td>

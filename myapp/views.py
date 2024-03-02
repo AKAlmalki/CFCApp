@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.http import HttpResponseRedirect, JsonResponse
 from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment
 # from .forms import CustomUserCreationForm
@@ -30,7 +30,7 @@ from .tokens import generate_token
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db.models.query_utils import Q
 from .decorators import group_required
 
@@ -3449,7 +3449,8 @@ def dashboard_users(request):
 
     context = {}
 
-    users_list = CustomUser.objects.all()
+    #  used to fetch all related groups for each user efficiently. This way, when you iterate over the users_list in your template, you can access the groups associated with each user.
+    users_list = CustomUser.objects.prefetch_related('groups').all()
 
     context = {
         'users_list': users_list,
@@ -3468,7 +3469,7 @@ def dashboard_user_profile(request, user_id):
 
     if user_obj:
         # Get the groups associated with the user
-        user_groups = user_obj.groups.all()
+        user_groups = user_obj.groups.first()
 
         # Convert date of birth to be populated in the template
         dob = date(
@@ -3480,7 +3481,7 @@ def dashboard_user_profile(request, user_id):
         context = {
             'user_obj': user_obj,
             'user_dob': int(time.mktime(dob.timetuple())) * 1000,
-            'user_groups': user_groups,
+            'user_group': user_groups,
         }
     else:
         # Handle case when user is not found
@@ -3507,48 +3508,47 @@ def dashboard_user_delete(request, user_id):
 @login_required(login_url='/login')
 def dashboard_user_edit_basic_info(request, user_id):
 
-    data = request.POST
-
-    first_name = data.get("first_name", None)
-    second_name = data.get("second_name", None)
-    last_name = data.get("last_name", None)
-    username = data.get("username", None)
-    date_of_birth = data.get("date_of_birth", None)
-    # Check if the date string exists and is not empty
-    if date_of_birth:
-        # Convert the date string to a date object
-        date_of_birth = datetime.strptime(
-            date_of_birth, '%Y-%m-%d').date()
-    else:
-        print("No valid date found in JSON")
-    gender = data.get("gender", None)
-    nationality = data.get("nationality", None)
-
-    user = get_object_or_404(CustomUser, id=user_id)
-
-    user.first_name = first_name
-    user.second_name = second_name
-    user.last_name = last_name
-    user.username = username
-    user.date_of_birth = date_of_birth
-    user.gender = gender
-    user.nationality = nationality
-
-    user.save()
-
     if request.method == 'POST':
-        # user.delete()
+
+        data = request.POST
+
+        first_name = data.get("first_name", None)
+        second_name = data.get("second_name", None)
+        last_name = data.get("last_name", None)
+        username = data.get("username", None)
+        date_of_birth = data.get("date_of_birth", None)
+        # Check if the date string exists and is not empty
+        if date_of_birth:
+            # Convert the date string to a date object
+            date_of_birth = datetime.strptime(
+                date_of_birth, '%Y-%m-%d').date()
+        else:
+            print("No valid date found in JSON")
+        gender = data.get("gender", None)
+        nationality = data.get("nationality", None)
+
+        user = get_object_or_404(CustomUser, id=user_id)
+
+        user.first_name = first_name
+        user.second_name = second_name
+        user.last_name = last_name
+        user.username = username
+        user.date_of_birth = date_of_birth
+        user.gender = gender
+        user.nationality = nationality
+
+        user.save()
+
         messages.success(request, "تم تعديل معلومات المستخدم بنجاح.")
-        return redirect("dashboard_users")
+        return redirect(reverse("dashboard_user_profile", args=[user_id]))
     else:
         return render(request, "dashboard/users_list.html")
 
 
-@group_required("Management")
+@group_required("Admin")
 @login_required(login_url='/login')
 def dashboard_user_validate_username(request):
 
-    print(request.POST)
     username = request.POST.get('username', None)
     b_username = request.POST.get('base_username', None)
 
@@ -3569,5 +3569,32 @@ def dashboard_user_validate_username(request):
             else:
                 data = "false"
 
-        print(data)
         return HttpResponse(data)
+
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_edit_role(request, user_id):
+
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    if request.method == 'POST':
+
+        data = request.POST
+        new_role_name = data.get("new_role", None)
+
+        # Get the group corresponding to the selected role
+        new_role_group = Group.objects.filter(
+            name__iexact=new_role_name).first()
+
+        # Remove the user from all previous groups
+        user.groups.clear()
+
+        # Add the user to the new role group
+        user.groups.add(new_role_group)
+
+        messages.success(request, "تم تعديل دور المستخدم بنجاح.")
+        return redirect(reverse("dashboard_user_profile", args=[user_id]))
+    else:
+        messages.error(request, "لقد حدث خطأ غير متوقع.")
+        return redirect("dashboard_users")

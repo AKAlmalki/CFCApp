@@ -8,6 +8,49 @@
 {% endblock %}
 {% block content %}
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+    <symbol id="check-circle-fill" viewBox="0 0 16 16">
+      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </symbol>
+    <symbol id="info-fill" viewBox="0 0 16 16">
+      <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+    </symbol>
+    <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </symbol>
+  </svg>
+
+  {% if messages %}
+  <script>
+    // Execute the following JavaScript code when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show the modal when there are messages
+      var modal = new bootstrap.Modal(document.getElementById('errorModal'));
+      modal.show();
+    });
+  </script>
+  {% endif %}
+
+  {% for message in messages %}
+  <div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">رسالة</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ message }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
   <div class="mt-3 mb-4">
     <h2 class="mt-4 mb-2">ملف المستخدم {{ user_obj.username }}</h2>
     <div class="nav-breadcrumb mb-2">
@@ -32,15 +75,20 @@
           </div>
           <h5 class="card-title text-center"><a href="#" class="text-gray-800 link-primary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover fw-bold text-hover-primary mb-1">{{ user_obj.first_name }} {{ user_obj.last_name }}</a></h5>
           <div class="text-center">
-            {% if user_groups %}
-                <h3>Groups:</h3>
-                <ul>
-                    {% for group in user_groups %}
-                        <li><h5 class="badge text-bg-primary">{{ group.name }}</h5></li>
-                    {% endfor %}
-                </ul>
+            {% if user_group %}
+              {% if user_group.name == "Admin" %}
+                <h5 class="badge text-bg-danger">مسؤول</h5>
+              {% elif user_group.name == "Management" %}
+                <h5 class="badge text-bg-warning">إداري</h5>
+              {% elif user_group.name == "Developer" %}
+                <h5 class="badge text-bg-info">مطور</h5>
+              {% elif user_group.name == "Beneficiary" %}
+                <h5 class="badge text-bg-primary">مستفيد</h5>
+              {% elif user_group.name == "Supporter" %}
+                <h5 class="badge text-bg-success">داعم</h5>
+              {% endif %}
             {% else %}
-                <p class="text-muted">No groups associated with this user.</p>
+                <p class="text-muted">لا يوجد دور محدد للمستخدم.</p>
             {% endif %}
           </div>
           <h5 class="fw-bold mt-3">التفاصيل</h5>
@@ -438,7 +486,7 @@
                           <td class="text-body-secondary">البريد الالكتروني</td>
                           <td class="text-body-secondary">{{ user_obj.email }}</td>
                           <td class="text-end">
-                            <a href="{% url 'home' %}" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                            <a href="#" class="btn btn-primary disabled"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                               <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                               <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                             </svg></a>
@@ -448,7 +496,7 @@
                           <td class="text-body-secondary">كلمة المرور</td>
                           <td class="text-body-secondary">******</td>
                           <td class="text-end">
-                            <a href="{% url 'home' %}" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                            <a href="#" class="btn btn-primary disabled"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                               <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                               <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                             </svg></a>
@@ -458,11 +506,14 @@
                           <td class="text-body-secondary">الدور</td>
                           <td class="text-body-secondary">Administrator</td>
                           <td class="text-end">
-                            <a href="{% url 'home' %}" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                            </svg></a>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#roleModal">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                              </svg>
+                            </button>
                           </td>
+                          <input type="hidden" id="currentRole" value="{{ user_group.name }}">
                       </tr>
                   </tbody>
               </table>
@@ -473,6 +524,92 @@
       </div>
     </div>
 </main>
+
+<!-- Role selection modal -->
+<div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-labelledby="roleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="roleModalLabel">تحديد الدور</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="changeRoleForm" action="{% url 'dashboard_user_edit_role' user_id=user_obj.id %}" method="POST">
+              {% csrf_token %}
+              <div class="row px-3">
+                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                  <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                  <div class="text-start">
+                    يرجى ملاحظة أنه عند تقليل تصنيف دور المستخدم، سيفقد هذا المستخدم جميع الامتيازات التي تم تعيينها للدور السابق.
+                  </div>
+                </div>
+                <div class="row form-group">
+                  <div class="form-check d-flex justify-content-start align-items-center gap-3 ms-4 mb-3">
+                    <input class="form-check-input" type="radio" name="new_role" id="admin_role" value="admin">
+                    <label class="form-check-label" for="admin_role">
+                      <div class="fw-bold text-start fs-5">
+                      مسؤول
+                      </div>
+                      <div class="text-muted text-start small">
+                        يُعتبر المسؤول الأعلى في المنصة، ولديه صلاحيات كاملة لإدارة جميع الجوانب في المنصة.
+                      </div>
+                    </label>
+                  </div>
+                  <div class="form-check d-flex justify-content-start align-items-center gap-3 ms-4 mb-3">
+                    <input class="form-check-input" type="radio" name="new_role" id="management_role" value="management">
+                    <label class="form-check-label" for="management_role">
+                      <div class="fw-bold text-start fs-5">
+                        إداري
+                      </div>
+                      <div class="text-muted text-start small">
+                        يتمتع الإداري بصلاحيات إدارية محددة في المنصة، حيث يدير المستخدمين والمحتوى والعمليات اليومية الأخرى.
+                      </div>
+                    </label>
+                  </div>
+                  <div class="form-check d-flex justify-content-start align-items-center gap-3 ms-4 mb-3">
+                    <input class="form-check-input" type="radio" name="new_role" id="developer_role" value="developer">
+                    <label class="form-check-label" for="developer_role">
+                      <div class="fw-bold text-start fs-5">
+                        مطور
+                      </div>
+                      <div class="text-muted text-start small">يعمل المطورون على تطوير وصيانة المنصة، ويمكنهم تحسين الأداء وإصلاح الأخطاء وإضافة ميزات جديدة.
+                      </div>
+                    </label>
+                  </div>
+                  <div class="form-check d-flex justify-content-start align-items-center gap-3 ms-4 mb-3">
+                    <input class="form-check-input" type="radio" name="new_role" id="beneficiary_role" value="beneficiary">
+                    <label class="form-check-label" for="beneficiary_role">
+                      <div class="fw-bold text-start fs-5">
+                        مستفيد
+                      </div>
+                      <div class="text-muted text-start small">
+                        المستفيد يستفيد من الخدمات المقدمة على المنصة، وليس لديه الصلاحيات الإدارية ويمكنه الوصول إلى المحتوى والخدمات فقط.
+                      </div>
+                    </label>
+                  </div>
+                  <div class="form-check d-flex justify-content-start align-items-center gap-3 ms-4 mb-3">
+                    <input class="form-check-input" type="radio" name="new_role" id="supporter_role" value="support">
+                    <label class="form-check-label" for="supporter_role">
+                      <div class="fw-bold text-start fs-5">
+                        داعم
+                      </div>
+                      <div class="text-muted text-start small">
+                        دور الداعم يتيح للمستخدمين تقديم الدعم المالي أو الدعم الآخر للمشاريع والأنشطة على المنصة، حيث يمكنهم المساهمة في تمويل المشاريع ودعمها بطرق مختلفة.
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+              <button type="submit" class="btn btn-primary" id="saveRoleBtn">حفظ</button>
+          </div>
+      </div>
+  </div>
+</div>
+
 <script>
   $(document).ready(function() {
 
@@ -491,7 +628,7 @@
       setSelectedOption('gender', "{{ user_obj.gender }}");
 
       // Global variables
-      var form = $("#editUserForm");
+      var editUserForm = $("#editUserForm");
 
       // Validator method for first, second, and last name fields in the form
       $.validator.addMethod(
@@ -540,7 +677,7 @@
       // Retrieve the CSRF token from the specific form with username
       var csrf_token = $('#editUserForm input[name=csrfmiddlewaretoken]').val();
 
-      form.validate({
+      editUserForm.validate({
           errorElement: "span",
           errorClass: "help-block invalid-feedback",
           highlight: function (element, errorClass, validClass) {
@@ -621,14 +758,13 @@
 
       // When the modal is opened, validate the form fields
       $('#editUserModal').on('show.bs.modal', function (e) {
-          form.valid(); // Trigger validation
+          editUserForm.valid(); // Trigger validation
       });
 
       // When any input field is changed, validate the form fields
-      form.find("input, select, textarea").on("input change", function () {
-          form.valid(); // Trigger validation
+      editUserForm.find("input, select, textarea").on("input change", function () {
+          editUserForm.valid(); // Trigger validation
       });
-
 
       $('#submitEditUserForm').click(function(e) {
           e.preventDefault(); // Prevent default form submission
@@ -639,7 +775,7 @@
               // Add other custom validation messages as needed
           });
 
-          form.validate({
+          editUserForm.validate({
               errorElement: "span",
               errorClass: "help-block invalid-feedback",
               highlight: function (element, errorClass, validClass) {
@@ -681,18 +817,99 @@
 
           // When the modal is opened, validate the form fields
           $('#editUserModal').on('show.bs.modal', function (e) {
-              form.valid(); // Trigger validation
+              editUserForm.valid(); // Trigger validation
           });
 
           // When any input field is changed, validate the form fields
-          form.find("input, select, textarea").on("input change", function () {
-              form.valid(); // Trigger validation
+          editUserForm.find("input, select, textarea").on("input change", function () {
+              editUserForm.valid(); // Trigger validation
           });
 
-          if (form.valid() === true) {
+          if (editUserForm.valid() === true) {
             // If validation passes, submit the form
             $('#editUserForm').submit();
           }
+      });
+
+      // Get the current role from the hidden input
+      var currentRole = $('#currentRole').val().toLowerCase();
+
+      // Check the radio button corresponding to the current role
+      $('#' + currentRole + '_role').prop('checked', true);
+
+      // Disable the radio button for the current role
+      $('#' + currentRole + '_role').prop('disabled', true);
+
+      // Global variables
+      var changeRoleForm = $("#changeRoleForm");
+
+      $('#saveRoleBtn').click(function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        // Get the value of the selected role
+        var selectedRole = $('input[name=new_role]:checked').val();
+
+        // Check if the selected role is the same as the current role
+        if (selectedRole === currentRole) {
+          // Close the modal if the selected role is the same as the current role
+          $('#roleModal').modal('hide');
+
+        } else {
+          
+          // The below code will change the default validation messages
+          $.extend($.validator.messages, {
+              required: "هذا الحقل مطلوب.",
+              // Add other custom validation messages as needed
+          });
+
+          changeRoleForm.validate({
+              errorElement: "span",
+              errorClass: "help-block invalid-feedback",
+              highlight: function (element, errorClass, validClass) {
+                  $(element).closest(".form-group").addClass("has-error");
+              },
+              unhighlight: function (element, errorClass, validClass) {
+                  $(element).closest(".form-group").removeClass("has-error");
+              },
+              errorPlacement: function (error, element) {
+                  // Check if the element is inside an input-group
+                  if (element.parent(".input-group").length) {
+                      // Place the error after the input-group
+                      error.insertAfter(element.parent(".input-group"));
+                  } else {
+                      // Default placement for other elements
+                      error.insertAfter(element);
+                  }
+              },
+              focusInvalid: true,
+
+              rules: {
+                new_role: {
+                    required: true,
+                  },
+              },
+          });
+
+          // When the modal is opened, validate the form fields
+          $('#changeRoleForm').on('show.bs.modal', function (e) {
+              changeRoleForm.valid(); // Trigger validation
+          });
+
+          // When any input field is changed, validate the form fields
+          changeRoleForm.find("input, select, textarea").on("input change", function () {
+              changeRoleForm.valid(); // Trigger validation
+          });
+
+          if (changeRoleForm.valid() === true) {
+            // If validation passes, submit the form
+            $('#changeRoleForm').submit();
+          }
+        }
+      });
+
+      $('#roleModal').on('hidden.bs.modal', function (e) {
+        var currentRole = $('#currentRole').val().toLowerCase();
+        $('#' + currentRole + '_role').prop('checked', true);
       });
   });
 </script>

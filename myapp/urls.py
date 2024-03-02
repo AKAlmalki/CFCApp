@@ -86,6 +86,11 @@ urlpatterns = [
         name="dashboard_user_validate_username"
     ),
     path(
+        "dashboard/users/<int:user_id>/edit_role/",
+        views.dashboard_user_edit_role,
+        name="dashboard_user_edit_role"
+    ),
+    path(
         "dashboard/beneficiaries/requests/",
         views.dashboard_beneficiaries_requests,
         name="dashboard_beneficiaries_requests"
