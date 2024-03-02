@@ -24,6 +24,11 @@ def supporter_request_file_directory(instance, filename):
     return "supporters/{0}/requests/{1}/{2}/{3}".format(instance.supporter_request.supporter.id, instance.supporter_request.id, instance.file_type, filename)
 
 
+def support_operation_file_directory(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
+    return "beneficiaries/{0}/support_operations/{1}/{2}/{3}".format(instance.support_operation.beneficiary.national_id, instance.support_operation.id, instance.file_type, filename)
+
+
 #########################################################
 
 
@@ -261,20 +266,29 @@ class Dependent_income(models.Model):
     amount = models.DecimalField(decimal_places=2, max_digits=15, default=0)
 
 
-# class Dependent_income_attachment(models.Model):
-#     db_table = "dependent_income_attachment"
-#     dependent_income = models.ForeignKey(Dependent_income, on_delete=models.CASCADE)
-#     file_type = models.CharField(max_length=256, null=True)
-#     file_object = models.FileField(
-#         upload_to=dependent_file_directory, blank=True, null=True)
+class Support_operation(models.Model):
+    db_table = "support_operation"
+    beneficiary = models.ForeignKey(
+        beneficiary, on_delete=models.CASCADE)
+    support_type = models.CharField(max_length=64)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-#     @property
-#     def file_size(self):
-#         return self.file_object.size
 
-#     # Returns file name with its extension
-#     def filename(self):
-#         return os.path.basename(self.file_object.name)
+class Support_operation_attachment(models.Model):
+    db_table = "support_operation_attachment"
+    support_operation = models.ForeignKey(
+        Support_operation, on_delete=models.CASCADE)
+    file_type = models.CharField(max_length=256, null=True)
+    file_object = models.FileField(
+        upload_to=supporter_request_file_directory, blank=True, null=True)
+
+    @property
+    def file_size(self):
+        return self.file_object.size
+
+    # Returns file name with its extension
+    def filename(self):
+        return os.path.basename(self.file_object.name)
 
 
 class Supporter(models.Model):

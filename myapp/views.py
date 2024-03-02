@@ -3598,3 +3598,17 @@ def dashboard_user_edit_role(request, user_id):
     else:
         messages.error(request, "لقد حدث خطأ غير متوقع.")
         return redirect("dashboard_users")
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_support_operations(request):
+
+    if request.method == 'GET':
+
+        context = {}
+
+        return render(request, "dashboard/support_operations.html", context)
+    else:
+        messages.error(request, "لقد حدث خطأ غير متوقع.")
+        return redirect("dashboard")
