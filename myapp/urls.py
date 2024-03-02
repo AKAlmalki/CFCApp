@@ -96,6 +96,11 @@ urlpatterns = [
         name="dashboard_support_operations"
     ),
     path(
+        "dashboard/support_operations/new/",
+        views.dashboard_add_support_operation,
+        name="dashboard_add_support_operation"
+    ),
+    path(
         "dashboard/beneficiaries/requests/",
         views.dashboard_beneficiaries_requests,
         name="dashboard_beneficiaries_requests"

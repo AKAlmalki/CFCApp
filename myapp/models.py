@@ -272,6 +272,9 @@ class Support_operation(models.Model):
         beneficiary, on_delete=models.CASCADE)
     support_type = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
+    notes = models.CharField(max_length=512, null=True)
+    total_amount = models.DecimalField(
+        decimal_places=2, max_digits=15, default=0)
 
 
 class Support_operation_attachment(models.Model):
@@ -280,7 +283,7 @@ class Support_operation_attachment(models.Model):
         Support_operation, on_delete=models.CASCADE)
     file_type = models.CharField(max_length=256, null=True)
     file_object = models.FileField(
-        upload_to=supporter_request_file_directory, blank=True, null=True)
+        upload_to=support_operation_file_directory, blank=True, null=True)
 
     @property
     def file_size(self):

@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment
 # from .forms import CustomUserCreationForm
 # from django.db.models import Q
 from django.contrib import messages
@@ -3606,9 +3606,69 @@ def dashboard_support_operations(request):
 
     if request.method == 'GET':
 
-        context = {}
+        support_operations_list = Support_operation.objects.prefetch_related(
+            'beneficiary').all()
+
+        beneficiaries_list = beneficiary.objects.all()
+
+        paginator = Paginator(support_operations_list, IPP_DASHBOARD_REQUESTS)
+        page_number = request.GET.get('page')
+        support_operations_list = paginator.get_page(page_number)
+
+        context = {
+            "support_operations": support_operations_list,
+            "beneficiaries": beneficiaries_list,
+        }
 
         return render(request, "dashboard/support_operations.html", context)
+    else:
+        messages.error(request, "لقد حدث خطأ غير متوقع.")
+        return redirect("dashboard")
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_add_support_operation(request):
+
+    if request.method == 'POST':
+
+        data = request.POST
+        files = request.FILES
+
+        support_operation_type = data.get("support_operation_type", None)
+        beneficiary_id = data.get("beneficiary", None)
+        total_amount = data.get("total_amount", None)
+        notes = data.get("notes", None)
+
+        beneficiary_obj = beneficiary.objects.filter(pk=beneficiary_id).first()
+
+        support_operation_obj = Support_operation(
+            beneficiary=beneficiary_obj,
+            support_type=support_operation_type,
+            notes=notes,
+            total_amount=total_amount,
+        )
+        support_operation_obj.save()
+
+        support_operation_attachments = files.getlist(
+            'support_operation_attachment')
+
+        file_list = []
+
+        # Loop for every file object to add to file_list
+        for file_obj in support_operation_attachments:
+            file_list.append(Support_operation_attachment(
+                support_operation=support_operation_obj,
+                file_type="general",
+                file_object=file_obj,
+            ))
+
+        # Create the attachment objects for supporter operations
+        if file_list:
+            Support_operation_attachment.objects.bulk_create(file_list)
+
+        messages.success(request, "تم إضافة عملية الدعم بنجاح.")
+        return redirect("dashboard_support_operations")
     else:
         messages.error(request, "لقد حدث خطأ غير متوقع.")
         return redirect("dashboard")
