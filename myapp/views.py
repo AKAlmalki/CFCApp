@@ -1,6 +1,6 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment, Field_visit, Field_visit_attachment
 # from .forms import CustomUserCreationForm
 # from django.db.models import Q
 from django.contrib import messages
@@ -30,7 +30,7 @@ from .tokens import generate_token
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db.models.query_utils import Q
 from .decorators import group_required
 
@@ -534,7 +534,7 @@ def dashboard_beneficiaries_requests(request):
     Beneficiary_request_list = paginator.get_page(page_number)
     context = {
         "beneficiary_requests": Beneficiary_request_list,
-        "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'تاريخ الإرسال', 'مُراجع الطلب', 'التعليقات', 'الإجراءات'],
+        "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'تاريخ الإرسال', 'مُراجع الطلب', 'الملاحظات', 'الإجراءات'],
     }
 
     return render(request, "dashboard/beneficiaries_requests.html", context)
@@ -1817,8 +1817,6 @@ def supporter_request_details(request, supporter_id, s_request_id):
 @login_required(login_url="/login")
 def supporter_request_confirm(request, supporter_id, s_request_id):
     if request.method == "POST":
-
-        print(request.POST)
 
         request_status = request.POST.get('request_status', None)
         request_comment = request.POST.get('request_comment', None)
@@ -3292,3 +3290,451 @@ def dashboard_supporter_details(request, s_id):
         "supporter": supporter,
     }
     return render(request, "dashboard/supporter_details.html", context)
+
+
+@group_required("Management")
+@login_required(login_url="/login")
+def dashboard_beneficiary_request_update(request, beneficiary_id, b_request_id):
+    if request.method == "POST":
+
+        request_status = request.POST.get('request_status', None)
+        request_comment = request.POST.get('request_comment', None)
+
+        beneficiary_request_obj = Beneficiary_request.objects.filter(
+            beneficiary=beneficiary_id, id=b_request_id).first()
+
+        # Update object data
+        beneficiary_request_obj.status = request_status
+        beneficiary_request_obj.comment = request_comment
+        beneficiary_request_obj.reviewed_by = request.user
+        beneficiary_request_obj.reviewed_at = datetime.now()
+
+        # Save the changes
+        beneficiary_request_obj.save()
+
+        messages.success(request, "لقد تم تحديث حالة طلب الداعم بنجاح!")
+        return redirect("dashboard_beneficiaries_requests")
+
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Method Not Allowed'}, status=405)
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_beneficiary_request_details(request, beneficiary_id, b_request_id):
+
+    context = {}
+
+    beneficiary_request_obj = Beneficiary_request.objects.filter(
+        beneficiary=beneficiary_id, id=b_request_id).first()
+
+    beneficiary_obj = beneficiary.objects.filter(
+        pk=beneficiary_id).first()
+
+    beneficiary_house_obj = beneficiary_house.objects.get(
+        beneficiary_id=beneficiary_obj.id)
+
+    beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
+        beneficiary_id=beneficiary_obj.id)
+
+    beneficiary_attachment_obj = Beneficiary_attachment.objects.filter(
+        beneficiary_id=beneficiary_obj.id).all()
+
+    dependent_list = dependent.objects.filter(
+        beneficiary_id=beneficiary_obj.id).all()
+
+    dependent_data = []
+
+    for dependent_obj in dependent_list:
+
+        # Initialize dependent income list with every dependent
+        dependent_income_data = []
+
+        # Retrieve the dependent income infomration
+        dependent_income_list = Dependent_income.objects.filter(
+            dependent=dependent_obj).all()
+
+        # Add the data into the dependent income list
+        for dependent_income_obj in dependent_income_list:
+            dependent_income_data.append({
+                'id': dependent_income_obj.id,
+                'income_source': dependent_income_obj.source,
+                'income_amount': dependent_income_obj.amount,
+            })
+
+        dependent_data.append({
+            'dependent_id': dependent_obj.id,
+            'dependent_first_name': dependent_obj.first_name,
+            'dependent_second_name': dependent_obj.second_name,
+            'dependent_last_name': dependent_obj.last_name,
+            'dependent_gender': dependent_obj.gender,
+            'dependent_relationship': dependent_obj.relationship,
+            'dependent_educational_status': dependent_obj.educational_status,
+            'dependent_marital_status': dependent_obj.marital_status,
+            'dependent_national_id': dependent_obj.national_id,
+            'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+            'dependent_health_status': dependent_obj.health_status,
+            'dependent_needs_type': dependent_obj.needs_type,
+            'dependent_educational_degree': dependent_obj.educational_degree,
+            'dependent_date_of_birth': dependent_obj.date_of_birth,
+            'dependent_needs_description': dependent_obj.needs_description,
+            'dependent_educational_level': dependent_obj.educational_level,
+            'dependent_disease_type': dependent_obj.disease_type,
+            'dependent_work_status': dependent_obj.work_status,
+            'dependent_employer': dependent_obj.employer,
+            'dependent_contribute_to_family_income': dependent_obj.contribute_to_family_income,
+            'dependent_disability_check': dependent_obj.disability_check,
+            'dependent_disability_type': dependent_obj.disability_type,
+            'dependent_income_data': dependent_income_data,
+        })
+
+    beneficiary_attachment_list = []
+
+    for attachment in beneficiary_attachment_obj:
+        # A variable that holds the attachment type in Arabic
+        attachment_type_ar = ""
+
+        if attachment.file_type == "national_id":
+            attachment_type_ar = "صورة الهوية الوطنية/الإقامة"
+        elif attachment.file_type == "national_address":
+            attachment_type_ar = "العنوان الوطني"
+        elif attachment.file_type == "dept_instrument":
+            attachment_type_ar = "صك الدين"
+        elif attachment.file_type == "pension_social_insurance":
+            attachment_type_ar = "مشهد التقاعد أو التأمينات الاجتماعية"
+        elif attachment.file_type == "father_husband_death_cert":
+            attachment_type_ar = "شهادة الوفاة للزوج / الأب"
+        elif attachment.file_type == "letter_from_prison":
+            attachment_type_ar = "خطاب من السجن"
+        elif attachment.file_type == "divorce_deed":
+            attachment_type_ar = "صك الطلاق"
+        elif attachment.file_type == "children_responsibility_deed":
+            attachment_type_ar = "صك إعالة الأبناء"
+        elif attachment.file_type == "other_files":
+            attachment_type_ar = "مستندات أخرى"
+        elif attachment.file_type == "lease_contract_title_deed":
+            attachment_type_ar = "عقد الإيجار الالكتروني من منصة إيجار أو صك ملكية"
+        elif attachment.file_type == "water_or_electricity_bills":
+            attachment_type_ar = "الفواتير (كهرباء - ماء)"
+        elif attachment.file_type == "dependent_national_id":
+            attachment_type_ar = "صورة الهوية الوطنية/الإقامة للمرافقين"
+        elif attachment.file_type == "social_warranty_inquiry":
+            attachment_type_ar = "مشهد الضمان الاجتماعي"
+        else:
+            attachment_type_ar = attachment.file_type
+
+        beneficiary_attachment_list.append({
+            'file_path': attachment.file_object.url,
+            'file_extension': file_extension(attachment.file_object.url),
+            'file_name': attachment.filename().split(".")[0],
+            'file_size': attachment.file_size,
+            'attachment_type': attachment_type_ar,
+        })
+
+    context = {
+        'beneficiary': beneficiary_obj,
+        'beneficiary_request': beneficiary_request_obj,
+        'beneficiary_house': beneficiary_house_obj,
+        'beneficiary_income_expense': beneficiary_income_expense_obj,
+        'beneficiary_attachments': beneficiary_attachment_list,
+        'dependent_list': dependent_data,
+    }
+
+    return render(request, "dashboard/beneficiary_request_details.html", context)
+
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_users(request):
+
+    context = {}
+
+    #  used to fetch all related groups for each user efficiently. This way, when you iterate over the users_list in your template, you can access the groups associated with each user.
+    users_list = CustomUser.objects.prefetch_related('groups').all()
+
+    context = {
+        'users_list': users_list,
+    }
+
+    return render(request, "dashboard/users_list.html", context)
+
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_profile(request, user_id):
+
+    context = {}
+
+    user_obj = CustomUser.objects.filter(pk=user_id).first()
+
+    if user_obj:
+        # Get the groups associated with the user
+        user_groups = user_obj.groups.first()
+
+        # Convert date of birth to be populated in the template
+        dob = date(
+            user_obj.date_of_birth.year,
+            user_obj.date_of_birth.month,
+            user_obj.date_of_birth.day
+        )
+
+        context = {
+            'user_obj': user_obj,
+            'user_dob': int(time.mktime(dob.timetuple())) * 1000,
+            'user_group': user_groups,
+        }
+    else:
+        # Handle case when user is not found
+        context['error_message'] = "User not found."
+
+    return render(request, "dashboard/user_profile.html", context)
+
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_delete(request, user_id):
+
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, "تم حذف المستخدم بنجاح.")
+        return redirect("dashboard_users")
+    else:
+        return render(request, "dashboard/users_list.html")
+
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_edit_basic_info(request, user_id):
+
+    if request.method == 'POST':
+
+        data = request.POST
+
+        first_name = data.get("first_name", None)
+        second_name = data.get("second_name", None)
+        last_name = data.get("last_name", None)
+        username = data.get("username", None)
+        date_of_birth = data.get("date_of_birth", None)
+        # Check if the date string exists and is not empty
+        if date_of_birth:
+            # Convert the date string to a date object
+            date_of_birth = datetime.strptime(
+                date_of_birth, '%Y-%m-%d').date()
+        else:
+            print("No valid date found in JSON")
+        gender = data.get("gender", None)
+        nationality = data.get("nationality", None)
+
+        user = get_object_or_404(CustomUser, id=user_id)
+
+        user.first_name = first_name
+        user.second_name = second_name
+        user.last_name = last_name
+        user.username = username
+        user.date_of_birth = date_of_birth
+        user.gender = gender
+        user.nationality = nationality
+
+        user.save()
+
+        messages.success(request, "تم تعديل معلومات المستخدم بنجاح.")
+        return redirect(reverse("dashboard_user_profile", args=[user_id]))
+    else:
+        return render(request, "dashboard/users_list.html")
+
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_validate_username(request):
+
+    username = request.POST.get('username', None)
+    b_username = request.POST.get('base_username', None)
+
+    if username is None:
+        return HttpResponse("true")
+    else:
+        data = "false"
+
+        cu_data = not CustomUser.objects.filter(
+            username=username).exists()
+
+        if cu_data:
+            data = "true"
+        else:
+            # in case of username exists before but it is equal to the base_username
+            if username == b_username:
+                data = "true"
+            else:
+                data = "false"
+
+        return HttpResponse(data)
+
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_edit_role(request, user_id):
+
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    if request.method == 'POST':
+
+        data = request.POST
+        new_role_name = data.get("new_role", None)
+
+        # Get the group corresponding to the selected role
+        new_role_group = Group.objects.filter(
+            name__iexact=new_role_name).first()
+
+        # Remove the user from all previous groups
+        user.groups.clear()
+
+        # Add the user to the new role group
+        user.groups.add(new_role_group)
+
+        messages.success(request, "تم تعديل دور المستخدم بنجاح.")
+        return redirect(reverse("dashboard_user_profile", args=[user_id]))
+    else:
+        messages.error(request, "لقد حدث خطأ غير متوقع.")
+        return redirect("dashboard_users")
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_support_operations(request):
+
+    if request.method == 'GET':
+
+        support_operations_list = Support_operation.objects.prefetch_related(
+            'beneficiary').all()
+
+        beneficiaries_list = beneficiary.objects.all()
+
+        paginator = Paginator(support_operations_list, IPP_DASHBOARD_REQUESTS)
+        page_number = request.GET.get('page')
+        support_operations_list = paginator.get_page(page_number)
+
+        context = {
+            "support_operations": support_operations_list,
+            "beneficiaries": beneficiaries_list,
+        }
+
+        return render(request, "dashboard/support_operations.html", context)
+    else:
+        messages.error(request, "لقد حدث خطأ غير متوقع.")
+        return redirect("dashboard")
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_add_support_operation(request):
+
+    if request.method == 'POST':
+
+        data = request.POST
+        files = request.FILES
+
+        support_operation_type = data.get("support_operation_type", None)
+        beneficiary_id = data.get("beneficiary", None)
+        total_amount = data.get("total_amount", None)
+        notes = data.get("notes", None)
+
+        beneficiary_obj = beneficiary.objects.filter(pk=beneficiary_id).first()
+
+        support_operation_obj = Support_operation(
+            beneficiary=beneficiary_obj,
+            support_type=support_operation_type,
+            notes=notes,
+            total_amount=total_amount,
+        )
+        support_operation_obj.save()
+
+        support_operation_attachments = files.getlist(
+            'support_operation_attachment')
+
+        file_list = []
+
+        # Loop for every file object to add to file_list
+        for file_obj in support_operation_attachments:
+            file_list.append(Support_operation_attachment(
+                support_operation=support_operation_obj,
+                file_type="general",
+                file_object=file_obj,
+            ))
+
+        # Create the attachment objects for supporter operations
+        if file_list:
+            Support_operation_attachment.objects.bulk_create(file_list)
+
+        messages.success(request, "تم إضافة عملية الدعم بنجاح.")
+        return redirect("dashboard_support_operations")
+    else:
+        messages.error(request, "لقد حدث خطأ غير متوقع.")
+        return redirect("dashboard")
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_field_visits(request):
+
+    field_visits_list = Field_visit.objects.all()
+
+    beneficiaries_list = beneficiary.objects.all()
+
+    paginator = Paginator(field_visits_list, IPP_DASHBOARD_REQUESTS)
+    page_number = request.GET.get('page')
+    field_visits_list = paginator.get_page(page_number)
+
+    context = {
+        'field_visits_list': field_visits_list,
+        "beneficiaries": beneficiaries_list,
+    }
+
+    return render(request, "dashboard/field_visit.html", context)
+
+
+@group_required("Management")
+@login_required(login_url='/login')
+def dashboard_add_field_visit(request):
+
+    if request.method == 'POST':
+
+        data = request.POST
+        files = request.FILES
+
+        beneficiary_id = data.get("beneficiary", None)
+        report_after_visit = data.get("report_after_visit", None)
+
+        beneficiary_obj = beneficiary.objects.filter(pk=beneficiary_id).first()
+
+        field_visit_obj = Field_visit(
+            beneficiary=beneficiary_obj,
+            specialist=request.user,
+            visit_type="",
+            report_after_visit=report_after_visit,
+        )
+        field_visit_obj.save()
+
+        field_visit_attachments = files.getlist(
+            'field_visit_attachment')
+
+        file_list = []
+
+        # Loop for every file object to add to file_list
+        for file_obj in field_visit_attachments:
+            file_list.append(Field_visit_attachment(
+                field_visit=field_visit_obj,
+                file_type="general",
+                file_object=file_obj,
+            ))
+
+        # Create the attachment objects for Field_visit_attachment
+        if file_list:
+            Field_visit_attachment.objects.bulk_create(file_list)
+
+        messages.success(request, "تم إضافة زيارة ميدانية بنجاح.")
+        return redirect("dashboard_field_visits")
+    else:
+        messages.error(request, "لقد حدث خطأ غير متوقع.")
+        return redirect("dashboard")

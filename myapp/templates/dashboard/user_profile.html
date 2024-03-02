@@ -1,0 +1,929 @@
+{% extends "dashboard/dbase.html" %} {% load humanize %} {% load static %} {% block title %} ملف المستفيد {% endblock %}
+{% block head %}
+  <!-- Include jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- Include jQuery Validation Plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+{% endblock %}
+{% block content %}
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+    <symbol id="check-circle-fill" viewBox="0 0 16 16">
+      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </symbol>
+    <symbol id="info-fill" viewBox="0 0 16 16">
+      <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+    </symbol>
+    <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </symbol>
+  </svg>
+
+  {% if messages %}
+  <script>
+    // Execute the following JavaScript code when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show the modal when there are messages
+      var modal = new bootstrap.Modal(document.getElementById('errorModal'));
+      modal.show();
+    });
+  </script>
+  {% endif %}
+
+  {% for message in messages %}
+  <div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">رسالة</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ message }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="mt-3 mb-4">
+    <h2 class="mt-4 mb-2">ملف المستخدم {{ user_obj.username }}</h2>
+    <div class="nav-breadcrumb mb-2">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item "><a href="{% url 'dashboard' %}" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">لوحة القيادة</a></li>
+          <li class="breadcrumb-item "><a href="{% url 'dashboard_users' %}" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">المستخدمين</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ user_obj.username }}</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+  
+  <div class="row mb-5">
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="text-center pt-4 pb-3">
+            <div class="bg-light d-inline-block p-3 rounded-circle">
+              <img class="" src="{% static '/imgs/User-avatar.svg.png' %}" alt="Logo" height="80" loading="lazy">
+            </div>
+          </div>
+          <h5 class="card-title text-center"><a href="#" class="text-gray-800 link-primary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover fw-bold text-hover-primary mb-1">{{ user_obj.first_name }} {{ user_obj.last_name }}</a></h5>
+          <div class="text-center">
+            {% if user_group %}
+              {% if user_group.name == "Admin" %}
+                <h5 class="badge text-bg-danger">مسؤول</h5>
+              {% elif user_group.name == "Management" %}
+                <h5 class="badge text-bg-warning">إداري</h5>
+              {% elif user_group.name == "Developer" %}
+                <h5 class="badge text-bg-info">مطور</h5>
+              {% elif user_group.name == "Beneficiary" %}
+                <h5 class="badge text-bg-primary">مستفيد</h5>
+              {% elif user_group.name == "Supporter" %}
+                <h5 class="badge text-bg-success">داعم</h5>
+              {% endif %}
+            {% else %}
+                <p class="text-muted">لا يوجد دور محدد للمستخدم.</p>
+            {% endif %}
+          </div>
+          <h5 class="fw-bold mt-3">التفاصيل</h5>
+          <hr>
+          <div class="pb-5 fs-6">
+            <div class="fw-bold mt-3">رقم الحساب</div>
+            <div class="text-body-secondary">ID-{{ user_obj.id }}</div>
+            <div class="fw-bold mt-3">البريد الالكتروني</div>
+            <div><p class="text-body-secondary">{{ user_obj.email }}</p></div>
+            <div class="fw-bold mt-3">الجنسية</div>
+            <div class="text-body-secondary">{{ user_obj.nationality }}</div>
+            <div class="fw-bold mt-3">تاريخ الانضمام</div>
+            <div class="text-body-secondary">{{ user_obj.date_joined }}</div>
+            <div class="fw-bold mt-3">آخر ظهور</div>
+            <div class="text-body-secondary">{% if user_obj.last_login %}{{ user_obj.last_login|naturaltime }}{% else %}----{% endif %}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+      <div class="col-md-8 ps-4">
+        <ul class="nav nav-underline pb-4" id="underline-tab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a class="nav-link text-dark active" aria-current="page" data-bs-toggle="pill" data-bs-target="#tab-overview" type="button" role="tab" aria-controls="tab-overview" aria-selected="true">نظرة عامة</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link text-dark" data-bs-toggle="pill" data-bs-target="#tab-security" type="button" role="tab" aria-controls="tab-security" aria-selected="true">الأمان</a>
+          </li>
+        </ul>
+        <div class="row tab-content" id="pills-tabContent">
+          <div class="row tab-pane fade show active" id="tab-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0">
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="mb-3 mt-3 d-flex justify-content-between">
+                  <h5 class="card-title fw-bold mb-1 mt-1">تفاصيل المستخدم</h5>
+                  <a href="#" class="btn btn-primary edit-user" data-bs-toggle="modal" data-bs-target="#editUserModal">تعديل</a>
+
+                  <!-- Edit User Modal -->
+                  <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editUserModalLabel">تعديل بيانات المستخدم</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form id="editUserForm" action="{% url 'dashboard_user_edit_basic_info' user_id=user_obj.id %}" method="POST">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                  <div class="row row-cols-md-3">
+                                    <div class="mb-3">
+                                        <label for="first_name" class="form-label">الاسم الاول</label>
+                                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user_obj.first_name }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="second_name" class="form-label">الاسم الثاني</label>
+                                        <input type="text" class="form-control" id="second_name" name="second_name" value="{{ user_obj.second_name }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="last_name" class="form-label">الاسم الاخير</label>
+                                        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user_obj.last_name }}">
+                                    </div>
+                                  </div>
+                                  <div class="row row-cols-md-2">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">اسم المستخدم</label>
+                                        <input type="text" class="form-control" id="username" name="username" value="{{ user_obj.username }}">
+                                    </div>
+                                    <div class="mb-3 d-none">
+                                      <label for="username_hidden" class="form-label">اسم المستخدم</label>
+                                      <input type="text" class="form-control" id="username_hidden" name="username_hidden" value="{{ user_obj.username }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date_of_birth" class="form-label">تاريخ الميلاد</label>
+                                        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="">
+                                    </div>
+                                  </div>
+                                  <div class="row row-cols-md-2">
+                                    <div class="mb-3">
+                                      <label for="gender" class="form-label">الجنس</label>
+                                      <select
+                                        name="gender"
+                                        class="form-select"
+                                        id="gender"
+                                        data-bs-title="الجنس"
+                                      >
+                                        <option value>---------</option>
+                                        <option value="ذكر">ذكر</option>
+                                        <option value="انثى">انثى</option>
+                                      </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nationality" class="form-label">الجنسية</label>
+                                        <select
+                                          name="nationality"
+                                          class="form-select"
+                                          id="nationality"
+                                          data-bs-title="الجنسية"
+                                        >
+                                          <option value>إختر</option>
+                                          <option value="السعودية">السعودية</option>
+                                          <option value="أفغانستان">أفغانستان</option>
+                                          <option value="ألبانيا">ألبانيا</option>
+                                          <option value="الجزائر">الجزائر</option>
+                                          <option value="أندورا">أندورا</option>
+                                          <option value="أنغولا">أنغولا</option>
+                                          <option value="أنتيغوا وباربودا">أنتيغوا وباربودا</option>
+                                          <option value="الأرجنتين">الأرجنتين</option>
+                                          <option value="أرمينيا">أرمينيا</option>
+                                          <option value="أستراليا">أستراليا</option>
+                                          <option value="النمسا">النمسا</option>
+                                          <option value="أذربيجان">أذربيجان</option>
+                                          <option value="البهاما">البهاما</option>
+                                          <option value="البحرين">البحرين</option>
+                                          <option value="بنغلاديش">بنغلاديش</option>
+                                          <option value="باربادوس">باربادوس</option>
+                                          <option value="بيلاروسيا">بيلاروسيا</option>
+                                          <option value="بلجيكا">بلجيكا</option>
+                                          <option value="بليز">بليز</option>
+                                          <option value="بنين">بنين</option>
+                                          <option value="بوتان">بوتان</option>
+                                          <option value="بوليفيا">بوليفيا</option>
+                                          <option value="البوسنة والهرسك ">البوسنة والهرسك</option>
+                                          <option value="بوتسوانا">بوتسوانا</option>
+                                          <option value="البرازيل">البرازيل</option>
+                                          <option value="بروناي">بروناي</option>
+                                          <option value="بلغاريا">بلغاريا</option>
+                                          <option value="بوركينا فاسو ">بوركينا فاسو</option>
+                                          <option value="بوروندي">بوروندي</option>
+                                          <option value="كمبوديا">كمبوديا</option>
+                                          <option value="الكاميرون">الكاميرون</option>
+                                          <option value="كندا">كندا</option>
+                                          <option value="الرأس الأخضر">الرأس الأخضر</option>
+                                          <option value="جمهورية أفريقيا الوسطى ">
+                                            جمهورية أفريقيا الوسطى
+                                          </option>
+                                          <option value="تشاد">تشاد</option>
+                                          <option value="تشيلي">تشيلي</option>
+                                          <option value="الصين">الصين</option>
+                                          <option value="كولومبيا">كولومبيا</option>
+                                          <option value="جزر القمر">جزر القمر</option>
+                                          <option value="كوستاريكا">كوستاريكا</option>
+                                          <option value="ساحل العاج">ساحل العاج</option>
+                                          <option value="كرواتيا">كرواتيا</option>
+                                          <option value="كوبا">كوبا</option>
+                                          <option value="قبرص">قبرص</option>
+                                          <option value="التشيك">التشيك</option>
+                                          <option value="جمهورية الكونغو الديمقراطية">
+                                            جمهورية الكونغو الديمقراطية
+                                          </option>
+                                          <option value="الدنمارك">الدنمارك</option>
+                                          <option value="جيبوتي">جيبوتي</option>
+                                          <option value="دومينيكا">دومينيكا</option>
+                                          <option value="جمهورية الدومينيكان">
+                                            جمهورية الدومينيكان
+                                          </option>
+                                          <option value="تيمور الشرقية ">تيمور الشرقية</option>
+                                          <option value="الإكوادور">الإكوادور</option>
+                                          <option value="مصر">مصر</option>
+                                          <option value="السلفادور">السلفادور</option>
+                                          <option value="غينيا الاستوائية">غينيا الاستوائية</option>
+                                          <option value="إريتريا">إريتريا</option>
+                                          <option value="إستونيا">إستونيا</option>
+                                          <option value="إثيوبيا">إثيوبيا</option>
+                                          <option value="فيجي">فيجي</option>
+                                          <option value="فنلندا">فنلندا</option>
+                                          <option value="فرنسا">فرنسا</option>
+                                          <option value="الغابون">الغابون</option>
+                                          <option value="غامبيا">غامبيا</option>
+                                          <option value="جورجيا">جورجيا</option>
+                                          <option value="ألمانيا">ألمانيا</option>
+                                          <option value="غانا">غانا</option>
+                                          <option value="اليونان">اليونان</option>
+                                          <option value="جرينادا">جرينادا</option>
+                                          <option value="غواتيمالا">غواتيمالا</option>
+                                          <option value="غينيا">غينيا</option>
+                                          <option value="غينيا بيساو">غينيا بيساو</option>
+                                          <option value="غويانا">غويانا</option>
+                                          <option value="هايتي">هايتي</option>
+                                          <option value="هندوراس">هندوراس</option>
+                                          <option value="المجر">المجر</option>
+                                          <option value="آيسلندا">آيسلندا</option>
+                                          <option value="الهند">الهند</option>
+                                          <option value="إندونيسيا">إندونيسيا</option>
+                                          <option value="إيران">إيران</option>
+                                          <option value="العراق">العراق</option>
+                                          <option value="جمهورية أيرلندا ">جمهورية أيرلندا</option>
+                                          <option value="فلسطين">فلسطين</option>
+                                          <option value="إيطاليا">إيطاليا</option>
+                                          <option value="جامايكا">جامايكا</option>
+                                          <option value="اليابان">اليابان</option>
+                                          <option value="الأردن">الأردن</option>
+                                          <option value="كازاخستان">كازاخستان</option>
+                                          <option value="كينيا">كينيا</option>
+                                          <option value="كيريباتي">كيريباتي</option>
+                                          <option value="الكويت">الكويت</option>
+                                          <option value="قرغيزستان">قرغيزستان</option>
+                                          <option value="لاوس">لاوس</option>
+                                          <option value="لاوس">لاوس</option>
+                                          <option value="لاتفيا">لاتفيا</option>
+                                          <option value="لبنان">لبنان</option>
+                                          <option value="ليسوتو">ليسوتو</option>
+                                          <option value="ليبيريا">ليبيريا</option>
+                                          <option value="ليبيا">ليبيا</option>
+                                          <option value="ليختنشتاين">ليختنشتاين</option>
+                                          <option value="ليتوانيا">ليتوانيا</option>
+                                          <option value="لوكسمبورغ">لوكسمبورغ</option>
+                                          <option value="مدغشقر">مدغشقر</option>
+                                          <option value="مالاوي">مالاوي</option>
+                                          <option value="ماليزيا">ماليزيا</option>
+                                          <option value="جزر المالديف">جزر المالديف</option>
+                                          <option value="مالي">مالي</option>
+                                          <option value="مالطا">مالطا</option>
+                                          <option value="جزر مارشال">جزر مارشال</option>
+                                          <option value="موريتانيا">موريتانيا</option>
+                                          <option value="موريشيوس">موريشيوس</option>
+                                          <option value="المكسيك">المكسيك</option>
+                                          <option value="مايكرونيزيا">مايكرونيزيا</option>
+                                          <option value="مولدوفا">مولدوفا</option>
+                                          <option value="موناكو">موناكو</option>
+                                          <option value="منغوليا">منغوليا</option>
+                                          <option value="الجبل الأسود">الجبل الأسود</option>
+                                          <option value="المغرب">المغرب</option>
+                                          <option value="موزمبيق">موزمبيق</option>
+                                          <option value="بورما">بورما</option>
+                                          <option value="ناميبيا">ناميبيا</option>
+                                          <option value="ناورو">ناورو</option>
+                                          <option value="نيبال">نيبال</option>
+                                          <option value="هولندا">هولندا</option>
+                                          <option value="نيوزيلندا">نيوزيلندا</option>
+                                          <option value="نيكاراجوا">نيكاراجوا</option>
+                                          <option value="النيجر">النيجر</option>
+                                          <option value="نيجيريا">نيجيريا</option>
+                                          <option value="كوريا الشمالية ">كوريا الشمالية</option>
+                                          <option value="النرويج">النرويج</option>
+                                          <option value="سلطنة عمان">سلطنة عمان</option>
+                                          <option value="باكستان">باكستان</option>
+                                          <option value="بالاو">بالاو</option>
+                                          <option value="بنما">بنما</option>
+                                          <option value="بابوا غينيا الجديدة">
+                                            بابوا غينيا الجديدة
+                                          </option>
+                                          <option value="باراغواي">باراغواي</option>
+                                          <option value="بيرو">بيرو</option>
+                                          <option value="الفلبين">الفلبين</option>
+                                          <option value="بولندا">بولندا</option>
+                                          <option value="البرتغال">البرتغال</option>
+                                          <option value="قطر">قطر</option>
+                                          <option value="جمهورية الكونغو">جمهورية الكونغو</option>
+                                          <option value="جمهورية مقدونيا">جمهورية مقدونيا</option>
+                                          <option value="رومانيا">رومانيا</option>
+                                          <option value="روسيا">روسيا</option>
+                                          <option value="رواندا">رواندا</option>
+                                          <option value="سانت كيتس ونيفيس">سانت كيتس ونيفيس</option>
+                                          <option value="سانت لوسيا">سانت لوسيا</option>
+                                          <option value="سانت فنسينت والجرينادينز">
+                                            سانت فنسينت والجرينادينز
+                                          </option>
+                                          <option value="ساموا">ساموا</option>
+                                          <option value="سان مارينو">سان مارينو</option>
+                                          <option value="ساو تومي وبرينسيب">
+                                            ساو تومي وبرينسيب
+                                          </option>
+                                          <option value="السنغال">السنغال</option>
+                                          <option value="صربيا">صربيا</option>
+                                          <option value="سيشيل">سيشيل</option>
+                                          <option value="سيراليون">سيراليون</option>
+                                          <option value="سنغافورة">سنغافورة</option>
+                                          <option value="سلوفاكيا">سلوفاكيا</option>
+                                          <option value="سلوفينيا">سلوفينيا</option>
+                                          <option value="جزر سليمان">جزر سليمان</option>
+                                          <option value="الصومال">الصومال</option>
+                                          <option value="جنوب أفريقيا">جنوب أفريقيا</option>
+                                          <option value="كوريا الجنوبية">كوريا الجنوبية</option>
+                                          <option value="جنوب السودان">جنوب السودان</option>
+                                          <option value="إسبانيا">إسبانيا</option>
+                                          <option value="سريلانكا">سريلانكا</option>
+                                          <option value="السودان">السودان</option>
+                                          <option value="سورينام">سورينام</option>
+                                          <option value="سوازيلاند">سوازيلاند</option>
+                                          <option value="السويد">السويد</option>
+                                          <option value="سويسرا">سويسرا</option>
+                                          <option value="سوريا">سوريا</option>
+                                          <option value="طاجيكستان">طاجيكستان</option>
+                                          <option value="تنزانيا">تنزانيا</option>
+                                          <option value="تايلاند">تايلاند</option>
+                                          <option value="توغو">توغو</option>
+                                          <option value="تونجا">تونجا</option>
+                                          <option value="ترينيداد وتوباغو">ترينيداد وتوباغو</option>
+                                          <option value="تونس">تونس</option>
+                                          <option value="تركيا">تركيا</option>
+                                          <option value="تركمانستان">تركمانستان</option>
+                                          <option value="توفالو">توفالو</option>
+                                          <option value="أوغندا">أوغندا</option>
+                                          <option value="أوكرانيا">أوكرانيا</option>
+                                          <option value="الإمارات العربية المتحدة">
+                                            الإمارات العربية المتحدة
+                                          </option>
+                                          <option value="المملكة المتحدة">المملكة المتحدة</option>
+                                          <option value="الولايات المتحدة">الولايات المتحدة</option>
+                                          <option value="أوروغواي">أوروغواي</option>
+                                          <option value="أوزبكستان">أوزبكستان</option>
+                                          <option value="فانواتو">فانواتو</option>
+                                          <option value="فنزويلا">فنزويلا</option>
+                                          <option value="فيتنام">فيتنام</option>
+                                          <option value="اليمن">اليمن</option>
+                                          <option value="زامبيا">زامبيا</option>
+                                          <option value="زيمبابوي">زيمبابوي</option>
+                                        </select>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                                    <button type="submit" class="btn btn-primary" id="submitEditUserForm">حفظ التغييرات</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <table class="table align-middle table-row-dashed gy-5" id="kt_table_users_login_session">
+                  <tbody class="fs-6 fw-semibold text-gray-600">
+                      <tr>
+                          <td class="text-body-secondary">الاسم الكامل</td>
+                          <td class="text-body-secondary">{{ user_obj.first_name }} {{ user_obj.second_name }} {{ user_obj.last_name }}</td>
+                          <td class="text-end">
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">اسم المستخدم</td>
+                          <td class="text-body-secondary">{{ user_obj.username }}</td>
+                          <td class="text-end">
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">البريد الالكتروني</td>
+                          <td class="text-body-secondary">{{ user_obj.email }}</td>
+                          <td class="text-end">
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">تاريخ الانضمام</td>
+                          <td class="text-body-secondary">{{ user_obj.date_joined }}</td>
+                          <td class="text-end">
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">آخر ظهور</td>
+                          <td class="text-body-secondary">{% if user_obj.last_login %}{{ user_obj.last_login|naturaltime }}{% else %}----{% endif %}</td>
+                          <td class="text-end">
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">تاريخ الميلاد</td>
+                          <td class="text-body-secondary">{{ user_obj.date_joined }}</td>
+                          <td class="text-end">
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">رقم الجوال</td>
+                          <td class="text-body-secondary">{{ user_obj.phonenumber }} (966+)</td>
+                          <td class="text-end">
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">الجنس</td>
+                          <td class="text-body-secondary">{{ user_obj.gender }}</td>
+                          <td class="text-end">
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">الجنسية</td>
+                          <td class="text-body-secondary">{{ user_obj.nationality }}</td>
+                          <td class="text-end">
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">آخر تحديث</td>
+                          <td class="text-body-secondary">{% if user_obj.last_updated %}{{ user_obj.last_updated }}{% else %}----{% endif %}</td>
+                          <td class="text-end">
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="row tab-pane fade" id="tab-security" role="tabpanel" aria-labelledby="tab-security" tabindex="1">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title fw-bold mb-3 mt-3">معلومات الأمان</h5>
+                <table class="table align-middle table-row-dashed gy-5" id="kt_table_users_login_session">
+                  <tbody class="fs-6 fw-semibold text-gray-600">
+                      <tr>
+                          <td class="text-body-secondary">البريد الالكتروني</td>
+                          <td class="text-body-secondary">{{ user_obj.email }}</td>
+                          <td class="text-end">
+                            <a href="#" class="btn btn-primary disabled"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                            </svg></a>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">كلمة المرور</td>
+                          <td class="text-body-secondary">******</td>
+                          <td class="text-end">
+                            <a href="#" class="btn btn-primary disabled"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                            </svg></a>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="text-body-secondary">الدور</td>
+                          <td class="text-body-secondary">
+                            {% if user_group %}
+                              {% if user_group.name == "Admin" %}
+                                <h5>مسؤول</h5>
+                              {% elif user_group.name == "Management" %}
+                                <h5>إداري</h5>
+                              {% elif user_group.name == "Developer" %}
+                                <h5>مطور</h5>
+                              {% elif user_group.name == "Beneficiary" %}
+                                <h5>مستفيد</h5>
+                              {% elif user_group.name == "Supporter" %}
+                                <h5>داعم</h5>
+                              {% endif %}
+                            {% else %}
+                                <p class="text-muted">-----</p>
+                            {% endif %}
+                          </td>
+                          <td class="text-end">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#roleModal">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                              </svg>
+                            </button>
+                          </td>
+                          <input type="hidden" id="currentRole" value="{{ user_group.name }}">
+                      </tr>
+                  </tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</main>
+
+<!-- Role selection modal -->
+<div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-labelledby="roleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="roleModalLabel">تحديد الدور</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="changeRoleForm" action="{% url 'dashboard_user_edit_role' user_id=user_obj.id %}" method="POST">
+              {% csrf_token %}
+              <div class="row px-3">
+                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                  <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                  <div class="text-start">
+                    يرجى ملاحظة أنه عند تقليل تصنيف دور المستخدم، سيفقد هذا المستخدم جميع الامتيازات التي تم تعيينها للدور السابق.
+                  </div>
+                </div>
+                <div class="row form-group">
+                  <div class="form-check d-flex justify-content-start align-items-center gap-3 ms-4 mb-3">
+                    <input class="form-check-input" type="radio" name="new_role" id="admin_role" value="admin">
+                    <label class="form-check-label" for="admin_role">
+                      <div class="fw-bold text-start fs-5">
+                      مسؤول
+                      </div>
+                      <div class="text-muted text-start small">
+                        يُعتبر المسؤول الأعلى في المنصة، ولديه صلاحيات كاملة لإدارة جميع الجوانب في المنصة.
+                      </div>
+                    </label>
+                  </div>
+                  <div class="form-check d-flex justify-content-start align-items-center gap-3 ms-4 mb-3">
+                    <input class="form-check-input" type="radio" name="new_role" id="management_role" value="management">
+                    <label class="form-check-label" for="management_role">
+                      <div class="fw-bold text-start fs-5">
+                        إداري
+                      </div>
+                      <div class="text-muted text-start small">
+                        يتمتع الإداري بصلاحيات إدارية محددة في المنصة، حيث يدير المستخدمين والمحتوى والعمليات اليومية الأخرى.
+                      </div>
+                    </label>
+                  </div>
+                  <div class="form-check d-flex justify-content-start align-items-center gap-3 ms-4 mb-3">
+                    <input class="form-check-input" type="radio" name="new_role" id="developer_role" value="developer">
+                    <label class="form-check-label" for="developer_role">
+                      <div class="fw-bold text-start fs-5">
+                        مطور
+                      </div>
+                      <div class="text-muted text-start small">يعمل المطورون على تطوير وصيانة المنصة، ويمكنهم تحسين الأداء وإصلاح الأخطاء وإضافة ميزات جديدة.
+                      </div>
+                    </label>
+                  </div>
+                  <div class="form-check d-flex justify-content-start align-items-center gap-3 ms-4 mb-3">
+                    <input class="form-check-input" type="radio" name="new_role" id="beneficiary_role" value="beneficiary">
+                    <label class="form-check-label" for="beneficiary_role">
+                      <div class="fw-bold text-start fs-5">
+                        مستفيد
+                      </div>
+                      <div class="text-muted text-start small">
+                        المستفيد يستفيد من الخدمات المقدمة على المنصة، وليس لديه الصلاحيات الإدارية ويمكنه الوصول إلى المحتوى والخدمات فقط.
+                      </div>
+                    </label>
+                  </div>
+                  <div class="form-check d-flex justify-content-start align-items-center gap-3 ms-4 mb-3">
+                    <input class="form-check-input" type="radio" name="new_role" id="supporter_role" value="support">
+                    <label class="form-check-label" for="supporter_role">
+                      <div class="fw-bold text-start fs-5">
+                        داعم
+                      </div>
+                      <div class="text-muted text-start small">
+                        دور الداعم يتيح للمستخدمين تقديم الدعم المالي أو الدعم الآخر للمشاريع والأنشطة على المنصة، حيث يمكنهم المساهمة في تمويل المشاريع ودعمها بطرق مختلفة.
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+              <button type="submit" class="btn btn-primary" id="saveRoleBtn">حفظ</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+
+      let dob = new Date({{ user_dob }});
+      let datestring1 = dob.getFullYear().toString().padStart(4, '0') + '-' + (dob.getMonth()+1).toString().padStart(2, '0') + '-' + dob.getDate().toString().padStart(2, '0');
+      document.getElementById('date_of_birth').value = datestring1;
+    
+      // Function to set the selected option for a given select element
+      function setSelectedOption(selectId, selectedValue) {
+        $('#' + selectId).val(selectedValue);
+      }
+
+      // Call the function with the specific select element and value
+      // Personal information selectors
+      setSelectedOption('nationality', "{{ user_obj.nationality }}");
+      setSelectedOption('gender', "{{ user_obj.gender }}");
+
+      // Global variables
+      var editUserForm = $("#editUserForm");
+
+      // Validator method for first, second, and last name fields in the form
+      $.validator.addMethod(
+        "nameRegex",
+        function (value, element) {
+          return (
+            this.optional(element) || /^[a-zA-Z0-9\u0621-\u064A]*$/i.test(value)
+          );
+        },
+        "يحتوي الأسم على حروف فقط."
+      );
+
+      // Validator method for username
+      $.validator.addMethod(
+        "usernameRegex",
+        function (value, element) {
+          return (
+            this.optional(element) || /^[a-zA-Z0-9_]{4,20}$/i.test(value)
+          );
+        },
+      );
+
+      // The below code will change the default validation messages
+      $.extend($.validator.messages, {
+        required: "هذا الحقل مطلوب.",
+        remote: "الرجاء اصلاح هذا الحقل.",
+        email: "الرجاء إدخال بريد الكتروني صالح.",
+        url: "الرجاء إدخال رابط صحيح وفعال.",
+        date: "الرجاء إدخال تاريخ صالح.",
+        dateISO: "الرجاء إدخال تاريخ صحيح (بصيغة ISO).",
+        number: "الرجاء إدخال رقم صحيح.",
+        digits: "الرجاء إدخال أرقام فقط.",
+        creditcard: "الرجاء إدخال رقم بطاقة ائتمان صالحة.",
+        equalTo: "رجاء أدخل نفس القيمة مره أخرى.",
+        accept: "الرجاء إدخال قيمة بإمتداد صحيح.",
+        maxlength: $.validator.format("الرجاء عدم إدخال أكثر من {0} أحرف."),
+        minlength: $.validator.format("الرجاء إدخال على الأقل {0} حروف."),
+        range: $.validator.format("الرجاء إدخال رقم بين {0} و {1}."),
+        max: $.validator.format(" الرجاء إدخال قيمة أقل من أو تساوي {0}."),
+        min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
+      });
+
+      // Retrieve the CSRF token from the specific form with username
+      var csrf_token = $('#editUserForm input[name=csrfmiddlewaretoken]').val();
+
+      editUserForm.validate({
+          errorElement: "span",
+          errorClass: "help-block invalid-feedback",
+          highlight: function (element, errorClass, validClass) {
+              $(element).closest(".form-group").addClass("has-error");
+          },
+          unhighlight: function (element, errorClass, validClass) {
+              $(element).closest(".form-group").removeClass("has-error");
+          },
+          errorPlacement: function (error, element) {
+              // Check if the element is inside an input-group
+              if (element.parent(".input-group").length) {
+                  // Place the error after the input-group
+                  error.insertAfter(element.parent(".input-group"));
+              } else {
+                  // Default placement for other elements
+                  error.insertAfter(element);
+              }
+          },
+          focusInvalid: true,
+
+          // Adding the rules (validations) for each input in the form.
+          rules: {
+              first_name: {
+                  required: true,
+                  nameRegex: true,
+                  minlength: 2,
+                  maxlength: 20,
+              },
+              second_name: {
+                  required: true,
+                  nameRegex: true,
+                  minlength: 2,
+                  maxlength: 20,
+              },
+              last_name: {
+                  required: true,
+                  nameRegex: true,
+                  minlength: 2,
+                  maxlength: 20,
+              },
+              username: {
+                  required: true,
+                  usernameRegex: true,
+                  remote: {
+                    url: '/dashboard/users/validate_username/',
+                    type: 'post',
+                    data: {
+                      username: function() {
+                        return $('#username').val();
+                      },
+                      csrfmiddlewaretoken: csrf_token,  // Include CSRF token
+                      base_username: function() { 
+                        // Get the value from the data-attr-base-nid attribute using plain JavaScript
+                        var element = document.getElementById('username_hidden');
+                        return element.value;
+                      },
+                    },
+                  },
+              },
+              date_of_birth: {
+                  required: true,
+                  dateISO: true,
+              },
+              gender: {
+                  required: true,
+              },
+              nationality: {
+                  required: true,
+              },
+          },
+          messages: {
+              username: {
+                usernameRegex: "اسم المستخدم يتكون من حروف انجليزية وارقام فقط.",
+                remote: "اسم المستخدم تم استخدامه بالفعل!",
+              },
+          },
+      });
+
+      // When the modal is opened, validate the form fields
+      $('#editUserModal').on('show.bs.modal', function (e) {
+          editUserForm.valid(); // Trigger validation
+      });
+
+      // When any input field is changed, validate the form fields
+      editUserForm.find("input, select, textarea").on("input change", function () {
+          editUserForm.valid(); // Trigger validation
+      });
+
+      $('#submitEditUserForm').click(function(e) {
+          e.preventDefault(); // Prevent default form submission
+
+          // The below code will change the default validation messages
+          $.extend($.validator.messages, {
+              required: "هذا الحقل مطلوب.",
+              // Add other custom validation messages as needed
+          });
+
+          editUserForm.validate({
+              errorElement: "span",
+              errorClass: "help-block invalid-feedback",
+              highlight: function (element, errorClass, validClass) {
+                  $(element).closest(".form-group").addClass("has-error");
+              },
+              unhighlight: function (element, errorClass, validClass) {
+                  $(element).closest(".form-group").removeClass("has-error");
+              },
+              errorPlacement: function (error, element) {
+                  // Check if the element is inside an input-group
+                  if (element.parent(".input-group").length) {
+                      // Place the error after the input-group
+                      error.insertAfter(element.parent(".input-group"));
+                  } else {
+                      // Default placement for other elements
+                      error.insertAfter(element);
+                  }
+              },
+              focusInvalid: true,
+
+              // Adding the rules (validations) for each input in the form.
+              rules: {
+                  full_name: {
+                      required: true,
+                      minlength: 2, // Example minlength validation
+                      // Add other validations as needed
+                  },
+                  // Add rules for other fields as needed
+              },
+              messages: {
+                  full_name: {
+                      required: "الرجاء إدخال الاسم الكامل.",
+                      minlength: "الرجاء إدخال الاسم الكامل بطول على الأقل 2 حرف.",
+                      // Add other custom messages as needed
+                  },
+                  // Add custom messages for other fields as needed
+              },
+          });
+
+          // When the modal is opened, validate the form fields
+          $('#editUserModal').on('show.bs.modal', function (e) {
+              editUserForm.valid(); // Trigger validation
+          });
+
+          // When any input field is changed, validate the form fields
+          editUserForm.find("input, select, textarea").on("input change", function () {
+              editUserForm.valid(); // Trigger validation
+          });
+
+          if (editUserForm.valid() === true) {
+            // If validation passes, submit the form
+            $('#editUserForm').submit();
+          }
+      });
+
+      // Get the current role from the hidden input
+      var currentRole = $('#currentRole').val().toLowerCase();
+
+      // Check the radio button corresponding to the current role
+      $('#' + currentRole + '_role').prop('checked', true);
+
+      // Disable the radio button for the current role
+      $('#' + currentRole + '_role').prop('disabled', true);
+
+      // Global variables
+      var changeRoleForm = $("#changeRoleForm");
+
+      $('#saveRoleBtn').click(function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        // Get the value of the selected role
+        var selectedRole = $('input[name=new_role]:checked').val();
+
+        // Check if the selected role is the same as the current role
+        if (selectedRole === currentRole) {
+          // Close the modal if the selected role is the same as the current role
+          $('#roleModal').modal('hide');
+
+        } else {
+          
+          // The below code will change the default validation messages
+          $.extend($.validator.messages, {
+              required: "هذا الحقل مطلوب.",
+              // Add other custom validation messages as needed
+          });
+
+          changeRoleForm.validate({
+              errorElement: "span",
+              errorClass: "help-block invalid-feedback",
+              highlight: function (element, errorClass, validClass) {
+                  $(element).closest(".form-group").addClass("has-error");
+              },
+              unhighlight: function (element, errorClass, validClass) {
+                  $(element).closest(".form-group").removeClass("has-error");
+              },
+              errorPlacement: function (error, element) {
+                  // Check if the element is inside an input-group
+                  if (element.parent(".input-group").length) {
+                      // Place the error after the input-group
+                      error.insertAfter(element.parent(".input-group"));
+                  } else {
+                      // Default placement for other elements
+                      error.insertAfter(element);
+                  }
+              },
+              focusInvalid: true,
+
+              rules: {
+                new_role: {
+                    required: true,
+                  },
+              },
+          });
+
+          // When the modal is opened, validate the form fields
+          $('#changeRoleForm').on('show.bs.modal', function (e) {
+              changeRoleForm.valid(); // Trigger validation
+          });
+
+          // When any input field is changed, validate the form fields
+          changeRoleForm.find("input, select, textarea").on("input change", function () {
+              changeRoleForm.valid(); // Trigger validation
+          });
+
+          if (changeRoleForm.valid() === true) {
+            // If validation passes, submit the form
+            $('#changeRoleForm').submit();
+          }
+        }
+      });
+
+      $('#roleModal').on('hidden.bs.modal', function (e) {
+        var currentRole = $('#currentRole').val().toLowerCase();
+        $('#' + currentRole + '_role').prop('checked', true);
+      });
+  });
+</script>
+{% endblock %}

@@ -61,6 +61,56 @@ urlpatterns = [
         name="dashboard"
     ),
     path(
+        "dashboard/users/",
+        views.dashboard_users,
+        name="dashboard_users"
+    ),
+    path(
+        "dashboard/users/<int:user_id>",
+        views.dashboard_user_profile,
+        name="dashboard_user_profile"
+    ),
+    path(
+        "dashboard/users/<int:user_id>/delete/",
+        views.dashboard_user_delete,
+        name="dashboard_user_delete"
+    ),
+    path(
+        "dashboard/users/<int:user_id>/edit/",
+        views.dashboard_user_edit_basic_info,
+        name="dashboard_user_edit_basic_info"
+    ),
+    path(
+        "dashboard/users/validate_username/",
+        views.dashboard_user_validate_username,
+        name="dashboard_user_validate_username"
+    ),
+    path(
+        "dashboard/users/<int:user_id>/edit_role/",
+        views.dashboard_user_edit_role,
+        name="dashboard_user_edit_role"
+    ),
+    path(
+        "dashboard/support_operations/",
+        views.dashboard_support_operations,
+        name="dashboard_support_operations"
+    ),
+    path(
+        "dashboard/support_operations/new/",
+        views.dashboard_add_support_operation,
+        name="dashboard_add_support_operation"
+    ),
+    path(
+        "dashboard/field_visits/",
+        views.dashboard_field_visits,
+        name="dashboard_field_visits"
+    ),
+    path(
+        "dashboard/field_visits/new/",
+        views.dashboard_add_field_visit,
+        name="dashboard_add_field_visit"
+    ),
+    path(
         "dashboard/beneficiaries/requests/",
         views.dashboard_beneficiaries_requests,
         name="dashboard_beneficiaries_requests"
@@ -139,6 +189,16 @@ urlpatterns = [
         'beneficiaries/<int:user_id>/requests/',
         views.beneficiary_requests,
         name="beneficiary_requests"
+    ),
+    path(
+        "dashboard/beneficiaries/<int:beneficiary_id>/requests/<int:b_request_id>/",
+        views.dashboard_beneficiary_request_details,
+        name="dashboard_beneficiary_request_details"
+    ),
+    path(
+        "dashboard/beneficiaries/<int:beneficiary_id>/requests/<int:b_request_id>/update/",
+        views.dashboard_beneficiary_request_update,
+        name="dashboard_beneficiary_request_update"
     ),
     path(
         'beneficiaries/<int:user_id>/details/',
