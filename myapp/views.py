@@ -174,8 +174,17 @@ def sign_up(request):
         )
         # Set the password to be hashed for the new user
         new_user.set_password(password1)
+
         # Save new user information
         new_user.save()
+
+        # Assign default role to the new user
+        default_role = Group.objects.filter(
+            name__iexact='beneficiary').first()
+
+        # Give the new user the default role
+        new_user.groups.add(default_role)
+
         messages.success(
             request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
 
@@ -188,7 +197,7 @@ def sign_up(request):
 
         # Email address Confirmation Email
         current_site = get_current_site(request)
-        email_subject = "تفعيل حسابك في جمعية الاصدقاء"
+        email_subject = "تفعيل حسابك في جمعية اصدقاء المجتمع"
 
         message2 = render_to_string('auth/email_confirmation.html', {
             'name': new_user.first_name,
