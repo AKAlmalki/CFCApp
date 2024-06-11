@@ -510,10 +510,6 @@ def dashboard_supporters_requests(request):
         # List of supporters requests
         supporters_request_list = Supporter_request.objects.all()
 
-        paginator = Paginator(supporters_request_list, IPP_DASHBOARD_REQUESTS)
-        page_number = request.GET.get('page')
-        supporter_request_pag_list = paginator.get_page(page_number)
-
         # List of beneficiaries
         beneficiary_list = beneficiary.objects.all()
 
@@ -523,7 +519,7 @@ def dashboard_supporters_requests(request):
         context = {
             'beneficiaries': beneficiary_list,
             'supporters': supporters_list,
-            'supporters_requests': supporter_request_pag_list,
+            'supporters_requests': supporters_request_list,
         }
     except ObjectDoesNotExist:
         print("[Error] - Object does not exist, dashboard_supporters_request.")
@@ -537,10 +533,7 @@ def dashboard_supporters_requests(request):
 def dashboard_beneficiaries_requests(request):
 
     Beneficiary_request_list = Beneficiary_request.objects.all()
-    # beneficiary_obj = beneficiary.objects.all()
-    paginator = Paginator(Beneficiary_request_list, IPP_DASHBOARD_REQUESTS)
-    page_number = request.GET.get('page')
-    Beneficiary_request_list = paginator.get_page(page_number)
+
     context = {
         "beneficiary_requests": Beneficiary_request_list,
         "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'تاريخ الإرسال', 'مُراجع الطلب', 'الملاحظات', 'الإجراءات'],
