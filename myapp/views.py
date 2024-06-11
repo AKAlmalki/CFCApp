@@ -2985,13 +2985,12 @@ def validate_national_id_edit_dependent(request, user_id):
 @login_required(login_url="/login")
 def supporter_beneficiary_sponsorship(request):
 
+    context = {}
+
     sponsorships_list = Supporter_beneficiary_sponsorship.objects.all()
-    paginator = Paginator(sponsorships_list, IPP_DASHBOARD_REQUESTS)
-    page_number = request.GET.get('page')
-    sponsorships = paginator.get_page(page_number)
 
     context = {
-        "sponsorships": sponsorships,
+        "sponsorships": sponsorships_list,
     }
 
     return render(request, "dashboard/sponsorships.html", context)
@@ -3097,13 +3096,12 @@ def add_sponsorship(request):
 @login_required(login_url="/login")
 def dashboard_beneficiaries_list(request):
 
+    context = {}
+
     beneficiaries_list = beneficiary.objects.all()
-    paginator = Paginator(beneficiaries_list, IPP_DASHBOARD_REQUESTS)
-    page_number = request.GET.get('page')
-    beneficiaries = paginator.get_page(page_number)
 
     context = {
-        "beneficiaries": beneficiaries,
+        "beneficiaries": beneficiaries_list,
     }
 
     return render(request, "dashboard/beneficiaries.html", context)
@@ -3113,13 +3111,12 @@ def dashboard_beneficiaries_list(request):
 @login_required(login_url="/login")
 def dashboard_supporters_list(request):
 
+    context = {}
+
     supporters_list = Supporter.objects.all()
-    paginator = Paginator(supporters_list, IPP_DASHBOARD_REQUESTS)
-    page_number = request.GET.get('page')
-    supporters = paginator.get_page(page_number)
 
     context = {
-        "supporters": supporters,
+        "supporters": supporters_list,
     }
 
     return render(request, "dashboard/supporters.html", context)
