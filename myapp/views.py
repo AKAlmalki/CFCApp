@@ -532,7 +532,7 @@ def dashboard_supporters_requests(request):
 @login_required(login_url="/login")
 def dashboard_beneficiaries_requests(request):
 
-    Beneficiary_request_list = Beneficiary_request.objects.all()
+    Beneficiary_request_list = Beneficiary_request.objects.prefetch_related('beneficiary').all()
 
     context = {
         "beneficiary_requests": Beneficiary_request_list,

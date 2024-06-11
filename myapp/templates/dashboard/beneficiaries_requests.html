@@ -63,12 +63,13 @@
           <thead>
             <tr class="table-secondary">
               <th scope="col" class="text-start">رقم الطلب</th>
+              <th scope="col" class="text-start">الاسم الأول</th>
+              <th scope="col" class="text-start">الاسم الاخير</th>
               <th scope="col" class="text-start">نوع الطلب</th>
               <th scope="col" class="text-start">الحالة</th>
               <th scope="col" class="text-start">تاريخ الإرسال</th>
               <th scope="col" class="text-start">تاريخ المراجعة</th>
               <th scope="col" class="text-start">مُراجع الطلب</th>
-              <th scope="col" class="text-start">الملاحظات</th>
               <th scope="col" class="text-start">الإجراءات</th>
             </tr>
           </thead>
@@ -76,6 +77,16 @@
             {% for beneficiary_request in beneficiary_requests %}
             <tr>
               <th scope="row">{{ beneficiary_request.id }}</th>
+              {% if beneficiary_request.beneficiary.first_name %}
+              <td class="col">{{ beneficiary_request.beneficiary.first_name}}</td>
+              {% else %}
+              <td class="col">----</td>
+              {% endif %}
+              {% if beneficiary_request.beneficiary.last_name %}
+              <td class="col">{{ beneficiary_request.beneficiary.last_name}}</td>
+              {% else %}
+              <td class="col">----</td>
+              {% endif %}
               {% if beneficiary_request.request_type == "جديد" %}
               <td class="col"><span class="badge text-bg-success">{{ beneficiary_request.request_type }}</span></td>
               {% elif beneficiary_request.request_type == "تحديث" %}
@@ -105,11 +116,7 @@
               {% else %}
               <td class="col">----</td>
               {% endif %}
-              {% if beneficiary_request.comment %}
-              <td class="col">{{ beneficiary_request.comment }}</td>
-              {% else %}
-              <td class="col">----</td>
-              {% endif %}
+              
               <td class="col">
                 
                 <a type="button" class="btn btn-primary btn-details" href="{% url 'dashboard_beneficiary_request_details' beneficiary_id=beneficiary_request.beneficiary.id b_request_id=beneficiary_request.id %}" data-id="{{ beneficiary_request.beneficiary.id }}">
