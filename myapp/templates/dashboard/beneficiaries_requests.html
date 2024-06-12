@@ -1,7 +1,15 @@
-{% extends "dashboard/dbase.html" %} {% load humanize %} {% block title %} طلبات المستفيدين {% endblock %}
+{% extends "dashboard/dbase.html" %} {% load humanize %} {% load static %} {% block title %} طلبات المستفيدين {% endblock %}
 {% block head %}
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <!-- Include jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- Include PopperJS -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <link rel="stylesheet" href="{% static 'css/data_table_style.css' %}" />
+  <!-- Required for DataTables -->
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+  <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
 {% endblock %}
 {% block content %}
 <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -36,26 +44,49 @@
   </div>
   {% endfor %}
 
-  <div class="col row-gap-3 justify-content-md-center mb-5">
-      <div class="col-md-auto p-1 pt-3 mt-4 bg-dark rounded-3 d-flex flex-column justify-content-center align-self-center table-responsive text-nowrap" style="overflow-x: scroll">
-        <p class="text-light ms-2 fs-3">طلبات المستفيدين</p>
-        <table class="table table-striped-columns mb-1">
-          <thead class="">
-            <tr>
-              <th scope="col">رقم الطلب</th>
-              <th scope="col">نوع الطلب</th>
-              <th scope="col">الحالة</th>
-              <th scope="col">تاريخ الإرسال</th>
-              <th scope="col">تاريخ المراجعة</th>
-              <th scope="col">مُراجع الطلب</th>
-              <th scope="col">الملاحظات</th>
-              <th scope="col">الإجراءات</th>
+  <div class="mt-3 mb-4">
+    <h1 class="mt-4 mb-2">طلبات المستفيدين</h1>
+    <div class="nav-breadcrumb mb-2">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item "><a href="{% url 'dashboard' %}" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">لوحة القيادة</a></li>
+          <li class="breadcrumb-item active" aria-current="page">الطلبات</li>
+          <li class="breadcrumb-item active" aria-current="page">طلبات المستفيدين</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="row mb-5 border rounded py-3 mb-5">
+    <div class="table-warper table-responsive">
+        <table class="table align-middle table-row-dashed text-start border border-1 border-secondary-subtle" id="beneficiaries_requests_table">
+          <thead>
+            <tr class="table-secondary">
+              <th scope="col" class="text-start">رقم الطلب</th>
+              <th scope="col" class="text-start">الاسم الأول</th>
+              <th scope="col" class="text-start">الاسم الاخير</th>
+              <th scope="col" class="text-start">نوع الطلب</th>
+              <th scope="col" class="text-start">الحالة</th>
+              <th scope="col" class="text-start">تاريخ الإرسال</th>
+              <th scope="col" class="text-start">تاريخ المراجعة</th>
+              <th scope="col" class="text-start">مُراجع الطلب</th>
+              <th scope="col" class="text-start">الإجراءات</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="table-group-divider">
             {% for beneficiary_request in beneficiary_requests %}
             <tr>
               <th scope="row">{{ beneficiary_request.id }}</th>
+              {% if beneficiary_request.beneficiary.first_name %}
+              <td class="col">{{ beneficiary_request.beneficiary.first_name}}</td>
+              {% else %}
+              <td class="col">----</td>
+              {% endif %}
+              {% if beneficiary_request.beneficiary.last_name %}
+              <td class="col">{{ beneficiary_request.beneficiary.last_name}}</td>
+              {% else %}
+              <td class="col">----</td>
+              {% endif %}
               {% if beneficiary_request.request_type == "جديد" %}
               <td class="col"><span class="badge text-bg-success">{{ beneficiary_request.request_type }}</span></td>
               {% elif beneficiary_request.request_type == "تحديث" %}
@@ -85,11 +116,7 @@
               {% else %}
               <td class="col">----</td>
               {% endif %}
-              {% if beneficiary_request.comment %}
-              <td class="col">{{ beneficiary_request.comment }}</td>
-              {% else %}
-              <td class="col">----</td>
-              {% endif %}
+              
               <td class="col">
                 
                 <a type="button" class="btn btn-primary btn-details" href="{% url 'dashboard_beneficiary_request_details' beneficiary_id=beneficiary_request.beneficiary.id b_request_id=beneficiary_request.id %}" data-id="{{ beneficiary_request.beneficiary.id }}">
@@ -852,29 +879,6 @@
           </tbody>
         </table>
       </div>
-      <nav class="mt-3" aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-          {% if beneficiary_requests.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?page=1">الاول</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="?page={{ beneficiary_requests.previous_page_number }}">السابق</a>
-          </li>
-          {% endif %}
-
-          <li class="page-item disabled"><a class="page-link" >{{ beneficiary_requests.number }} من {{ beneficiary_requests.paginator.num_pages }}</a></li>
-
-          {% if beneficiary_requests.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ beneficiary_requests.next_page_number }}">التالي</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="?page={{ beneficiary_requests.paginator.num_pages }}">الأخير</a>
-          </li>
-          {% endif %}
-        </ul>
-      </nav>
   </div>
 </div>
 <script>
@@ -1171,6 +1175,17 @@
               console.error('Error:', error);
            });
      });
+  });
+
+  // Display beneficiaries requests table as DataTable
+  $(document).ready(function () {
+    var table = $('#beneficiaries_requests_table').DataTable({
+      'language': {
+        url: "{% static '/Arabic.json' %}"
+      },
+    });
+
+    table.draw();
   });
 
   // Function to handle modal close event [possible solution for a bug]
