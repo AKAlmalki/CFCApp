@@ -2151,7 +2151,6 @@ def beneficiary_request_update(request, user_id):
         if is_beneficiary_request:
             last_beneficiary_request = Beneficiary_request.objects.filter(user=user).latest(
                 'created_at')
-            print(last_beneficiary_request.id, last_beneficiary_request.user_id, last_beneficiary_request.beneficiary_id, " last_b_r status ", last_beneficiary_request.status)
             if last_beneficiary_request.status == "تحت المراجعة" or last_beneficiary_request.status == "انتظار":
                 messages.error(
                     request, "لديك طلب سابق غير مكتمل! لا يمكنك إنشاء طلب جديد حتى يكتمل الطلب السابق.")
