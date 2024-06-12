@@ -532,7 +532,8 @@ def dashboard_supporters_requests(request):
 @login_required(login_url="/login")
 def dashboard_beneficiaries_requests(request):
 
-    Beneficiary_request_list = Beneficiary_request.objects.prefetch_related('beneficiary').all()
+    Beneficiary_request_list = Beneficiary_request.objects.prefetch_related(
+        'beneficiary').all()
 
     context = {
         "beneficiary_requests": Beneficiary_request_list,
@@ -2142,7 +2143,7 @@ def beneficiary_request_update(request, user_id):
             user=user).exists()
 
         if is_beneficiary_request:
-            last_beneficiary_request = Beneficiary_request.objects.latest(
+            last_beneficiary_request = Beneficiary_request.objects.filter(user=user).latest(
                 'created_at')
             if last_beneficiary_request.status == "تحت المراجعة" or last_beneficiary_request.status == "انتظار":
                 messages.error(
