@@ -1226,9 +1226,10 @@ def beneficiary_indiv(request, user_id):
             health_status = dep.get('healthStatus', None)
             needs_type = dep.get('needsType', '')
             educational_degree = dep.get('educationalDegree', '')
-            date_of_birth = dep.get('dateOfBitrh', None)
-            if date_of_birth is not None:
-                date_of_birth = convert_to_date(date_of_birth_data)
+            dependent_date_of_birth_data = dep.get('dateOfBitrh', None)
+            dependent_date_of_birth = None
+            if dependent_date_of_birth_data is not None:
+                dependent_date_of_birth = convert_to_date(dependent_date_of_birth_data)
             national_id_exp_date = dep.get(
                 'nationalIDExpDate', None)
             if national_id_exp_date is not None:
@@ -1253,7 +1254,7 @@ def beneficiary_indiv(request, user_id):
                 last_name=last_name,
                 gender=gender,
                 relationship=relationship,
-                date_of_birth=date_of_birth,
+                date_of_birth=dependent_date_of_birth,
                 national_id=national_id,
                 national_id_exp_date=national_id_exp_date,
                 marital_status=marital_status,
