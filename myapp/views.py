@@ -514,8 +514,8 @@ def dashboard(request):
     )['total']
     # Calculating average income and expenses
     num_beneficiaries_with_income_expense = beneficiary_income_expense.objects.count()
-    average_income = total_income / num_beneficiaries_with_income_expense if num_beneficiaries_with_income_expense else 0
-    average_expense = total_expense / num_beneficiaries_with_income_expense if num_beneficiaries_with_income_expense else 0
+    average_income = round(total_income / num_beneficiaries_with_income_expense, 2) if num_beneficiaries_with_income_expense else 0
+    average_expense = round(total_expense / num_beneficiaries_with_income_expense, 2) if num_beneficiaries_with_income_expense else 0
 
     context = {
         'beneficiaries_num': beneficiaries_num,
