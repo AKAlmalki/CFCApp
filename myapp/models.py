@@ -410,3 +410,9 @@ class Supporter_beneficiary_sponsorship(models.Model):
         beneficiary, on_delete=models.CASCADE)
     supporter = models.ForeignKey(
         Supporter, on_delete=models.CASCADE)
+
+
+# Temporary models
+
+class PasswordCheck(models.Model):
+    correct_password_passed = models.BooleanField(default=False)

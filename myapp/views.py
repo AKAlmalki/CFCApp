@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment, Field_visit, Field_visit_attachment
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment, Field_visit, Field_visit_attachment, PasswordCheck
 # from .forms import CustomUserCreationForm
 # from django.db.models import Q
 from django.contrib import messages
@@ -1226,9 +1226,11 @@ def beneficiary_indiv(request, user_id):
             health_status = dep.get('healthStatus', None)
             needs_type = dep.get('needsType', '')
             educational_degree = dep.get('educationalDegree', '')
-            date_of_birth = dep.get('dateOfBitrh', None)
-            if date_of_birth is not None:
-                date_of_birth = convert_to_date(date_of_birth_data)
+            dependent_date_of_birth_data = dep.get('dateOfBitrh', None)
+            dependent_date_of_birth = None
+            if dependent_date_of_birth_data is not None:
+                dependent_date_of_birth = convert_to_date(
+                    dependent_date_of_birth_data)
             national_id_exp_date = dep.get(
                 'nationalIDExpDate', None)
             if national_id_exp_date is not None:
@@ -1253,7 +1255,7 @@ def beneficiary_indiv(request, user_id):
                 last_name=last_name,
                 gender=gender,
                 relationship=relationship,
-                date_of_birth=date_of_birth,
+                date_of_birth=dependent_date_of_birth,
                 national_id=national_id,
                 national_id_exp_date=national_id_exp_date,
                 marital_status=marital_status,
@@ -3738,3 +3740,35 @@ def dashboard_add_field_visit(request):
     else:
         messages.error(request, "لقد حدث خطأ غير متوقع.")
         return redirect("dashboard")
+
+
+@csrf_exempt
+def check_password_for_release(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            password_value = data.get("password")
+
+            if password_value == "305":
+                # Update the correct_password_passed field to True
+                password_check, created = PasswordCheck.objects.get_or_create(
+                    id=1)
+                password_check.correct_password_passed = True
+                password_check.save()
+
+                return JsonResponse({"result": True})
+            else:
+                return JsonResponse({"result": False})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "Invalid request method."}, status=405)
+
+
+def check_password_status(request):
+    try:
+        password_check, created = PasswordCheck.objects.get_or_create(id=1)
+        return JsonResponse({"result": password_check.correct_password_passed})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)

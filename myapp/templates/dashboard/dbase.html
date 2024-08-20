@@ -248,26 +248,26 @@
         <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
           <ul class="nav flex-column">
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 active {% if request.path == '/dashboard/' %} text-bg-success {% else %} text-dark {% endif %}" aria-current="page" href="/dashboard">
+              <a class="nav-link d-flex align-items-center gap-2 active {% if request.path == '/dashboard/' %}text-bg-success{% endif %}" aria-current="page" href="/dashboard" style="color: var(--link-color);">
                 <svg class="bi"><use xlink:href="#house-fill"/></svg>
                 لوحة القيادة
               </a>
             </li>
             <li class="nav-item">
-              <button class="nav-link d-flex w-100 align-items-center gap-2 {% if request.path == '/dashboard/supporters/requests/' or request.path == '/dashboard/beneficiaries/requests/' %} text-bg-success {% else %} text-dark {% endif %}" data-bs-toggle="collapse" data-bs-target="#dashboard-requests" aria-expanded="true">
+              <button class="nav-link d-flex w-100 align-items-center gap-2 {% if request.path == '/dashboard/supporters/requests/' or request.path == '/dashboard/beneficiaries/requests/' %} text-bg-success {% else %}{% endif %}" data-bs-toggle="collapse" data-bs-target="#dashboard-requests" aria-expanded="true" style="color: var(--link-color);">
                 <svg class="bi"><use xlink:href="#file-earmark"/></svg>
                 الطلبات
               </button>
               <div class="collapse {% if request.path == '/dashboard/beneficiaries/requests/' or request.path == '/dashboard/supporters/requests/' %}show{% endif %}" id="dashboard-requests">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                  <li><a href="{% url 'dashboard_supporters_requests' %}" class="{% if request.path == '/dashboard/supporters/requests/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">الداعمين</a></li>
-                  <li><a href="{% url 'dashboard_beneficiaries_requests' %}" class="{% if request.path == '/dashboard/beneficiaries/requests/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">المستفيدين</a></li>
+                  <li><a href="{% url 'dashboard_supporters_requests' %}" class="{% if request.path == '/dashboard/supporters/requests/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}{% endif %} nav-link" style="color: var(--link-color);">الداعمين</a></li>
+                  <li><a href="{% url 'dashboard_beneficiaries_requests' %}" class="{% if request.path == '/dashboard/beneficiaries/requests/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}{% endif %} nav-link" style="color: var(--link-color);">المستفيدين</a></li>
                 </ul>
               </div>
             </li>
             
             <li class="nav-item">
-              <button class="nav-link d-flex w-100 align-items-center gap-2 {% if request.path == '/dashboard/supporters/' or request.path == '/dashboard/beneficiaries/' or request.path == '/dashboard/sponsorships/' %} text-bg-success {% else %} text-dark {% endif %}" data-bs-toggle="collapse" data-bs-target="#dashboard-records" aria-expanded="true">
+              <button class="nav-link d-flex w-100 align-items-center gap-2 {% if request.path == '/dashboard/supporters/' or request.path == '/dashboard/beneficiaries/' or request.path == '/dashboard/sponsorships/' %} text-bg-success {% else %}{% endif %}" data-bs-toggle="collapse" data-bs-target="#dashboard-records" aria-expanded="true" style="color: var(--link-color);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16">
                   <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5zm13-3H1v2h14zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
                 </svg>
@@ -275,14 +275,14 @@
               </button>
               <div class="collapse {% if request.path == '/dashboard/beneficiaries/' or request.path == '/dashboard/supporters/' or request.path == '/dashboard/sponsorships/' %}show{% endif %}" id="dashboard-records">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                  <li><a href="{% url 'supporters_list' %}" class="{% if request.path == '/dashboard/supporters/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">الداعمين</a></li>
-                  <li><a href="{% url 'beneficiaries_list' %}" class="{% if request.path == '/dashboard/beneficiaries/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">المستفيدين</a></li>
-                  <li><a href="{% url 'supporter_beneficiary_sponsorship' %}" class="{% if request.path == '/dashboard/sponsorships/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}text-dark{% endif %} nav-link">الكفالات</a></li>
+                  <li><a href="{% url 'supporters_list' %}" class="{% if request.path == '/dashboard/supporters/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}{% endif %} nav-link" style="color: var(--link-color);">الداعمين</a></li>
+                  <li><a href="{% url 'beneficiaries_list' %}" class="{% if request.path == '/dashboard/beneficiaries/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}{% endif %} nav-link" style="color: var(--link-color);">المستفيدين</a></li>
+                  <li><a href="{% url 'supporter_beneficiary_sponsorship' %}" class="{% if request.path == '/dashboard/sponsorships/' %}link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold{% else %}{% endif %} nav-link" style="color: var(--link-color);">الكفالات</a></li>
                 </ul>
               </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/dashboard/field_visits/' %} text-bg-success {% else %} text-dark {% endif %}" href="{% url 'dashboard_field_visits' %}">
+              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/dashboard/field_visits/' %} text-bg-success {% else %}{% endif %}" href="{% url 'dashboard_field_visits' %}" style="color: var(--link-color);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
                   <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
@@ -292,7 +292,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/dashboard/support_operations/' %} text-bg-success {% else %} text-dark {% endif %}" href="{% url 'dashboard_support_operations' %}">
+              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/dashboard/support_operations/' %} text-bg-success {% else %}{% endif %}" href="{% url 'dashboard_support_operations' %}" style="color: var(--link-color);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-coin" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8m5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0"/>
                   <path d="M9.438 11.944c.047.596.518 1.06 1.363 1.116v.44h.375v-.443c.875-.061 1.386-.529 1.386-1.207 0-.618-.39-.936-1.09-1.1l-.296-.07v-1.2c.376.043.614.248.671.532h.658c-.047-.575-.54-1.024-1.329-1.073V8.5h-.375v.45c-.747.073-1.255.522-1.255 1.158 0 .562.378.92 1.007 1.066l.248.061v1.272c-.384-.058-.639-.27-.696-.563h-.668zm1.36-1.354c-.369-.085-.569-.26-.569-.522 0-.294.216-.514.572-.578v1.1zm.432.746c.449.104.655.272.655.569 0 .339-.257.571-.709.614v-1.195z"/>
@@ -303,14 +303,14 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/dashboard/reports/' %} text-bg-success {% else %} text-dark {% endif %}" href="{% url 'dashboard_generate_reports' %}">
+              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/dashboard/reports/' %} text-bg-success {% else %}{% endif %}" href="{% url 'dashboard_generate_reports' %}" style="color: var(--link-color);">
                 <svg class="bi"><use xlink:href="#graph-up"/></svg>
                 التقارير
               </a>
             </li>
             {% if request.user|has_group:"Admin" %}
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/dashboard/users/' %} text-bg-success {% else %} text-dark {% endif %}" href="{% url 'dashboard_users' %}">
+              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/dashboard/users/' %} text-bg-success {% else %}{% endif %}" href="{% url 'dashboard_users' %}" style="color: var(--link-color);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
                   <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
                 </svg>
@@ -328,25 +328,25 @@
           </h6>
           <ul class="nav flex-column mb-auto">
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 text-dark" href="#">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
                 <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
                 الشهر الحالي
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 text-dark" href="#">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
                 <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
                 الربع الأخير
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 text-dark" href="#">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
                 <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
                 التفاعل الإجتماعي
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 text-dark" href="#">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
                 <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
                 مبيعات نهاية العام
               </a>
@@ -365,13 +365,13 @@
             </li>
             -->
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 text-dark" href="{% url 'logout' %}">
+              <a class="nav-link d-flex align-items-center gap-2" href="{% url 'logout' %}" style="color: var(--link-color);">
                 <svg class="bi"><use xlink:href="#door-closed"/></svg>
                 خروج
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 text-dark" href="/home">
+              <a class="nav-link d-flex align-items-center gap-2" href="/home" style="color: var(--link-color);">
                 الرجوع للصفحة الرئيسية
               </a>
             </li>

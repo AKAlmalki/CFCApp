@@ -12,17 +12,17 @@
         {% comment %} <img class="bg-img" src="/static/imgs/bgimg1.jpg" /> {% endcomment %}
     </div>
     <div class="row column-gap-3 justify-content-md-center">
-        <div class="col col-lg-4 p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
+        <div class="col col-lg-4 p-5 my-4 rounded-3 d-flex flex-column justify-content-center align-self-center">
             <img src="{% static '/imgs/users-group.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
             <h2 class="text-center">المستفيدين</h2>
             <p class="text-center fs-2 text-success">{{ beneficiaries_num }}</p>
         </div>
-        <div class="col-md-auto p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
+        <div class="col-md-auto p-5 my-4 rounded-3 d-flex flex-column justify-content-center align-self-center">
           <img src="{% static '/imgs/donation.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
           <h2 class="text-center">عمليات التبرع</h2>
           <p class="text-center fs-2 text-success">{{ supporter_operations_num }}</p>
       </div>
-        <div class="col col-lg-4 p-5 my-4 bg-light rounded-3 d-flex flex-column justify-content-center align-self-center">
+        <div class="col col-lg-4 p-5 my-4 rounded-3 d-flex flex-column justify-content-center align-self-center">
           <img src="{% static '/imgs/entity.png' %}" class="img-responsive justify-self-center align-self-center cetner" height="50" width="50"/>
           <h2 class="text-center">الجهات</h2>
           <p class="text-center fs-2 text-success">{{ entities_num }}</p>

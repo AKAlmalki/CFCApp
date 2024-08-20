@@ -7,6 +7,12 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
+    <!-- links for release page -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/confetti.css' %}">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;500;700;800&family=Zain:wght@200;300;400;700;800;900&display=swap" rel="stylesheet">
     <!-- favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static '/imgs/favicon_io/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static '/imgs/favicon_io/favicon-32x32.png' %}">
@@ -32,13 +38,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;500;700;800&display=swap" rel="stylesheet">
     <style>
       body {
-        font-family: "Noto Kufi Arabic";
+          font-family: "Noto Kufi Arabic";
       }
     </style>
-
   </head>
   <body>
-    
+    <div class="body-container" dir="rtl">
+      <!-- Header -->
+      <div class="header">إطلاق منصة بوابة المجتمع</div>
+      <!-- Confetti patterns on both sides -->
+      <!-- <div class="confetti-pattern left"></div> -->
+  
+      <!-- Main Content -->
+      <div class="container-confetti" style="background-image: url('{% static 'imgs/confetti_bg.svg' %}');">
+        <div class="button-wrapper mx-sm-5">
+          <img class="logo" src="{% static 'imgs/logo_hq.png' %}">
+          <div class="input-field-wrapper">
+            <!-- <label for="input-field" class="input-field-label zain-light">كلمة المرور</label> -->
+            <input type="text" class="input-field zain-light" id="input-field" placeholder="أدخل كلمة المرور..."/>
+          </div>
+          <button class="confetti-button zain-bold">إطلاق <span class="confetti-emoji">🎉</span>
+          </button>
+        </div>
+      </div>
+  
+      <!-- <div class="confetti-pattern right"></div> -->
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
@@ -128,5 +154,96 @@
           </div>
       </footer>
     </div>
+    <script defer type="text/javascript">
+      // Check the password status on page load
+      document.addEventListener("DOMContentLoaded", function () {
+          fetch('http://127.0.0.1:8000/api/check-password-status/')
+              .then(response => response.json())
+              .then(data => {
+                  if (data.result === true) {
+                      // Hide the body-container if the correct password has been passed before
+                      document.querySelector('.body-container').style.display = 'none';
+
+                      // Revert the overflow setting to allow scrolling
+                      document.body.style.overflow = 'auto'; // or 'scroll' if you want to always show the scrollbar
+                  } else {
+                      // Show the body-container if the correct password has not been passed
+                      document.querySelector('.body-container').style.display = 'block';
+
+                      // Optionally set overflow to hidden to prevent scrolling if needed
+                      document.body.style.overflow = 'hidden'; 
+                  }
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  //alert('حدث خطأ أثناء التحقق، حاول مرة أخرى');
+              });
+        });
+    
+      // Confetti button click event
+      document.getElementsByClassName("confetti-button")[0].addEventListener("click", () => {
+          let inputField = document.getElementById("input-field");
+          let enteredValue = inputField.value;
+    
+          // API call to verify the value
+          fetch('/api/check-password/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ password: enteredValue })
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.result === true) {
+                // If the response is true, hide the body-container
+                document.querySelector('.body-container').style.display = 'none';
+    
+                // Revert the overflow setting to allow scrolling
+                document.body.style.overflow = 'auto'; // or 'scroll' if you prefer always showing the scrollbar
+    
+                // Trigger confetti animation
+                let canvas = document.createElement("canvas");
+                canvas.width = 600;
+                canvas.height = 600;
+                canvas.style.zIndex = 9999;  // Set the z-index to 9999
+                let container = document.getElementsByClassName("button-wrapper")[0];
+                container.appendChild(canvas);
+    
+                let confetti_button = confetti.create(canvas);
+                confetti_button().then(() => container.removeChild(canvas));
+    
+                var duration = 15 * 1000;
+                var animationEnd = Date.now() + duration;
+                var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+    
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+    
+                var interval = setInterval(function() {
+                    var timeLeft = animationEnd - Date.now();
+    
+                    if (timeLeft <= 0) {
+                        return clearInterval(interval);
+                    }
+    
+                    var particleCount = 50 * (timeLeft / duration);
+                    // since particles fall down, start a bit higher than random
+                    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+                    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+                }, 250);
+            } else {
+                // Optionally handle incorrect password scenario
+                // alert('الرمز غير صحيح، حاول مرة أخرى');
+            }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              //alert('حدث خطأ أثناء التحقق، حاول مرة أخرى');
+          });
+    
+      });
+    </script>    
   </body>
 </html>
