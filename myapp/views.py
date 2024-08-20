@@ -32,6 +32,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User, Group
 from django.db.models.query_utils import Q
+from django.db.models import Sum, Avg, Count, F
 from .decorators import group_required
 
 # Set up logging
@@ -486,15 +487,45 @@ def validate_phonenumber(request):
 @group_required("Management")
 @login_required(login_url="/login")
 def dashboard(request):
-    # insights for the dashboard
     beneficiaries_num = beneficiary.objects.count()
-    # supporter_operations_num = supporter_operation.objects.count()
-    # entities_num = entity.objects.count()
+    dependents_num = dependent.objects.count()
+
+    # Example: Counting beneficiaries by specific categories
+    orphans_num = beneficiary.objects.filter(category='أسرة أيتام').count()
+    widows_num = beneficiary.objects.filter(category='أسرة أرملة').count()
+
+    # Example: Beneficiaries with medical needs
+    beneficiaries_with_medical_needs = beneficiary.objects.filter(
+        health_status='غير جيدة').count()
+
+    # Example: Beneficiaries with financial needs
+    beneficiaries_with_financial_needs = beneficiary.objects.filter(
+        work_status='لا').count()
+
+    # Calculating total income and expenses for all beneficiaries
+    total_income = beneficiary_income_expense.objects.aggregate(
+        total=Sum(F('salary_in') + F('social_insurance_in') + F('charity_in') + F('social_warranty_in') +
+                  F('pension_agency_in') + F('citizen_account_in') + F('benefactor_in') + F('other_in'))
+    )['total']
+
+    total_expense = beneficiary_income_expense.objects.aggregate(
+        total=Sum(F('housing_rent_ex') + F('electricity_bills_ex') + F('water_bills_ex') + F('transportation_ex') +
+                  F('health_supplies_ex') + F('food_supplies_ex') + F('educational_supplies_ex') + F('proven_debts_ex') + F('other_ex'))
+    )['total']
+    # Calculating average income and expenses
+    num_beneficiaries_with_income_expense = beneficiary_income_expense.objects.count()
+    average_income = total_income / num_beneficiaries_with_income_expense if num_beneficiaries_with_income_expense else 0
+    average_expense = total_expense / num_beneficiaries_with_income_expense if num_beneficiaries_with_income_expense else 0
 
     context = {
-        "beneficiaries_num": beneficiaries_num,
-        "supporter_operations_num": 0,
-        "entities_num": 0
+        'beneficiaries_num': beneficiaries_num,
+        'dependents_num': dependents_num,
+        'orphans_num': orphans_num,
+        'widows_num': widows_num,
+        'beneficiaries_with_medical_needs': beneficiaries_with_medical_needs,
+        'beneficiaries_with_financial_needs': beneficiaries_with_financial_needs,
+        'average_income': average_income,
+        'average_expense': average_expense,
     }
 
     return render(request, "dashboard/dashboard_home.html", context)
