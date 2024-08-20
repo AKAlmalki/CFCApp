@@ -300,4 +300,13 @@ urlpatterns = [
             template_name="auth/password_reset_complete.html"),
         name="password_reset_complete"
     ),
+    path('api/check-password/',
+         views.check_password_for_release,
+         name='check_password_for_release'
+         ),
+    path(
+        'api/check-password-status/',
+        views.check_password_status,
+        name='check_password_status'
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
