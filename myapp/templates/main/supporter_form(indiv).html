@@ -2180,7 +2180,7 @@
     // Append selected rows' data
     formData.append('selectedRowsData', JSON.stringify(selectedRowsData));
 
-    fetch('http://127.0.0.1:8000{% url "supporter_indiv_post" %}', {
+    fetch('https://port433.link{% url "supporter_indiv_post" %}', {
         method: 'POST',
         body: formData,
     })

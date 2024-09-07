@@ -523,9 +523,7 @@
                     <label
                       for="id_personalinfo_washing_place"
                       class="form-label"
-                      >المغسلة التي تم التجهيز فيها<span style="color: red"
-                        >*</span
-                      ></label
+                      >المغسلة التي تم التجهيز فيها</label
                     >
                     <select
                       name="personalinfo_washing_place"
@@ -905,9 +903,7 @@
                   <label
                     for="id_dependent_info_national_id_exp_date"
                     class="form-label"
-                    >تاريخ انتهاء الهوية \ الإقامة<span style="color: red"
-                      >*</span
-                    ></label
+                    >تاريخ انتهاء الهوية \ الإقامة</label
                   >
                   <input
                     type="date"
@@ -2641,9 +2637,7 @@
                 <label
                   for="id_dependent_edit_info_national_id_exp_date"
                   class="form-label"
-                  >تاريخ انتهاء الهوية \ الإقامة<span style="color: red"
-                  >*</span
-                ></label
+                  >تاريخ انتهاء الهوية \ الإقامة</label
                 >
                 <input
                   type="date"
@@ -2994,7 +2988,7 @@
       // delete options.headers['Content-Type'];
   
 
-      fetch('http://127.0.0.1:8000{% url 'beneficiary_new' user_id=user.id %}', {
+      fetch('https://port433.link{% url 'beneficiary_new' user_id=user.id %}', {
           method: 'POST',
           body: formData,
       })
@@ -3153,7 +3147,7 @@
           },
         },
         dependent_edit_info_national_id_exp_date: {
-          required: true,
+          required: false,
           dateISO: true,
         },
         dependent_edit_info_work_status: {
@@ -3969,7 +3963,7 @@
             },
           },
           dependent_info_national_id_exp_date: {
-            required: true,
+            required: false,
             dateISO: true,
           },
           dependent_info_work_status: {
