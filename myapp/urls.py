@@ -236,6 +236,11 @@ urlpatterns = [
         name="sign-up"
     ),
     path(
+        "sign-up/new/validate_national_id/",
+        views.validate_national_id_new_user,
+        name="validate_national_id_new_user"
+    ),
+    path(
         "login/",
         views.signin,
         name="login"
