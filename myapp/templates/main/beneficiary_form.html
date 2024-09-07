@@ -162,18 +162,14 @@
                     />
                   </div>
                   <div class="col-md-6 mb-4 form-group">
-                    <label
-                      for="id_personalinfo_date_of_birth"
-                      class="form-label"
-                      >تاريخ الميلاد<span style="color: red">*</span></label
-                    >
+                    <label for="id_personalinfo_date_of_birth" class="form-label">تاريخ الميلاد<span style="color: red">*</span></label>
                     <input
                       type="date"
                       class="form-control"
                       id="id_personalinfo_date_of_birth"
-                      maxlength="55"
-                      required
                       name="personalinfo_date_of_birth"
+                      value="{{ user.date_of_birth|date:'Y-m-d' }}"
+                      disabled  
                     />
                   </div>
                 </div>
@@ -181,33 +177,28 @@
                 <hr />
                 <div class="row row-cols-md-2 row-cols-xl-4">
                   <div class="col-md-6 mb-4 form-group">
-                    <label for="id_personalinfo_gender" class="form-label"
-                      >الجنس<span style="color: red">*</span></label
-                    >
+                    <label for="id_personalinfo_gender" class="form-label">الجنس<span style="color: red">*</span></label>
                     <select
                       name="personalinfo_gender"
                       class="form-select"
                       id="id_personalinfo_gender"
-                      required
+                      disabled  <!-- Disable the gender selection -->
                     >
-                      <option value selected>---------</option>
-                      <option value="ذكر">ذكر</option>
-                      <option value="انثى">انثى</option>
+                      <option value="ذكر" {% if user.gender == "ذكر" %} selected {% endif %}>ذكر</option>
+                      <option value="انثى" {% if user.gender == "انثى" %} selected {% endif %}>انثى</option>
                     </select>
                   </div>
+                  <!-- National ID Field (disabled) -->
                   <div class="col-md-6 mb-4 form-group">
-                    <label for="id_personalinfo_national_id" class="form-label"
-                      >رقم الهوية الوطنية \ الإقامة<span style="color: red"
-                        >*</span
-                      ></label
-                    >
+                    <label for="id_personalinfo_national_id" class="form-label">رقم الهوية الوطنية \ الإقامة<span style="color: red">*</span></label>
                     <input
                       type="text"
                       class="form-control"
                       id="id_personalinfo_national_id"
                       maxlength="20"
                       name="personalinfo_national_id"
-                      required
+                      value="{{ user.national_id }}" 
+                      disabled
                     />
                   </div>
                   <div class="col-md-6 mb-4 form-group">
@@ -234,216 +225,201 @@
                       name="personalinfo_nationality"
                       class="form-select"
                       id="id_personalinfo_nationality"
+                      disabled
                     >
-                      <option value selected>إختر</option>
-                      <option value="السعودية">السعودية</option>
-                      <option value="أفغانستان">أفغانستان</option>
-                      <option value="ألبانيا">ألبانيا</option>
-                      <option value="الجزائر">الجزائر</option>
-                      <option value="أندورا">أندورا</option>
-                      <option value="أنغولا">أنغولا</option>
-                      <option value="أنتيغوا وباربودا">أنتيغوا وباربودا</option>
-                      <option value="الأرجنتين">الأرجنتين</option>
-                      <option value="أرمينيا">أرمينيا</option>
-                      <option value="أستراليا">أستراليا</option>
-                      <option value="النمسا">النمسا</option>
-                      <option value="أذربيجان">أذربيجان</option>
-                      <option value="البهاما">البهاما</option>
-                      <option value="البحرين">البحرين</option>
-                      <option value="بنغلاديش">بنغلاديش</option>
-                      <option value="باربادوس">باربادوس</option>
-                      <option value="بيلاروسيا">بيلاروسيا</option>
-                      <option value="بلجيكا">بلجيكا</option>
-                      <option value="بليز">بليز</option>
-                      <option value="بنين">بنين</option>
-                      <option value="بوتان">بوتان</option>
-                      <option value="بوليفيا">بوليفيا</option>
-                      <option value="البوسنة والهرسك ">البوسنة والهرسك</option>
-                      <option value="بوتسوانا">بوتسوانا</option>
-                      <option value="البرازيل">البرازيل</option>
-                      <option value="بروناي">بروناي</option>
-                      <option value="بلغاريا">بلغاريا</option>
-                      <option value="بوركينا فاسو ">بوركينا فاسو</option>
-                      <option value="بوروندي">بوروندي</option>
-                      <option value="كمبوديا">كمبوديا</option>
-                      <option value="الكاميرون">الكاميرون</option>
-                      <option value="كندا">كندا</option>
-                      <option value="الرأس الأخضر">الرأس الأخضر</option>
-                      <option value="جمهورية أفريقيا الوسطى ">
-                        جمهورية أفريقيا الوسطى
-                      </option>
-                      <option value="تشاد">تشاد</option>
-                      <option value="تشيلي">تشيلي</option>
-                      <option value="الصين">الصين</option>
-                      <option value="كولومبيا">كولومبيا</option>
-                      <option value="جزر القمر">جزر القمر</option>
-                      <option value="كوستاريكا">كوستاريكا</option>
-                      <option value="ساحل العاج">ساحل العاج</option>
-                      <option value="كرواتيا">كرواتيا</option>
-                      <option value="كوبا">كوبا</option>
-                      <option value="قبرص">قبرص</option>
-                      <option value="التشيك">التشيك</option>
-                      <option value="جمهورية الكونغو الديمقراطية">
-                        جمهورية الكونغو الديمقراطية
-                      </option>
-                      <option value="الدنمارك">الدنمارك</option>
-                      <option value="جيبوتي">جيبوتي</option>
-                      <option value="دومينيكا">دومينيكا</option>
-                      <option value="جمهورية الدومينيكان">
-                        جمهورية الدومينيكان
-                      </option>
-                      <option value="تيمور الشرقية ">تيمور الشرقية</option>
-                      <option value="الإكوادور">الإكوادور</option>
-                      <option value="مصر">مصر</option>
-                      <option value="السلفادور">السلفادور</option>
-                      <option value="غينيا الاستوائية">غينيا الاستوائية</option>
-                      <option value="إريتريا">إريتريا</option>
-                      <option value="إستونيا">إستونيا</option>
-                      <option value="إثيوبيا">إثيوبيا</option>
-                      <option value="فيجي">فيجي</option>
-                      <option value="فنلندا">فنلندا</option>
-                      <option value="فرنسا">فرنسا</option>
-                      <option value="الغابون">الغابون</option>
-                      <option value="غامبيا">غامبيا</option>
-                      <option value="جورجيا">جورجيا</option>
-                      <option value="ألمانيا">ألمانيا</option>
-                      <option value="غانا">غانا</option>
-                      <option value="اليونان">اليونان</option>
-                      <option value="جرينادا">جرينادا</option>
-                      <option value="غواتيمالا">غواتيمالا</option>
-                      <option value="غينيا">غينيا</option>
-                      <option value="غينيا بيساو">غينيا بيساو</option>
-                      <option value="غويانا">غويانا</option>
-                      <option value="هايتي">هايتي</option>
-                      <option value="هندوراس">هندوراس</option>
-                      <option value="المجر">المجر</option>
-                      <option value="آيسلندا">آيسلندا</option>
-                      <option value="الهند">الهند</option>
-                      <option value="إندونيسيا">إندونيسيا</option>
-                      <option value="إيران">إيران</option>
-                      <option value="العراق">العراق</option>
-                      <option value="جمهورية أيرلندا ">جمهورية أيرلندا</option>
-                      <option value="فلسطين">فلسطين</option>
-                      <option value="إيطاليا">إيطاليا</option>
-                      <option value="جامايكا">جامايكا</option>
-                      <option value="اليابان">اليابان</option>
-                      <option value="الأردن">الأردن</option>
-                      <option value="كازاخستان">كازاخستان</option>
-                      <option value="كينيا">كينيا</option>
-                      <option value="كيريباتي">كيريباتي</option>
-                      <option value="الكويت">الكويت</option>
-                      <option value="قرغيزستان">قرغيزستان</option>
-                      <option value="لاوس">لاوس</option>
-                      <option value="لاوس">لاوس</option>
-                      <option value="لاتفيا">لاتفيا</option>
-                      <option value="لبنان">لبنان</option>
-                      <option value="ليسوتو">ليسوتو</option>
-                      <option value="ليبيريا">ليبيريا</option>
-                      <option value="ليبيا">ليبيا</option>
-                      <option value="ليختنشتاين">ليختنشتاين</option>
-                      <option value="ليتوانيا">ليتوانيا</option>
-                      <option value="لوكسمبورغ">لوكسمبورغ</option>
-                      <option value="مدغشقر">مدغشقر</option>
-                      <option value="مالاوي">مالاوي</option>
-                      <option value="ماليزيا">ماليزيا</option>
-                      <option value="جزر المالديف">جزر المالديف</option>
-                      <option value="مالي">مالي</option>
-                      <option value="مالطا">مالطا</option>
-                      <option value="جزر مارشال">جزر مارشال</option>
-                      <option value="موريتانيا">موريتانيا</option>
-                      <option value="موريشيوس">موريشيوس</option>
-                      <option value="المكسيك">المكسيك</option>
-                      <option value="مايكرونيزيا">مايكرونيزيا</option>
-                      <option value="مولدوفا">مولدوفا</option>
-                      <option value="موناكو">موناكو</option>
-                      <option value="منغوليا">منغوليا</option>
-                      <option value="الجبل الأسود">الجبل الأسود</option>
-                      <option value="المغرب">المغرب</option>
-                      <option value="موزمبيق">موزمبيق</option>
-                      <option value="بورما">بورما</option>
-                      <option value="ناميبيا">ناميبيا</option>
-                      <option value="ناورو">ناورو</option>
-                      <option value="نيبال">نيبال</option>
-                      <option value="هولندا">هولندا</option>
-                      <option value="نيوزيلندا">نيوزيلندا</option>
-                      <option value="نيكاراجوا">نيكاراجوا</option>
-                      <option value="النيجر">النيجر</option>
-                      <option value="نيجيريا">نيجيريا</option>
-                      <option value="كوريا الشمالية ">كوريا الشمالية</option>
-                      <option value="النرويج">النرويج</option>
-                      <option value="سلطنة عمان">سلطنة عمان</option>
-                      <option value="باكستان">باكستان</option>
-                      <option value="بالاو">بالاو</option>
-                      <option value="بنما">بنما</option>
-                      <option value="بابوا غينيا الجديدة">
-                        بابوا غينيا الجديدة
-                      </option>
-                      <option value="باراغواي">باراغواي</option>
-                      <option value="بيرو">بيرو</option>
-                      <option value="الفلبين">الفلبين</option>
-                      <option value="بولندا">بولندا</option>
-                      <option value="البرتغال">البرتغال</option>
-                      <option value="قطر">قطر</option>
-                      <option value="جمهورية الكونغو">جمهورية الكونغو</option>
-                      <option value="جمهورية مقدونيا">جمهورية مقدونيا</option>
-                      <option value="رومانيا">رومانيا</option>
-                      <option value="روسيا">روسيا</option>
-                      <option value="رواندا">رواندا</option>
-                      <option value="سانت كيتس ونيفيس">سانت كيتس ونيفيس</option>
-                      <option value="سانت لوسيا">سانت لوسيا</option>
-                      <option value="سانت فنسينت والجرينادينز">
-                        سانت فنسينت والجرينادينز
-                      </option>
-                      <option value="ساموا">ساموا</option>
-                      <option value="سان مارينو">سان مارينو</option>
-                      <option value="ساو تومي وبرينسيب">
-                        ساو تومي وبرينسيب
-                      </option>
-                      <option value="السنغال">السنغال</option>
-                      <option value="صربيا">صربيا</option>
-                      <option value="سيشيل">سيشيل</option>
-                      <option value="سيراليون">سيراليون</option>
-                      <option value="سنغافورة">سنغافورة</option>
-                      <option value="سلوفاكيا">سلوفاكيا</option>
-                      <option value="سلوفينيا">سلوفينيا</option>
-                      <option value="جزر سليمان">جزر سليمان</option>
-                      <option value="الصومال">الصومال</option>
-                      <option value="جنوب أفريقيا">جنوب أفريقيا</option>
-                      <option value="كوريا الجنوبية">كوريا الجنوبية</option>
-                      <option value="جنوب السودان">جنوب السودان</option>
-                      <option value="إسبانيا">إسبانيا</option>
-                      <option value="سريلانكا">سريلانكا</option>
-                      <option value="السودان">السودان</option>
-                      <option value="سورينام">سورينام</option>
-                      <option value="سوازيلاند">سوازيلاند</option>
-                      <option value="السويد">السويد</option>
-                      <option value="سويسرا">سويسرا</option>
-                      <option value="سوريا">سوريا</option>
-                      <option value="طاجيكستان">طاجيكستان</option>
-                      <option value="تنزانيا">تنزانيا</option>
-                      <option value="تايلاند">تايلاند</option>
-                      <option value="توغو">توغو</option>
-                      <option value="تونجا">تونجا</option>
-                      <option value="ترينيداد وتوباغو">ترينيداد وتوباغو</option>
-                      <option value="تونس">تونس</option>
-                      <option value="تركيا">تركيا</option>
-                      <option value="تركمانستان">تركمانستان</option>
-                      <option value="توفالو">توفالو</option>
-                      <option value="أوغندا">أوغندا</option>
-                      <option value="أوكرانيا">أوكرانيا</option>
-                      <option value="الإمارات العربية المتحدة">
-                        الإمارات العربية المتحدة
-                      </option>
-                      <option value="المملكة المتحدة">المملكة المتحدة</option>
-                      <option value="الولايات المتحدة">الولايات المتحدة</option>
-                      <option value="أوروغواي">أوروغواي</option>
-                      <option value="أوزبكستان">أوزبكستان</option>
-                      <option value="فانواتو">فانواتو</option>
-                      <option value="فنزويلا">فنزويلا</option>
-                      <option value="فيتنام">فيتنام</option>
-                      <option value="اليمن">اليمن</option>
-                      <option value="زامبيا">زامبيا</option>
-                      <option value="زيمبابوي">زيمبابوي</option>
+                      <option value="إختر" {% if not user.nationality %} selected {% endif %}>إختر</option>
+                      <option value="السعودية" {% if user.nationality == "السعودية" %} selected {% endif %}>السعودية</option>
+                      <option value="أفغانستان" {% if user.nationality == "أفغانستان" %} selected {% endif %}>أفغانستان</option>
+                      <option value="ألبانيا" {% if user.nationality == "ألبانيا" %} selected {% endif %}>ألبانيا</option>
+                      <option value="الجزائر" {% if user.nationality == "الجزائر" %} selected {% endif %}>الجزائر</option>
+                      <option value="أندورا" {% if user.nationality == "أندورا" %} selected {% endif %}>أندورا</option>
+                      <option value="أنغولا" {% if user.nationality == "أنغولا" %} selected {% endif %}>أنغولا</option>
+                      <option value="أنتيغوا وباربودا" {% if user.nationality == "أنتيغوا وباربودا" %} selected {% endif %}>أنتيغوا وباربودا</option>
+                      <option value="الأرجنتين" {% if user.nationality == "الأرجنتين" %} selected {% endif %}>الأرجنتين</option>
+                      <option value="أرمينيا" {% if user.nationality == "أرمينيا" %} selected {% endif %}>أرمينيا</option>
+                      <option value="أستراليا" {% if user.nationality == "أستراليا" %} selected {% endif %}>أستراليا</option>
+                      <option value="النمسا" {% if user.nationality == "النمسا" %} selected {% endif %}>النمسا</option>
+                      <option value="أذربيجان" {% if user.nationality == "أذربيجان" %} selected {% endif %}>أذربيجان</option>
+                      <option value="البهاما" {% if user.nationality == "البهاما" %} selected {% endif %}>البهاما</option>
+                      <option value="البحرين" {% if user.nationality == "البحرين" %} selected {% endif %}>البحرين</option>
+                      <option value="بنغلاديش" {% if user.nationality == "بنغلاديش" %} selected {% endif %}>بنغلاديش</option>
+                      <option value="باربادوس" {% if user.nationality == "باربادوس" %} selected {% endif %}>باربادوس</option>
+                      <option value="بيلاروسيا" {% if user.nationality == "بيلاروسيا" %} selected {% endif %}>بيلاروسيا</option>
+                      <option value="بلجيكا" {% if user.nationality == "بلجيكا" %} selected {% endif %}>بلجيكا</option>
+                      <option value="بليز" {% if user.nationality == "بليز" %} selected {% endif %}>بليز</option>
+                      <option value="بنين" {% if user.nationality == "بنين" %} selected {% endif %}>بنين</option>
+                      <option value="بوتان" {% if user.nationality == "بوتان" %} selected {% endif %}>بوتان</option>
+                      <option value="بوليفيا" {% if user.nationality == "بوليفيا" %} selected {% endif %}>بوليفيا</option>
+                      <option value="البوسنة والهرسك" {% if user.nationality == "البوسنة والهرسك" %} selected {% endif %}>البوسنة والهرسك</option>
+                      <option value="بوتسوانا" {% if user.nationality == "بوتسوانا" %} selected {% endif %}>بوتسوانا</option>
+                      <option value="البرازيل" {% if user.nationality == "البرازيل" %} selected {% endif %}>البرازيل</option>
+                      <option value="بروناي" {% if user.nationality == "بروناي" %} selected {% endif %}>بروناي</option>
+                      <option value="بلغاريا" {% if user.nationality == "بلغاريا" %} selected {% endif %}>بلغاريا</option>
+                      <option value="بوركينا فاسو" {% if user.nationality == "بوركينا فاسو" %} selected {% endif %}>بوركينا فاسو</option>
+                      <option value="بوروندي" {% if user.nationality == "بوروندي" %} selected {% endif %}>بوروندي</option>
+                      <option value="كمبوديا" {% if user.nationality == "كمبوديا" %} selected {% endif %}>كمبوديا</option>
+                      <option value="الكاميرون" {% if user.nationality == "الكاميرون" %} selected {% endif %}>الكاميرون</option>
+                      <option value="كندا" {% if user.nationality == "كندا" %} selected {% endif %}>كندا</option>
+                      <option value="الرأس الأخضر" {% if user.nationality == "الرأس الأخضر" %} selected {% endif %}>الرأس الأخضر</option>
+                      <option value="تشاد" {% if user.nationality == "تشاد" %} selected {% endif %}>تشاد</option>
+                      <option value="تشيلي" {% if user.nationality == "تشيلي" %} selected {% endif %}>تشيلي</option>
+                      <option value="الصين" {% if user.nationality == "الصين" %} selected {% endif %}>الصين</option>
+                      <option value="كولومبيا" {% if user.nationality == "كولومبيا" %} selected {% endif %}>كولومبيا</option>
+                      <option value="جزر القمر" {% if user.nationality == "جزر القمر" %} selected {% endif %}>جزر القمر</option>
+                      <option value="كوستاريكا" {% if user.nationality == "كوستاريكا" %} selected {% endif %}>كوستاريكا</option>
+                      <option value="ساحل العاج" {% if user.nationality == "ساحل العاج" %} selected {% endif %}>ساحل العاج</option>
+                      <option value="كرواتيا" {% if user.nationality == "كرواتيا" %} selected {% endif %}>كرواتيا</option>
+                      <option value="كوبا" {% if user.nationality == "كوبا" %} selected {% endif %}>كوبا</option>
+                      <option value="قبرص" {% if user.nationality == "قبرص" %} selected {% endif %}>قبرص</option>
+                      <option value="التشيك" {% if user.nationality == "التشيك" %} selected {% endif %}>التشيك</option>
+                      <option value="جمهورية الكونغو الديمقراطية" {% if user.nationality == "جمهورية الكونغو الديمقراطية" %} selected {% endif %}>جمهورية الكونغو الديمقراطية</option>
+                      <option value="الدنمارك" {% if user.nationality == "الدنمارك" %} selected {% endif %}>الدنمارك</option>
+                      <option value="جيبوتي" {% if user.nationality == "جيبوتي" %} selected {% endif %}>جيبوتي</option>
+                      <option value="دومينيكا" {% if user.nationality == "دومينيكا" %} selected {% endif %}>دومينيكا</option>
+                      <option value="جمهورية الدومينيكان" {% if user.nationality == "جمهورية الدومينيكان" %} selected {% endif %}>جمهورية الدومينيكان</option>
+                      <option value="تيمور الشرقية" {% if user.nationality == "تيمور الشرقية" %} selected {% endif %}>تيمور الشرقية</option>
+                      <option value="الإكوادور" {% if user.nationality == "الإكوادور" %} selected {% endif %}>الإكوادور</option>
+                      <option value="مصر" {% if user.nationality == "مصر" %} selected {% endif %}>مصر</option>
+                      <option value="السلفادور" {% if user.nationality == "السلفادور" %} selected {% endif %}>السلفادور</option>
+                      <option value="غينيا الاستوائية" {% if user.nationality == "غينيا الاستوائية" %} selected {% endif %}>غينيا الاستوائية</option>
+                      <option value="إريتريا" {% if user.nationality == "إريتريا" %} selected {% endif %}>إريتريا</option>
+                      <option value="إستونيا" {% if user.nationality == "إستونيا" %} selected {% endif %}>إستونيا</option>
+                      <option value="إثيوبيا" {% if user.nationality == "إثيوبيا" %} selected {% endif %}>إثيوبيا</option>
+                      <option value="فيجي" {% if user.nationality == "فيجي" %} selected {% endif %}>فيجي</option>
+                      <option value="فنلندا" {% if user.nationality == "فنلندا" %} selected {% endif %}>فنلندا</option>
+                      <option value="فرنسا" {% if user.nationality == "فرنسا" %} selected {% endif %}>فرنسا</option>
+                      <option value="الغابون" {% if user.nationality == "الغابون" %} selected {% endif %}>الغابون</option>
+                      <option value="غامبيا" {% if user.nationality == "غامبيا" %} selected {% endif %}>غامبيا</option>
+                      <option value="جورجيا" {% if user.nationality == "جورجيا" %} selected {% endif %}>جورجيا</option>
+                      <option value="ألمانيا" {% if user.nationality == "ألمانيا" %} selected {% endif %}>ألمانيا</option>
+                      <option value="غانا" {% if user.nationality == "غانا" %} selected {% endif %}>غانا</option>
+                      <option value="اليونان" {% if user.nationality == "اليونان" %} selected {% endif %}>اليونان</option>
+                      <option value="جرينادا" {% if user.nationality == "جرينادا" %} selected {% endif %}>جرينادا</option>
+                      <option value="غواتيمالا" {% if user.nationality == "غواتيمالا" %} selected {% endif %}>غواتيمالا</option>
+                      <option value="غينيا" {% if user.nationality == "غينيا" %} selected {% endif %}>غينيا</option>
+                      <option value="غينيا بيساو" {% if user.nationality == "غينيا بيساو" %} selected {% endif %}>غينيا بيساو</option>
+                      <option value="غويانا" {% if user.nationality == "غويانا" %} selected {% endif %}>غويانا</option>
+                      <option value="هايتي" {% if user.nationality == "هايتي" %} selected {% endif %}>هايتي</option>
+                      <option value="هندوراس" {% if user.nationality == "هندوراس" %} selected {% endif %}>هندوراس</option>
+                      <option value="المجر" {% if user.nationality == "المجر" %} selected {% endif %}>المجر</option>
+                      <option value="آيسلندا" {% if user.nationality == "آيسلندا" %} selected {% endif %}>آيسلندا</option>
+                      <option value="الهند" {% if user.nationality == "الهند" %} selected {% endif %}>الهند</option>
+                      <option value="إندونيسيا" {% if user.nationality == "إندونيسيا" %} selected {% endif %}>إندونيسيا</option>
+                      <option value="إيران" {% if user.nationality == "إيران" %} selected {% endif %}>إيران</option>
+                      <option value="العراق" {% if user.nationality == "العراق" %} selected {% endif %}>العراق</option>
+                      <option value="جمهورية أيرلندا" {% if user.nationality == "جمهورية أيرلندا" %} selected {% endif %}>جمهورية أيرلندا</option>
+                      <option value="فلسطين" {% if user.nationality == "فلسطين" %} selected {% endif %}>فلسطين</option>
+                      <option value="إيطاليا" {% if user.nationality == "إيطاليا" %} selected {% endif %}>إيطاليا</option>
+                      <option value="جامايكا" {% if user.nationality == "جامايكا" %} selected {% endif %}>جامايكا</option>
+                      <option value="اليابان" {% if user.nationality == "اليابان" %} selected {% endif %}>اليابان</option>
+                      <option value="الأردن" {% if user.nationality == "الأردن" %} selected {% endif %}>الأردن</option>
+                      <option value="كازاخستان" {% if user.nationality == "كازاخستان" %} selected {% endif %}>كازاخستان</option>
+                      <option value="كينيا" {% if user.nationality == "كينيا" %} selected {% endif %}>كينيا</option>
+                      <option value="كيريباتي" {% if user.nationality == "كيريباتي" %} selected {% endif %}>كيريباتي</option>
+                      <option value="الكويت" {% if user.nationality == "الكويت" %} selected {% endif %}>الكويت</option>
+                      <option value="قرغيزستان" {% if user.nationality == "قرغيزستان" %} selected {% endif %}>قرغيزستان</option>
+                      <option value="لاوس" {% if user.nationality == "لاوس" %} selected {% endif %}>لاوس</option>
+                      <option value="لاتفيا" {% if user.nationality == "لاتفيا" %} selected {% endif %}>لاتفيا</option>
+                      <option value="لبنان" {% if user.nationality == "لبنان" %} selected {% endif %}>لبنان</option>
+                      <option value="ليسوتو" {% if user.nationality == "ليسوتو" %} selected {% endif %}>ليسوتو</option>
+                      <option value="ليبيريا" {% if user.nationality == "ليبيريا" %} selected {% endif %}>ليبيريا</option>
+                      <option value="ليبيا" {% if user.nationality == "ليبيا" %} selected {% endif %}>ليبيا</option>
+                      <option value="ليختنشتاين" {% if user.nationality == "ليختنشتاين" %} selected {% endif %}>ليختنشتاين</option>
+                      <option value="ليتوانيا" {% if user.nationality == "ليتوانيا" %} selected {% endif %}>ليتوانيا</option>
+                      <option value="لوكسمبورغ" {% if user.nationality == "لوكسمبورغ" %} selected {% endif %}>لوكسمبورغ</option>
+                      <option value="مدغشقر" {% if user.nationality == "مدغشقر" %} selected {% endif %}>مدغشقر</option>
+                      <option value="مالاوي" {% if user.nationality == "مالاوي" %} selected {% endif %}>مالاوي</option>
+                      <option value="ماليزيا" {% if user.nationality == "ماليزيا" %} selected {% endif %}>ماليزيا</option>
+                      <option value="جزر المالديف" {% if user.nationality == "جزر المالديف" %} selected {% endif %}>جزر المالديف</option>
+                      <option value="مالي" {% if user.nationality == "مالي" %} selected {% endif %}>مالي</option>
+                      <option value="مالطا" {% if user.nationality == "مالطا" %} selected {% endif %}>مالطا</option>
+                      <option value="جزر مارشال" {% if user.nationality == "جزر مارشال" %} selected {% endif %}>جزر مارشال</option>
+                      <option value="موريتانيا" {% if user.nationality == "موريتانيا" %} selected {% endif %}>موريتانيا</option>
+                      <option value="موريشيوس" {% if user.nationality == "موريشيوس" %} selected {% endif %}>موريشيوس</option>
+                      <option value="المكسيك" {% if user.nationality == "المكسيك" %} selected {% endif %}>المكسيك</option>
+                      <option value="مايكرونيزيا" {% if user.nationality == "مايكرونيزيا" %} selected {% endif %}>مايكرونيزيا</option>
+                      <option value="مولدوفا" {% if user.nationality == "مولدوفا" %} selected {% endif %}>مولدوفا</option>
+                      <option value="موناكو" {% if user.nationality == "موناكو" %} selected {% endif %}>موناكو</option>
+                      <option value="منغوليا" {% if user.nationality == "منغوليا" %} selected {% endif %}>منغوليا</option>
+                      <option value="الجبل الأسود" {% if user.nationality == "الجبل الأسود" %} selected {% endif %}>الجبل الأسود</option>
+                      <option value="المغرب" {% if user.nationality == "المغرب" %} selected {% endif %}>المغرب</option>
+                      <option value="موزمبيق" {% if user.nationality == "موزمبيق" %} selected {% endif %}>موزمبيق</option>
+                      <option value="بورما" {% if user.nationality == "بورما" %} selected {% endif %}>بورما</option>
+                      <option value="ناميبيا" {% if user.nationality == "ناميبيا" %} selected {% endif %}>ناميبيا</option>
+                      <option value="ناورو" {% if user.nationality == "ناورو" %} selected {% endif %}>ناورو</option>
+                      <option value="نيبال" {% if user.nationality == "نيبال" %} selected {% endif %}>نيبال</option>
+                      <option value="هولندا" {% if user.nationality == "هولندا" %} selected {% endif %}>هولندا</option>
+                      <option value="نيوزيلندا" {% if user.nationality == "نيوزيلندا" %} selected {% endif %}>نيوزيلندا</option>
+                      <option value="نيكاراجوا" {% if user.nationality == "نيكاراجوا" %} selected {% endif %}>نيكاراجوا</option>
+                      <option value="النيجر" {% if user.nationality == "النيجر" %} selected {% endif %}>النيجر</option>
+                      <option value="نيجيريا" {% if user.nationality == "نيجيريا" %} selected {% endif %}>نيجيريا</option>
+                      <option value="كوريا الشمالية" {% if user.nationality == "كوريا الشمالية" %} selected {% endif %}>كوريا الشمالية</option>
+                      <option value="النرويج" {% if user.nationality == "النرويج" %} selected {% endif %}>النرويج</option>
+                      <option value="سلطنة عمان" {% if user.nationality == "سلطنة عمان" %} selected {% endif %}>سلطنة عمان</option>
+                      <option value="باكستان" {% if user.nationality == "باكستان" %} selected {% endif %}>باكستان</option>
+                      <option value="بالاو" {% if user.nationality == "بالاو" %} selected {% endif %}>بالاو</option>
+                      <option value="بنما" {% if user.nationality == "بنما" %} selected {% endif %}>بنما</option>
+                      <option value="بابوا غينيا الجديدة" {% if user.nationality == "بابوا غينيا الجديدة" %} selected {% endif %}>بابوا غينيا الجديدة</option>
+                      <option value="باراغواي" {% if user.nationality == "باراغواي" %} selected {% endif %}>باراغواي</option>
+                      <option value="بيرو" {% if user.nationality == "بيرو" %} selected {% endif %}>بيرو</option>
+                      <option value="الفلبين" {% if user.nationality == "الفلبين" %} selected {% endif %}>الفلبين</option>
+                      <option value="بولندا" {% if user.nationality == "بولندا" %} selected {% endif %}>بولندا</option>
+                      <option value="البرتغال" {% if user.nationality == "البرتغال" %} selected {% endif %}>البرتغال</option>
+                      <option value="قطر" {% if user.nationality == "قطر" %} selected {% endif %}>قطر</option>
+                      <option value="جمهورية الكونغو" {% if user.nationality == "جمهورية الكونغو" %} selected {% endif %}>جمهورية الكونغو</option>
+                      <option value="جمهورية مقدونيا" {% if user.nationality == "جمهورية مقدونيا" %} selected {% endif %}>جمهورية مقدونيا</option>
+                      <option value="رومانيا" {% if user.nationality == "رومانيا" %} selected {% endif %}>رومانيا</option>
+                      <option value="روسيا" {% if user.nationality == "روسيا" %} selected {% endif %}>روسيا</option>
+                      <option value="رواندا" {% if user.nationality == "رواندا" %} selected {% endif %}>رواندا</option>
+                      <option value="سانت كيتس ونيفيس" {% if user.nationality == "سانت كيتس ونيفيس" %} selected {% endif %}>سانت كيتس ونيفيس</option>
+                      <option value="سانت لوسيا" {% if user.nationality == "سانت لوسيا" %} selected {% endif %}>سانت لوسيا</option>
+                      <option value="سانت فنسينت والجرينادينز" {% if user.nationality == "سانت فنسينت والجرينادينز" %} selected {% endif %}>سانت فنسينت والجرينادينز</option>
+                      <option value="ساموا" {% if user.nationality == "ساموا" %} selected {% endif %}>ساموا</option>
+                      <option value="سان مارينو" {% if user.nationality == "سان مارينو" %} selected {% endif %}>سان مارينو</option>
+                      <option value="ساو تومي وبرينسيب" {% if user.nationality == "ساو تومي وبرينسيب" %} selected {% endif %}>ساو تومي وبرينسيب</option>
+                      <option value="السنغال" {% if user.nationality == "السنغال" %} selected {% endif %}>السنغال</option>
+                      <option value="صربيا" {% if user.nationality == "صربيا" %} selected {% endif %}>صربيا</option>
+                      <option value="سيشيل" {% if user.nationality == "سيشيل" %} selected {% endif %}>سيشيل</option>
+                      <option value="سيراليون" {% if user.nationality == "سيراليون" %} selected {% endif %}>سيراليون</option>
+                      <option value="سنغافورة" {% if user.nationality == "سنغافورة" %} selected {% endif %}>سنغافورة</option>
+                      <option value="سلوفاكيا" {% if user.nationality == "سلوفاكيا" %} selected {% endif %}>سلوفاكيا</option>
+                      <option value="سلوفينيا" {% if user.nationality == "سلوفينيا" %} selected {% endif %}>سلوفينيا</option>
+                      <option value="جزر سليمان" {% if user.nationality == "جزر سليمان" %} selected {% endif %}>جزر سليمان</option>
+                      <option value="الصومال" {% if user.nationality == "الصومال" %} selected {% endif %}>الصومال</option>
+                      <option value="جنوب أفريقيا" {% if user.nationality == "جنوب أفريقيا" %} selected {% endif %}>جنوب أفريقيا</option>
+                      <option value="كوريا الجنوبية" {% if user.nationality == "كوريا الجنوبية" %} selected {% endif %}>كوريا الجنوبية</option>
+                      <option value="جنوب السودان" {% if user.nationality == "جنوب السودان" %} selected {% endif %}>جنوب السودان</option>
+                      <option value="إسبانيا" {% if user.nationality == "إسبانيا" %} selected {% endif %}>إسبانيا</option>
+                      <option value="سريلانكا" {% if user.nationality == "سريلانكا" %} selected {% endif %}>سريلانكا</option>
+                      <option value="السودان" {% if user.nationality == "السودان" %} selected {% endif %}>السودان</option>
+                      <option value="سورينام" {% if user.nationality == "سورينام" %} selected {% endif %}>سورينام</option>
+                      <option value="سوازيلاند" {% if user.nationality == "سوازيلاند" %} selected {% endif %}>سوازيلاند</option>
+                      <option value="السويد" {% if user.nationality == "السويد" %} selected {% endif %}>السويد</option>
+                      <option value="سويسرا" {% if user.nationality == "سويسرا" %} selected {% endif %}>سويسرا</option>
+                      <option value="سوريا" {% if user.nationality == "سوريا" %} selected {% endif %}>سوريا</option>
+                      <option value="طاجيكستان" {% if user.nationality == "طاجيكستان" %} selected {% endif %}>طاجيكستان</option>
+                      <option value="تنزانيا" {% if user.nationality == "تنزانيا" %} selected {% endif %}>تنزانيا</option>
+                      <option value="تايلاند" {% if user.nationality == "تايلاند" %} selected {% endif %}>تايلاند</option>
+                      <option value="توغو" {% if user.nationality == "توغو" %} selected {% endif %}>توغو</option>
+                      <option value="تونجا" {% if user.nationality == "تونجا" %} selected {% endif %}>تونجا</option>
+                      <option value="ترينيداد وتوباغو" {% if user.nationality == "ترينيداد وتوباغو" %} selected {% endif %}>ترينيداد وتوباغو</option>
+                      <option value="تونس" {% if user.nationality == "تونس" %} selected {% endif %}>تونس</option>
+                      <option value="تركيا" {% if user.nationality == "تركيا" %} selected {% endif %}>تركيا</option>
+                      <option value="تركمانستان" {% if user.nationality == "تركمانستان" %} selected {% endif %}>تركمانستان</option>
+                      <option value="توفالو" {% if user.nationality == "توفالو" %} selected {% endif %}>توفالو</option>
+                      <option value="أوغندا" {% if user.nationality == "أوغندا" %} selected {% endif %}>أوغندا</option>
+                      <option value="أوكرانيا" {% if user.nationality == "أوكرانيا" %} selected {% endif %}>أوكرانيا</option>
+                      <option value="الإمارات العربية المتحدة" {% if user.nationality == "الإمارات العربية المتحدة" %} selected {% endif %}>الإمارات العربية المتحدة</option>
+                      <option value="المملكة المتحدة" {% if user.nationality == "المملكة المتحدة" %} selected {% endif %}>المملكة المتحدة</option>
+                      <option value="الولايات المتحدة" {% if user.nationality == "الولايات المتحدة" %} selected {% endif %}>الولايات المتحدة</option>
+                      <option value="أوروغواي" {% if user.nationality == "أوروغواي" %} selected {% endif %}>أوروغواي</option>
+                      <option value="أوزبكستان" {% if user.nationality == "أوزبكستان" %} selected {% endif %}>أوزبكستان</option>
+                      <option value="فانواتو" {% if user.nationality == "فانواتو" %} selected {% endif %}>فانواتو</option>
+                      <option value="فنزويلا" {% if user.nationality == "فنزويلا" %} selected {% endif %}>فنزويلا</option>
+                      <option value="فيتنام" {% if user.nationality == "فيتنام" %} selected {% endif %}>فيتنام</option>
+                      <option value="اليمن" {% if user.nationality == "اليمن" %} selected {% endif %}>اليمن</option>
+                      <option value="زامبيا" {% if user.nationality == "زامبيا" %} selected {% endif %}>زامبيا</option>
+                      <option value="زيمبابوي" {% if user.nationality == "زيمبابوي" %} selected {% endif %}>زيمبابوي</option>
                     </select>
                   </div>
                 </div>
@@ -673,16 +649,16 @@
                     <div class="form-text" id="basic-addon4">يبدا رقم الجوال بدون الصفر, مثال (512345678)</div>
                   </div>
                   <div class="col-md-6 mb-4 form-group">
-                    <label for="id_personalinfo_email" class="form-label"
-                      >البريد الالكتروني<span style="color: red">*</span></label
-                    >
+                    <label for="id_personalinfo_email" class="form-label">البريد الالكتروني<span style="color: red">*</span></label>
                     <input
                       type="email"
                       name="personalinfo_email"
                       maxlength="254"
                       class="form-control"
                       id="id_personalinfo_email"
+                      value="{{ user.email }}"
                       required
+                      disabled
                     />
                   </div>
                 </div>

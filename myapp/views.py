@@ -114,12 +114,18 @@ def sign_up(request):
         last_name = request.POST['last_name']
         date_of_birth = request.POST['date_of_birth']
         gender = request.POST['gender']
+        national_id = request.POST['national_id']
         nationality = request.POST['nationality']
         username = request.POST['username']
         email = request.POST['email']
         phonenumber = request.POST.get('phonenumber', None)
         password1 = request.POST['password1']
         password2 = request.POST['password2']
+
+        # Ensure no fields are empty
+        if not all([first_name, second_name, last_name, date_of_birth, gender, national_id, nationality, username, email, password1, password2]):
+            messages.error(request, "جميع الحقول مطلوبة.")
+            return redirect('sign-up')
 
         username_exists = CustomUser.objects.filter(username=username).exists()
 
@@ -130,6 +136,7 @@ def sign_up(request):
             request.session['last_name'] = last_name
             request.session['date_of_birth'] = date_of_birth
             request.session['gender'] = gender
+            request.session['national_id'] = national_id
             request.session['nationality'] = nationality
             request.session['username'] = username
             request.session['email'] = email
@@ -149,6 +156,7 @@ def sign_up(request):
             request.session['last_name'] = last_name
             request.session['date_of_birth'] = date_of_birth
             request.session['gender'] = gender
+            request.session['national_id'] = national_id
             request.session['nationality'] = nationality
             request.session['username'] = username
             request.session['email'] = email
@@ -157,6 +165,18 @@ def sign_up(request):
             # Alert an error message
             messages.error(request, "البريد الالكتروني موجود سابقًا.")
 
+            return redirect('sign-up')
+        
+        # Ensure passwords match
+        if password1 != password2:
+            messages.error(request, "كلمات المرور غير متطابقة.")
+            return redirect('sign-up')
+        
+        # Validate date of birth (check format and ensure it's a valid date)
+        try:
+            dob = datetime.strptime(date_of_birth, "%Y-%m-%d")
+        except ValueError:
+            messages.error(request, "صيغة تاريخ الميلاد غير صحيحة.")
             return redirect('sign-up')
 
         # Make a new user object
@@ -167,6 +187,7 @@ def sign_up(request):
             second_name=second_name,
             last_name=last_name,
             gender=gender,
+            national_id=national_id,
             nationality=nationality,
             phonenumber=phonenumber,
             date_of_birth=date_of_birth,
@@ -2917,9 +2938,11 @@ def validate_national_id_dependent(request, user_id):
             national_id=national_id).exists()
         s_data = not Supporter.objects.filter(
             national_id=national_id).exists()
+        u_data = not CustomUser.objects.filter(
+            national_id=national_id).exists()
 
         # in case of national_id doesn't exist before
-        if d_data or b_data or s_data:
+        if d_data or b_data or s_data or u_data:
             data = "true"
         else:
             data = "false"
@@ -2942,9 +2965,38 @@ def validate_national_id_new_beneficiary(request, user_id):
             national_id=national_id).exists()
         s_data = not Supporter.objects.filter(
             national_id=national_id).exists()
+        u_data = not CustomUser.objects.filter(
+            national_id=national_id).exists()
 
         # in case of national_id doesn't exist before
-        if d_data or b_data or s_data:
+        if d_data or b_data or s_data or u_data:
+            data = "true"
+        else:
+            data = "false"
+
+        return HttpResponse(data)
+    
+
+def validate_national_id_new_user(request):
+
+    national_id = request.POST.get('national_id', None)
+
+    if national_id is None:
+        return HttpResponse("true")
+    else:
+        data = "false"
+
+        d_data = not dependent.objects.filter(
+            national_id=national_id).exists()
+        b_data = not beneficiary.objects.filter(
+            national_id=national_id).exists()
+        s_data = not Supporter.objects.filter(
+            national_id=national_id).exists()
+        u_data = not CustomUser.objects.filter(
+            national_id=national_id).exists()
+
+        # in case of national_id doesn't exist before
+        if d_data or b_data or s_data or u_data:
             data = "true"
         else:
             data = "false"
@@ -2994,9 +3046,11 @@ def validate_national_id_edit_dependent(request, user_id):
             national_id=national_id).exists()
         s_data = not Supporter.objects.filter(
             national_id=national_id).exists()
+        u_data = not CustomUser.objects.filter(
+            national_id=national_id).exists()
 
         # in case of national_id doesn't exist before
-        if d_data or b_data or s_data:
+        if d_data or b_data or s_data or u_data:
             data = "true"
         else:
             # in case of national_id exists before but it is equal to the base_national_id

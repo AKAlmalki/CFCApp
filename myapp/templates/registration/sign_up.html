@@ -148,6 +148,12 @@
                 </div>
               </div>
               <div class="col mb-3">
+                <label for="id_national_id" class="form-label"
+                  >رقم الهوية</label
+                >
+                <input type="text" name="national_id" class="form-control" autofocus id="id_national_id" value="{{ national_id }}">
+              </div>
+              <div class="col mb-3">
                 <label for="id_nationality" class="form-label"
                   >الجنسية</label
                 >
@@ -499,6 +505,43 @@
           "الرجاء إدخال بريد إلكتروني صحيح."
         );
 
+        // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
+        function validateSAID(id) {
+          let type = id.substr(0, 1);
+          let sum = 0;
+          const _idLength = 10;
+          const _type1 = "1";
+          const _type2 = "2";
+          id = id.trim();
+          if (
+            isNaN(parseInt(id)) ||
+            id.length !== _idLength ||
+            (type !== _type2 && type !== _type1)
+          ) {
+            return false;
+          }
+          for (let num = 0; num < 10; num++) {
+            const digit = Number(id[num]);
+            if (num % 2 === 0) {
+              const doubled = digit * 2;
+              const ZFOdd = `00${doubled}`.slice(-2);
+              sum += Number(ZFOdd[0]) + Number(ZFOdd[1]);
+            } else {
+              sum += digit;
+            }
+          }
+          return sum % 10 !== 0 ? false : true;
+        }
+
+        // Validator method for the national id (Iqama/Saudi)
+        $.validator.addMethod(
+          "nationalidRegex",
+          function (value, element) {
+            return this.optional(element) || validateSAID(value);
+          },
+          "أدخل رقم هوية/إقامة صحيح."
+        );
+
         // The below code will change the default validation messages
         $.extend($.validator.messages, {
           required: "هذا الحقل مطلوب.",
@@ -610,6 +653,20 @@
               },
               gender: {
                 required: true,
+              },
+              national_id: {
+                required: true,
+                nationalidRegex: true,
+                remote: {
+                  url: '/sign-up/new/validate_national_id/',
+                  type: 'post',
+                  data: {
+                    national_id: function() {
+                      return $('#id_national_id').val();
+                    },
+                    csrfmiddlewaretoken: csrfToken,  // Include CSRF token
+                  },
+                },
               },
               nationality: {
                 required: true,
