@@ -93,6 +93,8 @@
                         class="form-select"
                         id="id_personalinfo_gender"
                         data-bs-title="الجنس"
+                        disabled
+                        readonly
                       >
                         <option value>---------</option>
                         <option value="ذكر">ذكر</option>
@@ -101,7 +103,7 @@
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_date_of_birth">تاريخ الميلاد<span style="color: red">*</span></h6>
-                      <input type="date" class="form-control" id="id_personalinfo_date_of_birth" name="personalinfo_date_of_birth" data-bs-title="تاريخ الميلاد">
+                      <input disabled readonly type="date" class="form-control" id="id_personalinfo_date_of_birth" name="personalinfo_date_of_birth" data-bs-title="تاريخ الميلاد">
                     </div>
                     <div class="col mb-3 form-group">
                       <label for="id_personalinfo_phone_number" class="form-label"
@@ -123,7 +125,7 @@
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_email">البريد الالكتروني<span style="color: red">*</span></h6>
-                      <input type="email" class="form-control" id="id_personalinfo_email" name="personalinfo_email" data-bs-title="البريد الالكتروني" value="{{ beneficiary.email }}">
+                      <input disabled readonly type="email" class="form-control" id="id_personalinfo_email" name="personalinfo_email" data-bs-title="البريد الالكتروني" value="{{ beneficiary.email }}">
                     </div>
                   </div>
 
@@ -137,6 +139,8 @@
                         class="form-select"
                         id="id_personalinfo_nationality"
                         data-bs-title="الجنسية"
+                        disabled
+                        readonly
                       >
                         <option value>إختر</option>
                         <option value="السعودية">السعودية</option>
@@ -351,7 +355,7 @@
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_national_id">رقم الهوية/الإقامة<span style="color: red">*</span></h6>
-                      <input type="text" class="form-control convert-to-english" id="id_personalinfo_national_id" name="personalinfo_national_id" data-bs-title="رقم الهوية / الإقامة" value="{{ beneficiary.national_id }}">
+                      <input disabled readonly type="text" class="form-control convert-to-english" id="id_personalinfo_national_id" name="personalinfo_national_id" data-bs-title="رقم الهوية / الإقامة" value="{{ beneficiary.national_id }}">
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة<span style="color: red">*</span></h6>
