@@ -44,7 +44,7 @@ class CustomUser(AbstractUser):
     gender = models.CharField(max_length=5, null=True)
     phonenumber = models.CharField(max_length=15, null=True, unique=True)
     last_updated = models.DateField(null=True)
-    national_id = models.CharField(max_length=20, default=0)
+    national_id = models.CharField(max_length=20, default=0, unique=True)
     nationality = models.CharField(max_length=64, null=True)
     email = models.EmailField(unique=True)  # Override the email field
     # add additional field in here
@@ -64,7 +64,7 @@ class beneficiary(models.Model):
     date_of_birth = models.DateField()
     phone_number = models.CharField(max_length=15)
     email = models.EmailField()
-    national_id = models.CharField(max_length=20)
+    national_id = models.CharField(max_length=20, unique=True)
     national_id_exp_date = models.DateField(null=True)
     # national address should be divided into multiple fields
     # national_address = models.CharField(max_length=255)  # Not included here
@@ -335,7 +335,7 @@ class Supporter(models.Model):
     last_name = models.CharField(max_length=55)
     date_of_birth = models.DateField()
     gender = models.CharField(max_length=5, null=True)
-    national_id = models.CharField(max_length=20)
+    national_id = models.CharField(max_length=20, unique=True)
     national_id_exp_date = models.DateField(null=True)
     nationality = models.CharField(max_length=64)
     marital_status = models.CharField(max_length=64)
@@ -411,9 +411,3 @@ class Supporter_beneficiary_sponsorship(models.Model):
         beneficiary, on_delete=models.CASCADE)
     supporter = models.ForeignKey(
         Supporter, on_delete=models.CASCADE)
-
-
-# Temporary models
-
-class PasswordCheck(models.Model):
-    correct_password_passed = models.BooleanField(default=False)
