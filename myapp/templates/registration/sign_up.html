@@ -37,6 +37,8 @@
     <!-- Include jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Include jQuery Validation Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <!-- Include jQuery Validation Plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"></script>
@@ -697,6 +699,9 @@
               username: {
                 usernameRegex: "اسم المستخدم يتكون من حروف انجليزية وارقام فقط.",
                 remote: "اسم المستخدم تم استخدامه بالفعل!",
+              },
+              national_id: {
+                remote: "رقم الهوية أو الإقامة مستخدم بالفعل!"
               },
               first_name: {
                 required: "هذا الحقل مطلوب.",

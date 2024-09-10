@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment, Field_visit, Field_visit_attachment, PasswordCheck
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment, Field_visit, Field_visit_attachment
 # from .forms import CustomUserCreationForm
 # from django.db.models import Q
 from django.contrib import messages
@@ -456,7 +456,7 @@ def validate_email(request):
         b_data = not beneficiary.objects.filter(email__iexact=email).exists()
         s_data = not Supporter.objects.filter(email__iexact=email).exists()
 
-        if cu_data or b_data or s_data:
+        if cu_data and b_data and s_data:
             data = "true"
         else:
             data = "false"
@@ -2942,7 +2942,7 @@ def validate_national_id_dependent(request, user_id):
             national_id=national_id).exists()
 
         # in case of national_id doesn't exist before
-        if d_data or b_data or s_data or u_data:
+        if d_data and b_data and s_data and u_data:
             data = "true"
         else:
             data = "false"
@@ -2969,7 +2969,7 @@ def validate_national_id_new_beneficiary(request, user_id):
             national_id=national_id).exists()
 
         # in case of national_id doesn't exist before
-        if d_data or b_data or s_data or u_data:
+        if d_data and b_data and s_data and u_data:
             data = "true"
         else:
             data = "false"
@@ -2996,7 +2996,7 @@ def validate_national_id_new_user(request):
             national_id=national_id).exists()
 
         # in case of national_id doesn't exist before
-        if d_data or b_data or s_data or u_data:
+        if d_data and b_data and s_data and u_data:
             data = "true"
         else:
             data = "false"
@@ -3017,9 +3017,11 @@ def validate_phonenumber_new_beneficiary(request, user_id):
             phone_number=phonenumber).exists()
         s_data = not Supporter.objects.filter(
             phone_number=phonenumber).exists()
+        u_data = not CustomUser.objects.filter(
+            phonenumber=phonenumber).exists()
 
         # in case of national_id doesn't exist before
-        if b_data or s_data:
+        if b_data and s_data and u_data:
             data = "true"
         else:
             data = "false"
@@ -3050,7 +3052,7 @@ def validate_national_id_edit_dependent(request, user_id):
             national_id=national_id).exists()
 
         # in case of national_id doesn't exist before
-        if d_data or b_data or s_data or u_data:
+        if d_data and b_data and s_data and u_data:
             data = "true"
         else:
             # in case of national_id exists before but it is equal to the base_national_id
@@ -3825,35 +3827,3 @@ def dashboard_add_field_visit(request):
     else:
         messages.error(request, "لقد حدث خطأ غير متوقع.")
         return redirect("dashboard")
-
-
-@csrf_exempt
-def check_password_for_release(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            password_value = data.get("password")
-
-            if password_value == "305":
-                # Update the correct_password_passed field to True
-                password_check, created = PasswordCheck.objects.get_or_create(
-                    id=1)
-                password_check.correct_password_passed = True
-                password_check.save()
-
-                return JsonResponse({"result": True})
-            else:
-                return JsonResponse({"result": False})
-
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
-
-    return JsonResponse({"error": "Invalid request method."}, status=405)
-
-
-def check_password_status(request):
-    try:
-        password_check, created = PasswordCheck.objects.get_or_create(id=1)
-        return JsonResponse({"result": password_check.correct_password_passed})
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=400)
