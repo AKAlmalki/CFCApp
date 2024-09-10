@@ -62,7 +62,7 @@ class beneficiary(models.Model):
     nationality = models.CharField(max_length=64)
     gender = models.CharField(max_length=5, null=True)
     date_of_birth = models.DateField()
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(max_length=15, unique=True)
     email = models.EmailField()
     national_id = models.CharField(max_length=20, unique=True)
     national_id_exp_date = models.DateField(null=True)
