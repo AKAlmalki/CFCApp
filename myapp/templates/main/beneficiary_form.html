@@ -169,7 +169,8 @@
                       id="id_personalinfo_date_of_birth"
                       name="personalinfo_date_of_birth"
                       value="{{ user.date_of_birth|date:'Y-m-d' }}"
-                      disabled  
+                      disabled
+                      readonly  
                     />
                   </div>
                 </div>
@@ -182,7 +183,8 @@
                       name="personalinfo_gender"
                       class="form-select"
                       id="id_personalinfo_gender"
-                      disabled  <!-- Disable the gender selection -->
+                      disabled
+                      readonly
                     >
                       <option value="ذكر" {% if user.gender == "ذكر" %} selected {% endif %}>ذكر</option>
                       <option value="انثى" {% if user.gender == "انثى" %} selected {% endif %}>انثى</option>
@@ -199,6 +201,7 @@
                       name="personalinfo_national_id"
                       value="{{ user.national_id }}" 
                       disabled
+                      readonly
                     />
                   </div>
                   <div class="col-md-6 mb-4 form-group">
@@ -226,6 +229,7 @@
                       class="form-select"
                       id="id_personalinfo_nationality"
                       disabled
+                      readonly
                     >
                       <option value="إختر" {% if not user.nationality %} selected {% endif %}>إختر</option>
                       <option value="السعودية" {% if user.nationality == "السعودية" %} selected {% endif %}>السعودية</option>
@@ -656,10 +660,53 @@
                       id="id_personalinfo_email"
                       value="{{ user.email }}"
                       required
-                      disabled
+                      disabled readonly
                     />
                   </div>
                 </div>
+
+                <!-- Hidden Fields Container (Organized in one place) -->
+                <div class="d-none">
+                  <!-- Date of Birth Hidden Field -->
+                  <input
+                    type="hidden"
+                    name="personalinfo_date_of_birth"
+                    id="hidden_personalinfo_date_of_birth"
+                    value="{{ user.date_of_birth|date:'Y-m-d' }}"
+                  />
+
+                  <!-- Gender Hidden Field -->
+                  <input
+                    type="hidden"
+                    name="personalinfo_gender"
+                    value="{{ user.gender }}"
+                  />
+
+                  <!-- National ID Hidden Field -->
+                  <input
+                    type="hidden"
+                    name="personalinfo_national_id"
+                    id="hidden_personalinfo_national_id"
+                    value="{{ user.national_id }}"
+                  />
+
+                  <!-- Nationality Hidden Field -->
+                  <input
+                    type="hidden"
+                    name="personalinfo_nationality"
+                    id="hidden_personalinfo_nationality"
+                    value="{{ user.nationality }}"
+                  />
+
+                  <!-- Email Hidden Field -->
+                  <input
+                    type="hidden"
+                    name="personalinfo_email"
+                    id="hidden_personalinfo_email"
+                    value="{{ user.email }}"
+                  />
+                </div>
+                
               </div>
             </div>
           </div>
@@ -887,9 +934,7 @@
               <div class="row">
                 <div class="col-md-6 mb-4 form-group">
                   <label for="id_dependent_info_national_id" class="form-label"
-                    >رقم الهوية الوطنية \ الإقامة<span style="color: red"
-                      >*</span
-                    ></label
+                    >رقم الهوية الوطنية \ الإقامة<span style="color: red">*</span></label
                   >
                   <input
                     type="text"

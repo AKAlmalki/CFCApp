@@ -2250,7 +2250,7 @@ def beneficiary_request_update(request, user_id):
                 'dependent_educational_status': dependent_obj.educational_status,
                 'dependent_marital_status': dependent_obj.marital_status,
                 'dependent_national_id': dependent_obj.national_id,
-                'dependent_national_id_exp_date': dependent_obj.national_id_exp_date.strftime('%Y-%m-%d'),
+                'dependent_national_id_exp_date': dependent_obj.national_id_exp_date.strftime('%Y-%m-%d') if dependent_obj.national_id_exp_date else None,
                 'dependent_health_status': dependent_obj.health_status,
                 'dependent_needs_type': dependent_obj.needs_type,
                 'dependent_educational_degree': dependent_obj.educational_degree,
@@ -2343,7 +2343,7 @@ def beneficiary_request_update(request, user_id):
                 'beneficiary_house': beneficiary_house_obj,
                 'beneficiary_income_expense': beneficiary_income_expense_obj,
                 'beneficiary_attachments': beneficiary_attachment_list,
-                'dependent_list': dependent_data,
+                'dependent_list': json.dumps(dependent_data),
             }
 
         else:
@@ -2356,7 +2356,7 @@ def beneficiary_request_update(request, user_id):
                 'beneficiary_house': beneficiary_house_obj,
                 'beneficiary_income_expense': beneficiary_income_expense_obj,
                 'beneficiary_attachments': beneficiary_attachment_list,
-                'dependent_list': dependent_data,
+                'dependent_list': json.dumps(dependent_data),
             }
 
     except ObjectDoesNotExist:
@@ -2378,6 +2378,8 @@ def beneficiary_request_update_confirm(request, user_id):
     try:
         data = request.POST
         files = request.FILES
+  
+        print(data)
 
         # Retrieve the user whose profile is being requested
         user = CustomUser.objects.get(id=user_id)
@@ -2477,7 +2479,7 @@ def beneficiary_request_update_confirm(request, user_id):
 
         # Get corresponding beneficiary objects of other tables
         beneficiary_house_obj = beneficiary_house.objects.get(
-            id=beneficiary_obj.id)
+            beneficiary_id=beneficiary_obj.id)
 
         # Update object values
         beneficiary_house_obj.building_number = building_number
@@ -2522,7 +2524,7 @@ def beneficiary_request_update_confirm(request, user_id):
         other_ex = float(data.get('expensesinfo_other', None))
 
         beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
-            id=beneficiary_obj.id)
+            beneficiary_id=beneficiary_obj.id)
 
         # Update object values
         beneficiary_income_expense_obj.salary_in = salary_in
