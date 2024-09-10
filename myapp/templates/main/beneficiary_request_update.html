@@ -93,6 +93,8 @@
                         class="form-select"
                         id="id_personalinfo_gender"
                         data-bs-title="الجنس"
+                        disabled
+                        readonly
                       >
                         <option value>---------</option>
                         <option value="ذكر">ذكر</option>
@@ -101,7 +103,7 @@
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_date_of_birth">تاريخ الميلاد<span style="color: red">*</span></h6>
-                      <input type="date" class="form-control" id="id_personalinfo_date_of_birth" name="personalinfo_date_of_birth" data-bs-title="تاريخ الميلاد">
+                      <input disabled readonly type="date" class="form-control" id="id_personalinfo_date_of_birth" name="personalinfo_date_of_birth" data-bs-title="تاريخ الميلاد">
                     </div>
                     <div class="col mb-3 form-group">
                       <label for="id_personalinfo_phone_number" class="form-label"
@@ -123,7 +125,7 @@
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_email">البريد الالكتروني<span style="color: red">*</span></h6>
-                      <input type="email" class="form-control" id="id_personalinfo_email" name="personalinfo_email" data-bs-title="البريد الالكتروني" value="{{ beneficiary.email }}">
+                      <input disabled readonly type="email" class="form-control" id="id_personalinfo_email" name="personalinfo_email" data-bs-title="البريد الالكتروني" value="{{ beneficiary.email }}">
                     </div>
                   </div>
 
@@ -137,6 +139,8 @@
                         class="form-select"
                         id="id_personalinfo_nationality"
                         data-bs-title="الجنسية"
+                        disabled
+                        readonly
                       >
                         <option value>إختر</option>
                         <option value="السعودية">السعودية</option>
@@ -351,7 +355,7 @@
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_national_id">رقم الهوية/الإقامة<span style="color: red">*</span></h6>
-                      <input type="text" class="form-control convert-to-english" id="id_personalinfo_national_id" name="personalinfo_national_id" data-bs-title="رقم الهوية / الإقامة" value="{{ beneficiary.national_id }}">
+                      <input disabled readonly type="text" class="form-control convert-to-english" id="id_personalinfo_national_id" name="personalinfo_national_id" data-bs-title="رقم الهوية / الإقامة" value="{{ beneficiary.national_id }}">
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة<span style="color: red">*</span></h6>
@@ -5007,7 +5011,11 @@
             newRow.append('<td class="d-none" data-attr="dependent_edit_info_needs_type">' + dependent.dependent_needs_type + '</td>');
             newRow.append('<td class="d-none" data-attr="dependent_edit_info_educational_degree">' + dependent.dependent_educational_degree + '</td>');
             newRow.append('<td class="d-none" data-attr="dependent_edit_info_date_of_birth">' + dependent.dependent_date_of_birth + '</td>');
-            newRow.append('<td class="d-none" data-attr="dependent_edit_info_national_id_exp_date">' + dependent.dependent_national_id_exp_date + '</td>');
+
+            // Check if national ID expiration date is null or undefined
+            var nationalIdExpDate = dependent.dependent_national_id_exp_date ? dependent.dependent_national_id_exp_date : '';
+            newRow.append('<td class="d-none" data-attr="dependent_edit_info_national_id_exp_date">' + nationalIdExpDate + '</td>');
+
             newRow.append('<td class="d-none" data-attr="dependent_edit_info_needs_description">' + dependent.dependent_needs_description + '</td>');
             newRow.append('<td class="d-none" data-attr="dependent_edit_info_educational_level">' + dependent.dependent_educational_level + '</td>');
             newRow.append('<td class="d-none" data-attr="dependent_edit_info_disease_type">' + dependent.dependent_disease_type + '</td>');
@@ -5072,6 +5080,13 @@
     
         for (let i = 1; i < rows.length; i++) { // Start from 1 to skip table header
             const cells = rows[i].getElementsByTagName('td');
+
+            // Check if nationalIDExpDate is null or empty and handle it
+            let nationalIDExpDate = cells[13].innerText;
+            if (!nationalIDExpDate || nationalIDExpDate === 'null' || nationalIDExpDate.trim() === '') {
+                nationalIDExpDate = null; // Set it to null if empty or invalid
+            }
+
             let dependent = {
                 firstName: cells[0].innerText, // Assuming first cell contains the first name
                 secondName: cells[1].innerText,
@@ -5086,7 +5101,7 @@
                 needsType: cells[10].innerText,
                 educationalDegree: cells[11].innerText,
                 dateOfBitrh: cells[12].innerText,
-                nationalIDExpDate: cells[13].innerText,
+                nationalIDExpDate: nationalIDExpDate, // Use the checked value
                 needsDescription: cells[14].innerText,
                 educationalLevel: cells[15].innerText,
                 diseaseType: cells[16].innerText,
@@ -5185,6 +5200,7 @@
       })
       .then(response => response.json())
       .then(data => {
+          console.log(data);
           if (data.redirect) {
               window.location.href = data.redirect;
               // console.log(data);

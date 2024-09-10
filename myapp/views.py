@@ -2250,7 +2250,7 @@ def beneficiary_request_update(request, user_id):
                 'dependent_educational_status': dependent_obj.educational_status,
                 'dependent_marital_status': dependent_obj.marital_status,
                 'dependent_national_id': dependent_obj.national_id,
-                'dependent_national_id_exp_date': dependent_obj.national_id_exp_date.strftime('%Y-%m-%d'),
+                'dependent_national_id_exp_date': dependent_obj.national_id_exp_date.strftime('%Y-%m-%d') if dependent_obj.national_id_exp_date else None,
                 'dependent_health_status': dependent_obj.health_status,
                 'dependent_needs_type': dependent_obj.needs_type,
                 'dependent_educational_degree': dependent_obj.educational_degree,
@@ -2343,7 +2343,7 @@ def beneficiary_request_update(request, user_id):
                 'beneficiary_house': beneficiary_house_obj,
                 'beneficiary_income_expense': beneficiary_income_expense_obj,
                 'beneficiary_attachments': beneficiary_attachment_list,
-                'dependent_list': dependent_data,
+                'dependent_list': json.dumps(dependent_data),
             }
 
         else:
@@ -2356,7 +2356,7 @@ def beneficiary_request_update(request, user_id):
                 'beneficiary_house': beneficiary_house_obj,
                 'beneficiary_income_expense': beneficiary_income_expense_obj,
                 'beneficiary_attachments': beneficiary_attachment_list,
-                'dependent_list': dependent_data,
+                'dependent_list': json.dumps(dependent_data),
             }
 
     except ObjectDoesNotExist:
@@ -2392,23 +2392,23 @@ def beneficiary_request_update_confirm(request, user_id):
         second_name = data.get('personalinfo_second_name', None)
         last_name = data.get('personalinfo_last_name', None)
 
-        date_of_birth_data = data.get('personalinfo_date_of_birth', None)
-        date_of_birth = None
-        # Check if the date string exists and is not empty
-        if date_of_birth_data:
-            # Convert the date string to a date object
-            date_of_birth = datetime.strptime(
-                date_of_birth_data, '%Y-%m-%d').date()
-        else:
-            print("No valid date found in JSON")
+        # date_of_birth_data = data.get('personalinfo_date_of_birth', None)
+        # date_of_birth = None
+        # # Check if the date string exists and is not empty
+        # if date_of_birth_data:
+        #     # Convert the date string to a date object
+        #     date_of_birth = datetime.strptime(
+        #         date_of_birth_data, '%Y-%m-%d').date()
+        # else:
+        #     print("No valid date found in JSON")
 
-        gender = data.get('personalinfo_gender', None)
-        national_id = data.get('personalinfo_national_id', None)
+        # gender = data.get('personalinfo_gender', None)
+        # national_id = data.get('personalinfo_national_id', None)
         national_id_exp_date_data = data.get(
             'personalinfo_national_id_exp_date', None)
         national_id_exp_date = convert_to_date(
             national_id_exp_date_data)
-        nationality = data.get('personalinfo_nationality', None)
+        # nationality = data.get('personalinfo_nationality', None)
         category = data.get('personalinfo_category', None)
         marital_status = data.get('personalinfo_marital_status', None)
         educational_level = data.get('personalinfo_educational_level', None)
@@ -2425,7 +2425,7 @@ def beneficiary_request_update_confirm(request, user_id):
         work_status = data.get('personalinfo_work_status', None)
         employer = data.get('personalinfo_employer', None)
         phone_number = data.get('personalinfo_phone_number', None)
-        email = data.get('personalinfo_email', None)
+        # email = data.get('personalinfo_email', None)
         bank_type = data.get('personalinfo_bank_type', None)
         bank_iban = data.get('personalinfo_bank_iban', None)
         family_issues = data.get('familyinfo_family_issues', None)
@@ -2439,12 +2439,12 @@ def beneficiary_request_update_confirm(request, user_id):
         beneficiary_obj.first_name = first_name
         beneficiary_obj.second_name = second_name
         beneficiary_obj.last_name = last_name
-        beneficiary_obj.date_of_birth = date_of_birth
-        beneficiary_obj.nationality = nationality
-        beneficiary_obj.gender = gender
+        # beneficiary_obj.date_of_birth = date_of_birth
+        # beneficiary_obj.nationality = nationality
+        # beneficiary_obj.gender = gender
         beneficiary_obj.phone_number = phone_number
-        beneficiary_obj.email = email
-        beneficiary_obj.national_id = national_id
+        # beneficiary_obj.email = email
+        # beneficiary_obj.national_id = national_id
         beneficiary_obj.national_id_exp_date = national_id_exp_date
         beneficiary_obj.category = category
         beneficiary_obj.marital_status = marital_status
@@ -2477,7 +2477,7 @@ def beneficiary_request_update_confirm(request, user_id):
 
         # Get corresponding beneficiary objects of other tables
         beneficiary_house_obj = beneficiary_house.objects.get(
-            id=beneficiary_obj.id)
+            beneficiary_id=beneficiary_obj.id)
 
         # Update object values
         beneficiary_house_obj.building_number = building_number
@@ -2522,7 +2522,7 @@ def beneficiary_request_update_confirm(request, user_id):
         other_ex = float(data.get('expensesinfo_other', None))
 
         beneficiary_income_expense_obj = beneficiary_income_expense.objects.get(
-            id=beneficiary_obj.id)
+            beneficiary_id=beneficiary_obj.id)
 
         # Update object values
         beneficiary_income_expense_obj.salary_in = salary_in
