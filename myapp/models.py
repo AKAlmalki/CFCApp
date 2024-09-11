@@ -63,7 +63,7 @@ class beneficiary(models.Model):
     gender = models.CharField(max_length=5, null=True)
     date_of_birth = models.DateField()
     phone_number = models.CharField(max_length=15, unique=True)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     national_id = models.CharField(max_length=20, unique=True)
     national_id_exp_date = models.DateField(null=True)
     # national address should be divided into multiple fields
@@ -94,8 +94,7 @@ class beneficiary(models.Model):
     family_needs = JSONField(default=list)
     last_updated = models.DateTimeField(null=True)
     status = models.CharField(max_length=55, null=True)
-    user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, null=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, unique=True)
 
     def __str__(self):
         return "file_no " + self.file_no + ", name: " + self.first_name + ", national_id:" + self.national_id
@@ -343,7 +342,7 @@ class Supporter(models.Model):
     work_status = models.CharField(max_length=64, null=True)
     employer = models.CharField(max_length=128, null=True)
     phone_number = models.CharField(max_length=15)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     status = models.CharField(max_length=55, null=True)
     was_sponsor = models.CharField(max_length=55, null=True)
     status_notify = models.CharField(max_length=55, null=True)
