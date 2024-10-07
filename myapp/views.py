@@ -396,21 +396,17 @@ def logout_user(request):
 
 
 def password_reset_request(request):
-
     if request.method == 'POST':
+        user_identifier_data = request.POST.get("email_or_national_id", None)
 
-        password_form = PasswordResetForm(request.POST)
+        if user_identifier_data:
+            # Ensure that the email or national ID exists
+            user_identifier = CustomUser.objects.filter(Q(email=user_identifier_data) | Q(national_id=user_identifier_data))  # Check both fields
 
-        if password_form.is_valid():
-            # Get the email sent with the user request
-            data = password_form.cleaned_data['email']
-
-            # Ensure that the email exists
-            user_email = CustomUser.objects.filter(Q(email=data))
-            if user_email.exists():
-                for user in user_email:
+            if user_identifier.exists():
+                for user in user_identifier:
                     subject = "تغيير كلمة المرور"
-                    email_template_name = "auth/password_reset_msg.txt",
+                    email_template_name = "auth/password_reset_msg.txt"
                     parameters = {
                         "email": user.email,
                         "username": user.username,
@@ -423,20 +419,25 @@ def password_reset_request(request):
                     }
                     email = render_to_string(email_template_name, parameters)
                     try:
-                        send_mail(subject, email, '', [
-                            user.email], fail_silently=False)
+                        send_mail(subject, email, '', [user.email], fail_silently=False)
                     except BadHeaderError:
                         return HttpResponse('Invalid Header')
 
-                    return redirect('password_reset_done')
+                return redirect('password_reset_done')
+            
+            # else:
+            #     messages.error(request, "حدث خطأ ما.")
+            #     return redirect("password_reset")
     else:
         password_form = PasswordResetForm()
 
-    context = {
-        "password_form": password_form,
-    }
+        context = {
+            "password_form": password_form,
+        }
 
-    return render(request, "auth/password_reset_form.html", context)
+        return render(request, "auth/password_reset_form.html", context)
+
+    return render(request, "auth/password_reset_form.html")
 
 
 def validate_email(request):
