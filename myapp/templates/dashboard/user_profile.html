@@ -164,6 +164,16 @@
                                         <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="">
                                     </div>
                                   </div>
+                                  <div class="row row-cols-md-1">
+                                    <div class="mb-3">
+                                        <label for="national_id" class="form-label">رقم الهوية/الإقامة</label>
+                                        <input type="text" class="form-control" id="national_id" name="national_id" value="{{ user_obj.national_id }}">
+                                    </div>
+                                    <div class="mb-3 d-none">
+                                      <label for="national_id_hidden" class="form-label">رقم الهوية/الإقامة</label>
+                                      <input type="text" class="form-control" id="national_id_hidden" name="national_id_hidden" value="{{ user_obj.national_id }}">
+                                    </div>
+                                  </div>
                                   <div class="row row-cols-md-2">
                                     <div class="mb-3">
                                       <label for="gender" class="form-label">الجنس</label>
@@ -423,6 +433,12 @@
                           </td>
                       </tr>
                       <tr>
+                        <td class="text-body-secondary">رقم الهوية/الإقامة</td>
+                        <td class="text-body-secondary">{{ user_obj.national_id }}</td>
+                        <td class="text-end">
+                        </td>
+                      </tr>
+                      <tr>
                           <td class="text-body-secondary">البريد الالكتروني</td>
                           <td class="text-body-secondary">{{ user_obj.email }}</td>
                           <td class="text-end">
@@ -486,10 +502,10 @@
                           <td class="text-body-secondary">البريد الالكتروني</td>
                           <td class="text-body-secondary">{{ user_obj.email }}</td>
                           <td class="text-end">
-                            <a href="#" class="btn btn-primary disabled"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserEmailModal"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                               <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                               <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                            </svg></a>
+                            </svg></button>
                           </td>
                       </tr>
                       <tr>
@@ -538,7 +554,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>   
 </main>
 
 <!-- Role selection modal -->
@@ -626,6 +642,37 @@
   </div>
 </div>
 
+<!-- Edit User Email Modal -->
+<div class="modal fade" id="editUserEmailModal" tabindex="-1" role="dialog" aria-labelledby="editUserEmailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="editUserEmailModalLabel">تحديث البريد الإلكتروني</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="editUserEmailForm" action="{% url 'dashboard_user_edit_email' user_id=user_obj.id %}" method="POST">
+              {% csrf_token %}
+              <div class="modal-body">
+                <div class="row row-cols-md-1">
+                  <div class="mb-3">
+                    <label for="update_email" class="form-label">البريد الإلكتروني</label>
+                    <input type="text" class="form-control" id="update_email" name="update_email" value="{{ user_obj.email }}">
+                  </div>
+                  <div class="mb-3 d-none">
+                    <label for="update_email_hidden" class="form-label">البريد الإلكتروني</label>
+                    <input type="text" class="form-control" id="update_email_hidden" name="update_email_hidden" value="{{ user_obj.email }}">
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                  <button type="submit" class="btn btn-primary" id="submitEditUserEmailForm">حفظ التغييرات</button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+
 <script>
   $(document).ready(function() {
 
@@ -666,6 +713,42 @@
           );
         },
       );
+
+      // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
+      function validateSAID(id) {
+        let type = id.substr(0, 1);
+        let sum = 0;
+        const _idLength = 10;
+        const _type1 = "1";
+        const _type2 = "2";
+        id = id.trim();
+        if (
+          isNaN(parseInt(id)) ||
+          id.length !== _idLength ||
+          (type !== _type2 && type !== _type1)
+        ) {
+          return false;
+        }
+        for (let num = 0; num < 10; num++) {
+          const digit = Number(id[num]);
+          if (num % 2 === 0) {
+            const doubled = digit * 2;
+            const ZFOdd = `00${doubled}`.slice(-2);
+            sum += Number(ZFOdd[0]) + Number(ZFOdd[1]);
+          } else {
+            sum += digit;
+          }
+        }
+        return sum % 10 !== 0 ? false : true;
+      }
+
+      $.validator.addMethod(
+          "nationalidRegex",
+          function (value, element) {
+            return this.optional(element) || validateSAID(value);
+          },
+          "أدخل رقم هوية/إقامة صحيح."
+        );
 
       // The below code will change the default validation messages
       $.extend($.validator.messages, {
@@ -750,6 +833,25 @@
                     },
                   },
               },
+              national_id: {
+                  required: true,
+                  nationalidRegex: true,
+                  remote: {
+                    url: '/dashboard/users/validate_national_id/',
+                    type: 'post',
+                    data: {
+                      national_id: function() {
+                        return $('#national_id').val();
+                      },
+                      csrfmiddlewaretoken: csrf_token,  // Include CSRF token
+                      base_national_id: function() { 
+                        // Get the value from the data-attr-base-nid attribute using plain JavaScript
+                        var element = document.getElementById('national_id_hidden');
+                        return element.value;
+                      },
+                    },
+                  },
+              },
               date_of_birth: {
                   required: true,
                   dateISO: true,
@@ -766,12 +868,15 @@
                 usernameRegex: "اسم المستخدم يتكون من حروف انجليزية وارقام فقط.",
                 remote: "اسم المستخدم تم استخدامه بالفعل!",
               },
+              national_id: {
+                remote: "رقم الهوية أو الإقامة مستخدم بالفعل!"
+              },
           },
       });
 
       // When the modal is opened, validate the form fields
       $('#editUserModal').on('show.bs.modal', function (e) {
-          editUserForm.valid(); // Trigger validation
+          editUserForm.validate(); // Trigger validation
       });
 
       // When any input field is changed, validate the form fields
@@ -830,12 +935,12 @@
 
           // When the modal is opened, validate the form fields
           $('#editUserModal').on('show.bs.modal', function (e) {
-              editUserForm.valid(); // Trigger validation
+              editUserForm.validate(); // Trigger validation
           });
 
           // When any input field is changed, validate the form fields
           editUserForm.find("input, select, textarea").on("input change", function () {
-              editUserForm.valid(); // Trigger validation
+              editUserForm.validate(); // Trigger validation
           });
 
           if (editUserForm.valid() === true) {
@@ -917,6 +1022,177 @@
             // If validation passes, submit the form
             $('#changeRoleForm').submit();
           }
+        }
+      });
+
+      // Edit user email
+      let editUserEmailForm = $("#editUserEmailForm");
+
+      // Retrieve the CSRF token from the specific form with email
+      let csrf_token_update_email_form = $('#editUserEmailForm input[name=csrfmiddlewaretoken]').val();
+
+      // The below code will change the default validation messages
+      $.extend($.validator.messages, {
+          required: "هذا الحقل مطلوب.",
+          // Add other custom validation messages as needed
+      });
+
+      // Email address validator
+      $.validator.addMethod(
+        "emailRegex",
+        function (value, element) {
+          return (
+            this.optional(element) ||
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+          );
+        },
+        "الرجاء إدخال بريد إلكتروني صحيح."
+      );
+
+      editUserEmailForm.validate({
+          errorElement: "span",
+          errorClass: "help-block invalid-feedback",
+          highlight: function (element, errorClass, validClass) {
+              $(element).closest(".form-group").addClass("has-error");
+          },
+          unhighlight: function (element, errorClass, validClass) {
+              $(element).closest(".form-group").removeClass("has-error");
+          },
+          errorPlacement: function (error, element) {
+              // Check if the element is inside an input-group
+              if (element.parent(".input-group").length) {
+                  // Place the error after the input-group
+                  error.insertAfter(element.parent(".input-group"));
+              } else {
+                  // Default placement for other elements
+                  error.insertAfter(element);
+              }
+          },
+          focusInvalid: true,
+
+          rules: {
+            update_email: {
+              required: true,
+              emailRegex: true,
+              remote: {
+                url: '/dashboard/users/validate_email/',
+                type: 'post',
+                data: {
+                  email: function() {
+                    return $('#update_email').val();
+                  },
+                  csrfmiddlewaretoken: csrf_token_update_email_form,  // Include CSRF token
+                  base_email: function() { 
+                    // Get the value from the data-attr-base-nid attribute using plain JavaScript
+                    var element = document.getElementById('update_email_hidden');
+                    return element.value;
+                  },
+                },
+              },
+            },
+          },
+          messages: {
+            update_email: {
+              required: "هذا الحقل مطلوب.",
+              remote: "البريد الالكتروني تم استخدامه بالفعل!",
+            },
+          },
+      });
+
+      // When the modal is opened, validate the form fields
+      $('#editUserEmailModal').on('show.bs.modal', function (e) {
+          editUserEmailForm.validate(); // Trigger validation
+      });
+
+      // When any input field is changed, validate the form fields
+      editUserEmailForm.find("input, select, textarea").on("input change", function () {
+          editUserEmailForm.valid(); // Trigger validation
+      });
+
+      $('#submitEditUserEmailForm').click(function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        // The below code will change the default validation messages
+        $.extend($.validator.messages, {
+            required: "هذا الحقل مطلوب.",
+            // Add other custom validation messages as needed
+        });
+
+        // Email address validator
+        $.validator.addMethod(
+          "emailRegex",
+          function (value, element) {
+            return (
+              this.optional(element) ||
+              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+            );
+          },
+          "الرجاء إدخال بريد إلكتروني صحيح."
+        );
+
+        editUserEmailForm.validate({
+            errorElement: "span",
+            errorClass: "help-block invalid-feedback",
+            highlight: function (element, errorClass, validClass) {
+                $(element).closest(".form-group").addClass("has-error");
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).closest(".form-group").removeClass("has-error");
+            },
+            errorPlacement: function (error, element) {
+                // Check if the element is inside an input-group
+                if (element.parent(".input-group").length) {
+                    // Place the error after the input-group
+                    error.insertAfter(element.parent(".input-group"));
+                } else {
+                    // Default placement for other elements
+                    error.insertAfter(element);
+                }
+            },
+            focusInvalid: true,
+
+            rules: {
+              update_email: {
+                required: true,
+                emailRegex: true,
+                remote: {
+                  url: '/dashboard/users/validate_email/',
+                  type: 'post',
+                  data: {
+                    email: function() {
+                      return $('#update_email').val();
+                    },
+                    csrfmiddlewaretoken: csrf_token_update_email_form,  // Include CSRF token
+                    base_email: function() { 
+                      // Get the value from the data-attr-base-nid attribute using plain JavaScript
+                      var element = document.getElementById('update_email_hidden');
+                      return element.value;
+                    },
+                  },
+                },
+              },
+            },
+            messages: {
+              update_email: {
+                required: "هذا الحقل مطلوب.",
+                remote: "البريد الالكتروني تم استخدامه بالفعل!",
+              },
+            },
+        });
+
+        // When the modal is opened, validate the form fields
+        $('#editUserEmailModal').on('show.bs.modal', function (e) {
+            editUserEmailForm.validate(); // Trigger validation
+        });
+
+        // When any input field is changed, validate the form fields
+        editUserEmailForm.find("input, select, textarea").on("input change", function () {
+            editUserEmailForm.valid(); // Trigger validation
+        });
+
+        if (editUserEmailForm.valid() === true) {
+          // If validation passes, submit the form
+          $('#editUserEmailForm').submit();
         }
       });
 

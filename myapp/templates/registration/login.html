@@ -41,12 +41,10 @@
         font-family: "Noto Kufi Arabic";
       }
       #id_background_container {
-        background-color: #1a1a1a;
-        opacity: 1;
-        background: repeating-linear-gradient( 45deg, #00834d, #00834d 11.5px, #1a1a1a 11.5px, #1a1a1a 57.5px );
+        background: url("{% static '/imgs/confetti_bg.svg' %}") no-repeat center center fixed;
+        background-size: cover;
         height: 100vh;
       }
-      
     </style>
 
   </head>
@@ -100,9 +98,7 @@
               {% csrf_token %}
               {% comment %} {{form}} {% endcomment %}
               <div class="col mb-3">
-                <label for="id_username" class="form-label"
-                  >اسم المستخدم</label
-                >
+                <label for="id_username" class="form-label">البريد الإلكتروني أو رقم الهوية/الإقامة</label>
                 <input type="text" name="username" class="form-control" autofocus id="id_username">
               </div>
               <div class="col mb-3">
@@ -150,6 +146,27 @@
             );
           },
         );
+
+        $.validator.addMethod(
+          "usernameOrEmailOrNationalID",
+          function (value, element) {
+            // Username regex (alphanumeric + underscore, between 2 and 20 characters)
+            var usernameRegex = /^[a-zA-Z0-9_]{2,20}$/;
+            
+            // Updated email regex to handle a wider range of valid email formats
+            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+            
+            // National ID regex (numeric, 10 to 15 digits - adjust as needed)
+            var nationalIDRegex = /^[0-9]{10,15}$/;
+
+            // Check if value matches any of the three formats
+            return (
+              this.optional(element) || usernameRegex.test(value) || emailRegex.test(value) || nationalIDRegex.test(value)
+            );
+          },
+          "الرجاء إدخال بريد الكتروني, اسم مستخدم او رقم هوية/إقامة صحيح."
+        );
+
 
         // Validator method for first, second, and last name fields in the form
         $.validator.addMethod(
@@ -236,9 +253,9 @@
             // Adding the rules (validations) for each input in the form.
             rules: {
               username: {
-                usernameRegex: true,
+                usernameOrEmailOrNationalID: true,
                 minlength: 3,
-                maxlength: 15,
+                maxlength: 35,
                 required: true,
               },
               password: {

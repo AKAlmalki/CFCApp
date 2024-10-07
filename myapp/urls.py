@@ -81,9 +81,29 @@ urlpatterns = [
         name="dashboard_user_edit_basic_info"
     ),
     path(
+        "dashboard/users/<int:user_id>/edit_email/",
+        views.dashboard_user_edit_email,
+        name="dashboard_user_edit_email"
+    ),
+    path(
+        "beneficiaries/users/<int:user_id>/edit/",
+        views.beneficiary_profile_edit,
+        name="beneficiary_profile_edit"
+    ),
+    path(
         "dashboard/users/validate_username/",
         views.dashboard_user_validate_username,
         name="dashboard_user_validate_username"
+    ),
+    path(
+        "dashboard/users/validate_national_id/",
+        views.dashboard_user_validate_national_id,
+        name="dashboard_user_validate_national_id"
+    ),
+    path(
+        "dashboard/users/validate_email/",
+        views.dashboard_user_validate_email,
+        name="dashboard_user_validate_email"
     ),
     path(
         "dashboard/users/<int:user_id>/edit_role/",

@@ -338,54 +338,50 @@ def resend_activation_email(request):
 
 def signin(request):
     if request.method == 'POST':
-
         # Check if the user is already authenticated
         if request.user.is_authenticated:
             return redirect('home')
 
-        username = request.POST.get("username")
+        identifier = request.POST.get("username")  # Now this could be national ID, username, or email
         password = request.POST.get("password")
-
         remember_me = request.POST.get("remember_me", None)
 
         if remember_me is not None:
-            # This if statement can change,
-            # but the purpose is checking remember me checkbox is checked or not.
-            request.session.set_expiry(604800)  # Here we extend session.
-
+            request.session.set_expiry(604800)  # Extend session for 1 week
         else:
-            # This part of code means, close session when browser is closed.
-            request.session.set_expiry(0)
+            request.session.set_expiry(0)  # Session expires when the browser is closed
 
-        # Authenticate user with username and password
-        user_auth = authenticate(username=username, password=password)
-        # Get user info from the db
-        user_db = CustomUser.objects.filter(username=username).first()
+        # Try to find user by email, username, or national_id
+        user_db = CustomUser.objects.filter(
+            username=identifier
+        ).first() or CustomUser.objects.filter(
+            email=identifier
+        ).first() or CustomUser.objects.filter(
+            national_id=identifier
+        ).first()
 
-        if user_db is not None:
-            # Check whether user password is correct
-            check_pass = check_password(password, user_db.password)
-            # Check if user is active
-            is_user_active = user_db.is_active
-
-        if user_auth is not None:
-            login(request, user_auth)
-            # messages.success(request, "تم تسجيل الدخول بنجاح")
-            return redirect("home")
-
-        # In case of user account is not activated
-        elif user_db is not None and check_pass and is_user_active is False:
-
-            messages.error(
-                request, "لم يتم تفعيل حسابك بعد! رجاء التأكد من بريدك الإلكتروني.", extra_tags='activation_email')
-            return redirect("login")
+        # If the user is found in the database
+        if user_db:
+            check_pass = check_password(password, user_db.password)  # Validate password
+            if check_pass and user_db.is_active:  # Authenticate and check if the user is active
+                user_auth = authenticate(username=user_db.username, password=password)
+                if user_auth is not None:
+                    login(request, user_auth)
+                    return redirect("home")
+                else:
+                    messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
+                    return redirect("login")
+            elif not user_db.is_active:
+                messages.error(
+                    request, "لم يتم تفعيل حسابك بعد! رجاء التأكد من بريدك الإلكتروني.", extra_tags='activation_email')
+                return redirect("login")
+            else:
+                messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
+                return redirect("login")
         else:
             messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
             return redirect("login")
-
     else:
-        # GET method -- In case Remember Me button is clicked
-        # Check if the user is already authenticated
         if request.user.is_authenticated:
             return redirect('home')
 
@@ -400,21 +396,17 @@ def logout_user(request):
 
 
 def password_reset_request(request):
-
     if request.method == 'POST':
+        user_identifier_data = request.POST.get("email_or_national_id", None)
 
-        password_form = PasswordResetForm(request.POST)
+        if user_identifier_data:
+            # Ensure that the email or national ID exists
+            user_identifier = CustomUser.objects.filter(Q(email=user_identifier_data) | Q(national_id=user_identifier_data))  # Check both fields
 
-        if password_form.is_valid():
-            # Get the email sent with the user request
-            data = password_form.cleaned_data['email']
-
-            # Ensure that the email exists
-            user_email = CustomUser.objects.filter(Q(email=data))
-            if user_email.exists():
-                for user in user_email:
+            if user_identifier.exists():
+                for user in user_identifier:
                     subject = "تغيير كلمة المرور"
-                    email_template_name = "auth/password_reset_msg.txt",
+                    email_template_name = "auth/password_reset_msg.txt"
                     parameters = {
                         "email": user.email,
                         "username": user.username,
@@ -427,20 +419,25 @@ def password_reset_request(request):
                     }
                     email = render_to_string(email_template_name, parameters)
                     try:
-                        send_mail(subject, email, '', [
-                            user.email], fail_silently=False)
+                        send_mail(subject, email, '', [user.email], fail_silently=False)
                     except BadHeaderError:
                         return HttpResponse('Invalid Header')
 
-                    return redirect('password_reset_done')
+                return redirect('password_reset_done')
+            
+            # else:
+            #     messages.error(request, "حدث خطأ ما.")
+            #     return redirect("password_reset")
     else:
         password_form = PasswordResetForm()
 
-    context = {
-        "password_form": password_form,
-    }
+        context = {
+            "password_form": password_form,
+        }
 
-    return render(request, "auth/password_reset_form.html", context)
+        return render(request, "auth/password_reset_form.html", context)
+
+    return render(request, "auth/password_reset_form.html")
 
 
 def validate_email(request):
@@ -1970,27 +1967,81 @@ def supporter_request_update(request, supporter_id, s_request_id):
 @login_required(login_url='/login')
 def beneficiary_profile(request, user_id):
 
+
+
     # Get the logged-in user
     logged_in_user = request.user
 
     context = {}
     try:
         # Retrieve the user whose profile is being requested
-        user = CustomUser.objects.get(id=user_id)
+        user_obj = CustomUser.objects.get(id=user_id)
 
         # Check if the logged-in user matches the requested user
-        if logged_in_user != user:
+        if logged_in_user != user_obj:
             messages.error(request, "ليس لديك الصلاحية اللازمة!")
             return redirect('home')
+        
+        # Get the groups associated with the user
+        user_groups = user_obj.groups.first()
+
+        # Convert date of birth to be populated in the template
+        dob = date(
+            user_obj.date_of_birth.year,
+            user_obj.date_of_birth.month,
+            user_obj.date_of_birth.day
+        )
 
         context = {
-            'user_info': user,
+            'user_obj': user_obj,
+            'user_dob': int(time.mktime(dob.timetuple())) * 1000,
+            'user_group': user_groups,
         }
     except ObjectDoesNotExist:
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
     return render(request, 'main/beneficiary_profile.html', context)
+
+@login_required(login_url='/login')
+def beneficiary_profile_edit(request, user_id):
+    if request.method == 'POST':
+
+        data = request.POST
+
+        first_name = data.get("first_name", None)
+        second_name = data.get("second_name", None)
+        last_name = data.get("last_name", None)
+        username = data.get("username", None)
+        date_of_birth = data.get("date_of_birth", None)
+        national_id = data.get("national_id_edit", None)
+        print(data)
+        # Check if the date string exists and is not empty
+        if date_of_birth:
+            # Convert the date string to a date object
+            date_of_birth = datetime.strptime(
+                date_of_birth, '%Y-%m-%d').date()
+        else:
+            print("No valid date found in JSON")
+        gender = data.get("gender", None)
+        nationality = data.get("nationality", None)
+
+        user = get_object_or_404(CustomUser, id=user_id)
+
+        # user.first_name = first_name
+        # user.second_name = second_name
+        # user.last_name = last_name
+        # user.username = username
+        # user.date_of_birth = date_of_birth
+        # user.gender = gender
+        # user.nationality = nationality
+
+        # user.save()
+
+        messages.success(request, "تم تعديل معلومات المستخدم بنجاح.")
+        return redirect(reverse("dashboard_user_profile", args=[user_id]))
+    else:
+        return render(request, "dashboard/users_list.html")
 
 
 @login_required(login_url='/login')
@@ -3615,6 +3666,7 @@ def dashboard_user_edit_basic_info(request, user_id):
             print("No valid date found in JSON")
         gender = data.get("gender", None)
         nationality = data.get("nationality", None)
+        national_id = data.get("national_id", None)
 
         user = get_object_or_404(CustomUser, id=user_id)
 
@@ -3625,6 +3677,29 @@ def dashboard_user_edit_basic_info(request, user_id):
         user.date_of_birth = date_of_birth
         user.gender = gender
         user.nationality = nationality
+        user.national_id = national_id
+
+        user.save()
+
+        messages.success(request, "تم تعديل معلومات المستخدم بنجاح.")
+        return redirect(reverse("dashboard_user_profile", args=[user_id]))
+    else:
+        return render(request, "dashboard/users_list.html")
+    
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_edit_email(request, user_id):
+
+    if request.method == 'POST':
+
+        data = request.POST
+
+        email = data.get("update_email", None)
+
+        user = get_object_or_404(CustomUser, id=user_id)
+
+        user.email = email
 
         user.save()
 
@@ -3654,6 +3729,60 @@ def dashboard_user_validate_username(request):
         else:
             # in case of username exists before but it is equal to the base_username
             if username == b_username:
+                data = "true"
+            else:
+                data = "false"
+
+        return HttpResponse(data)
+    
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_validate_national_id(request):
+
+    national_id = request.POST.get('national_id', None)
+    b_national_id = request.POST.get('base_national_id', None)
+
+    if national_id is None:
+        return HttpResponse("true")
+    else:
+        data = "false"
+
+        cu_data = not CustomUser.objects.filter(
+            national_id=national_id).exists()
+
+        if cu_data:
+            data = "true"
+        else:
+            # in case of national_id exists before but it is equal to the base_national_id
+            if national_id == b_national_id:
+                data = "true"
+            else:
+                data = "false"
+
+        return HttpResponse(data)
+    
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_validate_email(request):
+
+    email = request.POST.get('email', None)
+    b_email= request.POST.get('base_email', None)
+
+    if email is None:
+        return HttpResponse("true")
+    else:
+        data = "false"
+
+        cu_data = not CustomUser.objects.filter(
+            email=email).exists()
+
+        if cu_data:
+            data = "true"
+        else:
+            # in case of email exists before but it is equal to the base_email
+            if email == b_email:
                 data = "true"
             else:
                 data = "false"
