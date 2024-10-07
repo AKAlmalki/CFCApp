@@ -3688,6 +3688,28 @@ def dashboard_user_edit_basic_info(request, user_id):
         return redirect(reverse("dashboard_user_profile", args=[user_id]))
     else:
         return render(request, "dashboard/users_list.html")
+    
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_edit_email(request, user_id):
+
+    if request.method == 'POST':
+
+        data = request.POST
+
+        email = data.get("update_email", None)
+
+        user = get_object_or_404(CustomUser, id=user_id)
+
+        user.email = email
+
+        user.save()
+
+        messages.success(request, "تم تعديل معلومات المستخدم بنجاح.")
+        return redirect(reverse("dashboard_user_profile", args=[user_id]))
+    else:
+        return render(request, "dashboard/users_list.html")
 
 
 @group_required("Admin")
@@ -3737,6 +3759,33 @@ def dashboard_user_validate_national_id(request):
         else:
             # in case of national_id exists before but it is equal to the base_national_id
             if national_id == b_national_id:
+                data = "true"
+            else:
+                data = "false"
+
+        return HttpResponse(data)
+    
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_validate_email(request):
+
+    email = request.POST.get('email', None)
+    b_email= request.POST.get('base_email', None)
+
+    if email is None:
+        return HttpResponse("true")
+    else:
+        data = "false"
+
+        cu_data = not CustomUser.objects.filter(
+            email=email).exists()
+
+        if cu_data:
+            data = "true"
+        else:
+            # in case of email exists before but it is equal to the base_email
+            if email == b_email:
                 data = "true"
             else:
                 data = "false"
