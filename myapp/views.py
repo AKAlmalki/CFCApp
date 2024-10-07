@@ -338,54 +338,50 @@ def resend_activation_email(request):
 
 def signin(request):
     if request.method == 'POST':
-
         # Check if the user is already authenticated
         if request.user.is_authenticated:
             return redirect('home')
 
-        username = request.POST.get("username")
+        identifier = request.POST.get("username")  # Now this could be national ID, username, or email
         password = request.POST.get("password")
-
         remember_me = request.POST.get("remember_me", None)
 
         if remember_me is not None:
-            # This if statement can change,
-            # but the purpose is checking remember me checkbox is checked or not.
-            request.session.set_expiry(604800)  # Here we extend session.
-
+            request.session.set_expiry(604800)  # Extend session for 1 week
         else:
-            # This part of code means, close session when browser is closed.
-            request.session.set_expiry(0)
+            request.session.set_expiry(0)  # Session expires when the browser is closed
 
-        # Authenticate user with username and password
-        user_auth = authenticate(username=username, password=password)
-        # Get user info from the db
-        user_db = CustomUser.objects.filter(username=username).first()
+        # Try to find user by email, username, or national_id
+        user_db = CustomUser.objects.filter(
+            username=identifier
+        ).first() or CustomUser.objects.filter(
+            email=identifier
+        ).first() or CustomUser.objects.filter(
+            national_id=identifier
+        ).first()
 
-        if user_db is not None:
-            # Check whether user password is correct
-            check_pass = check_password(password, user_db.password)
-            # Check if user is active
-            is_user_active = user_db.is_active
-
-        if user_auth is not None:
-            login(request, user_auth)
-            # messages.success(request, "تم تسجيل الدخول بنجاح")
-            return redirect("home")
-
-        # In case of user account is not activated
-        elif user_db is not None and check_pass and is_user_active is False:
-
-            messages.error(
-                request, "لم يتم تفعيل حسابك بعد! رجاء التأكد من بريدك الإلكتروني.", extra_tags='activation_email')
-            return redirect("login")
+        # If the user is found in the database
+        if user_db:
+            check_pass = check_password(password, user_db.password)  # Validate password
+            if check_pass and user_db.is_active:  # Authenticate and check if the user is active
+                user_auth = authenticate(username=user_db.username, password=password)
+                if user_auth is not None:
+                    login(request, user_auth)
+                    return redirect("home")
+                else:
+                    messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
+                    return redirect("login")
+            elif not user_db.is_active:
+                messages.error(
+                    request, "لم يتم تفعيل حسابك بعد! رجاء التأكد من بريدك الإلكتروني.", extra_tags='activation_email')
+                return redirect("login")
+            else:
+                messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
+                return redirect("login")
         else:
             messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
             return redirect("login")
-
     else:
-        # GET method -- In case Remember Me button is clicked
-        # Check if the user is already authenticated
         if request.user.is_authenticated:
             return redirect('home')
 
