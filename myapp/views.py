@@ -1970,27 +1970,81 @@ def supporter_request_update(request, supporter_id, s_request_id):
 @login_required(login_url='/login')
 def beneficiary_profile(request, user_id):
 
+
+
     # Get the logged-in user
     logged_in_user = request.user
 
     context = {}
     try:
         # Retrieve the user whose profile is being requested
-        user = CustomUser.objects.get(id=user_id)
+        user_obj = CustomUser.objects.get(id=user_id)
 
         # Check if the logged-in user matches the requested user
-        if logged_in_user != user:
+        if logged_in_user != user_obj:
             messages.error(request, "ليس لديك الصلاحية اللازمة!")
             return redirect('home')
+        
+        # Get the groups associated with the user
+        user_groups = user_obj.groups.first()
+
+        # Convert date of birth to be populated in the template
+        dob = date(
+            user_obj.date_of_birth.year,
+            user_obj.date_of_birth.month,
+            user_obj.date_of_birth.day
+        )
 
         context = {
-            'user_info': user,
+            'user_obj': user_obj,
+            'user_dob': int(time.mktime(dob.timetuple())) * 1000,
+            'user_group': user_groups,
         }
     except ObjectDoesNotExist:
         messages.error(request, "المستخدم غير موجود!")
         return redirect('home')
 
     return render(request, 'main/beneficiary_profile.html', context)
+
+@login_required(login_url='/login')
+def beneficiary_profile_edit(request, user_id):
+    if request.method == 'POST':
+
+        data = request.POST
+
+        first_name = data.get("first_name", None)
+        second_name = data.get("second_name", None)
+        last_name = data.get("last_name", None)
+        username = data.get("username", None)
+        date_of_birth = data.get("date_of_birth", None)
+        national_id = data.get("national_id_edit", None)
+        print(data)
+        # Check if the date string exists and is not empty
+        if date_of_birth:
+            # Convert the date string to a date object
+            date_of_birth = datetime.strptime(
+                date_of_birth, '%Y-%m-%d').date()
+        else:
+            print("No valid date found in JSON")
+        gender = data.get("gender", None)
+        nationality = data.get("nationality", None)
+
+        user = get_object_or_404(CustomUser, id=user_id)
+
+        # user.first_name = first_name
+        # user.second_name = second_name
+        # user.last_name = last_name
+        # user.username = username
+        # user.date_of_birth = date_of_birth
+        # user.gender = gender
+        # user.nationality = nationality
+
+        # user.save()
+
+        messages.success(request, "تم تعديل معلومات المستخدم بنجاح.")
+        return redirect(reverse("dashboard_user_profile", args=[user_id]))
+    else:
+        return render(request, "dashboard/users_list.html")
 
 
 @login_required(login_url='/login')
@@ -3615,6 +3669,7 @@ def dashboard_user_edit_basic_info(request, user_id):
             print("No valid date found in JSON")
         gender = data.get("gender", None)
         nationality = data.get("nationality", None)
+        national_id = data.get("national_id", None)
 
         user = get_object_or_404(CustomUser, id=user_id)
 
@@ -3625,6 +3680,7 @@ def dashboard_user_edit_basic_info(request, user_id):
         user.date_of_birth = date_of_birth
         user.gender = gender
         user.nationality = nationality
+        user.national_id = national_id
 
         user.save()
 
@@ -3654,6 +3710,33 @@ def dashboard_user_validate_username(request):
         else:
             # in case of username exists before but it is equal to the base_username
             if username == b_username:
+                data = "true"
+            else:
+                data = "false"
+
+        return HttpResponse(data)
+    
+
+@group_required("Admin")
+@login_required(login_url='/login')
+def dashboard_user_validate_national_id(request):
+
+    national_id = request.POST.get('national_id', None)
+    b_national_id = request.POST.get('base_national_id', None)
+
+    if national_id is None:
+        return HttpResponse("true")
+    else:
+        data = "false"
+
+        cu_data = not CustomUser.objects.filter(
+            national_id=national_id).exists()
+
+        if cu_data:
+            data = "true"
+        else:
+            # in case of national_id exists before but it is equal to the base_national_id
+            if national_id == b_national_id:
                 data = "true"
             else:
                 data = "false"
