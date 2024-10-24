@@ -2363,17 +2363,21 @@ def beneficiary_request_update(request, user_id):
 
         # Convert date of birth to be populated in the template
         dob = date(
-            beneficiary_obj.date_of_birth.year,
-            beneficiary_obj.date_of_birth.month,
-            beneficiary_obj.date_of_birth.day
+            user.date_of_birth.year,
+            user.date_of_birth.month,
+            user.date_of_birth.day
         )
 
         # Convert date of birth to be populated in the template
-        national_id_exp_date = date(
-            beneficiary_obj.national_id_exp_date.year,
-            beneficiary_obj.national_id_exp_date.month,
-            beneficiary_obj.national_id_exp_date.day
-        )
+        national_id_exp_date = ""
+        if user.national_id_exp_date is not None:
+            national_id_exp_date = date(
+                user.national_id_exp_date.year,
+                user.national_id_exp_date.month,
+                user.national_id_exp_date.day
+            )
+            national_id_exp_date = int(time.mktime(national_id_exp_date.timetuple())) * 1000
+        
 
         death_date_father_husband = None
         if beneficiary_obj.death_date_father_husband is not None:
@@ -2390,7 +2394,7 @@ def beneficiary_request_update(request, user_id):
                 'beneficiary': beneficiary_obj,
                 'beneficiary_dob': int(time.mktime(dob.timetuple())) * 1000,
                 'beneficiary_death_date_father_husband': int(time.mktime(death_date_father_husband.timetuple())) * 1000,
-                'beneficiary_national_id_exp_data': int(time.mktime(national_id_exp_date.timetuple())) * 1000,
+                'beneficiary_national_id_exp_data': national_id_exp_date,
                 'beneficiary_house': beneficiary_house_obj,
                 'beneficiary_income_expense': beneficiary_income_expense_obj,
                 'beneficiary_attachments': beneficiary_attachment_list,
@@ -2403,7 +2407,7 @@ def beneficiary_request_update(request, user_id):
                 'beneficiary_requests': beneficiary_requests,
                 'beneficiary': beneficiary_obj,
                 'beneficiary_dob': int(time.mktime(dob.timetuple())) * 1000,
-                'beneficiary_national_id_exp_data': int(time.mktime(national_id_exp_date.timetuple())) * 1000,
+                'beneficiary_national_id_exp_data': national_id_exp_date,
                 'beneficiary_house': beneficiary_house_obj,
                 'beneficiary_income_expense': beneficiary_income_expense_obj,
                 'beneficiary_attachments': beneficiary_attachment_list,
@@ -2439,77 +2443,48 @@ def beneficiary_request_update_confirm(request, user_id):
             return redirect('home')
 
         # Accessing the data for beneficiary
-        first_name = data.get('personalinfo_first_name', None)
-        second_name = data.get('personalinfo_second_name', None)
-        last_name = data.get('personalinfo_last_name', None)
-
-        # date_of_birth_data = data.get('personalinfo_date_of_birth', None)
-        # date_of_birth = None
-        # # Check if the date string exists and is not empty
-        # if date_of_birth_data:
-        #     # Convert the date string to a date object
-        #     date_of_birth = datetime.strptime(
-        #         date_of_birth_data, '%Y-%m-%d').date()
-        # else:
-        #     print("No valid date found in JSON")
-
-        # gender = data.get('personalinfo_gender', None)
-        # national_id = data.get('personalinfo_national_id', None)
-        national_id_exp_date_data = data.get(
-            'personalinfo_national_id_exp_date', None)
-        national_id_exp_date = convert_to_date(
-            national_id_exp_date_data)
-        # nationality = data.get('personalinfo_nationality', None)
-        category = data.get('personalinfo_category', None)
-        marital_status = data.get('personalinfo_marital_status', None)
-        educational_level = data.get('personalinfo_educational_level', None)
-
-        date_of_death_of_father_or_husband = data.get(
+        first_name_personal = data.get('personalinfo_first_name', None)
+        second_name_personal = data.get('personalinfo_second_name', None)
+        last_name_personal = data.get('personalinfo_last_name', None)
+        category_personal = data.get('personalinfo_category', None)
+        marital_status_personal = data.get('personalinfo_marital_status', None)
+        educational_level_personal = data.get('personalinfo_educational_level', None)
+        death_date_father_husband_personal = data.get(
             'personalinfo_death_date_father_husband', None)
-        if date_of_death_of_father_or_husband is not None:
-            date_of_death_of_father_or_husband = convert_to_date(
-                date_of_death_of_father_or_husband)
-
-        washing_place = data.get('personalinfo_washing_place', None)
-        health_status = data.get('personalinfo_health_status', None)
-        disease_type = data.get('personalinfo_disease_type', None)
-        work_status = data.get('personalinfo_work_status', None)
-        employer = data.get('personalinfo_employer', None)
-        phone_number = data.get('personalinfo_phone_number', None)
-        # email = data.get('personalinfo_email', None)
-        bank_type = data.get('personalinfo_bank_type', None)
-        bank_iban = data.get('personalinfo_bank_iban', None)
-        family_issues = data.get('familyinfo_family_issues', None)
-        family_needs = data.get('familyinfo_needs_type', None)
+        if death_date_father_husband_personal is not None:
+            death_date_father_husband_personal = convert_to_date(
+                death_date_father_husband_personal)
+        washing_place_personal = data.get('personalinfo_washing_place', None)
+        health_status_personal = data.get('personalinfo_health_status', None)
+        disease_type_personal = data.get('personalinfo_disease_type', None)
+        work_status_personal = data.get('personalinfo_work_status', None)
+        employer_personal = data.get('personalinfo_employer', None)
+        bank_type_personal = data.get('personalinfo_bank_type', None)
+        bank_iban_personal = data.get('personalinfo_bank_iban', None)
+        family_issues_personal = data.get('familyinfo_family_issues', None)
+        family_needs_personal = data.get('familyinfo_needs_type', None)
 
         # Get beneficiary object using beneficiary_requests.beneficiary.id
         beneficiary_obj = beneficiary.objects.get(
             user=user)
 
         # Update object values
-        beneficiary_obj.first_name = first_name
-        beneficiary_obj.second_name = second_name
-        beneficiary_obj.last_name = last_name
-        # beneficiary_obj.date_of_birth = date_of_birth
-        # beneficiary_obj.nationality = nationality
-        # beneficiary_obj.gender = gender
-        beneficiary_obj.phone_number = phone_number
-        # beneficiary_obj.email = email
-        # beneficiary_obj.national_id = national_id
-        beneficiary_obj.national_id_exp_date = national_id_exp_date
-        beneficiary_obj.category = category
-        beneficiary_obj.marital_status = marital_status
-        beneficiary_obj.educational_level = educational_level
-        beneficiary_obj.death_date_father_husband = date_of_death_of_father_or_husband
-        beneficiary_obj.washing_place = washing_place
-        beneficiary_obj.health_status = health_status
-        beneficiary_obj.disease_type = disease_type
-        beneficiary_obj.work_status = work_status
-        beneficiary_obj.employer = employer
-        beneficiary_obj.bank_type = bank_type
-        beneficiary_obj.bank_iban = bank_iban
-        beneficiary_obj.family_issues = family_issues
-        beneficiary_obj.family_needs = family_needs
+        beneficiary_obj.first_name = first_name_personal
+        beneficiary_obj.second_name = second_name_personal
+        beneficiary_obj.last_name = last_name_personal
+        beneficiary_obj.category = category_personal
+        beneficiary_obj.marital_status = marital_status_personal
+        beneficiary_obj.educational_level = educational_level_personal
+        beneficiary_obj.death_date_father_husband = death_date_father_husband_personal
+        beneficiary_obj.washing_place = washing_place_personal
+        beneficiary_obj.health_status = health_status_personal
+        beneficiary_obj.disease_type = disease_type_personal
+        beneficiary_obj.work_status = work_status_personal
+        beneficiary_obj.employer = employer_personal
+        beneficiary_obj.bank_type = bank_type_personal
+        beneficiary_obj.bank_iban = bank_iban_personal
+        beneficiary_obj.family_issues = family_issues_personal
+        beneficiary_obj.family_needs = family_needs_personal
 
         # Save object changes
         beneficiary_obj.save()
