@@ -16,7 +16,7 @@ class TodoItem(models.Model):
 
 def beneficiary_file_directory(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<attachement_name>/<file_name>
-    return "beneficiaries/{0}/{1}/{2}".format(instance.beneficiary.national_id, instance.file_type, filename)
+    return "beneficiaries/{0}/{1}/{2}".format(instance.national_id, instance.file_type, filename)
 
 
 def supporter_request_file_directory(instance, filename):
