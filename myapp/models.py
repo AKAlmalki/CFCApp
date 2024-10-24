@@ -39,7 +39,9 @@ def field_visit_file_directory(instance, filename):
 
 # Adjust the original user modal to have other fields
 class CustomUser(AbstractUser):
+    first_name = models.CharField(max_length=150, blank=True)
     second_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
     date_of_birth = models.DateField(null=True)
     gender = models.CharField(max_length=5, null=True)
     phonenumber = models.CharField(max_length=15, null=True, unique=True)
@@ -47,8 +49,7 @@ class CustomUser(AbstractUser):
     national_id = models.CharField(max_length=20, null=True, unique=True)
     national_id_exp_date = models.DateField(null=True)
     nationality = models.CharField(max_length=64, null=True)
-    email = models.EmailField(unique=True)  # Override the email field
-    # add additional field in here
+    email = models.EmailField(unique=True)
 
     def __str__(self):
         return self.username
@@ -60,17 +61,6 @@ class beneficiary(models.Model):
     first_name = models.CharField(max_length=64, default="")
     second_name = models.CharField(max_length=64, default="")
     last_name = models.CharField(max_length=64, default="")
-    nationality = models.CharField(max_length=64, default="none")
-    gender = models.CharField(max_length=5, null=True)
-    date_of_birth = models.DateField(null=True)
-    phone_number = models.CharField(max_length=15, unique=True, default=0)
-    email = models.EmailField(unique=True, null=True)
-    national_id = models.CharField(max_length=20, unique=True, default=0)
-    national_id_exp_date = models.DateField(null=True)
-    # national address should be divided into multiple fields
-    # national_address = models.CharField(max_length=255)  # Not included here
-    # consider changing it
-    # relationship = models.CharField(max_length=64)# Not included here
     is_qualified = models.IntegerField(
         default=0)  # Not included yet - dashboard
     category = models.CharField(max_length=128)

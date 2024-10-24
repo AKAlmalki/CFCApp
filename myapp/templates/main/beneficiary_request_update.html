@@ -117,7 +117,9 @@
                           class="form-control convert-to-english"
                           id="id_personalinfo_phone_number"
                           placeholder="5XXXXXXXX"
-                          value="{{ beneficiary.phone_number }}"
+                          value="{{ user_info.phonenumber }}"
+                          disabled
+                          readonly
                         />
                         <span class="input-group-text" id="basic-addon1">966+</span>
                       </div>
@@ -125,7 +127,9 @@
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_email">البريد الالكتروني<span style="color: red">*</span></h6>
-                      <input disabled readonly type="email" class="form-control" id="id_personalinfo_email" name="personalinfo_email" data-bs-title="البريد الالكتروني" value="{{ beneficiary.email }}">
+                      <input disabled readonly type="email" class="form-control" id="id_personalinfo_email" name="personalinfo_email" data-bs-title="البريد الالكتروني" value="{{ user_info.email }}"
+                      disabled
+                      readonly>
                     </div>
                   </div>
 
@@ -355,12 +359,14 @@
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_national_id">رقم الهوية/الإقامة<span style="color: red">*</span></h6>
-                      <input disabled readonly type="text" class="form-control convert-to-english" id="id_personalinfo_national_id" name="personalinfo_national_id" data-bs-title="رقم الهوية / الإقامة" value="{{ beneficiary.national_id }}">
+                      <input disabled readonly type="text" class="form-control convert-to-english" id="id_personalinfo_national_id" name="personalinfo_national_id" data-bs-title="رقم الهوية / الإقامة" value="{{ user_info.national_id }}">
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_national_id_exp_date">تاريخ انتهاء الهوية/الإقامة<span style="color: red">*</span></h6>
                       <input type="date" class="form-control" id="id_personalinfo_national_id_exp_date" name="personalinfo_national_id_exp_date"
-                      data-bs-title="تاريخ انتهاء الهوية / الإقامة">
+                      data-bs-title="تاريخ انتهاء الهوية / الإقامة"
+                      disabled
+                      readonly>
                     </div>
                   </div>
         
@@ -2707,8 +2713,8 @@
 
     // Call the function with the specific select element and value
     // Personal information selectors
-    setSelectedOption('id_personalinfo_nationality', "{{ beneficiary.nationality }}");
-    setSelectedOption('id_personalinfo_gender', "{{ beneficiary.gender }}");
+    setSelectedOption('id_personalinfo_nationality', "{{ user_info.nationality }}");
+    setSelectedOption('id_personalinfo_gender', "{{ user_info.gender }}");
     setSelectedOption('id_personalinfo_category', "{{ beneficiary.category }}");
     setSelectedOption('id_personalinfo_marital_status', "{{ beneficiary.marital_status }}");
     setSelectedOption('id_personalinfo_educational_level', "{{ beneficiary.educational_level }}");
@@ -3162,7 +3168,7 @@
     var alertContainer = $("#alert-danger-error-fields");
     var tabs = $(".nav-link.next"); //
 
-    var includedFields = ["id_dependent_info_national_id", "id_personalinfo_phone_number", "id_personalinfo_email", "id_personalinfo_national_id", "id_personalinfo_bank_iban"]; // IDs of fields to exclude
+    var includedFields = ["id_dependent_info_national_id", "id_personalinfo_bank_iban"]; // IDs of fields to exclude
 
 
     // The below code will change the default validation messages
@@ -3244,6 +3250,7 @@
           minlength: 2,
           maxlength: 20,
         },
+        /*
         personalinfo_date_of_birth: {
           required: true,
           dateISO: true,
@@ -3263,6 +3270,7 @@
           required: true,
           maxlength: 30,
         },
+        */
         personalinfo_category: {
           required: true,
         },
@@ -3291,6 +3299,7 @@
         personalinfo_employer: {
           required: true,
         },
+        /*
         personalinfo_phone_number: {
           required: true,
           saudiPhoneRegex: true,
@@ -3298,6 +3307,7 @@
         personalinfo_email: {
           required: true,
         },
+        */
         // housing_income_need_information ---------
         houseinfo_building_number: {
           required: true,
@@ -3453,9 +3463,6 @@
         },
         name: {
           required: "Name required",
-        },
-        email: {
-          required: "Email required",
         },
       },
     });

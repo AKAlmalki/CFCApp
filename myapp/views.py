@@ -115,6 +115,7 @@ def sign_up(request):
         date_of_birth = request.POST['date_of_birth']
         gender = request.POST['gender']
         national_id = request.POST['national_id']
+        national_id_exp_date = request.POST['national_id_exp_date']
         nationality = request.POST['nationality']
         username = request.POST['username']
         email = request.POST['email']
@@ -123,7 +124,7 @@ def sign_up(request):
         password2 = request.POST['password2']
 
         # Ensure no fields are empty
-        if not all([first_name, second_name, last_name, date_of_birth, gender, national_id, nationality, username, email, password1, password2]):
+        if not all([first_name, second_name, last_name, date_of_birth, gender, national_id, national_id_exp_date, nationality, username, email, password1, password2]):
             messages.error(request, "جميع الحقول مطلوبة.")
             return redirect('sign-up')
 
@@ -137,6 +138,7 @@ def sign_up(request):
             request.session['date_of_birth'] = date_of_birth
             request.session['gender'] = gender
             request.session['national_id'] = national_id
+            request.session['national_id_exp_date'] = national_id_exp_date
             request.session['nationality'] = nationality
             request.session['username'] = username
             request.session['email'] = email
@@ -188,6 +190,7 @@ def sign_up(request):
             last_name=last_name,
             gender=gender,
             national_id=national_id,
+            national_id_exp_date=national_id_exp_date,
             nationality=nationality,
             phonenumber=phonenumber,
             date_of_birth=date_of_birth,
@@ -450,10 +453,9 @@ def validate_email(request):
         data = "false"
 
         cu_data = not CustomUser.objects.filter(email__iexact=email).exists()
-        b_data = not beneficiary.objects.filter(email__iexact=email).exists()
         s_data = not Supporter.objects.filter(email__iexact=email).exists()
 
-        if cu_data and b_data and s_data:
+        if cu_data and s_data:
             data = "true"
         else:
             data = "false"
@@ -480,7 +482,7 @@ def validate_username(request):
 
 def validate_phonenumber(request):
 
-    phone_number = request.POST.get('phone_number', None)
+    phone_number = request.POST.get('phonenumber', None)
 
     if phone_number is None:
         return HttpResponse("true")
@@ -488,13 +490,11 @@ def validate_phonenumber(request):
         data = "false"
 
         cu_data = not CustomUser.objects.filter(
-            phone_number=phone_number).exists()
+            phonenumber=phone_number).exists()
         s_data = not Supporter.objects.filter(
             phone_number=phone_number).exists()
-        b_data = not beneficiary.objects.filter(
-            phone_number=phone_number).exists()
 
-        if cu_data or s_data or b_data:
+        if cu_data and s_data:
             data = "true"
         else:
             data = "false"
@@ -987,22 +987,6 @@ def beneficiary_indiv(request, user_id):
         first_name = data.get('personalinfo_first_name', None)
         second_name = data.get('personalinfo_second_name', None)
         last_name = data.get('personalinfo_last_name', None)
-        date_of_birth_data = data.get('personalinfo_date_of_birth', None)
-        date_of_birth = None
-        # Check if the date string exists and is not empty
-        if date_of_birth_data:
-            # Convert the date string to a date object
-            date_of_birth = datetime.strptime(
-                date_of_birth_data, '%Y-%m-%d').date()
-        else:
-            print("No valid date found in JSON")
-        gender = data.get('personalinfo_gender', None)
-        national_id = data.get('personalinfo_national_id', None)
-        national_id_exp_date_data = data.get(
-            'personalinfo_national_id_exp_date', None)
-        national_id_exp_date = convert_to_date(
-            national_id_exp_date_data)
-        nationality = data.get('personalinfo_nationality', None)
         category = data.get('personalinfo_category', None)
         marital_status = data.get('personalinfo_marital_status', None)
         educational_level = data.get('personalinfo_educational_level', None)
@@ -1016,8 +1000,6 @@ def beneficiary_indiv(request, user_id):
         disease_type = data.get('personalinfo_disease_type', None)
         work_status = data.get('personalinfo_work_status', None)
         employer = data.get('personalinfo_employer', None)
-        phone_number = data.get('personalinfo_phone_number', None)
-        email = data.get('personalinfo_email', None)
         bank_type = data.get('beneficiaryinfo_bank', None)
         bank_iban = data.get('beneficiaryinfo_iban', None)
         family_issues = data.get('familyinfo_family_issues', None)
@@ -1027,13 +1009,6 @@ def beneficiary_indiv(request, user_id):
             first_name=first_name,
             second_name=second_name,
             last_name=last_name,
-            nationality=nationality,
-            gender=gender,
-            date_of_birth=date_of_birth,
-            phone_number=phone_number,
-            email=email,
-            national_id=national_id,
-            national_id_exp_date=national_id_exp_date,
             category=category,
             marital_status=marital_status,
             educational_level=educational_level,
@@ -1400,6 +1375,11 @@ def beneficiary_details(request, beneficiary_id):
         try:
             beneficiary_obj = beneficiary.objects.get(id=beneficiary_id)
 
+            # Ensure this is working by printing the result below
+            user_obj = CustomUser.objects.get(id=beneficiary_obj.user)
+
+            print('user_info', user_obj)
+
             beneficiary_housing_obj = beneficiary_house.objects.filter(
                 beneficiary_id=beneficiary_id).first()
 
@@ -1546,13 +1526,13 @@ def beneficiary_details(request, beneficiary_id):
                 'first_name': beneficiary_obj.first_name,
                 'second_name': beneficiary_obj.second_name,
                 'last_name': beneficiary_obj.last_name,
-                'nationality': beneficiary_obj.nationality,
-                'gender': beneficiary_obj.gender,
-                'date_of_birth': beneficiary_obj.date_of_birth,
-                'phone_number': beneficiary_obj.phone_number,
-                'email': beneficiary_obj.email,
-                'national_id': beneficiary_obj.national_id,
-                'national_id_exp_date': beneficiary_obj.national_id_exp_date,
+                'nationality': user_obj.nationality,
+                'gender': user_obj.gender,
+                'date_of_birth': user_obj.date_of_birth,
+                'phone_number': user_obj.phonenumber,
+                'email': user_obj.email,
+                'national_id': user_obj.national_id,
+                'national_id_exp_date': user_obj.national_id_exp_date,
                 'is_qualified': beneficiary_obj.is_qualified,
                 'category': beneficiary_obj.category,
                 'marital_status': beneficiary_obj.marital_status,
@@ -1966,9 +1946,6 @@ def supporter_request_update(request, supporter_id, s_request_id):
 
 @login_required(login_url='/login')
 def beneficiary_profile(request, user_id):
-
-
-
     # Get the logged-in user
     logged_in_user = request.user
 
@@ -1992,9 +1969,20 @@ def beneficiary_profile(request, user_id):
             user_obj.date_of_birth.day
         )
 
+        # Convert national_id_exp_date to be populated in the template
+        national_id_exp_date = ""
+        if user_obj.national_id_exp_date is not None:
+            national_id_exp_date = date(
+                user_obj.national_id_exp_date.year,
+                user_obj.national_id_exp_date.month,
+                user_obj.national_id_exp_date.day
+            )
+            national_id_exp_date = int(time.mktime(national_id_exp_date.timetuple())) * 1000
+
         context = {
             'user_obj': user_obj,
             'user_dob': int(time.mktime(dob.timetuple())) * 1000,
+            'user_national_id_exp_date': national_id_exp_date,
             'user_group': user_groups,
         }
     except ObjectDoesNotExist:
@@ -2015,6 +2003,7 @@ def beneficiary_profile_edit(request, user_id):
         username = data.get("username", None)
         date_of_birth = data.get("date_of_birth", None)
         national_id = data.get("national_id_edit", None)
+        national_id_exp_date = data.get("national_id_exp_date_edit", None)
         print(data)
         # Check if the date string exists and is not empty
         if date_of_birth:
@@ -2028,15 +2017,17 @@ def beneficiary_profile_edit(request, user_id):
 
         user = get_object_or_404(CustomUser, id=user_id)
 
-        # user.first_name = first_name
-        # user.second_name = second_name
-        # user.last_name = last_name
-        # user.username = username
-        # user.date_of_birth = date_of_birth
-        # user.gender = gender
-        # user.nationality = nationality
+        user.first_name = first_name
+        user.second_name = second_name
+        user.last_name = last_name
+        user.username = username
+        user.date_of_birth = date_of_birth
+        user.gender = gender
+        user.nationality = nationality
+        # user.national_id = national_id
+        user.national_id_exp_date = national_id_exp_date
 
-        # user.save()
+        user.save()
 
         messages.success(request, "تم تعديل معلومات المستخدم بنجاح.")
         return redirect(reverse("dashboard_user_profile", args=[user_id]))
@@ -2632,7 +2623,7 @@ def beneficiary_request_update_confirm(request, user_id):
 
             date_of_birth = dep.get('dateOfBitrh', None)
             if date_of_birth is not None:
-                date_of_birth = convert_to_date(date_of_birth_data)
+                date_of_birth = convert_to_date(date_of_birth)
 
             national_id_exp_date = dep.get(
                 'nationalIDExpDate', None)
@@ -2960,15 +2951,13 @@ def validate_national_id_dependent(request, user_id):
 
         d_data = not dependent.objects.filter(
             national_id=national_id).exists()
-        b_data = not beneficiary.objects.filter(
-            national_id=national_id).exists()
         s_data = not Supporter.objects.filter(
             national_id=national_id).exists()
         u_data = not CustomUser.objects.filter(
             national_id=national_id).exists()
 
         # in case of national_id doesn't exist before
-        if d_data and b_data and s_data and u_data:
+        if d_data and s_data and u_data:
             data = "true"
         else:
             data = "false"
@@ -2987,15 +2976,13 @@ def validate_national_id_new_beneficiary(request, user_id):
 
         d_data = not dependent.objects.filter(
             national_id=national_id).exists()
-        b_data = not beneficiary.objects.filter(
-            national_id=national_id).exists()
         s_data = not Supporter.objects.filter(
             national_id=national_id).exists()
         u_data = not CustomUser.objects.filter(
             national_id=national_id).exists()
 
         # in case of national_id doesn't exist before
-        if d_data and b_data and s_data and u_data:
+        if d_data and s_data and u_data:
             data = "true"
         else:
             data = "false"
@@ -3014,15 +3001,13 @@ def validate_national_id_new_user(request):
 
         d_data = not dependent.objects.filter(
             national_id=national_id).exists()
-        b_data = not beneficiary.objects.filter(
-            national_id=national_id).exists()
         s_data = not Supporter.objects.filter(
             national_id=national_id).exists()
         u_data = not CustomUser.objects.filter(
             national_id=national_id).exists()
 
         # in case of national_id doesn't exist before
-        if d_data and b_data and s_data and u_data:
+        if d_data and s_data and u_data:
             data = "true"
         else:
             data = "false"
@@ -3039,15 +3024,13 @@ def validate_phonenumber_new_beneficiary(request, user_id):
     else:
         data = "false"
 
-        b_data = not beneficiary.objects.filter(
-            phone_number=phonenumber).exists()
         s_data = not Supporter.objects.filter(
             phone_number=phonenumber).exists()
         u_data = not CustomUser.objects.filter(
             phonenumber=phonenumber).exists()
 
         # in case of national_id doesn't exist before
-        if b_data and s_data and u_data:
+        if s_data and u_data:
             data = "true"
         else:
             data = "false"
@@ -3070,15 +3053,13 @@ def validate_national_id_edit_dependent(request, user_id):
 
         d_data = not dependent.objects.filter(
             national_id=national_id).exists()
-        b_data = not beneficiary.objects.filter(
-            national_id=national_id).exists()
         s_data = not Supporter.objects.filter(
             national_id=national_id).exists()
         u_data = not CustomUser.objects.filter(
             national_id=national_id).exists()
 
         # in case of national_id doesn't exist before
-        if d_data and b_data and s_data and u_data:
+        if d_data and s_data and u_data:
             data = "true"
         else:
             # in case of national_id exists before but it is equal to the base_national_id
@@ -3239,6 +3220,8 @@ def dashboard_beneficiary_details(request, b_id):
 
         beneficiary_obj = beneficiary.objects.get(id=b_id)
 
+        user_obj = CustomUser.objects.get(id=beneficiary_obj.user_id)
+
         beneficiary_housing_obj = beneficiary_house.objects.filter(
             beneficiary_id=beneficiary_obj.id).first()
 
@@ -3380,6 +3363,7 @@ def dashboard_beneficiary_details(request, b_id):
         # print("attachments: ", beneficiary_attachment_list)
 
         context = {
+            'user_info': user_obj,
             'beneficiary': beneficiary_obj,
             'dependent_list': dependent_data,
             'beneficiary_house': housing_data,
@@ -3445,6 +3429,8 @@ def dashboard_beneficiary_request_details(request, beneficiary_id, b_request_id)
 
     beneficiary_obj = beneficiary.objects.filter(
         pk=beneficiary_id).first()
+    
+    user_obj = CustomUser.objects.get(id=beneficiary_obj.user_id)
 
     beneficiary_house_obj = beneficiary_house.objects.get(
         beneficiary_id=beneficiary_obj.id)
@@ -3547,6 +3533,7 @@ def dashboard_beneficiary_request_details(request, beneficiary_id, b_request_id)
         })
 
     context = {
+        'user_info': user_obj,
         'beneficiary': beneficiary_obj,
         'beneficiary_request': beneficiary_request_obj,
         'beneficiary_house': beneficiary_house_obj,
@@ -3593,9 +3580,20 @@ def dashboard_user_profile(request, user_id):
             user_obj.date_of_birth.day
         )
 
+        # Convert national_id_exp_date to be populated in the template
+        national_id_exp_date = ""
+        if user_obj.national_id_exp_date is not None:
+            national_id_exp_date = date(
+                user_obj.national_id_exp_date.year,
+                user_obj.national_id_exp_date.month,
+                user_obj.national_id_exp_date.day
+            )
+            national_id_exp_date = int(time.mktime(national_id_exp_date.timetuple())) * 1000
+
         context = {
             'user_obj': user_obj,
             'user_dob': int(time.mktime(dob.timetuple())) * 1000,
+            'user_national_id_exp_date': national_id_exp_date,
             'user_group': user_groups,
         }
     else:
@@ -3642,6 +3640,11 @@ def dashboard_user_edit_basic_info(request, user_id):
         gender = data.get("gender", None)
         nationality = data.get("nationality", None)
         national_id = data.get("national_id", None)
+        national_id_exp_date = data.get("national_id_exp_date", None)
+        if national_id_exp_date:
+            # Convert the date string to a date object
+            national_id_exp_date = datetime.strptime(
+                national_id_exp_date, '%Y-%m-%d').date()
 
         user = get_object_or_404(CustomUser, id=user_id)
 
@@ -3653,6 +3656,7 @@ def dashboard_user_edit_basic_info(request, user_id):
         user.gender = gender
         user.nationality = nationality
         user.national_id = national_id
+        user.national_id_exp_date = national_id_exp_date
 
         user.save()
 
