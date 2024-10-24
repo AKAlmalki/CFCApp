@@ -217,7 +217,9 @@
                       class="form-control"
                       id="id_personalinfo_national_id_exp_date"
                       name="personalinfo_national_id_exp_date"
-                      required
+                      value="{{ user.national_id_exp_date|date:'Y-m-d' }}"
+                      disabled
+                      readonly
                     />
                   </div>
                   <div class="col-md-6 mb-4 form-group">
@@ -643,8 +645,9 @@
                         class="form-control convert-to-english"
                         id="id_personalinfo_phone_number"
                         placeholder="5XXXXXXXX"
-                        required
-                        value="{{ beneficiary.phone_number }}"
+                        value="{{ user.phonenumber }}"
+                        disabled
+                        readonly
                       />
                       <span class="input-group-text" id="basic-addon1">966+</span>
                     </div>

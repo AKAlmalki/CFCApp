@@ -164,10 +164,14 @@
                                         <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="">
                                     </div>
                                   </div>
-                                  <div class="row row-cols-md-1">
+                                  <div class="row row-cols-md-2">
                                     <div class="mb-3">
                                         <label for="national_id" class="form-label">رقم الهوية/الإقامة</label>
                                         <input type="text" class="form-control" id="national_id" name="national_id" value="{{ user_obj.national_id }}">
+                                    </div>
+                                    <div class="mb-3">
+                                      <label for="national_id_exp_date" class="form-label">تاريخ انتهاء الهوية/الإقامة</label>
+                                      <input type="date" class="form-control" id="national_id_exp_date" name="national_id_exp_date" value="">
                                     </div>
                                     <div class="mb-3 d-none">
                                       <label for="national_id_hidden" class="form-label">رقم الهوية/الإقامة</label>
@@ -439,6 +443,12 @@
                         </td>
                       </tr>
                       <tr>
+                        <td class="text-body-secondary">تاريخ انتهاء الهوية/الإقامة</td>
+                        <td class="text-body-secondary">{{ user_obj.national_id_exp_date }}</td>
+                        <td class="text-end">
+                        </td>
+                      </tr>
+                      <tr>
                           <td class="text-body-secondary">البريد الالكتروني</td>
                           <td class="text-body-secondary">{{ user_obj.email }}</td>
                           <td class="text-end">
@@ -679,6 +689,10 @@
       let dob = new Date({{ user_dob }});
       let datestring1 = dob.getFullYear().toString().padStart(4, '0') + '-' + (dob.getMonth()+1).toString().padStart(2, '0') + '-' + dob.getDate().toString().padStart(2, '0');
       document.getElementById('date_of_birth').value = datestring1;
+
+      let national_id_exp_date = new Date({{ user_national_id_exp_date }});
+      let datestring2 = national_id_exp_date.getFullYear().toString().padStart(4, '0') + '-' + (national_id_exp_date.getMonth()+1).toString().padStart(2, '0') + '-' + national_id_exp_date.getDate().toString().padStart(2, '0');
+      document.getElementById('national_id_exp_date').value = datestring2;
     
       // Function to set the selected option for a given select element
       function setSelectedOption(selectId, selectedValue) {
@@ -861,6 +875,10 @@
               },
               nationality: {
                   required: true,
+              },
+              national_id_exp_date: {
+                required: true,
+                dateISO: true,
               },
           },
           messages: {

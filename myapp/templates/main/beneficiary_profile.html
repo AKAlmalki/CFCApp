@@ -1,9 +1,9 @@
 {% extends 'base.html' %}{% load static %}{% load humanize %}{% block title %}الملف الشخصي{% endblock %}
 {% block head %}
-  <!-- Include jQuery -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <!-- Include jQuery Validation Plugin -->
-<!-- Then load the jQuery validation plugin -->
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Include jQuery Validation Plugin -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
@@ -214,10 +214,10 @@
                               </div>
                             </div>
                           </div>
-                          <div class="row row-cols-md-1">
+                          <div class="row row-cols-md-2">
                             <div class="mb-4 form-group">
                               <label for="id_personalinfo_email" class="form-label"
-                                >رقم الهوية الوطنية \ الإقامة</label
+                                >رقم الهوية الوطنية/الإقامة</label
                               >
                               <input
                                 type="text"
@@ -228,6 +228,22 @@
                                   value="{{ user_obj.national_id }}"
                                   readonly
                                 name="personalinfo_national_id"
+                              />
+                            </div>
+
+                            <div class="mb-4 form-group">
+                              <label for="id_personalinfo_date_of_birth" class="form-label"
+                                >تاريخ انتهاء الهوية/الإقامة</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="id_personalinfo_national_id_exp_date"
+                                maxlength="55"
+                                disabled
+                                  value="{{ user_obj.national_id_exp_date }}"
+                                  readonly
+                                name="personalinfo_national_id_exp_date"
                               />
                             </div>
                           </div>
@@ -528,6 +544,10 @@
                                               <label for="national_id_edit" class="form-label">رقم الهوية \ الإقامة</label>
                                               <input type="text" class="form-control" id="id_national_id_edit"name="national_id_edit" value="{{ user_obj.national_id }}">
                                             </div>
+                                            <div class="mb-3">
+                                              <label for="national_id_exp_date_edit" class="form-label">تاريخ انتهاء الهوية/الإقامة</label>
+                                              <input type="date" class="form-control" id="id_national_id_exp_date_edit" name="national_id_exp_date_edit" value="">
+                                            </div>
                                           </div>
                                         </div>
                                         <div class="modal-footer">
@@ -584,6 +604,10 @@
     let dob = new Date({{ user_dob }});
     let datestring1 = dob.getFullYear().toString().padStart(4, '0') + '-' + (dob.getMonth()+1).toString().padStart(2, '0') + '-' + dob.getDate().toString().padStart(2, '0');
     document.getElementById('date_of_birth').value = datestring1;
+
+    let national_id_exp_date = new Date({{ user_national_id_exp_date }});
+    let datestring2 = national_id_exp_date.getFullYear().toString().padStart(4, '0') + '-' + (national_id_exp_date.getMonth()+1).toString().padStart(2, '0') + '-' + national_id_exp_date.getDate().toString().padStart(2, '0');
+    document.getElementById('id_national_id_exp_date_edit').value = datestring2;
   
     // Function to set the selected option for a given select element
     function setSelectedOption(selectId, selectedValue) {
@@ -735,6 +759,10 @@
                     csrfmiddlewaretoken: csrf_token,  // Include CSRF token
                   },
                 },
+            },
+            national_id_exp_date_edit: {
+              required: true,
+              dateISO: true,
             },
         },
         messages: {
