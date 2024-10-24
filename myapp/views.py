@@ -1033,7 +1033,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "national id"
         if national_id_file is not None:
             beneficiary_attachment_obj = Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="national_id",
                 file_object=national_id_file,
             )
@@ -1042,7 +1042,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "national address"
         if national_address_file is not None:
             beneficiary_attachment_obj = Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="national_address",
                 file_object=national_address_file,
             )
@@ -1051,7 +1051,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "dept instrument"
         for file_obj in dept_instrument_file:
             file_list.append(Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="dept_instrument",
                 file_object=file_obj
             ))
@@ -1059,7 +1059,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "pension or social insurance"
         for file_obj in pension_social_insurance_file:
             file_list.append(Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="pension_social_insurance",
                 file_object=file_obj
             ))
@@ -1067,7 +1067,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "father or husband death certificate"
         if father_husband_death_certificate_file is not None:
             beneficiary_attachment_obj = Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="father_husband_death_cert",
                 file_object=father_husband_death_certificate_file,
             )
@@ -1076,7 +1076,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "letter from prison"
         for file_obj in letter_from_prison_file:
             file_list.append(Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="letter_from_prison",
                 file_object=file_obj
             ))
@@ -1084,7 +1084,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "Divorce Deed"
         if divorce_deed_file is not None:
             beneficiary_attachment_obj = Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="divorce_deed",
                 file_object=divorce_deed_file,
             )
@@ -1093,7 +1093,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "children responsibility deed"
         for file_obj in children_responsibility_deed_file:
             file_list.append(Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="children_responsibility_deed",
                 file_object=file_obj
             ))
@@ -1101,7 +1101,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "other files"
         for file_obj in other_files:
             file_list.append(Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="other_files",
                 file_object=file_obj
             ))
@@ -1109,7 +1109,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "lease contract or title deed"
         for file_obj in lease_contract_or_title_deed_file:
             file_list.append(Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="lease_contract_title_deed",
                 file_object=file_obj
             ))
@@ -1117,7 +1117,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "water or electricity bills"
         for file_obj in water_or_electricity_bills_file:
             file_list.append(Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="water_or_electricity_bills",
                 file_object=file_obj
             ))
@@ -1125,7 +1125,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "dependent national id"
         for file_obj in dependent_national_id_file:
             file_list.append(Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="dependent_national_id",
                 file_object=file_obj
             ))
@@ -1133,7 +1133,7 @@ def beneficiary_indiv(request, user_id):
         # Create beneficiary attachment for "social warranty inquiry"
         for file_obj in social_warranty_inquiry_file:
             file_list.append(Beneficiary_attachment(
-                beneficiary=request.user.national_id,
+                beneficiary=request.user,
                 file_type="social_warranty_inquiry",
                 file_object=file_obj
             ))
