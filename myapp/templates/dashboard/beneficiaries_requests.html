@@ -119,8 +119,10 @@
         { 'title': 'تاريخ الإرسال' },
         { 'title': 'تاريخ المراجعة' },
         { 'title': 'مُراجع الطلب' },
-        { 'title': 'الإجراءات' }
-      ]
+        { 'title': 'الإجراءات', orderable: false }
+      ],
+      "ordering": true,  // Enable ordering
+      "order": [[ 5, "desc" ]],  // Default order by first column, adjust as needed
     });
   
     // Trigger page load based on pagination click
