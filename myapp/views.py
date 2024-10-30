@@ -34,6 +34,7 @@ from django.contrib.auth.models import User, Group
 from django.db.models.query_utils import Q
 from django.db.models import Sum, Avg, Count, F
 from .decorators import group_required
+from ninja.pagination import paginate
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -580,15 +581,60 @@ def dashboard_supporters_requests(request):
 @group_required("Management")
 @login_required(login_url="/login")
 def dashboard_beneficiaries_requests(request):
+    # Fetch search and pagination parameters from DataTables
+    search_value = request.GET.get('search[value]', '')
+    start = int(request.GET.get('start', 0))
+    length = int(request.GET.get('length', 10))
+    draw = int(request.GET.get('draw', 1))
 
-    Beneficiary_request_list = Beneficiary_request.objects.prefetch_related(
-        'beneficiary').all()
+    # Initial queryset with optional search filter
+    beneficiary_requests = Beneficiary_request.objects.prefetch_related('beneficiary').order_by('-created_at')
+    if search_value:
+        beneficiary_requests = beneficiary_requests.filter(
+            Q(beneficiary__first_name__icontains=search_value) |
+            Q(beneficiary__last_name__icontains=search_value) |
+            Q(request_type__icontains=search_value) |
+            Q(status__icontains=search_value)
+        )
 
+    # Pagination logic
+    paginator = Paginator(beneficiary_requests, length)
+    page_number = start // length + 1
+    page_obj = paginator.get_page(page_number)
+    
+    # Check if the request is AJAX
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        data = [
+            {
+                'id': req.id,
+                'first_name': req.beneficiary.first_name if req.beneficiary.first_name else "----",
+                'last_name': req.beneficiary.last_name if req.beneficiary.last_name else "----",
+                'request_type': req.request_type,
+                'status': req.status,
+                'created_at': req.created_at.strftime('%H:%M:%S -- %Y-%m-%d '),  # Format date as needed
+                'reviewed_at': req.reviewed_at.strftime('%H:%M:%S -- %Y-%m-%d ') if req.reviewed_at else "----",
+                # Serialize only the `username` or relevant field from `reviewed_by`
+                'reviewed_by': req.reviewed_by.username if req.reviewed_by else "----",
+                'details_url': f"/dashboard/beneficiaries/{req.beneficiary.id}/requests/{req.id}"
+            }
+            for req in page_obj
+        ]
+        # Return paginated response with DataTables format
+        return JsonResponse({
+            'draw': draw,
+            'recordsTotal': paginator.count,
+            'recordsFiltered': paginator.count if not search_value else beneficiary_requests.count(),
+            'data': data,
+            'has_next': page_obj.has_next(),
+            'has_previous': page_obj.has_previous(),
+            'num_pages': paginator.num_pages,
+            'current_page': page_obj.number
+        })
+    # Pass the first page of results to the template for initial load
     context = {
-        "beneficiary_requests": Beneficiary_request_list,
+        "beneficiary_requests": page_obj,
         "beneficiary_request_headers": ['رقم الطلب', 'نوع الطلب', 'الحالة', 'تاريخ الإرسال', 'مُراجع الطلب', 'الملاحظات', 'الإجراءات'],
     }
-
     return render(request, "dashboard/beneficiaries_requests.html", context)
 
 
