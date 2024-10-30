@@ -587,14 +587,28 @@ def dashboard_beneficiaries_requests(request):
     length = int(request.GET.get('length', 10))
     draw = int(request.GET.get('draw', 1))
 
+    # Retrieve order parameters
+    order_column_index = request.GET.get('order[0][column]', '0')
+    order_direction = request.GET.get('order[0][dir]', 'asc')
+
+    # Map DataTables column index to model field names
+    columns = [
+        'id', 'beneficiary__first_name', 'beneficiary__last_name',
+        'request_type', 'status', 'created_at', 'reviewed_at', 'reviewed_by__username'
+    ]
+    order_column = columns[int(order_column_index)]
+    if order_direction == 'desc':
+        order_column = f'-{order_column}'
+
     # Initial queryset with optional search filter
-    beneficiary_requests = Beneficiary_request.objects.prefetch_related('beneficiary').order_by('-created_at')
+    beneficiary_requests = Beneficiary_request.objects.prefetch_related('beneficiary').order_by(order_column)
     if search_value:
         beneficiary_requests = beneficiary_requests.filter(
             Q(beneficiary__first_name__icontains=search_value) |
             Q(beneficiary__last_name__icontains=search_value) |
             Q(request_type__icontains=search_value) |
-            Q(status__icontains=search_value)
+            Q(status__icontains=search_value) |
+            Q(id=search_value)
         )
 
     # Pagination logic
