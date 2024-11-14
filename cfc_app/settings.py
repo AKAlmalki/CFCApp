@@ -34,7 +34,8 @@ ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://port433.link',
-    'http://port433.link'
+    'http://port433.link',
+    'https://beneficiaries.asdiqa.org.sa'
 ]
 
 # Application definition
