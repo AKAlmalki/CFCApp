@@ -12,6 +12,35 @@
 {% block content %}
 
 <div class="container mt-3">
+  {% if messages %}
+  <script>
+    // Execute the following JavaScript code when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show the modal when there are messages
+      var modal = new bootstrap.Modal(document.getElementById('errorModal'));
+      modal.show();
+    });
+  </script>
+  {% endif %}
+
+  {% for message in messages %}
+  <div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">خطأ</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ message }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
   <div class="row flex-lg-nowrap">
 
     <div class="col-12 col-lg-auto mb-3">
@@ -66,7 +95,7 @@
 
                 <div class="tab-content pt-3">
                   <div class="tab-pane active">
-                    <form class="form" novalidate="">
+                    <div class="form" novalidate="">
                       <div class="row">
                         <div class="col">
                           <div class="row row-cols-md-2">
@@ -253,11 +282,11 @@
                             >
                             <textarea
                               class="form-control"
-                              id="id_personalinfo_last_name"
+                              id="id_personalinfo_bio"
                               rows="5"
                               disabled
                               readonly
-                              name="personalinfo_last_name"
+                              name="personalinfo_bio"
                             >
                             </textarea>
                           </div>
@@ -308,6 +337,14 @@
                                             </div>
                                           </div>
                                           <div class="row row-cols-md-2">
+                                            <div class="mb-3">
+                                              <label for="id_national_id_edit" class="form-label">رقم الهوية \ الإقامة</label>
+                                              <input type="text" class="form-control" id="id_national_id_edit"name="national_id_edit" value="{{ user_obj.national_id }}">
+                                            </div>
+                                            <div class="mb-3">
+                                              <label for="id_national_id_exp_date_edit" class="form-label">تاريخ انتهاء الهوية/الإقامة</label>
+                                              <input type="date" class="form-control" id="id_national_id_exp_date_edit" name="national_id_exp_date_edit" value="">
+                                            </div>
                                             <div class="mb-3">
                                               <label for="gender" class="form-label">الجنس</label>
                                               <select
@@ -540,14 +577,6 @@
                                                   <option value="زيمبابوي">زيمبابوي</option>
                                                 </select>
                                             </div>
-                                            <div class="mb-3">
-                                              <label for="national_id_edit" class="form-label">رقم الهوية \ الإقامة</label>
-                                              <input type="text" class="form-control" id="id_national_id_edit"name="national_id_edit" value="{{ user_obj.national_id }}">
-                                            </div>
-                                            <div class="mb-3">
-                                              <label for="national_id_exp_date_edit" class="form-label">تاريخ انتهاء الهوية/الإقامة</label>
-                                              <input type="date" class="form-control" id="id_national_id_exp_date_edit" name="national_id_exp_date_edit" value="">
-                                            </div>
                                           </div>
                                         </div>
                                         <div class="modal-footer">
@@ -560,7 +589,7 @@
                           </div>
                         </div>
                       </div>
-                    </form>
+                    </div>
 
                   </div>
                 </div>
@@ -621,7 +650,6 @@
 
     // Global variables
     var editUserForm = $("#editUserForm");
-    console.log(editUserForm);
 
     // Validator method for first, second, and last name fields in the form
     $.validator.addMethod(
@@ -643,6 +671,34 @@
         );
       },
     );
+
+    // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
+    function validateSAID(id) {
+      let type = id.substr(0, 1);
+      let sum = 0;
+      const _idLength = 10;
+      const _type1 = "1";
+      const _type2 = "2";
+      id = id.trim();
+      if (
+        isNaN(parseInt(id)) ||
+        id.length !== _idLength ||
+        (type !== _type2 && type !== _type1)
+      ) {
+        return false;
+      }
+      for (let num = 0; num < 10; num++) {
+        const digit = Number(id[num]);
+        if (num % 2 === 0) {
+          const doubled = digit * 2;
+          const ZFOdd = `00${doubled}`.slice(-2);
+          sum += Number(ZFOdd[0]) + Number(ZFOdd[1]);
+        } else {
+          sum += digit;
+        }
+      }
+      return sum % 10 !== 0 ? false : true;
+    }
 
     // Validator method for the national id (Iqama/Saudi)
     $.validator.addMethod(
@@ -750,7 +806,7 @@
                 required: true,
                 nationalidRegex: true,
                 remote: {
-                  url: '/beneficiaries/' + {{ request.user.id }}  + '/new/validate_national_id_beneficiary/',
+                  url: '/beneficiaries/' + {{ request.user.id }}  + '/edit/validate_national_id/',
                   type: 'post',
                   data: {
                     national_id: function() {
@@ -769,6 +825,10 @@
             username: {
               usernameRegex: "اسم المستخدم يتكون من حروف انجليزية وارقام فقط.",
               remote: "اسم المستخدم تم استخدامه بالفعل!",
+            },
+            national_id_edit: {
+              nationalidRegex: "رقم الهوية / الإقامة غير صحيح",
+              remote: "رقم الهوية / الإقامة تم استخدامه بالفعل!",
             },
         },
     });
@@ -841,9 +901,6 @@
         editUserForm.find("input, select, textarea").on("input change", function () {
             editUserForm.validate(); // Trigger validation
         });
-
-        console.log($("#editUserForm")); // Check if the form is being referenced correctly
-
 
         if (editUserForm.valid() === true) {
           // If validation passes, submit the form

@@ -45,7 +45,7 @@ class CustomUser(AbstractUser):
     date_of_birth = models.DateField(null=True)
     gender = models.CharField(max_length=5, null=True)
     phonenumber = models.CharField(max_length=15, null=True, unique=True)
-    last_updated = models.DateField(null=True)
+    last_updated = models.DateTimeField(auto_now=True, null=True)
     national_id = models.CharField(max_length=20, null=True, unique=True)
     national_id_exp_date = models.DateField(null=True)
     nationality = models.CharField(max_length=64, null=True)

@@ -2051,8 +2051,10 @@ def beneficiary_profile(request, user_id):
 
     return render(request, 'main/beneficiary_profile.html', context)
 
+
 @login_required(login_url='/login')
 def beneficiary_profile_edit(request, user_id):
+    
     if request.method == 'POST':
 
         data = request.POST
@@ -2064,7 +2066,7 @@ def beneficiary_profile_edit(request, user_id):
         date_of_birth = data.get("date_of_birth", None)
         national_id = data.get("national_id_edit", None)
         national_id_exp_date = data.get("national_id_exp_date_edit", None)
-        print(data)
+        
         # Check if the date string exists and is not empty
         if date_of_birth:
             # Convert the date string to a date object
@@ -2084,15 +2086,15 @@ def beneficiary_profile_edit(request, user_id):
         user.date_of_birth = date_of_birth
         user.gender = gender
         user.nationality = nationality
-        # user.national_id = national_id
+        user.national_id = national_id
         user.national_id_exp_date = national_id_exp_date
 
         user.save()
 
         messages.success(request, "تم تعديل معلومات المستخدم بنجاح.")
-        return redirect(reverse("dashboard_user_profile", args=[user_id]))
+        return redirect(reverse("beneficiary_profile", args=[user_id]))
     else:
-        return render(request, "dashboard/users_list.html")
+        return render(request, "home.html")
 
 
 @login_required(login_url='/login')
@@ -3025,29 +3027,42 @@ def validate_national_id_dependent(request, user_id):
         return HttpResponse(data)
 
 
-def validate_national_id_new_beneficiary(request, user_id):
+def validate_national_id_edit_user(request, user_id):
 
-    national_id = request.POST.get('national_id', None)
+    # Check if the user_id is provided
+    if user_id:
+        user_obj = CustomUser.objects.filter(id=user_id).first()
+    
+        # Get base national id (registered id of the user in the DB)
+        base_national_id = user_obj.national_id
 
-    if national_id is None:
-        return HttpResponse("true")
-    else:
-        data = "false"
+        national_id = request.POST.get('national_id', None)
 
-        d_data = not dependent.objects.filter(
-            national_id=national_id).exists()
-        s_data = not Supporter.objects.filter(
-            national_id=national_id).exists()
-        u_data = not CustomUser.objects.filter(
-            national_id=national_id).exists()
-
-        # in case of national_id doesn't exist before
-        if d_data and s_data and u_data:
-            data = "true"
+        if national_id is None:
+            return HttpResponse("true")
         else:
             data = "false"
 
-        return HttpResponse(data)
+            d_data = not dependent.objects.filter(
+                national_id=national_id).exists()
+            s_data = not Supporter.objects.filter(
+                national_id=national_id).exists()
+            u_data = not CustomUser.objects.filter(
+                national_id=national_id).exists()
+
+            # in case of national_id doesn't exist before
+            if d_data and s_data and u_data:
+                data = "true"
+            else:
+                # in case of national_id exists before but it is equal to the base_national_id
+                if base_national_id == national_id:
+                    data = "true"
+                else:
+                    data = "false"
+
+            return HttpResponse(data)
+    else:
+        return "User ID is not Found"
     
 
 def validate_national_id_new_user(request):

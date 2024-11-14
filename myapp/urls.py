@@ -26,9 +26,9 @@ urlpatterns = [
         name="beneficiary_new"
     ),
     path(
-        "beneficiaries/<int:user_id>/new/validate_national_id_beneficiary/",
-        views.validate_national_id_new_beneficiary,
-        name="validate_national_id_new_beneficiary"
+        "beneficiaries/<int:user_id>/edit/validate_national_id/",
+        views.validate_national_id_edit_user,
+        name="validate_national_id_edit_user"
     ),
     path(
         "beneficiaries/<int:user_id>/new/validate_phonenumber_beneficiary/",
