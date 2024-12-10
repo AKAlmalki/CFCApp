@@ -13,6 +13,7 @@ from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 import logging
 import os
+import re
 import json
 import time
 from decimal import Decimal
@@ -602,13 +603,29 @@ def dashboard_beneficiaries_requests(request):
 
     # Initial queryset with optional search filter
     beneficiary_requests = Beneficiary_request.objects.prefetch_related('beneficiary').order_by(order_column)
-    if search_value:
+
+    # Determine if search_value is numeric or contains digits
+    if search_value.isdigit(): # Handles numeric strings
         beneficiary_requests = beneficiary_requests.filter(
             Q(beneficiary__first_name__icontains=search_value) |
             Q(beneficiary__last_name__icontains=search_value) |
             Q(request_type__icontains=search_value) |
             Q(status__icontains=search_value) |
             Q(id=search_value)
+        )
+    elif any(char.isdigit() for char in search_value):  # Search contains both digits and characters
+        beneficiary_requests = beneficiary_requests.filter(
+            Q(beneficiary__first_name__icontains=search_value) |
+            Q(beneficiary__last_name__icontains=search_value) |
+            Q(request_type__icontains=search_value) |
+            Q(status__icontains=search_value)
+        )
+    else: # No numeric characters, search only other fields
+        beneficiary_requests = beneficiary_requests.filter(
+            Q(beneficiary__first_name__icontains=search_value) |
+            Q(beneficiary__last_name__icontains=search_value) |
+            Q(request_type__icontains=search_value) |
+            Q(status__icontains=search_value)
         )
 
     # Pagination logic
