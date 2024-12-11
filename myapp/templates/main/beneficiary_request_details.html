@@ -23,15 +23,15 @@
             </div>
             <div class="mb-3">
               <h6 class="col form-label" for="id_first_name">الأسم الأول</h6>
-              <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ beneficiary.first_name }}" disabled readonly>
+              <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ beneficiary.user.first_name }}" disabled readonly>
             </div>
             <div class="mb-3">
               <h6 class="col form-label" for="id_second_name">الأسم الثاني</h6>
-              <input type="text" class="form-control" id="id_second_name" name="second_name" value="{{ beneficiary.second_name }}" disabled readonly>
+              <input type="text" class="form-control" id="id_second_name" name="second_name" value="{{ beneficiary.user.second_name }}" disabled readonly>
             </div>
             <div class="mb-3">
               <h6 class="col form-label" for="id_last_name">الأسم الأخير</h6>
-              <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ beneficiary.last_name }}" disabled readonly>
+              <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ beneficiary.user.last_name }}" disabled readonly>
             </div>
           </div>
 

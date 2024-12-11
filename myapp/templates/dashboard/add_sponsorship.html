@@ -87,7 +87,7 @@
                     <select class="form-select" id="id_beneficiary_selection" name="beneficiary_selection">
                       <option value selected>---------</option>
                       {% for beneficiary in beneficiaries %}
-                      <option value="{{ beneficiary.id }}|{{ beneficiary.first_name }}|{{ beneficiary.last_name}}|{{ beneficiary.national_id }}|{{ beneficiary.email }}">{{ beneficiary.national_id }} - {{ beneficiary.first_name }} {{ beneficiary.last_name }}</option>
+                      <option value="{{ beneficiary.id }}|{{ beneficiary.user.first_name }}|{{ beneficiary.user.last_name}}|{{ beneficiary.user.national_id }}|{{ beneficiary.user.email }}">{{ beneficiary.user.national_id }} - {{ beneficiary.user.first_name }} {{ beneficiary.user.last_name }}</option>
                       {% endfor %}
                     </select>
                   </div>

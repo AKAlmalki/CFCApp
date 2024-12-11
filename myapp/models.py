@@ -74,9 +74,6 @@ class Authentication_OTP(models.Model):
 class beneficiary(models.Model):
     id = models.AutoField(primary_key=True)
     file_no = models.CharField(max_length=512, null=True, blank=True)
-    first_name = models.CharField(max_length=64, default="")
-    second_name = models.CharField(max_length=64, default="")
-    last_name = models.CharField(max_length=64, default="")
     is_qualified = models.IntegerField(
         default=0)  # Not included yet - dashboard
     category = models.CharField(max_length=128)
@@ -145,6 +142,8 @@ class Beneficiary_attachment(models.Model):
     file_type = models.CharField(max_length=256, null=True)
     file_object = models.FileField(
         upload_to=beneficiary_file_directory, blank=True, null=True)
+    last_updated = models.DateTimeField(auto_now=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     @property
     def file_size(self):
@@ -264,6 +263,8 @@ class dependent(models.Model):
     needs_description = models.TextField(max_length=300)
     educational_level = models.CharField(max_length=64, null=True)
     disease_type = models.CharField(max_length=100, null=True)
+    bank_type = models.CharField(max_length=64, null=True)
+    bank_iban = models.CharField(max_length=32, null=True)
     beneficiary_id = models.ForeignKey(
         beneficiary, on_delete=models.CASCADE, null=True)
 

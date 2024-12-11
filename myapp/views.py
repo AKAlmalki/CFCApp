@@ -607,23 +607,23 @@ def dashboard_beneficiaries_requests(request):
     # Determine if search_value is numeric or contains digits
     if search_value.isdigit(): # Handles numeric strings
         beneficiary_requests = beneficiary_requests.filter(
-            Q(beneficiary__first_name__icontains=search_value) |
-            Q(beneficiary__last_name__icontains=search_value) |
+            Q(user__first_name__icontains=search_value) |
+            Q(user__last_name__icontains=search_value) |
             Q(request_type__icontains=search_value) |
             Q(status__icontains=search_value) |
             Q(id=search_value)
         )
     elif any(char.isdigit() for char in search_value):  # Search contains both digits and characters
         beneficiary_requests = beneficiary_requests.filter(
-            Q(beneficiary__first_name__icontains=search_value) |
-            Q(beneficiary__last_name__icontains=search_value) |
+            Q(user__first_name__icontains=search_value) |
+            Q(user__last_name__icontains=search_value) |
             Q(request_type__icontains=search_value) |
             Q(status__icontains=search_value)
         )
     else: # No numeric characters, search only other fields
         beneficiary_requests = beneficiary_requests.filter(
-            Q(beneficiary__first_name__icontains=search_value) |
-            Q(beneficiary__last_name__icontains=search_value) |
+            Q(user__first_name__icontains=search_value) |
+            Q(user__last_name__icontains=search_value) |
             Q(request_type__icontains=search_value) |
             Q(status__icontains=search_value)
         )
@@ -638,8 +638,8 @@ def dashboard_beneficiaries_requests(request):
         data = [
             {
                 'id': req.id,
-                'first_name': req.beneficiary.first_name if req.beneficiary.first_name else "----",
-                'last_name': req.beneficiary.last_name if req.beneficiary.last_name else "----",
+                'first_name': req.user.first_name if req.user.first_name else "----",
+                'last_name': req.user.last_name if req.user.last_name else "----",
                 'request_type': req.request_type,
                 'status': req.status,
                 'created_at': req.created_at.strftime('%H:%M:%S -- %Y-%m-%d '),  # Format date as needed
@@ -1061,9 +1061,6 @@ def beneficiary_indiv(request, user_id):
             'fileSocialWarrantyInquiry')
 
         # Accessing the data for beneficiary
-        first_name = data.get('personalinfo_first_name', None)
-        second_name = data.get('personalinfo_second_name', None)
-        last_name = data.get('personalinfo_last_name', None)
         category = data.get('personalinfo_category', None)
         marital_status = data.get('personalinfo_marital_status', None)
         educational_level = data.get('personalinfo_educational_level', None)
@@ -1083,9 +1080,6 @@ def beneficiary_indiv(request, user_id):
         family_needs = data.get('familyinfo_needs_type', None)
 
         beneficiary_obj = beneficiary(
-            first_name=first_name,
-            second_name=second_name,
-            last_name=last_name,
             category=category,
             marital_status=marital_status,
             educational_level=educational_level,
@@ -2513,9 +2507,6 @@ def beneficiary_request_update_confirm(request, user_id):
             return redirect('home')
 
         # Accessing the data for beneficiary
-        first_name_personal = data.get('personalinfo_first_name', None)
-        second_name_personal = data.get('personalinfo_second_name', None)
-        last_name_personal = data.get('personalinfo_last_name', None)
         category_personal = data.get('personalinfo_category', None)
         marital_status_personal = data.get('personalinfo_marital_status', None)
         educational_level_personal = data.get('personalinfo_educational_level', None)
@@ -2539,9 +2530,6 @@ def beneficiary_request_update_confirm(request, user_id):
             user=user)
 
         # Update object values
-        beneficiary_obj.first_name = first_name_personal
-        beneficiary_obj.second_name = second_name_personal
-        beneficiary_obj.last_name = last_name_personal
         beneficiary_obj.category = category_personal
         beneficiary_obj.marital_status = marital_status_personal
         beneficiary_obj.educational_level = educational_level_personal
@@ -3262,7 +3250,7 @@ def add_sponsorship(request):
         supporter_requests_list = Supporter_request.objects.filter(
             selection_type="الجمعية").all()
 
-        beneficiary_list = beneficiary.objects.filter().all()
+        beneficiary_list = beneficiary.objects.prefetch_related('user').all()
 
         context = {
             "supporter_requests": supporter_requests_list,
@@ -3503,7 +3491,7 @@ def dashboard_beneficiary_request_update(request, beneficiary_id, b_request_id):
         # Save the changes
         beneficiary_request_obj.save()
 
-        messages.success(request, "لقد تم تحديث حالة طلب الداعم بنجاح!")
+        messages.success(request, "لقد تم تحديث حالة الطلب بنجاح!")
         return redirect("dashboard_beneficiaries_requests")
 
     else:

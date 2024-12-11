@@ -132,6 +132,9 @@
                       maxlength="55"
                       required
                       name="personalinfo_first_name"
+                      value="{{ user.first_name }}" 
+                      disabled
+                      readonly
                     />
                   </div>
                   <div class="col-md-6 mb-4 form-group">
@@ -145,6 +148,9 @@
                       maxlength="55"
                       required
                       name="personalinfo_second_name"
+                      value="{{ user.second_name }}" 
+                      disabled
+                      readonly
                     />
                   </div>
                   <div class="col-md-6 mb-4 form-group">
@@ -159,6 +165,9 @@
                       maxlength="55"
                       required
                       name="personalinfo_last_name"
+                      value="{{ user.last_name }}" 
+                      disabled
+                      readonly
                     />
                   </div>
                   <div class="col-md-6 mb-4 form-group">
@@ -1069,6 +1078,56 @@
 
               <div class="row">
                 <div class="col-md-6 mb-4 form-group">
+                  <label for="id_dependent_info_bank_iban" class="form-label"
+                    >الحساب البنكي للمرافق
+                    (IBAN)</label
+                  >
+                  <input
+                    type="text"
+                    name="dependent_info_bank_iban"
+                    maxlength="50"
+                    class="form-control"
+                    id="id_dependent_info_bank_iban"
+                    placeholder=""
+                  />
+                </div>
+                <div class="col-md-6 mb-4 form-group">
+                  <label for="id_dependent_info_bank_type" class="form-label"
+                    >البنك</label
+                  >
+                  <select
+                    name="dependent_info_bank_type"
+                    class="form-select"
+                    id="id_dependent_info_bank_type"
+                  >
+                    <option value selected>---------</option>
+                    <option value="الأهلي السعودي">الأهلي السعودي</option>
+                    <option value="الراجحي">الراجحي</option>
+                    <option value="الجزيرة">الجزيرة</option>
+                    <option value="الإنماء">الإنماء</option>
+                    <option value="البلاد">البلاد</option>
+                    <option value="الرياض">الرياض</option>
+                    <option value="ساب">ساب</option>
+                    <option value="السعودي الفرنسي">السعودي الفرنسي</option>
+                    <option value="العربي">العربي</option>
+                    <option value="مسقط">مسقط</option>
+                    <option value="الإمارات دبي الوطني">الإمارات دبي الوطني</option>
+                    <option value="الخليج الدولي">الخليج الدولي</option>
+                    <option value="البحرين الوطني">البحرين الوطني</option>
+                    <option value="الكويت الوطني">الكويت الوطني</option>
+                    <option value="باكستان الوطني">باكستان الوطني</option>
+                    <option value="الأول">الأول</option>
+                    <option value="السعودي للاستثمار">السعودي للاستثمار</option>
+                    <option value="زراعات">زراعات</option>
+                    <option value="أخرى">أخرى</option>
+                  </select>
+                </div>
+              </div>
+
+              <hr/>
+
+              <div class="row">
+                <div class="col-md-6 mb-4 form-group">
                   <label
                     for="id_dependent_info_health_status"
                     class="form-label"
@@ -1218,6 +1277,8 @@
                       <th scope="col" class="d-none">نوع الاحتياج</th>
                       <th scope="col" class="d-none">المؤهل التعليمي</th>
                       <th scope="col" class="d-none">تاريخ الميلاد</th>
+                      <th scope="col" class="d-none">الحساب البنكي للمرافق (IBAN)</th>
+                      <th scope="col" class="d-none">نوع البنك</th>
                       <th scope="col" class="d-none">
                         تاريح انتهاء الهوية/الإقامة
                       </th>
@@ -2801,6 +2862,56 @@
 
             <div class="row">
               <div class="col-md-6 mb-4 form-group">
+                <label for="id_dependent_edit_info_bank_iban" class="form-label"
+                  >الحساب البنكي للمرافق
+                  (IBAN)</label
+                >
+                <input
+                  type="text"
+                  name="dependent_edit_info_bank_iban"
+                  maxlength="50"
+                  class="form-control"
+                  id="id_dependent_edit_info_bank_iban"
+                  placeholder=""
+                />
+              </div>
+              <div class="col-md-6 mb-4 form-group">
+                <label for="id_dependent_edit_info_bank_type" class="form-label"
+                  >البنك</label
+                >
+                <select
+                  name="dependent_edit_info_bank_type"
+                  class="form-select"
+                  id="id_dependent_edit_info_bank_type"
+                >
+                  <option value selected>---------</option>
+                  <option value="الأهلي السعودي">الأهلي السعودي</option>
+                  <option value="الراجحي">الراجحي</option>
+                  <option value="الجزيرة">الجزيرة</option>
+                  <option value="الإنماء">الإنماء</option>
+                  <option value="البلاد">البلاد</option>
+                  <option value="الرياض">الرياض</option>
+                  <option value="ساب">ساب</option>
+                  <option value="السعودي الفرنسي">السعودي الفرنسي</option>
+                  <option value="العربي">العربي</option>
+                  <option value="مسقط">مسقط</option>
+                  <option value="الإمارات دبي الوطني">الإمارات دبي الوطني</option>
+                  <option value="الخليج الدولي">الخليج الدولي</option>
+                  <option value="البحرين الوطني">البحرين الوطني</option>
+                  <option value="الكويت الوطني">الكويت الوطني</option>
+                  <option value="باكستان الوطني">باكستان الوطني</option>
+                  <option value="الأول">الأول</option>
+                  <option value="السعودي للاستثمار">السعودي للاستثمار</option>
+                  <option value="زراعات">زراعات</option>
+                  <option value="أخرى">أخرى</option>
+                </select>
+              </div>
+            </div>
+
+            <hr/>
+
+            <div class="row">
+              <div class="col-md-6 mb-4 form-group">
                 <label
                   for="id_dependent_edit_info_health_status"
                   class="form-label"
@@ -2976,15 +3087,17 @@
                 needsType: cells[10].innerText,
                 educationalDegree: cells[11].innerText,
                 dateOfBitrh: cells[12].innerText,
-                nationalIDExpDate: cells[13].innerText,
-                needsDescription: cells[14].innerText,
-                educationalLevel: cells[15].innerText,
-                diseaseType: cells[16].innerText,
-                workStatus: cells[17].innerText,
-                employer: cells[18].innerText,
-                contributeToFamilyIncome: cells[19].innerText,
-                disabilityCheck: cells[20].innerText,
-                disabilityType: cells[21].innerText,
+                bankIban: cells[13].innerText,
+                bankType: cells[14].innerText,
+                nationalIDExpDate: cells[15].innerText,
+                needsDescription: cells[16].innerText,
+                educationalLevel: cells[17].innerText,
+                diseaseType: cells[18].innerText,
+                workStatus: cells[19].innerText,
+                employer: cells[20].innerText,
+                contributeToFamilyIncome: cells[21].innerText,
+                disabilityCheck: cells[22].innerText,
+                disabilityType: cells[23].innerText,
             };
             dependentsData.push(dependent);
         }
@@ -3036,7 +3149,7 @@
       // delete options.headers['Content-Type'];
   
 
-      fetch('https://port433.link{% url 'beneficiary_new' user_id=user.id %}', {
+      fetch('http://127.0.0.1:8000{% url 'beneficiary_new' user_id=user.id %}', {
           method: 'POST',
           body: formData,
       })
@@ -3058,254 +3171,6 @@
     var $modalForm = $("#editModalForm");
     var $saveChangesButton = $("#saveChanges");
     var csrfTokenDepForm = $('#myform input[name=csrfmiddlewaretoken]').val();
-
-    $.validator.addMethod(
-      "fullNameRegex",
-      function (value, element) {
-        return (
-          this.optional(element) ||
-          /^[a-zA-Z\u0621-\u064A]+([ '-][a-zA-Z\u0621-\u064A]+)*$/i.test(value)
-        );
-      },
-      "يجب أن يتكون الاسم الكامل من الاسم الأول والأوسط والأخير."
-    );
-
-    // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
-    function validateSAID(id) {
-      let type = id.substr(0, 1);
-      let sum = 0;
-      const _idLength = 10;
-      const _type1 = "1";
-      const _type2 = "2";
-      id = id.trim();
-      if (
-        isNaN(parseInt(id)) ||
-        id.length !== _idLength ||
-        (type !== _type2 && type !== _type1)
-      ) {
-        return false;
-      }
-      for (let num = 0; num < 10; num++) {
-        const digit = Number(id[num]);
-        if (num % 2 === 0) {
-          const doubled = digit * 2;
-          const ZFOdd = `00${doubled}`.slice(-2);
-          sum += Number(ZFOdd[0]) + Number(ZFOdd[1]);
-        } else {
-          sum += digit;
-        }
-      }
-      return sum % 10 !== 0 ? false : true;
-    }
-
-    // Validator method for the national id (Iqama/Saudi)
-    $.validator.addMethod(
-      "nationalidRegex",
-      function (value, element) {
-        // console.log(value, validateSAID(value));
-        return this.optional(element) || validateSAID(value);
-      },
-      "أدخل رقم هوية/إقامة صحيح."
-    );
-
-    $.validator.addMethod(
-      "dependentNameRegex",
-      function (value, element) {
-        return (
-          this.optional(element) || /^[a-zA-Z0-9\u0621-\u064A]*$/i.test(value)
-        );
-      },
-      "يحتوي الأسم على حروف فقط."
-    );
-
-    // Retrieve the CSRF token from the specific form with id 'editModalForm'
-    var csrfTokenEditDepForm = $('#editModalForm input[name=csrfmiddlewaretoken]').val();
-
-    var includedFieldsEditModal = ["id_dependent_edit_info_national_id"]; // IDs of fields to include
-
-    // Define your validation rules here
-    $modalForm.validate({
-      // Your validation rules
-      rules: {
-        // rules for your fields
-        // dependent_information ---------
-        dependent_edit_info_first_name: {
-          required: true,
-          dependentNameRegex: true,
-          minlength: 2,
-          maxlength: 50,
-        },
-        dependent_edit_info_second_name: {
-          required: true,
-          dependentNameRegex: true,
-          minlength: 2,
-          maxlength: 50,
-        },
-        dependent_edit_info_last_name: {
-          required: true,
-          dependentNameRegex: true,
-          minlength: 2,
-          maxlength: 50,
-        },
-        dependent_edit_info_relationship: {
-          required: true,
-        },
-        dependent_edit_info_date_of_birth: {
-          required: true,
-          dateISO: true,
-        },
-        dependent_edit_info_gender: {
-          required: true,
-        },
-        dependent_edit_info_marital_status: {
-          required: true,
-        },
-        dependent_edit_info_educational_status: {
-          required: true,
-        },
-        dependent_edit_info_educational_level: {
-          required: true,
-        },
-        dependent_edit_info_educational_degree: {
-          required: true,
-        },
-        dependent_edit_info_health_status: {
-          required: true,
-        },
-        dependent_edit_info_disease_type: {
-          required: true,
-        },
-        dependent_edit_info_national_id: {
-          required: true,
-          nationalidRegex: true,
-          remote: {
-            url: '/beneficiaries/' + {{ request.user.id }}  + '/update/validate_national_id_edit_dependent/',
-            type: 'post',
-            data: {
-              national_id: function() {
-                return $('#id_dependent_edit_info_national_id').val();
-              },
-              csrfmiddlewaretoken: csrfTokenEditDepForm,  // Include CSRF token
-              base_nid: function() { 
-                // Get the value from the data-attr-base-nid attribute using plain JavaScript
-                var element = document.getElementById('id_dependent_edit_info_national_id');
-                return element.getAttribute('data-attr-base-nid');
-              },
-            },
-          },
-        },
-        dependent_edit_info_national_id_exp_date: {
-          required: false,
-          dateISO: true,
-        },
-        dependent_edit_info_work_status: {
-          required: true,
-        },
-        dependent_edit_info_employer: {
-          required: true,
-        },
-        dependent_edit_info_contribute_to_family_income: {
-          required: true,
-        },
-        dependent_edit_info_is_disabled: {
-          required: true,
-        },
-        dependent_edit_info_disability_type: {
-          required: true,
-        },
-        dependent_edit_info_needs_type: {
-          required: true,
-        },
-        dependent_edit_info_needs_description: {
-          required: false,
-        },
-      },
-      messages: {
-        dependent_edit_info_first_name: {
-          required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
-          minlength: "يجب ألا يقل الاسم عن حرفين",
-        },
-        dependent_edit_info_second_name: {
-          required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
-          minlength: "يجب ألا يقل الاسم عن حرفين",
-        },
-        dependent_edit_info_last_name: {
-          required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
-          minlength: "يجب ألا يقل الاسم عن حرفين",
-        },
-        dependent_edit_info_gender: {
-          required: "الرجاء اختيار الجنس",
-        },
-        dependent_edit_info_relationship: {
-          required: "الرجاء اختيار صلة القرابة",
-        },
-        // Add other field messages here
-      },
-      errorElement: "div",
-      errorClass: "invalid-feedback",
-      highlight: function (element, errorClass, validClass) {
-        //$(element).addClass('is-invalid');
-        $(element).closest(".form-group").addClass("has-error");
-
-        // Check if the field is excluded
-        if (includedFieldsEditModal.indexOf(element.id) !== -1) {
-          $(element).addClass("is-invalid");
-          $(element).removeClass("is-valid");
-        }
-      },
-      unhighlight: function (element, errorClass, validClass) {
-        $(element).closest(".form-group").removeClass("has-error");
-
-        // Check if the field is excluded
-        if (includedFieldsEditModal.indexOf(element.id) !== -1) {
-          $(element).removeClass("is-invalid");
-          $(element).addClass("is-valid");
-        }
-      },
-      errorPlacement: function (error, element) {
-        // Check if the element is inside an input-group
-        if (element.parent(".input-group").length) {
-          // Place the error after the input-group
-          error.insertAfter(element.parent(".input-group"));
-        } else {
-          // Default placement for other elements
-          error.insertAfter(element);
-        }
-      },
-      // other options
-    });
-
-
-    // Check form validity on input change
-    $modalForm.on("change keyup", function () {
-      if ($modalForm.valid()) {
-          $saveChangesButton.prop("disabled", false);
-      } else {
-          $saveChangesButton.prop("disabled", true);
-      }
-    });
-
-
-
-    // Add an event listener to the dependent income table for add row btn
-    $("#id_add_row_income_edit_info").on("click", function () {
-      if ($modalForm.valid()) {
-          $saveChangesButton.prop("disabled", false);
-      } else {
-          $saveChangesButton.prop("disabled", true);
-      }
-    });
-
-
-    // Additionally, you may want to trigger the event when a row is removed from income table
-    $(".removeIncomeEditInfoRow").on("click", function () {
-      if ($modalForm.valid()) {
-          $saveChangesButton.prop("disabled", false);
-      } else {
-          $saveChangesButton.prop("disabled", true);
-      }
-    });
-
 
     const banks = [
       {
@@ -3469,6 +3334,316 @@
       */
     ];
 
+    // Validate IBAN number
+    function validateIBAN(iban) {
+      if (!iban) {
+        return false;
+      }
+
+      iban = iban.trim();
+
+      if (iban.length !== 24) {
+        return false;
+      }
+
+      if (!iban.startsWith("SA")) {
+        return false;
+      }
+
+      const bankCode = iban.substring(4, 6);
+
+      return banks.some((b) => b.samaCode === bankCode);
+    }
+
+    /**
+     * Returns the bank object
+     * @return {Object}
+     */
+    function getBankByIBAN(iban) {
+      if (!validateIBAN(iban)) return null;
+
+      const bankCode = iban.substring(4, 6);
+      const bank = banks.find((b) => b.samaCode === bankCode);
+      return bank ? bank.nameAr : null;
+    }
+
+    // Auto-select the specified bank type using iban number for dependent
+    $("#id_dependent_edit_info_bank_iban").on("input", function () {
+      var iban = $(this).val();
+      var bankNameAr = getBankByIBAN(iban);
+
+      if (bankNameAr) {
+        $("#id_dependent_edit_info_bank_type").val(bankNameAr).change();
+      } else {
+        $("#id_dependent_edit_info_bank_type").val("").change(); // Reset to default if IBAN is invalid
+      }
+    });
+
+    // Validator method for the Saudi IBAN number
+    $.validator.addMethod(
+      "validateIBAN",
+      function (value, element) {
+        // console.log(value, validateIBAN(value));
+        return this.optional(element) || validateIBAN(value);
+      },
+      "الرجاء إدخال رقم إيبان صحيح"
+    );
+
+
+    $.validator.addMethod(
+      "fullNameRegex",
+      function (value, element) {
+        return (
+          this.optional(element) ||
+          /^[a-zA-Z\u0621-\u064A]+([ '-][a-zA-Z\u0621-\u064A]+)*$/i.test(value)
+        );
+      },
+      "يجب أن يتكون الاسم الكامل من الاسم الأول والأوسط والأخير."
+    );
+
+    // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
+    function validateSAID(id) {
+      let type = id.substr(0, 1);
+      let sum = 0;
+      const _idLength = 10;
+      const _type1 = "1";
+      const _type2 = "2";
+      id = id.trim();
+      if (
+        isNaN(parseInt(id)) ||
+        id.length !== _idLength ||
+        (type !== _type2 && type !== _type1)
+      ) {
+        return false;
+      }
+      for (let num = 0; num < 10; num++) {
+        const digit = Number(id[num]);
+        if (num % 2 === 0) {
+          const doubled = digit * 2;
+          const ZFOdd = `00${doubled}`.slice(-2);
+          sum += Number(ZFOdd[0]) + Number(ZFOdd[1]);
+        } else {
+          sum += digit;
+        }
+      }
+      return sum % 10 !== 0 ? false : true;
+    }
+
+    // Validator method for the national id (Iqama/Saudi)
+    $.validator.addMethod(
+      "nationalidRegex",
+      function (value, element) {
+        // console.log(value, validateSAID(value));
+        return this.optional(element) || validateSAID(value);
+      },
+      "أدخل رقم هوية/إقامة صحيح."
+    );
+
+    $.validator.addMethod(
+      "dependentNameRegex",
+      function (value, element) {
+        return (
+          this.optional(element) || /^[a-zA-Z0-9\u0621-\u064A]*$/i.test(value)
+        );
+      },
+      "يحتوي الأسم على حروف فقط."
+    );
+
+    // Retrieve the CSRF token from the specific form with id 'editModalForm'
+    var csrfTokenEditDepForm = $('#editModalForm input[name=csrfmiddlewaretoken]').val();
+
+    var includedFieldsEditModal = ["id_dependent_edit_info_national_id"]; // IDs of fields to include
+
+    // Define your validation rules here
+    $modalForm.validate({
+      // Your validation rules
+      rules: {
+        // rules for your fields
+        // dependent_information ---------
+        dependent_edit_info_first_name: {
+          required: true,
+          dependentNameRegex: true,
+          minlength: 2,
+          maxlength: 50,
+        },
+        dependent_edit_info_second_name: {
+          required: true,
+          dependentNameRegex: true,
+          minlength: 2,
+          maxlength: 50,
+        },
+        dependent_edit_info_last_name: {
+          required: true,
+          dependentNameRegex: true,
+          minlength: 2,
+          maxlength: 50,
+        },
+        dependent_edit_info_relationship: {
+          required: true,
+        },
+        dependent_edit_info_date_of_birth: {
+          required: true,
+          dateISO: true,
+        },
+        dependent_edit_info_gender: {
+          required: true,
+        },
+        dependent_edit_info_marital_status: {
+          required: true,
+        },
+        dependent_edit_info_educational_status: {
+          required: true,
+        },
+        dependent_edit_info_educational_level: {
+          required: true,
+        },
+        dependent_edit_info_educational_degree: {
+          required: true,
+        },
+        dependent_edit_info_health_status: {
+          required: true,
+        },
+        dependent_edit_info_disease_type: {
+          required: true,
+        },
+        dependent_edit_info_national_id: {
+          required: true,
+          nationalidRegex: true,
+          remote: {
+            url: '/beneficiaries/' + {{ request.user.id }}  + '/update/validate_national_id_edit_dependent/',
+            type: 'post',
+            data: {
+              national_id: function() {
+                return $('#id_dependent_edit_info_national_id').val();
+              },
+              csrfmiddlewaretoken: csrfTokenEditDepForm,  // Include CSRF token
+              base_nid: function() { 
+                // Get the value from the data-attr-base-nid attribute using plain JavaScript
+                var element = document.getElementById('id_dependent_edit_info_national_id');
+                return element.getAttribute('data-attr-base-nid');
+              },
+            },
+          },
+        },
+        dependent_edit_info_national_id_exp_date: {
+          required: false,
+          dateISO: true,
+        },
+        dependent_edit_info_work_status: {
+          required: true,
+        },
+        dependent_edit_info_bank_iban: {
+          required: false,
+          validateIBAN: true,
+        },
+        dependent_edit_info_bank_type: {
+          required: false,
+        },
+        dependent_edit_info_employer: {
+          required: true,
+        },
+        dependent_edit_info_contribute_to_family_income: {
+          required: true,
+        },
+        dependent_edit_info_is_disabled: {
+          required: true,
+        },
+        dependent_edit_info_disability_type: {
+          required: true,
+        },
+        dependent_edit_info_needs_type: {
+          required: true,
+        },
+        dependent_edit_info_needs_description: {
+          required: false,
+        },
+      },
+      messages: {
+        dependent_edit_info_first_name: {
+          required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
+          minlength: "يجب ألا يقل الاسم عن حرفين",
+        },
+        dependent_edit_info_second_name: {
+          required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
+          minlength: "يجب ألا يقل الاسم عن حرفين",
+        },
+        dependent_edit_info_last_name: {
+          required: "الرجاء إدخال الاسم حسب الهوية/الإقامة",
+          minlength: "يجب ألا يقل الاسم عن حرفين",
+        },
+        dependent_edit_info_gender: {
+          required: "الرجاء اختيار الجنس",
+        },
+        dependent_edit_info_relationship: {
+          required: "الرجاء اختيار صلة القرابة",
+        },
+        // Add other field messages here
+      },
+      errorElement: "div",
+      errorClass: "invalid-feedback",
+      highlight: function (element, errorClass, validClass) {
+        //$(element).addClass('is-invalid');
+        $(element).closest(".form-group").addClass("has-error");
+
+        // Check if the field is excluded
+        if (includedFieldsEditModal.indexOf(element.id) !== -1) {
+          $(element).addClass("is-invalid");
+          $(element).removeClass("is-valid");
+        }
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).closest(".form-group").removeClass("has-error");
+
+        // Check if the field is excluded
+        if (includedFieldsEditModal.indexOf(element.id) !== -1) {
+          $(element).removeClass("is-invalid");
+          $(element).addClass("is-valid");
+        }
+      },
+      errorPlacement: function (error, element) {
+        // Check if the element is inside an input-group
+        if (element.parent(".input-group").length) {
+          // Place the error after the input-group
+          error.insertAfter(element.parent(".input-group"));
+        } else {
+          // Default placement for other elements
+          error.insertAfter(element);
+        }
+      },
+      // other options
+    });
+
+
+    // Check form validity on input change
+    $modalForm.on("change keyup", function () {
+      if ($modalForm.valid()) {
+          $saveChangesButton.prop("disabled", false);
+      } else {
+          $saveChangesButton.prop("disabled", true);
+      }
+    });
+
+
+
+    // Add an event listener to the dependent income table for add row btn
+    $("#id_add_row_income_edit_info").on("click", function () {
+      if ($modalForm.valid()) {
+          $saveChangesButton.prop("disabled", false);
+      } else {
+          $saveChangesButton.prop("disabled", true);
+      }
+    });
+
+
+    // Additionally, you may want to trigger the event when a row is removed from income table
+    $(".removeIncomeEditInfoRow").on("click", function () {
+      if ($modalForm.valid()) {
+          $saveChangesButton.prop("disabled", false);
+      } else {
+          $saveChangesButton.prop("disabled", true);
+      }
+    });
+
     // Function to validate file sizes
     function validateFileSizes() {
       var files = document.querySelectorAll('input[type="file"]');
@@ -3587,42 +3762,7 @@
     );
     updateFileNamesDisplay("id_formFileOther", "id_fileNamesOther");
 
-    /**
-     * validates IBAN
-     * @return {boolean}
-     */
-    function validateIBAN(iban) {
-      if (!iban) {
-        return false;
-      }
-
-      iban = iban.trim();
-
-      if (iban.length !== 24) {
-        return false;
-      }
-
-      if (!iban.startsWith("SA")) {
-        return false;
-      }
-
-      const bankCode = iban.substring(4, 6);
-
-      return banks.some((b) => b.samaCode === bankCode);
-    }
-
-    /**
-     * Returns the bank object
-     * @return {Object}
-     */
-    function getBankByIBAN(iban) {
-      if (!validateIBAN(iban)) return null;
-
-      const bankCode = iban.substring(4, 6);
-      const bank = banks.find((b) => b.samaCode === bankCode);
-      return bank ? bank.nameAr : null;
-    }
-
+    // Auto-select the specified bank type using iban number for beneficiary
     $("#id_beneficiaryinfo_iban").on("input", function () {
       var iban = $(this).val();
       var bankNameAr = getBankByIBAN(iban);
@@ -3631,6 +3771,18 @@
         $("#id_beneficiaryinfo_bank").val(bankNameAr).change();
       } else {
         $("#id_beneficiaryinfo_bank").val("").change(); // Reset to default if IBAN is invalid
+      }
+    });
+
+    // Auto-select the specified bank type using iban number for dependent
+    $("#id_dependent_info_bank_iban").on("input", function () {
+      var iban = $(this).val();
+      var bankNameAr = getBankByIBAN(iban);
+
+      if (bankNameAr) {
+        $("#id_dependent_info_bank_type").val(bankNameAr).change();
+      } else {
+        $("#id_dependent_info_bank_type").val("").change(); // Reset to default if IBAN is invalid
       }
     });
 
@@ -4019,6 +4171,13 @@
           },
           dependent_info_employer: {
             required: true,
+          },
+          dependent_info_bank_iban: {
+            required: false,
+            validateIBAN: true,
+          },
+          dependent_info_bank_type: {
+            required: false,
           },
           dependent_info_gender: {
             required: true,
@@ -4487,6 +4646,9 @@
       var dependentMaritalStatus = $("#id_dependent_info_marital_status").val();
       var dependentNationalID = $("#id_dependent_info_national_id").val().trim();
 
+      var dependentBankIban = $("#id_dependent_info_bank_iban").val().trim();
+      var dependentBankType = $("#id_dependent_info_bank_type").val();
+
       var dependentHealthStatus = $("#id_dependent_info_health_status").val();
       var dependentMonthlyIncome = $("#id_dependent_info_monthly_income").val();
       var dependentIncomeSource = $("#id_dependent_info_income_source").val();
@@ -4628,6 +4790,20 @@
             .attr("data-attr", "dependent_edit_info_national_id")
             .attr("data-attr-base-nid", dependentNationalID)
         );
+
+        $row.append(
+          $("<td></td>")
+            .text(dependentBankIban)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_bank_iban")
+        );
+        $row.append(
+          $("<td></td>")
+            .text(dependentBankType)
+            .addClass("d-none")
+            .attr("data-attr", "dependent_edit_info_bank_type")
+        );
+
         $row.append(
           $("<td></td>")
             .text(dependentHealthStatus)
@@ -4777,6 +4953,8 @@
         $("#id_dependent_info_work_status").val("");
         $("#id_dependent_info_employer").val("");
         $("#id_dependent_info_contribute_to_family_income").val("");
+        $("#id_dependent_info_bank_iban").val("");
+        $("#id_dependent_info_bank_type").val("");
         $("#id_dependent_info_is_disabled").val("");
         $("#id_dependent_info_disability_type").val("");
 
