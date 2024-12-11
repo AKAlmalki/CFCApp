@@ -1318,6 +1318,8 @@ def beneficiary_indiv(request, user_id):
             educational_status = dep.get('educationalStatus', None)
             marital_status = dep.get('martialStatus', '')
             national_id = dep.get('nationalID', '')
+            bank_iban = dep.get('bankIban', '')
+            bank_type = dep.get('bankType', '')
             health_status = dep.get('healthStatus', None)
             needs_type = dep.get('needsType', '')
             educational_degree = dep.get('educationalDegree', '')
@@ -1353,6 +1355,8 @@ def beneficiary_indiv(request, user_id):
                 date_of_birth=dependent_date_of_birth,
                 national_id=national_id,
                 national_id_exp_date=national_id_exp_date,
+                bank_iban=bank_iban,
+                bank_type=bank_type,
                 marital_status=marital_status,
                 educational_level=educational_level,
                 educational_status=educational_status,
@@ -1449,8 +1453,6 @@ def beneficiary_details(request, beneficiary_id):
             # Ensure this is working by printing the result below
             user_obj = CustomUser.objects.get(id=beneficiary_obj.user)
 
-            print('user_info', user_obj)
-
             beneficiary_housing_obj = beneficiary_house.objects.filter(
                 beneficiary_id=beneficiary_id).first()
 
@@ -1529,6 +1531,8 @@ def beneficiary_details(request, beneficiary_id):
                     'dependent_marital_status': dependent_obj.marital_status,
                     'dependent_national_id': dependent_obj.national_id,
                     'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                    'dependent_bank_iban': dependent_obj.bank_iban,
+                    'dependent_bank_type': dependent_obj.bank_type,
                     'dependent_health_status': dependent_obj.health_status,
                     'dependent_needs_type': dependent_obj.needs_type,
                     'dependent_educational_degree': dependent_obj.educational_degree,
@@ -2208,6 +2212,8 @@ def beneficiary_request_details(request, user_id):
                 'dependent_marital_status': dependent_obj.marital_status,
                 'dependent_national_id': dependent_obj.national_id,
                 'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                'dependent_bank_iban': dependent_obj.bank_iban,
+                'dependent_bank_type': dependent_obj.bank_type,
                 'dependent_health_status': dependent_obj.health_status,
                 'dependent_needs_type': dependent_obj.needs_type,
                 'dependent_educational_degree': dependent_obj.educational_degree,
@@ -3380,6 +3386,8 @@ def dashboard_beneficiary_details(request, b_id):
                 'dependent_marital_status': dependent_obj.marital_status,
                 'dependent_national_id': dependent_obj.national_id,
                 'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                'dependent_bank_iban': dependent_obj.bank_iban,
+                'dependent_bank_type': dependent_obj.bank_type,
                 'dependent_health_status': dependent_obj.health_status,
                 'dependent_needs_type': dependent_obj.needs_type,
                 'dependent_educational_degree': dependent_obj.educational_degree,
@@ -3554,6 +3562,8 @@ def dashboard_beneficiary_request_details(request, beneficiary_id, b_request_id)
             'dependent_marital_status': dependent_obj.marital_status,
             'dependent_national_id': dependent_obj.national_id,
             'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+            'dependent_bank_iban': dependent_obj.bank_iban,
+            'dependent_bank_type': dependent_obj.bank_type,
             'dependent_health_status': dependent_obj.health_status,
             'dependent_needs_type': dependent_obj.needs_type,
             'dependent_educational_degree': dependent_obj.educational_degree,

@@ -719,6 +719,17 @@
                         </div>
                       </div>
 
+                      <div class="row row-cols-lg-2">
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_bank_iban{{ dependent.dependent_id }}">رقم الإيبان</h6>
+                          <input type="text" class="form-control" id="id_dependent_bank_iban{{ dependent.dependent_id }}" name="dependent_bank_iban" value="{{ dependent.dependent_bank_iban }}" disabled readonly>
+                        </div>
+                        <div class="mb-3">
+                          <h6 class="col form-label" for="id_dependent_bank_type{{ dependent.dependent_id }}">البنك</h6>
+                          <input type="text" class="form-control" id="id_dependent_bank_type{{ dependent.dependent_id }}" name="dependent_bank_type" value="{{ dependent.dependent_bank_type }}" disabled readonly>
+                        </div>
+                      </div>
+
                       <div class="row row-cols-lg-2 row-cols-xl-3">
                         <div class="mb-3">
                           <h6 class="col form-label" for="id_dependent_date_of_birth{{ dependent.dependent_id }}">تاريخ الميلاد</h6>
