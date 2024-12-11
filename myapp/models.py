@@ -53,6 +53,22 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+
+class Authentication_OTP(models.Model):
+    db_table = "authentication_otp"
+    otp_code = models.CharField(max_length=6)
+    is_used = models.BooleanField(default=False)
+    used_at = models.DateTimeField(null=True)
+    expiry_time = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    purpose = models.CharField(max_length=50)
+    ip_address = models.GenericIPAddressField()
+    user_agent = models.CharField(max_length=128)
+
+    def __str__(self):
+        return "OTP code: " + self.otp_code + " - expire_at: " + self.expiry_time + " - created_at: " + self.created_at + " - user agent: " + self.user_agent + " - purpose: " + self.purpose
 
 
 class beneficiary(models.Model):
