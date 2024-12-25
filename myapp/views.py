@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment, Field_visit, Field_visit_attachment
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment, Field_visit, Field_visit_attachment, Authentication_OTP
 # from .forms import CustomUserCreationForm
 # from django.db.models import Q
 from django.contrib import messages
@@ -16,6 +16,7 @@ import os
 import re
 import json
 import time
+import random
 from decimal import Decimal
 from openpyxl import Workbook
 from openpyxl.styles import *
@@ -28,6 +29,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from .tokens import generate_token
+from django.utils.timezone import now
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.forms import PasswordResetForm
@@ -83,6 +85,11 @@ def is_valid_queryparam(param, type):
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+
+def generate_otp():
+    """Generate a 6-digit OTP code."""
+    return random.randint(100000, 999999)
 
 # View Handlers ==============================================
 
@@ -212,37 +219,56 @@ def sign_up(request):
         # Give the new user the default role
         new_user.groups.add(default_role)
 
-        messages.success(
-            request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
+        # messages.success(
+        #     request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
 
-        # Welcome email
-        subject = "أهلا بك في جمعية أصدقاء المجتمع!"
-        message = f'\nالسلام عليكم {new_user.first_name}\n\nنرحب بك بحرارة في جمعية أصدقاء المجتمع, حيث تلتقي القلوب الرحيمة لبناء جسر من العطاء والأمل. نشعر بسعادة كبيرة لأنك قررت أن تكون جزءًا من مسيرتنا الإنسانية\n\nنحن هنا لتحفيز الخير وتشجيع العطاء, ومن خلال انضمامك إلينا, نزداد قوة وإمكانية لنقدم المساعدة والدعم لأولئك الذين هم في أمس الحاجة لها. سوف تجد في جمعية أصدقاء المجتمع فرصًا رائعة للمشاركة في المشاريع الإنسانية وتغيير حياة الناس بشكل إيجابي.\n\nندعوك لاستكشاف موقعنا والتعرف على الأنشطة المختلفة والفرص التطوعية المتاحة لك. نحن متأكدون أن تجربتك معنا ستكون مميزة وملهمة.\n\nفي حال كانت لديك أي أسئلة أو تحتاج إلى المساعدة, فلا تتردد في التواصل معنا عبر المنصة وطرق التواصل الموضحة فيها.\n\nشكرا لك مره أخرى على انضمامك إلينا, ونتطلع إلى العمل المشترك لبناء عالم أفضل.\n\nمع أطيب التحيات,\nفريق جمعية أصدقاء المجتمع'
-        from_email = settings.EMAIL_HOST_USER
-        to_list = [new_user.email]
-        send_mail(subject, message, from_email, to_list, fail_silently=True)
+        # # Welcome email
+        # subject = "أهلا بك في جمعية أصدقاء المجتمع!"
+        # message = f'\nالسلام عليكم {new_user.first_name}\n\nنرحب بك بحرارة في جمعية أصدقاء المجتمع, حيث تلتقي القلوب الرحيمة لبناء جسر من العطاء والأمل. نشعر بسعادة كبيرة لأنك قررت أن تكون جزءًا من مسيرتنا الإنسانية\n\nنحن هنا لتحفيز الخير وتشجيع العطاء, ومن خلال انضمامك إلينا, نزداد قوة وإمكانية لنقدم المساعدة والدعم لأولئك الذين هم في أمس الحاجة لها. سوف تجد في جمعية أصدقاء المجتمع فرصًا رائعة للمشاركة في المشاريع الإنسانية وتغيير حياة الناس بشكل إيجابي.\n\nندعوك لاستكشاف موقعنا والتعرف على الأنشطة المختلفة والفرص التطوعية المتاحة لك. نحن متأكدون أن تجربتك معنا ستكون مميزة وملهمة.\n\nفي حال كانت لديك أي أسئلة أو تحتاج إلى المساعدة, فلا تتردد في التواصل معنا عبر المنصة وطرق التواصل الموضحة فيها.\n\nشكرا لك مره أخرى على انضمامك إلينا, ونتطلع إلى العمل المشترك لبناء عالم أفضل.\n\nمع أطيب التحيات,\nفريق جمعية أصدقاء المجتمع'
+        # from_email = settings.EMAIL_HOST_USER
+        # to_list = [new_user.email]
+        # send_mail(subject, message, from_email, to_list, fail_silently=True)
 
-        # Email address Confirmation Email
-        current_site = get_current_site(request)
-        email_subject = "تفعيل حسابك في جمعية اصدقاء المجتمع"
+        # # Email address Confirmation Email
+        # current_site = get_current_site(request)
+        # email_subject = "تفعيل حسابك في جمعية اصدقاء المجتمع"
 
-        message2 = render_to_string('auth/email_confirmation.html', {
-            'name': new_user.first_name,
-            'domain': current_site.domain,
-            'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
-            'token': generate_token.make_token(new_user),
-        })
-        email = EmailMessage(
-            email_subject,
-            message2,
-            settings.EMAIL_HOST_USER,
-            [new_user.email],
+        # message2 = render_to_string('auth/email_confirmation.html', {
+        #     'name': new_user.first_name,
+        #     'domain': current_site.domain,
+        #     'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
+        #     'token': generate_token.make_token(new_user),
+        # })
+        # email = EmailMessage(
+        #     email_subject,
+        #     message2,
+        #     settings.EMAIL_HOST_USER,
+        #     [new_user.email],
+        # )
+
+        # email.fail_silently = True
+        # email.send()
+
+        # Pass user identifier to the otp verification page to let the user login using it
+        request.session['username'] = username
+
+        # Generate and save OTP
+        otp_code = generate_otp()
+        expiry_time = now() + timedelta(minutes=5)  # OTP expires in 5 minutes
+        ip_address = request.META.get('REMOTE_ADDR', '')
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        otp = Authentication_OTP(
+            otp_code=otp_code,
+            expiry_time=expiry_time,
+            created_by=new_user,
+            purpose="Sign-up phone number verification",
+            ip_address=ip_address,
+            user_agent=user_agent
         )
+        otp.save()
 
-        email.fail_silently = True
-        email.send()
-
-        return redirect('/login')
+        return redirect('otp_sign_up_view')
 
     else:
 
@@ -251,6 +277,47 @@ def sign_up(request):
             return redirect('home')
 
     return render(request, "registration/sign_up.html")
+
+
+def otp_sign_up_view(request):
+    if request.method == "POST":
+        username = request.session.get('username', '')
+        otp_code = request.POST.get('otp', '')
+
+        try:
+            user = CustomUser.objects.get(username=username)
+            otp = Authentication_OTP.objects.filter(
+                created_by=user,
+                purpose="Sign-up phone number verification",
+                is_used=False  # Ensure OTP hasn't been used
+            ).latest('created_at')  # Get the latest unused OTP record
+
+            # Check OTP validity
+            if otp.otp_code == otp_code and otp.expiry_time > now():
+                # Mark the OTP as used
+                otp.is_used = True
+                otp.used_at = now()
+                otp.save()
+
+                # Activate the user
+                user.is_active = True
+                user.save()
+                messages.success(request, "تم تفعيل الحساب بنجاح! يمكنك الأن تسجيل الدخول باستخدام حسابك.")
+
+                # Log the user in
+                login(request, user)
+                return redirect('home')
+            else:
+                messages.error(request, "رمز التحقق غير صالح او غير صحيح, الرجاء المحاولة مره أخرى.")
+        except (CustomUser.DoesNotExist, Authentication_OTP.DoesNotExist):
+            messages.error(request, "حصل خطأ. الرجاء المحاولة مره أخرى")
+            return redirect('sign-up')
+
+    elif request.method == "GET":
+        username = request.session.get('username', '')
+        return render(request, 'auth/otp_sign_up_view.html')
+
+    return render(request, 'auth/otp_sign_up_view.html')
 
 
 def activate(request, uidb64, token):

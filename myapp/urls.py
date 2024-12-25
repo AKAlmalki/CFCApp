@@ -300,7 +300,11 @@ urlpatterns = [
         views.resend_activation_email_view,
         name="resend_activation_email_view"
     ),
-
+    path(
+        'otp_sign_up_view/',
+        views.otp_sign_up_view,
+        name="otp_sign_up_view"
+    ),
     path(
         'password_reset/',
         views.password_reset_request,
