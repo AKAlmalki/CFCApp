@@ -110,6 +110,30 @@ def confirmBeneficiaryRequestView(request):
     return render(request, "main/confirmBeneficiaryReq.html")
 
 
+def send_otp_email(user, otp_code):
+    """
+    Sends an OTP email to the user.
+    """
+    email_subject = "رمز التحقق الخاص بك - جمعية أصدقاء المجتمع"
+    
+    # Render email body using an HTML template
+    message = render_to_string('auth/otp_template.html', {
+        'name': user.first_name,
+        'otp_code': otp_code,
+        'expiry_minutes': 5,  # Adjust this value to match your expiry time
+    })
+
+    email = EmailMessage(
+        email_subject,
+        message,
+        settings.EMAIL_HOST_USER,
+        [user.email],
+    )
+    email.content_subtype = 'html'  # Specify that the email content is HTML
+    email.fail_silently = False  # Raise errors if email sending fails
+    email.send()
+
+
 def sign_up(request):
     if request.method == 'POST':
 
@@ -219,35 +243,8 @@ def sign_up(request):
         # Give the new user the default role
         new_user.groups.add(default_role)
 
-        # messages.success(
-        #     request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
-
-        # # Welcome email
-        # subject = "أهلا بك في جمعية أصدقاء المجتمع!"
-        # message = f'\nالسلام عليكم {new_user.first_name}\n\nنرحب بك بحرارة في جمعية أصدقاء المجتمع, حيث تلتقي القلوب الرحيمة لبناء جسر من العطاء والأمل. نشعر بسعادة كبيرة لأنك قررت أن تكون جزءًا من مسيرتنا الإنسانية\n\nنحن هنا لتحفيز الخير وتشجيع العطاء, ومن خلال انضمامك إلينا, نزداد قوة وإمكانية لنقدم المساعدة والدعم لأولئك الذين هم في أمس الحاجة لها. سوف تجد في جمعية أصدقاء المجتمع فرصًا رائعة للمشاركة في المشاريع الإنسانية وتغيير حياة الناس بشكل إيجابي.\n\nندعوك لاستكشاف موقعنا والتعرف على الأنشطة المختلفة والفرص التطوعية المتاحة لك. نحن متأكدون أن تجربتك معنا ستكون مميزة وملهمة.\n\nفي حال كانت لديك أي أسئلة أو تحتاج إلى المساعدة, فلا تتردد في التواصل معنا عبر المنصة وطرق التواصل الموضحة فيها.\n\nشكرا لك مره أخرى على انضمامك إلينا, ونتطلع إلى العمل المشترك لبناء عالم أفضل.\n\nمع أطيب التحيات,\nفريق جمعية أصدقاء المجتمع'
-        # from_email = settings.EMAIL_HOST_USER
-        # to_list = [new_user.email]
-        # send_mail(subject, message, from_email, to_list, fail_silently=True)
-
-        # # Email address Confirmation Email
-        # current_site = get_current_site(request)
-        # email_subject = "تفعيل حسابك في جمعية اصدقاء المجتمع"
-
-        # message2 = render_to_string('auth/email_confirmation.html', {
-        #     'name': new_user.first_name,
-        #     'domain': current_site.domain,
-        #     'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
-        #     'token': generate_token.make_token(new_user),
-        # })
-        # email = EmailMessage(
-        #     email_subject,
-        #     message2,
-        #     settings.EMAIL_HOST_USER,
-        #     [new_user.email],
-        # )
-
-        # email.fail_silently = True
-        # email.send()
+        messages.success(
+             request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
 
         # Pass user identifier to the otp verification page to let the user login using it
         request.session['username'] = username
@@ -268,6 +265,9 @@ def sign_up(request):
         )
         otp.save()
 
+        # Send OTP via email
+        send_otp_email(new_user, otp.otp_code)
+
         return redirect('otp_sign_up_view')
 
     else:
@@ -284,33 +284,76 @@ def otp_sign_up_view(request):
         username = request.session.get('username', '')
         otp_code = request.POST.get('otp', '')
 
+        if 'resend_otp' in request.POST:  # Handle resend OTP action
+            try:
+                user = CustomUser.objects.get(username=username)
+
+                # Check if there's a recent OTP and update its expiry time
+                try:
+                    recent_otp = Authentication_OTP.objects.filter(
+                        created_by=user,
+                        purpose="Sign-up phone number verification",
+                    ).latest('created_at')
+
+                    if recent_otp.created_at + timedelta(minutes=1) > now():
+                        messages.error(request, "يمكنك إعادة إرسال رمز التحقق بعد دقيقة واحدة.")
+                        return redirect('otp_sign_up_view')
+
+                    # Mark the recent OTP as expired
+                    recent_otp.expiry_time = now()
+                    recent_otp.save()
+                except Authentication_OTP.DoesNotExist:
+                    # No previous OTP exists, continue to generate a new one
+                    pass
+
+                # Generate and save new OTP
+                new_otp_code = generate_otp()
+                expiry_time = now() + timedelta(minutes=5)
+                ip_address = request.META.get('REMOTE_ADDR', '')
+                user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+                new_otp = Authentication_OTP(
+                    otp_code=new_otp_code,
+                    expiry_time=expiry_time,
+                    created_by=user,
+                    purpose="Sign-up phone number verification",
+                    ip_address=ip_address,
+                    user_agent=user_agent
+                )
+                new_otp.save()
+
+                # Send OTP via email
+                send_otp_email(user, new_otp_code)
+
+                messages.success(request, "تم إرسال رمز تحقق جديد إلى رقم الجوال الخاص بك.")
+            except CustomUser.DoesNotExist:
+                messages.error(request, "حدث خطأ أثناء إرسال رمز التحقق.")
+            return redirect('otp_sign_up_view')
+
+        # Verify OTP
         try:
             user = CustomUser.objects.get(username=username)
             otp = Authentication_OTP.objects.filter(
                 created_by=user,
                 purpose="Sign-up phone number verification",
-                is_used=False  # Ensure OTP hasn't been used
-            ).latest('created_at')  # Get the latest unused OTP record
+                is_used=False
+            ).latest('created_at')
 
             # Check OTP validity
             if otp.otp_code == otp_code and otp.expiry_time > now():
-                # Mark the OTP as used
                 otp.is_used = True
                 otp.used_at = now()
                 otp.save()
 
-                # Activate the user
                 user.is_active = True
                 user.save()
                 messages.success(request, "تم تفعيل الحساب بنجاح! يمكنك الأن تسجيل الدخول باستخدام حسابك.")
-
-                # Log the user in
                 login(request, user)
                 return redirect('home')
             else:
-                messages.error(request, "رمز التحقق غير صالح او غير صحيح, الرجاء المحاولة مره أخرى.")
+                messages.error(request, "رمز التحقق غير صالح أو منتهي الصلاحية، الرجاء المحاولة مره أخرى.")
         except (CustomUser.DoesNotExist, Authentication_OTP.DoesNotExist):
-            messages.error(request, "حصل خطأ. الرجاء المحاولة مره أخرى")
+            messages.error(request, "حدث خطأ أثناء التحقق.")
             return redirect('sign-up')
 
     elif request.method == "GET":
