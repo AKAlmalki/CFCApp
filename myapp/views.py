@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment, Field_visit, Field_visit_attachment
+from .models import dependent, beneficiary, beneficiary_house, beneficiary_income_expense, Dependent_income, Beneficiary_attachment, Supporter_beneficiary_sponsorship, CustomUser, Beneficiary_request, Supporter, Supporter_request, Supporter_request_attachment, Support_operation, Support_operation_attachment, Field_visit, Field_visit_attachment, Authentication_OTP
 # from .forms import CustomUserCreationForm
 # from django.db.models import Q
 from django.contrib import messages
@@ -16,6 +16,7 @@ import os
 import re
 import json
 import time
+import random
 from decimal import Decimal
 from openpyxl import Workbook
 from openpyxl.styles import *
@@ -28,6 +29,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from .tokens import generate_token
+from django.utils.timezone import now
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.forms import PasswordResetForm
@@ -84,6 +86,11 @@ def is_valid_queryparam(param, type):
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
+
+def generate_otp():
+    """Generate a 6-digit OTP code."""
+    return random.randint(100000, 999999)
+
 # View Handlers ==============================================
 
 
@@ -101,6 +108,30 @@ def home_redirect(request):
 
 def confirmBeneficiaryRequestView(request):
     return render(request, "main/confirmBeneficiaryReq.html")
+
+
+def send_otp_email(user, otp_code):
+    """
+    Sends an OTP email to the user.
+    """
+    email_subject = "رمز التحقق الخاص بك - جمعية أصدقاء المجتمع"
+    
+    # Render email body using an HTML template
+    message = render_to_string('auth/otp_template.html', {
+        'name': user.first_name,
+        'otp_code': otp_code,
+        'expiry_minutes': 5,  # Adjust this value to match your expiry time
+    })
+
+    email = EmailMessage(
+        email_subject,
+        message,
+        settings.EMAIL_HOST_USER,
+        [user.email],
+    )
+    email.content_subtype = 'html'  # Specify that the email content is HTML
+    email.fail_silently = False  # Raise errors if email sending fails
+    email.send()
 
 
 def sign_up(request):
@@ -213,36 +244,31 @@ def sign_up(request):
         new_user.groups.add(default_role)
 
         messages.success(
-            request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
+             request, "تم إنشاء حسابك بنجاح! رجاء راجع البريد الالكتروني الخاص بك لتأكيد البريد الالكتروني وتفعيل حسابك.")
 
-        # Welcome email
-        subject = "أهلا بك في جمعية أصدقاء المجتمع!"
-        message = f'\nالسلام عليكم {new_user.first_name}\n\nنرحب بك بحرارة في جمعية أصدقاء المجتمع, حيث تلتقي القلوب الرحيمة لبناء جسر من العطاء والأمل. نشعر بسعادة كبيرة لأنك قررت أن تكون جزءًا من مسيرتنا الإنسانية\n\nنحن هنا لتحفيز الخير وتشجيع العطاء, ومن خلال انضمامك إلينا, نزداد قوة وإمكانية لنقدم المساعدة والدعم لأولئك الذين هم في أمس الحاجة لها. سوف تجد في جمعية أصدقاء المجتمع فرصًا رائعة للمشاركة في المشاريع الإنسانية وتغيير حياة الناس بشكل إيجابي.\n\nندعوك لاستكشاف موقعنا والتعرف على الأنشطة المختلفة والفرص التطوعية المتاحة لك. نحن متأكدون أن تجربتك معنا ستكون مميزة وملهمة.\n\nفي حال كانت لديك أي أسئلة أو تحتاج إلى المساعدة, فلا تتردد في التواصل معنا عبر المنصة وطرق التواصل الموضحة فيها.\n\nشكرا لك مره أخرى على انضمامك إلينا, ونتطلع إلى العمل المشترك لبناء عالم أفضل.\n\nمع أطيب التحيات,\nفريق جمعية أصدقاء المجتمع'
-        from_email = settings.EMAIL_HOST_USER
-        to_list = [new_user.email]
-        send_mail(subject, message, from_email, to_list, fail_silently=True)
+        # Pass user identifier to the otp verification page to let the user login using it
+        request.session['username'] = username
 
-        # Email address Confirmation Email
-        current_site = get_current_site(request)
-        email_subject = "تفعيل حسابك في جمعية اصدقاء المجتمع"
+        # Generate and save OTP
+        otp_code = generate_otp()
+        expiry_time = now() + timedelta(minutes=5)  # OTP expires in 5 minutes
+        ip_address = request.META.get('REMOTE_ADDR', '')
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
 
-        message2 = render_to_string('auth/email_confirmation.html', {
-            'name': new_user.first_name,
-            'domain': current_site.domain,
-            'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
-            'token': generate_token.make_token(new_user),
-        })
-        email = EmailMessage(
-            email_subject,
-            message2,
-            settings.EMAIL_HOST_USER,
-            [new_user.email],
+        otp = Authentication_OTP(
+            otp_code=otp_code,
+            expiry_time=expiry_time,
+            created_by=new_user,
+            purpose="Sign-up phone number verification",
+            ip_address=ip_address,
+            user_agent=user_agent
         )
+        otp.save()
 
-        email.fail_silently = True
-        email.send()
+        # Send OTP via email
+        send_otp_email(new_user, otp.otp_code)
 
-        return redirect('/login')
+        return redirect('otp_sign_up_view')
 
     else:
 
@@ -253,23 +279,107 @@ def sign_up(request):
     return render(request, "registration/sign_up.html")
 
 
-def activate(request, uidb64, token):
+def otp_sign_up_view(request):
+    if request.method == "POST":
+        username = request.session.get('username', '')
+        otp_code = request.POST.get('otp', '')
 
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        myuser = CustomUser.objects.get(pk=uid)
+        if 'resend_otp' in request.POST:  # Handle resend OTP action
+            try:
+                user = CustomUser.objects.get(username=username)
 
-    except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
-        print("User doesn't exist")
-        myuser = None
+                # Check if there's a recent OTP and update its expiry time
+                try:
+                    recent_otp = Authentication_OTP.objects.filter(
+                        created_by=user,
+                        purpose="Sign-up phone number verification",
+                    ).latest('created_at')
 
-    if myuser is not None and generate_token.check_token(myuser, token):
-        myuser.is_active = True
-        myuser.save()
-        login(request, myuser)
-        return redirect('home')
-    else:
-        return render(request, 'auth/activation_failed.html')
+                    if recent_otp.created_at + timedelta(minutes=1) > now():
+                        messages.error(request, "يمكنك إعادة إرسال رمز التحقق بعد دقيقة واحدة.")
+                        return redirect('otp_sign_up_view')
+
+                    # Mark the recent OTP as expired
+                    recent_otp.expiry_time = now()
+                    recent_otp.save()
+                except Authentication_OTP.DoesNotExist:
+                    # No previous OTP exists, continue to generate a new one
+                    pass
+
+                # Generate and save new OTP
+                new_otp_code = generate_otp()
+                expiry_time = now() + timedelta(minutes=5)
+                ip_address = request.META.get('REMOTE_ADDR', '')
+                user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+                new_otp = Authentication_OTP(
+                    otp_code=new_otp_code,
+                    expiry_time=expiry_time,
+                    created_by=user,
+                    purpose="Sign-up phone number verification",
+                    ip_address=ip_address,
+                    user_agent=user_agent
+                )
+                new_otp.save()
+
+                # Send OTP via email
+                send_otp_email(user, new_otp_code)
+
+                messages.success(request, "تم إرسال رمز تحقق جديد إلى رقم الجوال الخاص بك.")
+            except CustomUser.DoesNotExist:
+                messages.error(request, "حدث خطأ أثناء إرسال رمز التحقق.")
+            return redirect('otp_sign_up_view')
+
+        # Verify OTP
+        try:
+            user = CustomUser.objects.get(username=username)
+            otp = Authentication_OTP.objects.filter(
+                created_by=user,
+                purpose="Sign-up phone number verification",
+                is_used=False
+            ).latest('created_at')
+
+            # Check OTP validity
+            if otp.otp_code == otp_code and otp.expiry_time > now():
+                otp.is_used = True
+                otp.used_at = now()
+                otp.save()
+
+                user.is_active = True
+                user.save()
+                messages.success(request, "تم تفعيل الحساب بنجاح! يمكنك الأن تسجيل الدخول باستخدام حسابك.")
+                login(request, user)
+                return redirect('home')
+            else:
+                messages.error(request, "رمز التحقق غير صالح أو منتهي الصلاحية، الرجاء المحاولة مره أخرى.")
+        except (CustomUser.DoesNotExist, Authentication_OTP.DoesNotExist):
+            messages.error(request, "حدث خطأ أثناء التحقق.")
+            return redirect('sign-up')
+
+    elif request.method == "GET":
+        username = request.session.get('username', '')
+        return render(request, 'auth/otp_sign_up_view.html')
+
+    return render(request, 'auth/otp_sign_up_view.html')
+
+
+# def activate(request, uidb64, token):
+
+#     try:
+#         uid = force_str(urlsafe_base64_decode(uidb64))
+#         myuser = CustomUser.objects.get(pk=uid)
+
+#     except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+#         print("User doesn't exist")
+#         myuser = None
+
+#     if myuser is not None and generate_token.check_token(myuser, token):
+#         myuser.is_active = True
+#         myuser.save()
+#         login(request, myuser)
+#         return redirect('home')
+#     else:
+#         return render(request, 'auth/activation_failed.html')
 
 
 def resend_activation_email_view(request):
@@ -286,20 +396,51 @@ def resend_activation_email_view(request):
             myuser = CustomUser.objects.get(email__iexact=email)
 
             if myuser is not None and myuser.is_active is False:
-                messages.success(
-                    request, "تم إعادة إرسال رسالة التأكيد بنجاح.")
+                # Generate a new OTP
+                otp_code = generate_otp()
+                expiry_time = now() + timedelta(minutes=5)
+
+                # Get the user's IP address
+                ip_address = request.META.get('REMOTE_ADDR', '')
+
+                # Save the OTP to the database
+                Authentication_OTP.objects.create(
+                    otp_code=otp_code,
+                    expiry_time=expiry_time,
+                    created_by=myuser,
+                    purpose="Account Activation",
+                    ip_address=ip_address,
+                )
+
+                # Render the OTP email template
+                email_subject = "رمز التحقق لتفعيل الحساب"
+                email_message = render_to_string('auth/otp_template.html', {
+                    'name': myuser.first_name,
+                    'otp_code': otp_code,
+                })
+
+                # Send OTP via email
+                email = EmailMessage(
+                    email_subject,
+                    email_message,
+                    settings.EMAIL_HOST_USER,
+                    [myuser.email],
+                )
+                email.content_subtype = 'html'  # Ensure the email is sent as HTML
+                email.send(fail_silently=True)
+
+                messages.success(request, "تم إرسال رمز التحقق إلى بريدك الإلكتروني.")
                 request.session['username'] = myuser.username
-                return redirect('resend_activation_email')
+                return redirect('verify_activation_otp')
             else:
-                messages.error(request, "الحساب مفعل لهذا البريد الالكتروني.")
+                messages.error(request, "الحساب مفعل لهذا البريد الإلكتروني.")
                 return redirect('resend_activation_email_view')
 
         except ObjectDoesNotExist:
-            messages.error(request, "البريد الإلكتروني غير موجود")
+            messages.error(request, "البريد الإلكتروني غير موجود.")
             return redirect('resend_activation_email_view')
 
     else:
-
         # Check if the user is already authenticated
         if request.user.is_authenticated:
             return redirect('home')
@@ -307,38 +448,104 @@ def resend_activation_email_view(request):
     return render(request, "auth/resend_activation_email.html")
 
 
-def resend_activation_email(request):
+def verify_activation_otp_view(request):
+    if request.method == 'POST':
+        if 'resend_otp' in request.POST:  # Handle OTP resend request
+            username = request.session.get('username')
 
-    try:
-        session_username = request.session['username']
-        user = CustomUser.objects.get(username=session_username)
+            try:
+                user = CustomUser.objects.get(username=username)
 
-        if not user.is_active:
-            current_site = get_current_site(request)
-            email_subject = "تفعيل حسابك في جمعية الاصدقاء"
+                if user.is_active:
+                    messages.warning(request, "الحساب مفعل بالفعل.")
+                    return redirect('login')
 
-            message = render_to_string('auth/email_confirmation.html', {
-                'name': user.first_name,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': generate_token.make_token(user),
-            })
+                # Check if the OTP was recently sent (cooldown period of 1 minute)
+                recent_otp = Authentication_OTP.objects.filter(
+                    created_by=user,
+                    purpose="Account Activation"
+                ).latest('created_at')
 
-            email = EmailMessage(
-                email_subject,
-                message,
-                settings.EMAIL_HOST_USER,
-                [user.email],
-            )
+                # Compare the current time with the OTP's created_at time
+                if recent_otp.created_at + timedelta(minutes=1) > now():
+                    messages.error(request, "يمكنك إعادة إرسال رمز التحقق بعد دقيقة واحدة.")
+                    return redirect('verify_activation_otp')
 
-            email.fail_silently = True
-            email.send()
-        else:
-            messages.warning(request, "الحساب مفعل بالفعل.")
-    except CustomUser.DoesNotExist:
-        messages.error(request, "المستخدم غير موجود.")
+                # Generate a new OTP
+                otp_code = generate_otp()
+                expiry_time = now() + timedelta(minutes=5)
 
-    return redirect('login')  # Change 'login' to your desired URL
+                # Get the user's IP address
+                ip_address = request.META.get('REMOTE_ADDR', '')
+
+                # Save the OTP to the database
+                Authentication_OTP.objects.create(
+                    otp_code=otp_code,
+                    expiry_time=expiry_time,
+                    created_by=user,
+                    purpose="Account Activation",
+                    ip_address=ip_address,
+                )
+
+                # Render the OTP email template
+                email_subject = "رمز التحقق لتفعيل الحساب (إعادة إرسال)"
+                email_message = render_to_string('auth/otp_template.html', {
+                    'name': user.first_name,
+                    'otp_code': otp_code,
+                })
+
+                # Send OTP via email
+                email = EmailMessage(
+                    email_subject,
+                    email_message,
+                    settings.EMAIL_HOST_USER,
+                    [user.email],
+                )
+                email.content_subtype = 'html'  # Ensure the email is sent as HTML
+                email.send(fail_silently=True)
+
+                messages.success(request, "تم إعادة إرسال رمز التحقق إلى بريدك الإلكتروني.")
+                return redirect('verify_activation_otp')
+
+            except CustomUser.DoesNotExist:
+                messages.error(request, "المستخدم غير موجود.")
+                return redirect('resend_activation_email_view')
+
+        else:  # Handle OTP verification
+            otp_code = request.POST.get('otp')
+            username = request.session.get('username')
+
+            try:
+                user = CustomUser.objects.get(username=username)
+
+                # Validate OTP
+                otp_record = Authentication_OTP.objects.filter(
+                    created_by=user,
+                    purpose="Account Activation",
+                    otp_code=otp_code,
+                    expiry_time__gt=now(),  # Ensure OTP is not expired
+                ).first()
+
+                if otp_record:
+                    # Mark the OTP as used
+                    otp_record.is_used = True
+                    otp_record.save()
+
+                    # Activate the user's account
+                    user.is_active = True
+                    user.save()
+
+                    messages.success(request, "تم تفعيل حسابك بنجاح.")
+                    return redirect('login')  # Change 'login' to your desired URL
+                else:
+                    messages.error(request, "رمز التحقق غير صحيح أو منتهي الصلاحية.")
+                    return redirect('verify_activation_otp')
+
+            except CustomUser.DoesNotExist:
+                messages.error(request, "المستخدم غير موجود.")
+                return redirect('resend_activation_email_view')
+
+    return render(request, "auth/verify_activation_otp.html")
 
 
 def signin(request):
@@ -607,23 +814,23 @@ def dashboard_beneficiaries_requests(request):
     # Determine if search_value is numeric or contains digits
     if search_value.isdigit(): # Handles numeric strings
         beneficiary_requests = beneficiary_requests.filter(
-            Q(beneficiary__first_name__icontains=search_value) |
-            Q(beneficiary__last_name__icontains=search_value) |
+            Q(user__first_name__icontains=search_value) |
+            Q(user__last_name__icontains=search_value) |
             Q(request_type__icontains=search_value) |
             Q(status__icontains=search_value) |
             Q(id=search_value)
         )
     elif any(char.isdigit() for char in search_value):  # Search contains both digits and characters
         beneficiary_requests = beneficiary_requests.filter(
-            Q(beneficiary__first_name__icontains=search_value) |
-            Q(beneficiary__last_name__icontains=search_value) |
+            Q(user__first_name__icontains=search_value) |
+            Q(user__last_name__icontains=search_value) |
             Q(request_type__icontains=search_value) |
             Q(status__icontains=search_value)
         )
     else: # No numeric characters, search only other fields
         beneficiary_requests = beneficiary_requests.filter(
-            Q(beneficiary__first_name__icontains=search_value) |
-            Q(beneficiary__last_name__icontains=search_value) |
+            Q(user__first_name__icontains=search_value) |
+            Q(user__last_name__icontains=search_value) |
             Q(request_type__icontains=search_value) |
             Q(status__icontains=search_value)
         )
@@ -638,8 +845,8 @@ def dashboard_beneficiaries_requests(request):
         data = [
             {
                 'id': req.id,
-                'first_name': req.beneficiary.first_name if req.beneficiary.first_name else "----",
-                'last_name': req.beneficiary.last_name if req.beneficiary.last_name else "----",
+                'first_name': req.user.first_name if req.user.first_name else "----",
+                'last_name': req.user.last_name if req.user.last_name else "----",
                 'request_type': req.request_type,
                 'status': req.status,
                 'created_at': req.created_at.strftime('%H:%M:%S -- %Y-%m-%d '),  # Format date as needed
@@ -1061,9 +1268,6 @@ def beneficiary_indiv(request, user_id):
             'fileSocialWarrantyInquiry')
 
         # Accessing the data for beneficiary
-        first_name = data.get('personalinfo_first_name', None)
-        second_name = data.get('personalinfo_second_name', None)
-        last_name = data.get('personalinfo_last_name', None)
         category = data.get('personalinfo_category', None)
         marital_status = data.get('personalinfo_marital_status', None)
         educational_level = data.get('personalinfo_educational_level', None)
@@ -1083,9 +1287,6 @@ def beneficiary_indiv(request, user_id):
         family_needs = data.get('familyinfo_needs_type', None)
 
         beneficiary_obj = beneficiary(
-            first_name=first_name,
-            second_name=second_name,
-            last_name=last_name,
             category=category,
             marital_status=marital_status,
             educational_level=educational_level,
@@ -1324,6 +1525,8 @@ def beneficiary_indiv(request, user_id):
             educational_status = dep.get('educationalStatus', None)
             marital_status = dep.get('martialStatus', '')
             national_id = dep.get('nationalID', '')
+            bank_iban = dep.get('bankIban', '')
+            bank_type = dep.get('bankType', '')
             health_status = dep.get('healthStatus', None)
             needs_type = dep.get('needsType', '')
             educational_degree = dep.get('educationalDegree', '')
@@ -1359,6 +1562,8 @@ def beneficiary_indiv(request, user_id):
                 date_of_birth=dependent_date_of_birth,
                 national_id=national_id,
                 national_id_exp_date=national_id_exp_date,
+                bank_iban=bank_iban,
+                bank_type=bank_type,
                 marital_status=marital_status,
                 educational_level=educational_level,
                 educational_status=educational_status,
@@ -1455,8 +1660,6 @@ def beneficiary_details(request, beneficiary_id):
             # Ensure this is working by printing the result below
             user_obj = CustomUser.objects.get(id=beneficiary_obj.user)
 
-            print('user_info', user_obj)
-
             beneficiary_housing_obj = beneficiary_house.objects.filter(
                 beneficiary_id=beneficiary_id).first()
 
@@ -1535,6 +1738,8 @@ def beneficiary_details(request, beneficiary_id):
                     'dependent_marital_status': dependent_obj.marital_status,
                     'dependent_national_id': dependent_obj.national_id,
                     'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                    'dependent_bank_iban': dependent_obj.bank_iban,
+                    'dependent_bank_type': dependent_obj.bank_type,
                     'dependent_health_status': dependent_obj.health_status,
                     'dependent_needs_type': dependent_obj.needs_type,
                     'dependent_educational_degree': dependent_obj.educational_degree,
@@ -2214,6 +2419,8 @@ def beneficiary_request_details(request, user_id):
                 'dependent_marital_status': dependent_obj.marital_status,
                 'dependent_national_id': dependent_obj.national_id,
                 'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                'dependent_bank_iban': dependent_obj.bank_iban,
+                'dependent_bank_type': dependent_obj.bank_type,
                 'dependent_health_status': dependent_obj.health_status,
                 'dependent_needs_type': dependent_obj.needs_type,
                 'dependent_educational_degree': dependent_obj.educational_degree,
@@ -2513,9 +2720,6 @@ def beneficiary_request_update_confirm(request, user_id):
             return redirect('home')
 
         # Accessing the data for beneficiary
-        first_name_personal = data.get('personalinfo_first_name', None)
-        second_name_personal = data.get('personalinfo_second_name', None)
-        last_name_personal = data.get('personalinfo_last_name', None)
         category_personal = data.get('personalinfo_category', None)
         marital_status_personal = data.get('personalinfo_marital_status', None)
         educational_level_personal = data.get('personalinfo_educational_level', None)
@@ -2539,9 +2743,6 @@ def beneficiary_request_update_confirm(request, user_id):
             user=user)
 
         # Update object values
-        beneficiary_obj.first_name = first_name_personal
-        beneficiary_obj.second_name = second_name_personal
-        beneficiary_obj.last_name = last_name_personal
         beneficiary_obj.category = category_personal
         beneficiary_obj.marital_status = marital_status_personal
         beneficiary_obj.educational_level = educational_level_personal
@@ -3262,7 +3463,7 @@ def add_sponsorship(request):
         supporter_requests_list = Supporter_request.objects.filter(
             selection_type="الجمعية").all()
 
-        beneficiary_list = beneficiary.objects.filter().all()
+        beneficiary_list = beneficiary.objects.prefetch_related('user').all()
 
         context = {
             "supporter_requests": supporter_requests_list,
@@ -3392,6 +3593,8 @@ def dashboard_beneficiary_details(request, b_id):
                 'dependent_marital_status': dependent_obj.marital_status,
                 'dependent_national_id': dependent_obj.national_id,
                 'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+                'dependent_bank_iban': dependent_obj.bank_iban,
+                'dependent_bank_type': dependent_obj.bank_type,
                 'dependent_health_status': dependent_obj.health_status,
                 'dependent_needs_type': dependent_obj.needs_type,
                 'dependent_educational_degree': dependent_obj.educational_degree,
@@ -3503,7 +3706,7 @@ def dashboard_beneficiary_request_update(request, beneficiary_id, b_request_id):
         # Save the changes
         beneficiary_request_obj.save()
 
-        messages.success(request, "لقد تم تحديث حالة طلب الداعم بنجاح!")
+        messages.success(request, "لقد تم تحديث حالة الطلب بنجاح!")
         return redirect("dashboard_beneficiaries_requests")
 
     else:
@@ -3566,6 +3769,8 @@ def dashboard_beneficiary_request_details(request, beneficiary_id, b_request_id)
             'dependent_marital_status': dependent_obj.marital_status,
             'dependent_national_id': dependent_obj.national_id,
             'dependent_national_id_exp_date': dependent_obj.national_id_exp_date,
+            'dependent_bank_iban': dependent_obj.bank_iban,
+            'dependent_bank_type': dependent_obj.bank_type,
             'dependent_health_status': dependent_obj.health_status,
             'dependent_needs_type': dependent_obj.needs_type,
             'dependent_educational_degree': dependent_obj.educational_degree,

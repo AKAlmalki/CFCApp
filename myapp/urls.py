@@ -285,22 +285,31 @@ urlpatterns = [
         views.validate_phonenumber,
         name="validate_phonenumber"
     ),
+    # path(
+    #     "activate/<uidb64>/<token>/",
+    #     views.activate,
+    #     name="activate"
+    # ),
     path(
-        "activate/<uidb64>/<token>/",
-        views.activate,
-        name="activate"
+        'verify-activation-otp/',
+        views.verify_activation_otp_view,
+        name='verify_activation_otp'
     ),
-    path(
-        'resend-activation/',
-        views.resend_activation_email,
-        name='resend_activation_email'
-    ),
+    # path(
+    #     'resend-activation/',
+    #     views.resend_activation_email,
+    #     name='resend_activation_email'
+    # ),
     path(
         'resend-activation-email/',
         views.resend_activation_email_view,
         name="resend_activation_email_view"
     ),
-
+    path(
+        'otp_sign_up_view/',
+        views.otp_sign_up_view,
+        name="otp_sign_up_view"
+    ),
     path(
         'password_reset/',
         views.password_reset_request,

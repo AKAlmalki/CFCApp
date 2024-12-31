@@ -73,15 +73,15 @@
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_first_name">الأسم الأول<span style="color: red">*</span></h6>
-                      <input type="text" class="form-control" id="id_personalinfo_first_name" name="personalinfo_first_name" data-bs-title="الأسم الأول" value="{{ beneficiary.first_name }}">
+                      <input type="text" class="form-control" id="id_personalinfo_first_name" name="personalinfo_first_name" data-bs-title="الأسم الأول" value="{{ beneficiary.user.first_name }}" disabled readonly>
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_second_name">الأسم الثاني<span style="color: red">*</span></h6>
-                      <input type="text" class="form-control" id="id_personalinfo_second_name" name="personalinfo_second_name" data-bs-title="الأسم الثاني" value="{{ beneficiary.second_name }}">
+                      <input type="text" class="form-control" id="id_personalinfo_second_name" name="personalinfo_second_name" data-bs-title="الأسم الثاني" value="{{ beneficiary.user.second_name }}" disabled readonly>
                     </div>
                     <div class="mb-3 form-group">
                       <h6 class="col form-label" for="id_personalinfo_last_name">الأسم الأخير<span style="color: red">*</span></h6>
-                      <input type="text" class="form-control" id="id_personalinfo_last_name" name="personalinfo_last_name" data-bs-title="الأسم الأخير" value="{{ beneficiary.last_name }}">
+                      <input type="text" class="form-control" id="id_personalinfo_last_name" name="personalinfo_last_name" data-bs-title="الأسم الأخير" value="{{ beneficiary.user.last_name }}" disabled readonly>
                     </div>
                   </div>
         
