@@ -252,7 +252,7 @@ def sign_up(request):
         # Generate and save OTP
         otp_code = generate_otp()
         expiry_time = now() + timedelta(minutes=5)  # OTP expires in 5 minutes
-        ip_address = request.META.get('REMOTE_ADDR', 'UNKNOWN')
+        ip_address = request.META.get('REMOTE_ADDR', None)
         user_agent = request.META.get('HTTP_USER_AGENT', '')
 
         otp = Authentication_OTP(
@@ -309,7 +309,7 @@ def otp_sign_up_view(request):
                 # Generate and save new OTP
                 new_otp_code = generate_otp()
                 expiry_time = now() + timedelta(minutes=5)
-                ip_address = request.META.get('REMOTE_ADDR', 'UNKNOWN')
+                ip_address = request.META.get('REMOTE_ADDR', None)
                 user_agent = request.META.get('HTTP_USER_AGENT', '')
 
                 new_otp = Authentication_OTP(
@@ -401,7 +401,7 @@ def resend_activation_email_view(request):
                 expiry_time = now() + timedelta(minutes=5)
 
                 # Get the user's IP address
-                ip_address = request.META.get('REMOTE_ADDR', 'UNKNOWN')
+                ip_address = request.META.get('REMOTE_ADDR', None)
 
                 # Save the OTP to the database
                 Authentication_OTP.objects.create(
@@ -476,7 +476,7 @@ def verify_activation_otp_view(request):
                 expiry_time = now() + timedelta(minutes=5)
 
                 # Get the user's IP address
-                ip_address = request.META.get('REMOTE_ADDR', 'UNKNOWN')
+                ip_address = request.META.get('REMOTE_ADDR', None)
 
                 # Save the OTP to the database
                 Authentication_OTP.objects.create(
