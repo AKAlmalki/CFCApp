@@ -3147,9 +3147,8 @@
       // Remove 'Content-Type' header to allow the browser to add it
       // along with the correct 'boundary'
       // delete options.headers['Content-Type'];
-  
 
-      fetch('http://127.0.0.1:8000{% url 'beneficiary_new' user_id=user.id %}', {
+      fetch('https://beneficiaries.asdiqa.org.sa{% url 'beneficiary_new' user_id=user.id %}', {
           method: 'POST',
           body: formData,
       })
