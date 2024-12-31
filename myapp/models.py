@@ -64,7 +64,7 @@ class Authentication_OTP(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     purpose = models.CharField(max_length=50)
-    ip_address = models.GenericIPAddressField()
+    ip_address = models.GenericIPAddressField(null=True)
     user_agent = models.CharField(max_length=128)
 
     def __str__(self):
