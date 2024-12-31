@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>إعادة تفعيل الحساب</title>
+    <title>تفعيل الحساب</title>
     {% comment %} Bootstrp CSS {% endcomment %} {% comment %} {% load bootstrap5
     %} {% endcomment %} {% comment %} {% bootstrap_css %} {% endcomment %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.rtl.min.css' %}" />
@@ -55,8 +55,9 @@
         <img class="img-fluid rounded-3 card-img-top" src="{% static '/imgs/logo-c-1.png' %}" alt="Girl in a jacket">
         </a>
         <div class="card-body">
+          <img class="rounded-3 mx-auto d-block my-5" src="{% static '/imgs/sms.png' %}" alt="SMS message icon" width="140px">
           <h2 class="card-title fw-bold mb-3 mt-4 text-center">تفعيل الحساب</h2>
-          <p class="text-center text-muted mb-3">أدخل البريد الالكتروني الخاص بحسابك  لإعادة إرسال رسالة تفعيل الحساب ولتأكيد البريد الالكتروني</p>
+          <p class="text-center text-muted mb-3">أدخل الرمز الذي تم إرساله الى البريد الإلكتروني الخاص بك لإكمال عملية التسجيل وتفعيل حسابك</p>
           <div class="col">
             
             {% if messages %}
@@ -93,18 +94,17 @@
 
             <form method="post" id="reactivate-account-form">
               {% csrf_token %}
-              {% comment %} {{form}} {% endcomment %}
               <div class="col mb-3">
-                <label for="id_email" class="form-label"
-                  >البريد الالكتروني</label
-                >
-                <input type="email" placeholder="you@example.com" name="email" class="form-control text-start" maxlength="320" id="id_email">
+                <label for="id_otp" class="form-label">رمز التحقق</label>
+                <input type="text" placeholder="أدخل رمز التحقق" name="otp" class="form-control text-start" maxlength="10" id="id_otp" inputmode="numeric" autocomplete="one-time-code">
               </div>
               
-              <button type="submit" class="w-100 btn btn-lg btn-primary mt-3" id="reactivate_btn">تأكيد البريد الالكتروني</button>
-              <p class="mt-4 text-center">ليس لديك حساب؟ <a href="/sign-up">تسجيل حساب جديد</a></p>
-              <p class="mt-2 text-center">لديك حساب بالفعل؟ <a href="/login">تسجيل الدخول</a></p>
-            </form>
+              <button type="submit" class="w-100 btn btn-lg btn-primary mt-3" id="reactivate_btn">التحقق من الرمز</button>
+            
+              <button type="submit" name="resend_otp" value="true" class="w-100 btn btn-lg btn-secondary mt-3">إعادة إرسال رمز التحقق</button>
+            
+              <p class="mt-4 text-center">لديك حساب؟ <a href="/login">تسجيل الدخول</a></p>
+            </form>            
           </div>
         </div>
       </div>
@@ -116,16 +116,15 @@
         // Retrieve the CSRF token from the page
         var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
 
-        // Email address validator
+        // OTP validator to ensure it's a 6-digit numeric code
         $.validator.addMethod(
-          "emailRegex",
+          "otpRegex",
           function (value, element) {
             return (
-              this.optional(element) ||
-              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+              this.optional(element) || /^[0-9]{6}$/.test(value)
             );
           },
-          "الرجاء إدخال بريد إلكتروني صحيح."
+          "الرجاء إدخال رمز التحقق (OTP) مكون من 6 أرقام."
         );
 
         // The below code will change the default validation messages
@@ -178,14 +177,15 @@
 
             // Adding the rules (validations) for each input in the form.
             rules: {
-              email: {
+              otp: {
                 required: true,
-                emailRegex: true,
+                otpRegex: true,
               },
             },
             messages: {
-              username: {
-                // usernameRegex: "اسم المستخدم يتكون من حروف انجليزية وارقام فقط.",
+              otp: {
+                required: "الرجاء إدخال رمز التحقق (OTP).",
+                otpRegex: "الرجاء إدخال رمز مكون من 6 أرقام.",
               },
             },
           });

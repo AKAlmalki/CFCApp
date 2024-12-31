@@ -363,23 +363,23 @@ def otp_sign_up_view(request):
     return render(request, 'auth/otp_sign_up_view.html')
 
 
-def activate(request, uidb64, token):
+# def activate(request, uidb64, token):
 
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        myuser = CustomUser.objects.get(pk=uid)
+#     try:
+#         uid = force_str(urlsafe_base64_decode(uidb64))
+#         myuser = CustomUser.objects.get(pk=uid)
 
-    except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
-        print("User doesn't exist")
-        myuser = None
+#     except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+#         print("User doesn't exist")
+#         myuser = None
 
-    if myuser is not None and generate_token.check_token(myuser, token):
-        myuser.is_active = True
-        myuser.save()
-        login(request, myuser)
-        return redirect('home')
-    else:
-        return render(request, 'auth/activation_failed.html')
+#     if myuser is not None and generate_token.check_token(myuser, token):
+#         myuser.is_active = True
+#         myuser.save()
+#         login(request, myuser)
+#         return redirect('home')
+#     else:
+#         return render(request, 'auth/activation_failed.html')
 
 
 def resend_activation_email_view(request):
@@ -396,20 +396,51 @@ def resend_activation_email_view(request):
             myuser = CustomUser.objects.get(email__iexact=email)
 
             if myuser is not None and myuser.is_active is False:
-                messages.success(
-                    request, "تم إعادة إرسال رسالة التأكيد بنجاح.")
+                # Generate a new OTP
+                otp_code = generate_otp()
+                expiry_time = now() + timedelta(minutes=5)
+
+                # Get the user's IP address
+                ip_address = request.META.get('REMOTE_ADDR', '')
+
+                # Save the OTP to the database
+                Authentication_OTP.objects.create(
+                    otp_code=otp_code,
+                    expiry_time=expiry_time,
+                    created_by=myuser,
+                    purpose="Account Activation",
+                    ip_address=ip_address,
+                )
+
+                # Render the OTP email template
+                email_subject = "رمز التحقق لتفعيل الحساب"
+                email_message = render_to_string('auth/otp_template.html', {
+                    'name': myuser.first_name,
+                    'otp_code': otp_code,
+                })
+
+                # Send OTP via email
+                email = EmailMessage(
+                    email_subject,
+                    email_message,
+                    settings.EMAIL_HOST_USER,
+                    [myuser.email],
+                )
+                email.content_subtype = 'html'  # Ensure the email is sent as HTML
+                email.send(fail_silently=True)
+
+                messages.success(request, "تم إرسال رمز التحقق إلى بريدك الإلكتروني.")
                 request.session['username'] = myuser.username
-                return redirect('resend_activation_email')
+                return redirect('verify_activation_otp')
             else:
-                messages.error(request, "الحساب مفعل لهذا البريد الالكتروني.")
+                messages.error(request, "الحساب مفعل لهذا البريد الإلكتروني.")
                 return redirect('resend_activation_email_view')
 
         except ObjectDoesNotExist:
-            messages.error(request, "البريد الإلكتروني غير موجود")
+            messages.error(request, "البريد الإلكتروني غير موجود.")
             return redirect('resend_activation_email_view')
 
     else:
-
         # Check if the user is already authenticated
         if request.user.is_authenticated:
             return redirect('home')
@@ -417,38 +448,104 @@ def resend_activation_email_view(request):
     return render(request, "auth/resend_activation_email.html")
 
 
-def resend_activation_email(request):
+def verify_activation_otp_view(request):
+    if request.method == 'POST':
+        if 'resend_otp' in request.POST:  # Handle OTP resend request
+            username = request.session.get('username')
 
-    try:
-        session_username = request.session['username']
-        user = CustomUser.objects.get(username=session_username)
+            try:
+                user = CustomUser.objects.get(username=username)
 
-        if not user.is_active:
-            current_site = get_current_site(request)
-            email_subject = "تفعيل حسابك في جمعية الاصدقاء"
+                if user.is_active:
+                    messages.warning(request, "الحساب مفعل بالفعل.")
+                    return redirect('login')
 
-            message = render_to_string('auth/email_confirmation.html', {
-                'name': user.first_name,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': generate_token.make_token(user),
-            })
+                # Check if the OTP was recently sent (cooldown period of 1 minute)
+                recent_otp = Authentication_OTP.objects.filter(
+                    created_by=user,
+                    purpose="Account Activation"
+                ).latest('created_at')
 
-            email = EmailMessage(
-                email_subject,
-                message,
-                settings.EMAIL_HOST_USER,
-                [user.email],
-            )
+                # Compare the current time with the OTP's created_at time
+                if recent_otp.created_at + timedelta(minutes=1) > now():
+                    messages.error(request, "يمكنك إعادة إرسال رمز التحقق بعد دقيقة واحدة.")
+                    return redirect('verify_activation_otp')
 
-            email.fail_silently = True
-            email.send()
-        else:
-            messages.warning(request, "الحساب مفعل بالفعل.")
-    except CustomUser.DoesNotExist:
-        messages.error(request, "المستخدم غير موجود.")
+                # Generate a new OTP
+                otp_code = generate_otp()
+                expiry_time = now() + timedelta(minutes=5)
 
-    return redirect('login')  # Change 'login' to your desired URL
+                # Get the user's IP address
+                ip_address = request.META.get('REMOTE_ADDR', '')
+
+                # Save the OTP to the database
+                Authentication_OTP.objects.create(
+                    otp_code=otp_code,
+                    expiry_time=expiry_time,
+                    created_by=user,
+                    purpose="Account Activation",
+                    ip_address=ip_address,
+                )
+
+                # Render the OTP email template
+                email_subject = "رمز التحقق لتفعيل الحساب (إعادة إرسال)"
+                email_message = render_to_string('auth/otp_template.html', {
+                    'name': user.first_name,
+                    'otp_code': otp_code,
+                })
+
+                # Send OTP via email
+                email = EmailMessage(
+                    email_subject,
+                    email_message,
+                    settings.EMAIL_HOST_USER,
+                    [user.email],
+                )
+                email.content_subtype = 'html'  # Ensure the email is sent as HTML
+                email.send(fail_silently=True)
+
+                messages.success(request, "تم إعادة إرسال رمز التحقق إلى بريدك الإلكتروني.")
+                return redirect('verify_activation_otp')
+
+            except CustomUser.DoesNotExist:
+                messages.error(request, "المستخدم غير موجود.")
+                return redirect('resend_activation_email_view')
+
+        else:  # Handle OTP verification
+            otp_code = request.POST.get('otp')
+            username = request.session.get('username')
+
+            try:
+                user = CustomUser.objects.get(username=username)
+
+                # Validate OTP
+                otp_record = Authentication_OTP.objects.filter(
+                    created_by=user,
+                    purpose="Account Activation",
+                    otp_code=otp_code,
+                    expiry_time__gt=now(),  # Ensure OTP is not expired
+                ).first()
+
+                if otp_record:
+                    # Mark the OTP as used
+                    otp_record.is_used = True
+                    otp_record.save()
+
+                    # Activate the user's account
+                    user.is_active = True
+                    user.save()
+
+                    messages.success(request, "تم تفعيل حسابك بنجاح.")
+                    return redirect('login')  # Change 'login' to your desired URL
+                else:
+                    messages.error(request, "رمز التحقق غير صحيح أو منتهي الصلاحية.")
+                    return redirect('verify_activation_otp')
+
+            except CustomUser.DoesNotExist:
+                messages.error(request, "المستخدم غير موجود.")
+                return redirect('resend_activation_email_view')
+
+    return render(request, "auth/verify_activation_otp.html")
 
 
 def signin(request):
