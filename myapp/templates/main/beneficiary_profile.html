@@ -651,6 +651,17 @@
     // Global variables
     var editUserForm = $("#editUserForm");
 
+    $('#submitEditUserForm').click(function(e) {
+      e.preventDefault(); // Prevent default form submission
+  
+      if (editUserForm.valid() === true) {
+          console.log("Form is valid. Submitting...");
+          editUserForm.submit(); // Submit the form if valid
+      } else {
+          console.log("Form is invalid. Check validation rules.");
+      }
+    });
+
     // Validator method for first, second, and last name fields in the form
     $.validator.addMethod(
       "nameRegex",
