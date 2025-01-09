@@ -37,7 +37,7 @@ from django.contrib.auth.models import User, Group
 from django.db.models.query_utils import Q
 from django.db.models import Sum, Avg, Count, F
 from .decorators import group_required
-from ninja.pagination import paginate
+# from ninja.pagination import paginate
 
 # Set up logging
 logger = logging.getLogger(__name__)
