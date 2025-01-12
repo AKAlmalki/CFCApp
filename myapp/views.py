@@ -628,9 +628,9 @@ def signin(request):
                     otp_code=otp_code,
                     expiry_time=now() + timedelta(minutes=5),
                     created_by=user,
-                    purpose="Account Activation",
+                    purpose="Login",
                     ip_address=request.META.get('REMOTE_ADDR'),
-                    user_agent=request.META.get('HTTP_USER_AGENT'),
+                    user_agent=request.META.get('HTTP_USER_AGENT', '')[:512],
                 )
                 # Send OTP via SMS
                 if send_otp_via_sms(normalized_phone, otp_code):
@@ -675,7 +675,7 @@ def verify_otp_login(request):
                 otp_code=otp_code,
                 is_used=False,
                 expiry_time__gt=now(),
-                purpose="Account Login",
+                purpose="Login",
             ).first()
 
             if otp_record:
@@ -684,20 +684,17 @@ def verify_otp_login(request):
                 otp_record.used_at = now()
                 otp_record.save()
 
-                # Mark phone number as verified
-                user.is_phone_number_verified = True
-                user.phone_number_verified_at = now()
                 user.save()
 
                 # Log the user in
                 login(request, user)
-                messages.success(request, "تم التحقق من رقم هاتفك بنجاح!")
+                messages.success(request, "تم التحقق من رقم هاتفك بنجاح!", 200)
                 return redirect("home")
             else:
-                messages.error(request, "رمز التحقق غير صحيح أو منتهي الصلاحية.")
+                messages.error(request, "رمز التحقق غير صحيح أو منتهي الصلاحية.", status=400)
                 return redirect("login")
         else:
-            messages.error(request, "رقم الهاتف غير مسجل.")
+            messages.error(request, "رقم الهاتف غير مسجل.", status=404)
             return redirect("login")
 
 
