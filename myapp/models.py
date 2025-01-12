@@ -50,6 +50,10 @@ class CustomUser(AbstractUser):
     national_id_exp_date = models.DateField(null=True)
     nationality = models.CharField(max_length=64, null=True)
     email = models.EmailField(unique=True)
+    is_email_verified = models.BooleanField(default=False)
+    is_phone_number_verified = models.BooleanField(default=False)
+    email_verified_at = models.DateTimeField(null=True)
+    phone_number_verified_at = models.DateTimeField(null=True)
 
     def __str__(self):
         return self.username
