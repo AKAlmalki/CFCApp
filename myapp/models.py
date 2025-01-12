@@ -69,7 +69,7 @@ class Authentication_OTP(models.Model):
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     purpose = models.CharField(max_length=50)
     ip_address = models.GenericIPAddressField(null=True)
-    user_agent = models.CharField(max_length=128)
+    user_agent = models.CharField(max_length=512)
 
     def __str__(self):
         return "OTP code: " + self.otp_code + " - expire_at: " + self.expiry_time + " - created_at: " + self.created_at + " - user agent: " + self.user_agent + " - purpose: " + self.purpose

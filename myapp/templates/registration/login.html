@@ -75,7 +75,7 @@
               {% csrf_token %}
               <input type="hidden" name="phone_number" id="otp-phone-number">
               <label for="otp-input" class="form-label">أدخل رمز التحقق المرسل:</label>
-              <input type="text" id="otp-input" name="otp" class="form-control" required>
+              <input type="text" id="otp-input" name="otp" class="form-control" autocomplete="one-time-code" placeholder="أدخل رمز التحقق" required>
             </form>
           </div>
           <div class="modal-footer">
