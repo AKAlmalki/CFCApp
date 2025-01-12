@@ -8,33 +8,10 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <title>تسجيل الدخول</title>
-    {% comment %} Bootstrp CSS {% endcomment %} {% comment %} {% load bootstrap5
-    %} {% endcomment %} {% comment %} {% bootstrap_css %} {% endcomment %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.rtl.min.css' %}" />
-    {% comment %} <link rel="stylesheet" href="{% static 'css/bootstrap.rtl.css' %}" /> {% endcomment %}
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-    {% comment %} <script src="{% static 'js/bootstrap.min.js' %}"></script> {% endcomment %}
-    {% comment %} <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css"
-      integrity="sha384-nU14brUcp6StFntEOOEBvcJm4huWjB0OcIeQ3fltAfSmuZFrkAif0T+UtNGlKKQv"
-      crossorigin="anonymous"
-    /> {% endcomment %}
-    <!-- favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static '/imgs/favicon_io/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static '/imgs/favicon_io/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static '/imgs/favicon_io/favicon-16x16.png' %}">
-    <link rel="manifest" href="{% static '/imgs/favicon_io/site.webmanifest' %}">
-    {% comment %} arabic fonts {% endcomment %}
-    {% block head %}{% endblock %}
-    <!-- Include jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Include jQuery Validation Plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;500;700;800&display=swap" rel="stylesheet">
     <style>
       body {
@@ -46,83 +23,37 @@
         height: 100vh;
       }
     </style>
-
   </head>
   <body id="id_background_container">
     <div class="row mx-auto justify-content-center">
       <div class="card mt-5 mb-4 p-5 my-4 bg-light rounded-3" style="width: 35rem;">
         <a href="{% url 'home' %}">
-        <img class="img-fluid rounded-3 card-img-top" src="{% static '/imgs/logo-c-1.png' %}" alt="Girl in a jacket">
+        <img class="img-fluid rounded-3 card-img-top" src="{% static '/imgs/logo-c-1.png' %}" alt="Logo">
         </a>
         <div class="card-body">
           <h2 class="card-title fw-bold mb-5 mt-4 text-center">تسجيل الدخول</h2>
           <div class="col">
-            
             {% if messages %}
-              {% comment %} {% for message in messages %}
-                {% if message.tags == "error" %}
-                  <div class="alert alert-danger" role="alert">{{message}}</div>
-                {% endif%}
-              {% endfor %} {% endcomment %}
-      
-              {% comment %} Icons for alerts {% endcomment %}
-              <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
-                <symbol id="check-circle-fill" viewBox="0 0 16 16">
-                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                </symbol>
-                <symbol id="info-fill" viewBox="0 0 16 16">
-                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-                </symbol>
-                <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
-                  <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                </symbol>
-              </svg>
-      
               {% for message in messages %}
-                
-                <div class="alert alert-{% if message.tags == "error" %}danger{% elif "activation_email" in message.extra_tags %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show d-flex align-items-center" role="alert">
-                  <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Info:" width="16" height="16"><use xlink:href="#info-fill"/></svg>
-                  <div>
-                    <div>
-                      {% if "activation_email" in message.extra_tags %}<p>{% endif %}{{ message }} {% if "activation_email" in message.extra_tags %}
-                      <a href="{% url 'resend_activation_email_view' %}">اضغط هنا</a> لإعادة إرسال رسالة التفعيل.</p>
-                      {% endif %}
-                    </div>
-                  </div>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  {{ message }}
                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
               {% endfor %}
             {% endif %}
-
-            <form method="post" id="sign-in-form">
-              {% csrf_token %}
-              {% comment %} {{form}} {% endcomment %}
-              <div class="col mb-3">
-                <label for="id_username" class="form-label">البريد الإلكتروني أو رقم الهوية/الإقامة</label>
-                <input type="text" name="username" class="form-control" autofocus id="id_username">
-              </div>
-              <div class="col mb-3">
-                <label for="id_password" class="form-label"
-                  >كلمة المرور</label
-                >
-                <input type="password" name="password" class="form-control" id="id_password">
-              </div>
-              <div class="row mb-4">
-                <div class="col justify-content-center">
-                  <!-- Checkbox -->
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="id_remember_me_checkbox" name="remember_me"/>
-                    <label class="form-check-label" for="id_remember_me_checkbox"> تذكرني </label>
-                  </div>
-                </div>
             
-                <div class="col text-end">
-                  <!-- Simple link -->
-                  <a href="{% url 'password_reset' %}">نسيت كلمة المرور؟</a>
-                </div>
+            <!-- Login Form -->
+            <form method="post" id="sign-in-form" action="{% url 'login' %}">
+              {% csrf_token %}
+              <div class="col mb-3">
+                <label for="id_username" class="form-label">اسم المستخدم / رقم الهاتف / رقم الهوية</label>
+                <input type="text" name="username" class="form-control" id="id_username" placeholder="أدخل اسم المستخدم أو رقم الهاتف أو رقم الهوية" required>
               </div>
-              
-              <button type="submit" class="w-100 btn btn-lg btn-primary mt-3" id="sign_in_btn">تسجيل الدخول</button>
+              <div class="col mb-3" id="password-field-container" style="display: none;">
+                <label for="id_password" class="form-label">كلمة المرور</label>
+                <input type="password" name="password" class="form-control" id="id_password" placeholder="أدخل كلمة المرور">
+              </div>
+              <button type="button" class="w-100 btn btn-lg btn-primary mt-3" id="sign_in_btn">تسجيل الدخول</button>
               <p class="mt-4 text-center">ليس لديك حساب؟ <a href="{% url 'sign-up' %}">تسجيل حساب جديد</a></p>
               <p class="mt-1 text-center">لم تصلك رسالة التفعيل؟ <a href="{% url 'resend_activation_email_view' %}">اضغط هنا</a></p>
             </form>
@@ -131,154 +62,94 @@
       </div>
     </div>
 
+    <!-- OTP Modal -->
+    <div class="modal fade" id="otp-modal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">رمز التحقق</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="otp-form">
+              {% csrf_token %}
+              <input type="hidden" name="phone_number" id="otp-phone-number">
+              <label for="otp-input" class="form-label">أدخل رمز التحقق المرسل:</label>
+              <input type="text" id="otp-input" name="otp" class="form-control" required>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" id="verify-otp-btn" class="btn btn-primary">تأكيد</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       $(document).ready(function () {
+        const usernameField = $("#id_username");
+        const passwordContainer = $("#password-field-container");
+        const otpModal = new bootstrap.Modal($("#otp-modal"));
 
-        // Retrieve the CSRF token from the page
-        var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
+        // Dynamic field behavior
+        usernameField.on("input", function () {
+          const input = $(this).val();
+          const phonePattern = /^(5|9665|\+9665)\d{8}$/;
+          const nationalIdPattern = /^\d{10}$/;
+          const usernamePattern = /^[a-zA-Z0-9_]{3,}$/;
 
-        // Validator method for username
-        $.validator.addMethod(
-          "usernameRegex",
-          function (value, element) {
-            return (
-              this.optional(element) || /^[a-zA-Z0-9_]{2,20}$/i.test(value)
-            );
-          },
-        );
-
-        $.validator.addMethod(
-          "usernameOrEmailOrNationalID",
-          function (value, element) {
-            // Username regex (alphanumeric + underscore, between 2 and 20 characters)
-            var usernameRegex = /^[a-zA-Z0-9_]{2,20}$/;
-            
-            // Updated email regex to handle a wider range of valid email formats
-            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-            
-            // National ID regex (numeric, 10 to 15 digits - adjust as needed)
-            var nationalIDRegex = /^[0-9]{10,15}$/;
-
-            // Check if value matches any of the three formats
-            return (
-              this.optional(element) || usernameRegex.test(value) || emailRegex.test(value) || nationalIDRegex.test(value)
-            );
-          },
-          "الرجاء إدخال بريد الكتروني, اسم مستخدم او رقم هوية/إقامة صحيح."
-        );
-
-
-        // Validator method for first, second, and last name fields in the form
-        $.validator.addMethod(
-          "nameRegex",
-          function (value, element) {
-            return (
-              this.optional(element) || /^[a-zA-Z0-9\u0621-\u064A]*$/i.test(value)
-            );
-          },
-          "يحتوي الأسم على حروف فقط."
-        );
-
-        // Validator method for the phone number [Saudi Arabia Only]
-        $.validator.addMethod(
-          "saudiPhoneRegex",
-          function (value, element) {
-            return (
-              this.optional(element) || /^(5\d{8})$/i.test(value)
-            );
-          },
-          "الرجاء إدخال رقم جوال صحيح يبدأ برقم 5 وبطول 9 ارقام."
-        );
-
-        // Email address validator
-        $.validator.addMethod(
-          "emailRegex",
-          function (value, element) {
-            return (
-              this.optional(element) ||
-              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
-            );
-          },
-          "الرجاء إدخال بريد إلكتروني صحيح."
-        );
-
-        // The below code will change the default validation messages
-        $.extend($.validator.messages, {
-          required: "هذا الحقل مطلوب.",
-          remote: "الرجاء اصلاح هذا الحقل.",
-          email: "الرجاء إدخال بريد الكتروني صالح.",
-          url: "الرجاء إدخال رابط صحيح وفعال.",
-          date: "الرجاء إدخال تاريخ صالح.",
-          dateISO: "الرجاء إدخال تاريخ صحيح (بصيغة ISO).",
-          number: "الرجاء إدخال رقم صحيح.",
-          digits: "الرجاء إدخال أرقام فقط.",
-          creditcard: "الرجاء إدخال رقم بطاقة ائتمان صالحة.",
-          equalTo: "رجاء أدخل نفس القيمة مره أخرى.",
-          accept: "الرجاء إدخال قيمة بإمتداد صحيح.",
-          maxlength: $.validator.format("الرجاء عدم إدخال أكثر من {0} أحرف."),
-          minlength: $.validator.format("الرجاء إدخال على الأقل {0} حروف."),
-          rangelength: $.validator.format(
-            "الرجاء إدخال قيمة طولها يكون من {0} إلى {1} أحرف."
-          ),
-          range: $.validator.format("الرجاء إدخال رقم بين {0} و {1}."),
-          max: $.validator.format(" الرجاء إدخال قيمة أقل من أو تساوي {0}."),
-          min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
+          if (phonePattern.test(input)) {
+            passwordContainer.hide();
+          } else if (nationalIdPattern.test(input) || usernamePattern.test(input)) {
+            passwordContainer.show();
+          } else {
+            passwordContainer.hide();
+          }
         });
 
-        // When ".next" button is clicked, the following function is executed
-        $("#sign_in_btn").click(function () {
-          var form = $("#sign-in-form");
+        // Handle login submission
+        $("#sign_in_btn").click(function (e) {
+          e.preventDefault();
+          const input = usernameField.val();
+          const phonePattern = /^(5|9665|\+9665)\d{8}$/;
 
-          form.validate({
-            errorElement: "span",
-            errorClass: "help-block invalid-feedback",
-            highlight: function (element, errorClass, validClass) {
-              $(element).closest(".form-group").addClass("has-error");
-            },
-            unhighlight: function (element, errorClass, validClass) {
-              $(element).closest(".form-group").removeClass("has-error");
-            },
-            errorPlacement: function (error, element) {
-              // Check if the element is inside an input-group
-              if (element.parent(".input-group").length) {
-                // Place the error after the input-group
-                error.insertAfter(element.parent(".input-group"));
-              } else {
-                // Default placement for other elements
-                error.insertAfter(element);
-              }
-            },
-            focusInvalid: true,
+          if (phonePattern.test(input)) {
+            // Send OTP if phone number
+            $.post("{% url 'login' %}", {
+              username: input,
+              csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            })
+            .done(function () {
+              $("#otp-phone-number").val(input);
+              otpModal.show();
+            })
+            .fail(function () {
+              alert("فشل في إرسال رمز التحقق. حاول مرة أخرى.");
+            });
+          } else {
+            // Submit form for username/national ID
+            $("#sign-in-form").submit();
+          }
+        });
 
-            // Adding the rules (validations) for each input in the form.
-            rules: {
-              username: {
-                usernameOrEmailOrNationalID: true,
-                minlength: 3,
-                maxlength: 35,
-                required: true,
-              },
-              password: {
-                required: true,
-              },
-              phonenumber: {
-                required: true,
-                saudiPhoneRegex: true,
-              },
-              email: {
-                required: true,
-                emailRegex: true,
-              },
-            },
-            messages: {
-              username: {
-                usernameRegex: "اسم المستخدم يتكون من حروف انجليزية وارقام فقط.",
-              },
-            },
+        // Verify OTP
+        $("#verify-otp-btn").click(function () {
+          const phoneNumber = $("#otp-phone-number").val();
+          const otp = $("#otp-input").val();
+
+          $.post("{% url 'verify_otp_login' %}", {
+            phone_number: phoneNumber,
+            otp: otp,
+            csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+          })
+          .done(function () {
+            window.location.href = "{% url 'home' %}";
+          })
+          .fail(function () {
+            alert("رمز التحقق غير صحيح.");
           });
         });
-
-      }); // (document).ready() end line
+      });
     </script>
   </body>
 </html>

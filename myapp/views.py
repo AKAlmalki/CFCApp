@@ -17,6 +17,7 @@ import re
 import json
 import time
 import random
+import requests
 from decimal import Decimal
 from openpyxl import Workbook
 from openpyxl.styles import *
@@ -37,7 +38,9 @@ from django.contrib.auth.models import User, Group
 from django.db.models.query_utils import Q
 from django.db.models import Sum, Avg, Count, F
 from .decorators import group_required
-# from ninja.pagination import paginate
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -90,6 +93,67 @@ def is_ajax(request):
 def generate_otp():
     """Generate a 6-digit OTP code."""
     return random.randint(100000, 999999)
+
+
+def normalize_phone_number(phone):
+    """
+    Normalize the phone number entered by the user into the format used in the database (e.g., 541546323).
+    
+    Accepted formats:
+    - +9665XXXXXXXX
+    - 9665XXXXXXXX
+    - 5XXXXXXXX
+
+    Returns:
+    - The normalized phone number (e.g., 541546323) if valid.
+    - None if the phone number is invalid.
+    """
+    # Remove any non-numeric characters (if necessary)
+    phone = ''.join(filter(str.isdigit, phone))
+
+    # Check and normalize based on known patterns
+    if phone.startswith('+9665') and len(phone) == 13:  # +9665XXXXXXXX
+        return phone[4:]  # Remove '+966'
+    elif phone.startswith('9665') and len(phone) == 12:  # 9665XXXXXXXX
+        return phone[3:]  # Remove '966'
+    elif phone.startswith('5') and len(phone) == 9:  # 5XXXXXXXX
+        return phone  # Already in the correct format
+
+    # If none of the patterns match, return None (invalid phone number)
+    return None
+
+
+def send_otp_via_sms(phone_number, otp):
+    api_url = os.environ.get('SMS_PROVIDER_API_BASE_URL') + "/api/v1/sendsms"
+    api_key = os.environ.get('SMS_PROVIDER_API_KEY')
+    username = os.environ.get('SMS_PROVIDER_USERNAME')
+    sender = os.environ.get('SMS_PROVIDER_SENDER')
+    message = f"رمز التحقق هو: {otp}"
+
+    # Ensure the phone number starts with "966"
+    if not phone_number.startswith("966"):
+        phone_number = "966" + phone_number
+
+    params = {
+        "api_key": api_key,
+        "username": username,
+        "numbers": phone_number,
+        "response_type": "text",
+        "message": message,
+        "sender": sender,
+    }
+
+    try:
+        response = requests.get(api_url, params=params)
+        if response.status_code == 200 and "Success" in response.text:
+            print(f"OTP sent successfully to {phone_number}")
+            return True
+        else:
+            print(f"Failed to send OTP. Response: {response.text}")
+            return False
+    except requests.RequestException as e:
+        print(f"Error occurred while sending OTP: {e}")
+        return False
 
 # View Handlers ==============================================
 
@@ -550,54 +614,91 @@ def verify_activation_otp_view(request):
 
 def signin(request):
     if request.method == 'POST':
-        # Check if the user is already authenticated
-        if request.user.is_authenticated:
-            return redirect('home')
+        identifier = request.POST.get("username")  # Could be phone, email, or national ID
+        password = request.POST.get("password", None)
 
-        identifier = request.POST.get("username")  # Now this could be national ID, username, or email
-        password = request.POST.get("password")
-        remember_me = request.POST.get("remember_me", None)
-
-        if remember_me is not None:
-            request.session.set_expiry(604800)  # Extend session for 1 week
+        # Normalize phone number if provided
+        normalized_phone = normalize_phone_number(identifier)
+        if normalized_phone:  # User provided a phone number
+            user = CustomUser.objects.filter(phonenumber=normalized_phone).first()
+            if user:
+                otp_code = generate_otp()
+                # Save OTP in the database
+                Authentication_OTP.objects.create(
+                    otp_code=otp_code,
+                    expiry_time=now() + timedelta(minutes=5),
+                    created_by=user,
+                    purpose="Account Activation",
+                    ip_address=request.META.get('REMOTE_ADDR'),
+                    user_agent=request.META.get('HTTP_USER_AGENT'),
+                )
+                # Send OTP via SMS
+                if send_otp_via_sms(normalized_phone, otp_code):
+                    return render(request, "otp_verification.html", {"phone_number": normalized_phone})
+                else:
+                    messages.error(request, "فشل في إرسال رمز التحقق. حاول مرة أخرى.")
+                    return redirect("login")
+            else:
+                messages.error(request, "رقم الهاتف غير مسجل.")
+                return redirect("login")
         else:
-            request.session.set_expiry(0)  # Session expires when the browser is closed
+            # Handle email, national ID, or username
+            user = CustomUser.objects.filter(
+                email=identifier
+            ).first() or CustomUser.objects.filter(
+                national_id=identifier
+            ).first() or CustomUser.objects.filter(
+                username=identifier
+            ).first()
 
-        # Try to find user by email, username, or national_id
-        user_db = CustomUser.objects.filter(
-            username=identifier
-        ).first() or CustomUser.objects.filter(
-            email=identifier
-        ).first() or CustomUser.objects.filter(
-            national_id=identifier
-        ).first()
-
-        # If the user is found in the database
-        if user_db:
-            check_pass = check_password(password, user_db.password)  # Validate password
-            if check_pass and user_db.is_active:  # Authenticate and check if the user is active
-                user_auth = authenticate(username=user_db.username, password=password)
-                if user_auth is not None:
+            if user and user.is_active:
+                user_auth = authenticate(username=user.username, password=password)
+                if user_auth:
                     login(request, user_auth)
                     return redirect("home")
                 else:
                     messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
-                    return redirect("login")
-            elif not user_db.is_active:
-                messages.error(
-                    request, "لم يتم تفعيل حسابك بعد! رجاء التأكد من بريدك الإلكتروني.", extra_tags='activation_email')
-                return redirect("login")
             else:
-                messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
+                messages.error(request, "المستخدم غير موجود أو الحساب غير نشط.")
+    return render(request, "registration/login.html")
+
+
+def verify_otp_login(request):
+    if request.method == 'POST':
+        phone_number = request.POST.get("phone_number")
+        otp_code = request.POST.get("otp")
+
+        user = CustomUser.objects.filter(phonenumber=phone_number).first()
+        if user:
+            otp_record = Authentication_OTP.objects.filter(
+                created_by=user,
+                otp_code=otp_code,
+                is_used=False,
+                expiry_time__gt=now(),
+                purpose="Account Login",
+            ).first()
+
+            if otp_record:
+                # Mark OTP as used
+                otp_record.is_used = True
+                otp_record.used_at = now()
+                otp_record.save()
+
+                # Mark phone number as verified
+                user.is_phone_number_verified = True
+                user.phone_number_verified_at = now()
+                user.save()
+
+                # Log the user in
+                login(request, user)
+                messages.success(request, "تم التحقق من رقم هاتفك بنجاح!")
+                return redirect("home")
+            else:
+                messages.error(request, "رمز التحقق غير صحيح أو منتهي الصلاحية.")
                 return redirect("login")
         else:
-            messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
+            messages.error(request, "رقم الهاتف غير مسجل.")
             return redirect("login")
-    else:
-        if request.user.is_authenticated:
-            return redirect('home')
-
-    return render(request, "registration/login.html")
 
 
 @login_required(login_url="/login")
