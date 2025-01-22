@@ -50,6 +50,8 @@ logger = logging.getLogger(__name__)
 IPP_DASHBOARD_REQUESTS = 10  # IPP stands for Item Per Page
 IPP_SUPPORTER_FORM = 8
 IPP_DASHBOARD_REPORTS = 10
+# Maximum messages allowed per minute
+SMS_LIMIT_PER_MINUTE = 5
 
 duration_factors = {
     "": 0,
@@ -123,7 +125,7 @@ def normalize_phone_number(phone):
     return None
 
 
-def send_otp_via_sms(phone_number, otp):
+def send_otp_via_sms(phone_number, otp, user):
     api_url = os.environ.get('SMS_PROVIDER_API_BASE_URL') + "/api/v1/sendsms"
     api_key = os.environ.get('SMS_PROVIDER_API_KEY')
     username = os.environ.get('SMS_PROVIDER_USERNAME')
@@ -133,6 +135,20 @@ def send_otp_via_sms(phone_number, otp):
     # Ensure the phone number starts with "966"
     if not phone_number.startswith("966"):
         phone_number = "966" + phone_number
+
+    # Get the current time and calculate the start of the one-minute window
+    current_time = now()
+    one_minute_ago = current_time - timedelta(minutes=1)
+
+    # Check how many OTPs have been sent by this user in the last minute
+    recent_otps = Authentication_OTP.objects.filter(
+        created_by=user,
+        created_at__gte=one_minute_ago
+    ).count()
+
+    if recent_otps >= SMS_LIMIT_PER_MINUTE:
+        print(f"SMS limit reached for user {user.id}. Try again later.")
+        return False
 
     params = {
         "api_key": api_key,
@@ -145,7 +161,7 @@ def send_otp_via_sms(phone_number, otp):
 
     try:
         response = requests.get(api_url, params=params)
-        if response.status_code == 200 and "Success" in response.text:
+        if response.status_code == 200:
             print(f"OTP sent successfully to {phone_number}")
             return True
         else:
@@ -614,59 +630,75 @@ def verify_activation_otp_view(request):
 
 def signin(request):
     if request.method == 'POST':
-        identifier = request.POST.get("username")  # Could be phone, email, or national ID
+        identifier = request.POST.get("username")  # Could be email, national ID, or username
         password = request.POST.get("password", None)
 
-        # Normalize phone number if provided
-        normalized_phone = normalize_phone_number(identifier)
-        if normalized_phone:  # User provided a phone number
-            user = CustomUser.objects.filter(phonenumber=normalized_phone).first()
-            if user:
-                otp_code = generate_otp()
-                # Save OTP in the database
-                Authentication_OTP.objects.create(
-                    otp_code=otp_code,
-                    expiry_time=now() + timedelta(minutes=5),
-                    created_by=user,
-                    purpose="Login",
-                    ip_address=request.META.get('REMOTE_ADDR'),
-                    user_agent=request.META.get('HTTP_USER_AGENT', '')[:512],
-                )
-                # Send OTP via SMS
-                if send_otp_via_sms(normalized_phone, otp_code):
-                    return render(request, "otp_verification.html", {"phone_number": normalized_phone})
-                else:
-                    messages.error(request, "فشل في إرسال رمز التحقق. حاول مرة أخرى.")
-                    return redirect("login")
-            else:
-                messages.error(request, "رقم الهاتف غير مسجل.")
-                return redirect("login")
-        else:
-            # Handle email, national ID, or username
-            user = CustomUser.objects.filter(
-                email=identifier
-            ).first() or CustomUser.objects.filter(
-                national_id=identifier
-            ).first() or CustomUser.objects.filter(
-                username=identifier
-            ).first()
+        # Handle email, national ID, or username
+        user = CustomUser.objects.filter(
+            email=identifier
+        ).first() or CustomUser.objects.filter(
+            national_id=identifier
+        ).first() or CustomUser.objects.filter(
+            username=identifier
+        ).first()
 
-            if user and user.is_active:
-                user_auth = authenticate(username=user.username, password=password)
-                if user_auth:
-                    login(request, user_auth)
-                    return redirect("home")
-                else:
-                    messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
+        if user and user.is_active:
+            user_auth = authenticate(username=user.username, password=password)
+            if user_auth:
+                login(request, user_auth)
+                return redirect("home")
             else:
-                messages.error(request, "المستخدم غير موجود أو الحساب غير نشط.")
+                messages.error(request, "كلمة المرور أو اسم المستخدم خطأ!")
+        else:
+            messages.error(request, "المستخدم غير موجود أو الحساب غير نشط.")
+
     return render(request, "registration/login.html")
+
+
+def phone_login_page(request):
+    """
+    Render the phone login page.
+    """
+    return render(request, 'registration/phone_login.html')
+
+
+def send_otp_phone_login(request):
+    """
+    Handle OTP sending functionality for phone login using fetch.
+    """
+    if request.method == 'POST':
+        phone_number = request.POST.get('phonenumber')
+
+        # Validate if the phone number exists in the database
+        user = CustomUser.objects.filter(phonenumber=phone_number).first()
+        if user:
+            otp_code = generate_otp()
+            
+            # Save OTP in the database
+            Authentication_OTP.objects.create(
+                otp_code=otp_code,
+                expiry_time=now() + timedelta(minutes=5),
+                created_by=user,
+                purpose="Login by Phone number",
+                ip_address=request.META.get('REMOTE_ADDR'),
+                user_agent=request.META.get('HTTP_USER_AGENT', '')[:512],
+            )
+            
+            # Send OTP via SMS
+            if send_otp_via_sms(phone_number, otp_code, user):
+                return JsonResponse({'success': True, 'message': "تم إرسال رمز التحقق إلى رقم الجوال.", 'phone_number': phone_number})
+            else:
+                return JsonResponse({'success': False, 'message': "فشل في إرسال رمز التحقق. حاول مرة أخرى."}, status=500)
+        else:
+            return JsonResponse({'success': False, 'message': "رقم الجوال غير مسجل."}, status=404)
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
 
 
 def verify_otp_login(request):
     if request.method == 'POST':
         phone_number = request.POST.get("phone_number")
-        otp_code = request.POST.get("otp")
+        otp_code = request.POST.get("otp", "").strip()
 
         user = CustomUser.objects.filter(phonenumber=phone_number).first()
         if user:
@@ -675,9 +707,9 @@ def verify_otp_login(request):
                 otp_code=otp_code,
                 is_used=False,
                 expiry_time__gt=now(),
-                purpose="Login",
-            ).first()
-
+                purpose="Login by Phone number",
+            ).order_by('-created_at').first()
+            
             if otp_record:
                 # Mark OTP as used
                 otp_record.is_used = True
@@ -691,11 +723,13 @@ def verify_otp_login(request):
                 messages.success(request, "تم التحقق من رقم هاتفك بنجاح!", 200)
                 return redirect("home")
             else:
-                messages.error(request, "رمز التحقق غير صحيح أو منتهي الصلاحية.", status=400)
-                return redirect("login")
+                messages.error(request, "رمز التحقق غير صحيح أو منتهي الصلاحية.")
+                request.session['phonenumber'] = phone_number
+                return redirect("phone_login_page")
         else:
             messages.error(request, "رقم الهاتف غير مسجل.", status=404)
-            return redirect("login")
+            request.session['phonenumber'] = phone_number
+            return redirect("phone_login_page")
 
 
 @login_required(login_url="/login")
@@ -707,47 +741,105 @@ def logout_user(request):
 
 def password_reset_request(request):
     if request.method == 'POST':
-        user_identifier_data = request.POST.get("email_or_national_id", None)
+        reset_method = request.POST.get("reset_method", None)
+        identifier = request.POST.get("identifier", None)
 
-        if user_identifier_data:
-            # Ensure that the email or national ID exists
-            user_identifier = CustomUser.objects.filter(Q(email=user_identifier_data) | Q(national_id=user_identifier_data))  # Check both fields
+        if reset_method and identifier:
+            try:
+                # Fetch user based on the selected reset method
+                if reset_method == "email":
+                    user = CustomUser.objects.get(Q(email=identifier) | Q(national_id=identifier))
+                    
+                    # Generate OTP and save in database
+                    otp_code = generate_otp()
+                    expiry_time = now() + timedelta(minutes=5)  # OTP expires in 5 minutes
+                    Authentication_OTP.objects.create(
+                        created_by=user,
+                        otp_code=otp_code,
+                        purpose="Password Reset",
+                        expiry_time=expiry_time
+                    )
+                    
+                    # Send OTP via email
+                    send_otp_email(user, otp_code)
+                    
+                    # Store user ID in session for verification
+                    request.session['otp_user_id'] = user.id
+                    
+                    messages.success(request, "تم إرسال رمز التحقق إلى بريدك الإلكتروني.")
+                    return redirect('password_reset_done')
 
-            if user_identifier.exists():
-                for user in user_identifier:
-                    subject = "تغيير كلمة المرور"
-                    email_template_name = "auth/password_reset_msg.txt"
-                    parameters = {
-                        "email": user.email,
-                        "username": user.username,
-                        "first_name": user.first_name,
-                        "domain": "port433.link",
-                        "protocol": "https",
-                        "site_name": "جمعية اصدقاء المجتمع",
-                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                        "token": default_token_generator.make_token(user),
-                    }
-                    email = render_to_string(email_template_name, parameters)
-                    try:
-                        send_mail(subject, email, '', [user.email], fail_silently=False)
-                    except BadHeaderError:
-                        return HttpResponse('Invalid Header')
+                elif reset_method == "phone":
+                    user = CustomUser.objects.get(phonenumber=identifier)  # Assuming `phonenumber` is unique
+                    
+                    # Generate OTP and save in database
+                    otp_code = generate_otp()
+                    expiry_time = now() + timedelta(minutes=5)  # OTP expires in 5 minutes
+                    Authentication_OTP.objects.create(
+                        created_by=user,
+                        otp_code=otp_code,
+                        purpose="Password Reset",
+                        expiry_time=expiry_time
+                    )
+                    
+                    # Send OTP via SMS (replace with your SMS logic)
+                    sms_message = f"استخدام الرمز التالي لإعادة تعيين كلمة المرور: {otp_code}"
+                    if send_otp_via_sms(user.phonenumber, sms_message, user):
+                        request.session['otp_user_id'] = user.id
+                        messages.success(request, "تم إرسال رمز التحقق إلى هاتفك.")
+                        return redirect('password_reset_done')
+                    else:
+                        messages.error(request, "تعذر إرسال الرسالة. حاول مرة أخرى.")
+                        return redirect("password_reset")
 
-                return redirect('password_reset_done')
-            
-            # else:
-            #     messages.error(request, "حدث خطأ ما.")
-            #     return redirect("password_reset")
-    else:
-        password_form = PasswordResetForm()
-
-        context = {
-            "password_form": password_form,
-        }
-
-        return render(request, "auth/password_reset_form.html", context)
+            except CustomUser.DoesNotExist:
+                messages.error(request, "لم يتم العثور على بيانات مطابقة.")
+                return redirect("password_reset")
+        else:
+            messages.error(request, "يرجى اختيار طريقة الإدخال الصحيحة.")
+            return redirect("password_reset")
 
     return render(request, "auth/password_reset_form.html")
+
+
+def password_reset_done(request):
+    """
+    Render the password reset done page.
+    """
+    if request.method == 'POST':
+        otp_code = request.POST.get('otp_code', "").strip()
+        user_id = request.session.get('otp_user_id')
+
+        if user_id and otp_code:
+            user = get_object_or_404(CustomUser, id=user_id)
+
+            # Retrieve OTP record from the database
+            otp_record = Authentication_OTP.objects.filter(
+                created_by=user,
+                otp_code=otp_code,
+                is_used=False,
+                expiry_time__gt=now(),
+                purpose="Password Reset",
+            ).order_by('-created_at').first()
+
+            if otp_record:
+                # Mark OTP as used
+                otp_record.is_used = True
+                otp_record.used_at = now()
+                otp_record.save()
+
+                # Redirect to password reset confirmation page
+                del request.session['otp_user_id']  # Remove user ID from session
+                messages.success(request, "تم التحقق من الرمز بنجاح.")
+                return redirect('password_reset_confirm', 
+                                uidb64=urlsafe_base64_encode(force_bytes(user.pk)),
+                                token=default_token_generator.make_token(user))
+            else:
+                messages.error(request, "رمز التحقق غير صحيح أو منتهي الصلاحية.")
+        else:
+            messages.error(request, "حدث خطأ. يرجى المحاولة مرة أخرى.")
+    else:
+        return render(request, 'auth/password_reset_done.html')
 
 
 def validate_email(request):
