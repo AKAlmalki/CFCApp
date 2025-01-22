@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>تسجيل الدخول برقم الجوال</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.rtl.min.css' %}" />
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: "Noto Kufi Arabic";
+      }
+      #id_background_container {
+        background: url("{% static '/imgs/confetti_bg.svg' %}") no-repeat center center fixed;
+        background-size: cover;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body id="id_background_container">
+    <div class="row mx-auto justify-content-center">
+      <div class="card mt-5 mb-4 p-5 my-4 bg-light rounded-3" style="width: 35rem;">
+        <a href="{% url 'home' %}">
+        <img class="img-fluid rounded-3 card-img-top" src="{% static '/imgs/logo-c-1.png' %}" alt="Logo">
+        </a>
+        <div class="card-body">
+          <h2 class="card-title fw-bold mb-5 mt-4 text-center">تسجيل الدخول برقم الجوال</h2>
+          <div class="col">
+            {% if messages %}
+              {% comment %} {% for message in messages %}
+                {% if message.tags == "error" %}
+                  <div class="alert alert-danger" role="alert">{{message}}</div>
+                {% endif%}
+              {% endfor %} {% endcomment %}
+      
+              {% comment %} Icons for alerts {% endcomment %}
+              <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+                <symbol id="check-circle-fill" viewBox="0 0 16 16">
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </symbol>
+                <symbol id="info-fill" viewBox="0 0 16 16">
+                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                </symbol>
+                <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
+                  <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </symbol>
+              </svg>
+      
+              {% for message in messages %}
+                
+                <div class="alert alert-{% if message.tags == "error" %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show d-flex align-items-center" role="alert">
+                  <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Info:" width="16" height="16"><use xlink:href="#info-fill"/></svg>
+                  <div>
+                      {{ message }}
+                  </div>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+            
+            <!-- Login with Phone Number Form -->
+            <form method="post" id="phone-login-form" action="{% url 'send_otp_phone_login' %}">
+              {% csrf_token %}
+
+              <div class="col mb-3">
+                <label for="id_phonenumber" class="form-label">رقم الجوال</label>
+                <input type="text" name="phonenumber" class="form-control" id="id_phonenumber" placeholder="أدخل رقم الجوال" required value="{{ phonenumber }}">
+                <small class="form-text text-muted">الرجاء إدخال رقم جوال يبدأ بـ 5 ويتكون من 9 أرقام.</small>
+              </div>
+              <button type="submit" class="w-100 btn btn-lg btn-primary mt-3" id="login_with_phone_btn">إرسال رمز التحقق</button>
+              <p class="mt-4 text-center">تريد تسجيل الدخول باستخدام بريدك الإلكتروني؟ <a href="{% url 'login' %}">اضغط هنا</a></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OTP Verification Modal -->
+    <div class="modal fade" id="otpVerificationModal" tabindex="-1" aria-labelledby="otpVerificationModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="otpVerificationModalLabel">التحقق من رمز التحقق</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="otp-verification-form" method="post" action="{% url 'verify_otp_login' %}">
+              {% csrf_token %}
+              <input type="hidden" name="phone_number" id="hidden_phone_number" value="{{ phonenumber }}">
+              <div class="mb-3">
+                <label for="id_otp" class="form-label">رمز التحقق</label>
+                <input type="text" name="otp" class="form-control" id="id_otp" placeholder="أدخل رمز التحقق" required>
+                <small class="form-text text-muted">الرجاء إدخال رمز التحقق المرسل إلى رقم الجوال الخاص بك.</small>
+              </div>
+              <button type="submit" class="w-100 btn btn-primary mt-3">تحقق</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function () {    
+            
+        // Validator method for Saudi phone numbers
+        $.validator.addMethod(
+          "saudiPhoneRegex",
+          function (value, element) {
+            return (
+              this.optional(element) || /^(5\d{8})$/i.test(value)
+            );
+          },
+          "الرجاء إدخال رقم جوال صحيح يبدأ برقم 5 وبطول 9 أرقام."
+        );
+
+        // Validator method for Saudi phone numbers
+        $.validator.addMethod(
+          "saudiPhoneRegex",
+          function (value, element) {
+            return (
+              this.optional(element) || /^(5\d{8})$/i.test(value)
+            );
+          },
+          "الرجاء إدخال رقم جوال صحيح يبدأ برقم 5 وبطول 9 أرقام."
+        );
+
+        // Validation for the phone login form
+        $("#phone-login-form").validate({
+          rules: {
+            phonenumber: {
+              required: true,
+              saudiPhoneRegex: true,
+            },
+          },
+          messages: {
+            phonenumber: {
+              required: "رقم الجوال مطلوب.",
+              saudiPhoneRegex: "الرجاء إدخال رقم جوال صحيح.",
+            },
+          },
+          errorElement: "span",
+          errorClass: "help-block invalid-feedback",
+          highlight: function (element) {
+            $(element).addClass("is-invalid").removeClass("is-valid");
+          },
+          unhighlight: function (element) {
+            $(element).removeClass("is-invalid").addClass("is-valid");
+          },
+        });
+
+        $("#login_with_phone_btn").click(function (e) {
+          e.preventDefault(); // Prevent the default form submission behavior
+        
+          const phoneLoginForm = $("#phone-login-form");
+          if (phoneLoginForm.valid()) {
+            const formData = new FormData(phoneLoginForm[0]); // Get form data
+            const otpModal = new bootstrap.Modal(document.getElementById("otpVerificationModal")); // Initialize modal
+            const phoneNumber = $("#id_phonenumber").val(); // Get phone number input value
+        
+            // Fetch API to send OTP
+            fetch(phoneLoginForm.attr("action"), {
+              method: "POST",
+              body: formData,
+              headers: {
+                "X-Requested-With": "XMLHttpRequest", // Ensure the request is treated as AJAX
+              },
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Network response was not ok");
+                }
+                return response.json(); // Parse JSON from the response
+              })
+              .then((data) => {
+                if (data.success) {
+                  // Handle success: Set phone number in the hidden input and show modal
+                  $("#hidden_phone_number").val(phoneNumber); // Set phone number in the hidden input field of the OTP modal
+                  otpModal.show(); // Show the OTP verification modal
+                } else {
+                  // Handle failure: Show an alert with the error message
+                  alert(data.message);
+                }
+              })
+              .catch((error) => {
+                console.error("Fetch error:", error);
+                alert("حدث خطأ أثناء إرسال الطلب. حاول مرة أخرى.");
+              });
+          }
+        });        
+      });
+    </script>
+  </body>
+</html>

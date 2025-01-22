@@ -266,6 +266,16 @@ urlpatterns = [
         name="login"
     ),
     path(
+        "login/by-phone-number/",
+        views.phone_login_page,
+        name="phone_login_page"
+    ),
+    path(
+        "login/by-phone-number/send-otp-sms",
+        views.send_otp_phone_login,
+        name="send_otp_phone_login"
+    ),
+    path(
         "verify-otp-login/",
         views.verify_otp_login,
         name="verify_otp_login"
