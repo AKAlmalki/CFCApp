@@ -146,6 +146,8 @@ def send_otp_via_sms(phone_number, otp, user):
         created_at__gte=one_minute_ago
     ).count()
 
+    print("SMS is processing....")
+
     if recent_otps >= SMS_LIMIT_PER_MINUTE:
         print(f"SMS limit reached for user {user.id}. Try again later.")
         return False
@@ -161,6 +163,7 @@ def send_otp_via_sms(phone_number, otp, user):
 
     try:
         response = requests.get(api_url, params=params)
+        print("SMS is about to be sent...")
         if response.status_code == 200:
             print(f"OTP sent successfully to {phone_number}")
             return True
@@ -669,10 +672,14 @@ def send_otp_phone_login(request):
     if request.method == 'POST':
         phone_number = request.POST.get('phonenumber')
 
+        print("phone number is " + phone_number)
+
         # Validate if the phone number exists in the database
         user = CustomUser.objects.filter(phonenumber=phone_number).first()
         if user:
             otp_code = generate_otp()
+
+            print(otp_code)
             
             # Save OTP in the database
             Authentication_OTP.objects.create(
@@ -686,6 +693,7 @@ def send_otp_phone_login(request):
             
             # Send OTP via SMS
             if send_otp_via_sms(phone_number, otp_code, user):
+                print("SMS is sent.")
                 return JsonResponse({'success': True, 'message': "تم إرسال رمز التحقق إلى رقم الجوال.", 'phone_number': phone_number})
             else:
                 return JsonResponse({'success': False, 'message': "فشل في إرسال رمز التحقق. حاول مرة أخرى."}, status=500)
