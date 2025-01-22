@@ -810,9 +810,6 @@ def password_reset_done(request):
         otp_code = request.POST.get('otp_code', "").strip()
         user_id = request.session.get('otp_user_id')
 
-        print(user_id)
-        print(otp_code)
-
         if user_id and otp_code:
             user = get_object_or_404(CustomUser, id=user_id)
 
@@ -824,9 +821,6 @@ def password_reset_done(request):
                 expiry_time__gt=now(),
                 purpose="Password Reset",
             ).order_by('-created_at').first()
-
-            print(user.phonenumber)
-            print(otp_record.otp_code)
 
             if otp_record:
                 # Mark OTP as used
