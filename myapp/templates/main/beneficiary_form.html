@@ -6,7 +6,7 @@
 <!-- Include jQuery Validation Plugin -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 
-<script src="{% static 'js/index2.js' %}"></script>
+<script src="{% static 'js/beneficiary_request_form.js' %}"></script>
 
 <style type="text/css">
   #dependent_information,
@@ -3148,7 +3148,7 @@
       // along with the correct 'boundary'
       // delete options.headers['Content-Type'];
 
-      fetch('https://beneficiaries.asdiqa.org.sa{% url 'beneficiary_new' user_id=user.id %}', {
+      fetch('{% url 'beneficiary_new' user_id=user.id %}', {
           method: 'POST',
           body: formData,
       })
