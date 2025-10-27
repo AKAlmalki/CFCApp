@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 
 <script src="{% static 'js/beneficiary_request_form.js' %}"></script>
-
+<script src="{% static 'js/utilities.js' %}"></script>
 <style type="text/css">
   #dependent_information,
   #housing_income_need_information,
@@ -575,7 +575,7 @@
                       name="personalinfo_health_status"
                       class="form-select"
                       id="id_personalinfo_health_status"
-                      onchange="personalInfoHealthCheck(this);"
+                      onchange="toggleConditionalField(this, 'id_personalinfo_disease_type_group_info', 'غير جيدة');"
                     >
                       <option value="" selected>---------</option>
                       <option value="جيدة">جيدة</option>
@@ -613,7 +613,7 @@
                       class="form-select"
                       required
                       id="id_personalinfo_work_status"
-                      onchange="workCheck(this);"
+                      onchange="toggleConditionalField(this, 'id_personalinfo_employer_group_info');"
                     >
                       <option value="" selected>---------</option>
                       <option value="نعم">نعم</option>
@@ -983,7 +983,7 @@
                     class="form-select"
                     required
                     id="id_dependent_info_work_status"
-                    onchange="workCheckDependent(this);"
+                    onchange="toggleConditionalField(this, 'id_dependent_info_employer_group_info');"
                   >
                     <option value="" selected>---------</option>
                     <option value="نعم">نعم</option>
@@ -1137,7 +1137,7 @@
                     name="dependent_info_health_status"
                     class="form-select"
                     id="id_dependent_info_health_status"
-                    onchange="dependentInfoHealthCheck(this);"
+                    onchange="toggleConditionalField(this, 'id_dependentinfo_disease_type_group_info', 'غير جيدة');"
                   >
                     <option value selected>---------</option>
                     <option value="جيدة">جيدة</option>
@@ -1176,7 +1176,7 @@
                     name="dependent_info_is_disabled"
                     class="form-select"
                     id="id_dependent_info_is_disabled"
-                    onchange="dependentInfoDisabilityCheck(this);"
+                    onchange="toggleConditionalField(this, 'id_dependentinfo_disability_type_group_info');"
                   >
                     <option value selected>---------</option>
                     <option value="نعم">نعم</option>
@@ -2769,7 +2769,7 @@
                   class="form-select"
                   required
                   id="id_dependent_edit_info_work_status"
-                  onchange="workCheckEditDependent(this);"
+                  onchange="toggleConditionalField(this, 'id_dependent_edit_info_employer_group_info');"
                 >
                   <option value="" selected>---------</option>
                   <option value="نعم">نعم</option>
@@ -2923,7 +2923,7 @@
                   name="dependent_edit_info_health_status"
                   class="form-select"
                   id="id_dependent_edit_info_health_status"
-                  onchange="dependentEditInfoHealthCheck(this);"
+                  onchange="toggleConditionalField(this, 'id_dependent_edit_info_disease_type_group_info', 'غير جيدة');"
                 >
                   <option value selected>---------</option>
                   <option value="جيدة">جيدة</option>
@@ -2965,7 +2965,7 @@
                   name="dependent_edit_info_is_disabled"
                   class="form-select"
                   id="id_dependent_edit_info_is_disabled"
-                  onchange="editDependentInfoDisabilityCheck(this);"
+                  onchange="toggleConditionalField(this, 'id_dependent_edit_info_disability_type_group_info');"
                 >
                   <option value selected>---------</option>
                   <option value="نعم">نعم</option>

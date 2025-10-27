@@ -4,6 +4,7 @@
 <!-- Include jQuery Validation Plugin -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script src="{% static 'js/supporter_form(indiv).js' %}"></script>
+<script src="{% static 'js/utilities.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/supporter_form(indiv).css' %}" />
 
 {% comment %} Data Table Requirements {% endcomment %}
@@ -540,7 +541,7 @@
                     class="form-control"
                     required
                     id="id_personalinfo_work_status"
-                    onchange="workCheck(this);"
+                    onchange="toggleConditionalField(this, 'id_personalinfo_employer_group_info');"
                   >
                     <option value="" selected>---------</option>
                     <option value="نعم">نعم</option>

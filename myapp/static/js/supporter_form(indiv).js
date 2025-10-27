@@ -10,14 +10,6 @@ function widowerCheck(that) {
   }
 }
 */
-// Check if the user work or not, display or hide the following field
-function workCheck(that) {
-  if (that.value == "نعم") {
-      document.getElementById("id_personalinfo_employer_group_info").style.display = "block";
-  } else {
-      document.getElementById("id_personalinfo_employer_group_info").style.display = "none";
-  }
-}
 
 // If the value of this field become empty, it reset back the value to zero
 function isThereWidower(inputField) {
