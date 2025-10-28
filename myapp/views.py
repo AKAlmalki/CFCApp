@@ -2777,6 +2777,8 @@ def beneficiary_request_update(request, user_id):
                 'dependent_marital_status': dependent_obj.marital_status,
                 'dependent_national_id': dependent_obj.national_id,
                 'dependent_national_id_exp_date': dependent_obj.national_id_exp_date.strftime('%Y-%m-%d') if dependent_obj.national_id_exp_date else None,
+                'dependent_edit_info_bank_iban': dependent_obj.bank_iban,
+                'dependent_edit_info_bank_type': dependent_obj.bank_type,
                 'dependent_health_status': dependent_obj.health_status,
                 'dependent_needs_type': dependent_obj.needs_type,
                 'dependent_educational_degree': dependent_obj.educational_degree,

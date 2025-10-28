@@ -305,7 +305,292 @@ function addRowToIncomeInfoTable() {
   removeMaxRowErrorMessage();
 }
 
+function populateEditModal($row) {
+  // First, uncheck all checkboxes in the modal
+  $("#editModal").find("input[type='checkbox']").prop("checked", false);
 
+  $row.children("td").each(function () {
+    var tdDataAttr = $(this).data("attr");
+    var cellText = $(this).text();
+    var $inputs = $("#editModal").find('[name^="' + tdDataAttr + '"]'); // Selects all inputs that start with tdDataAttr
+
+    $inputs.each(function () {
+      if ($(this).attr("type") === "checkbox") {
+        // Splitting the comma-separated values
+        var values = cellText.split(",").map(function (item) {
+          return item.trim(); // Trimming any extra whitespace
+        });
+
+        // Check if the checkbox value is in the values array
+        if (values.includes($(this).val())) {
+          $(this).prop("checked", true);
+        }
+      } else {
+        $(this).val(cellText);
+
+        // If the input is the national id field, add a data attribute
+        if ($(this).attr("name") === "dependent_edit_info_national_id") {
+          // Assuming you want to add a data attribute named 'custom-data'
+          $(this).attr("data-attr-base-nid", cellText);
+        }
+      }
+    });
+
+    // Retrieve the stored income information array from the family table row
+    var incomeInfoArrayText = "";
+
+    if (tdDataAttr == "dependent_edit_info_income_table_data") {
+      // Clear existing rows in the edit income table
+      $("#incomeEditInfoTableBody").empty();
+
+      incomeInfoArrayText = cellText;
+      var incomeInfoArray = JSON.parse(incomeInfoArrayText) || [];
+
+      // Add rows for each income information object in the array
+      incomeInfoArray.forEach(function (incomeInfo) {
+        var $incomeRow = $("<tr></tr>");
+        $incomeRow.append($("<td></td>").text(incomeInfo.income_amount));
+        $incomeRow.append($("<td></td>").text(incomeInfo.income_source));
+
+        // Add a delete button to each row
+        var $deleteButton = $("<button>حذف</button>").addClass(
+          "btn btn-danger btn-sm removeIncomeEditInfoRow",
+        );
+        $deleteButton.on("click", function () {
+          // Handle the delete button click event here
+          // You can remove the corresponding row from the table or perform any other action
+          $incomeRow.remove();
+
+          // Select save changes btn
+          var $saveChangesButton = $("#saveChanges");
+          var $modalForm = $("#editModalForm");
+
+          if ($modalForm.valid()) {
+            $saveChangesButton.prop("disabled", false);
+          } else {
+            $saveChangesButton.prop("disabled", true);
+          }
+        });
+
+        // Append the delete button column to the row
+        $incomeRow.append($("<td></td>").append($deleteButton));
+
+        // Append the row to the edit income table
+        $("#incomeEditInfoTableBody").append($incomeRow);
+      });
+    }
+  });
+
+  $("#saveChanges").data("rowToEdit", $row);
+}
+
+function populateDependentRow($row, data) {
+
+  if (data === undefined || $.isEmptyObject(data)) {
+    const dependentNeedsTypeArray = [];
+    $("#id_dependent_info_needs_type input[type=checkbox]:checked").each(function() {
+      dependentNeedsTypeArray.push($(this).val());
+    });
+
+    data = {
+      firstName: $("#id_dependent_info_first_name").val().trim(),
+      secondName: $("#id_dependent_info_second_name").val().trim(),
+      lastName: $("#id_dependent_info_last_name").val().trim(),
+      gender: $("#id_dependent_info_gender").val(),
+      relationship: $("#id_dependent_info_relationship").val(),
+      educationalStatus: $("#id_dependent_info_educational_status").val(),
+      maritalStatus: $("#id_dependent_info_marital_status").val(),
+      nationalId: $("#id_dependent_info_national_id").val().trim(),
+      bankIban: $("#id_dependent_info_bank_iban").val().trim(),
+      bankType: $("#id_dependent_info_bank_type").val(),
+      healthStatus: $("#id_dependent_info_health_status").val(),
+      incomeData: getDependentIncomeTableDataAsJSON('incomeInfoTable'),
+      needsType: dependentNeedsTypeArray.join(","),
+      educationalDegree: $("#id_dependent_info_educational_degree").val(),
+      dateOfBirth: $("#id_dependent_info_date_of_birth").val(),
+      nationalIdExpDate: $("#id_dependent_info_national_id_exp_date").val(),
+      needsDescription: $("#id_dependent_info_needs_description").val().trim(),
+      educationalLevel: $("#id_dependent_info_educational_level").val(),
+      diseaseType: $("#id_dependent_info_disease_type").val(),
+      workStatus: $("#id_dependent_info_work_status").val(),
+      employer: $("#id_dependent_info_employer").val().trim(),
+      contributeToFamilyIncome: $("#id_dependent_info_contribute_to_family_income").val(),
+      isDisabled: $("#id_dependent_info_is_disabled").val(),
+      disabilityType: $("#id_dependent_info_disability_type").val(),
+    }
+  }
+  $row.append(
+      $("<td></td>")
+          .text(data.firstName)
+          .attr("data-attr", "dependent_edit_info_first_name"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.secondName)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_second_name"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.lastName)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_last_name"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.gender)
+          .attr("data-attr", "dependent_edit_info_gender"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.relationship)
+          .attr("data-attr", "dependent_edit_info_relationship"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.educationalStatus)
+          .attr("data-attr", "dependent_edit_info_educational_status"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.maritalStatus)
+          .attr("data-attr", "dependent_edit_info_marital_status"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.nationalId)
+          .attr("data-attr", "dependent_edit_info_national_id")
+          .attr("data-attr-base-nid", $("#id_dependent_info_national_id").val()),
+  );
+
+  $row.append(
+      $("<td></td>")
+          .text(data.bankIban)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_bank_iban"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.bankType)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_bank_type"),
+  );
+
+  $row.append(
+      $("<td></td>")
+          .text(data.healthStatus)
+          .attr("data-attr", "dependent_edit_info_health_status"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.incomeData)
+          .addClass("d-none dependent_income_json")
+          .attr("data-attr", "dependent_edit_info_income_table_data"),
+  );
+
+
+  $row.append(
+      $("<td></td>")
+          .text(data.needsType)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_needs_type"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.educationalDegree)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_educational_degree"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.dateOfBirth)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_date_of_birth"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.nationalIdExpDate)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_national_id_exp_date"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.needsDescription)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_needs_description"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.educationalLevel)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_educational_level"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.diseaseType)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_disease_type"),
+  );
+
+  $row.append(
+      $("<td></td>")
+          .text(data.workStatus)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_work_status"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.employer)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_employer"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.contributeToFamilyIncome)
+          .addClass("d-none")
+          .attr(
+              "data-attr",
+              "dependent_edit_info_contribute_to_family_income",
+          ),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.isDisabled)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_is_disabled"),
+  );
+  $row.append(
+      $("<td></td>")
+          .text(data.disabilityType)
+          .addClass("d-none")
+          .attr("data-attr", "dependent_edit_info_disability_type"),
+  );
+
+  var $editButton = $("<button>تفاصيل</button>")
+    .addClass("edit btn btn-primary")
+    .attr("data-bs-toggle", "modal")
+    .attr("data-bs-target", "#editModal")
+    .attr("id", "editModalButton")
+    .click(function (event) {
+      event.preventDefault();
+      // Populate the modal fields with data from $row
+      populateEditModal($row);
+    });
+
+  var $deleteButton = $('<button type="button">حذف</button>')
+    .addClass("delete btn btn-danger")
+    .click(function (event) {
+      event.preventDefault();
+      $row.remove();
+    });
+
+  var $actionsCell = $(
+    '<td class="d-grid gap-2" style="grid-template-columns: 80px 80px; grid-template-rows: 50px;"></td>'
+  ).append($deleteButton);
+  $actionsCell.append($editButton);
+
+  $row.append($actionsCell);
+}
 // Function to display an error message
 function displayMaxRowErrorMessage(message, duration) {
   // Check if the error message element already exists
@@ -336,6 +621,57 @@ function displayMaxRowErrorMessage(message, duration) {
   errorMessageElement.textContent = message;
 }
 
+function displayMinChoiceCountEditErrorMessage(message, duration) {
+  // Check if the error message element already exists
+  var errorMessageElement = document.getElementById(
+    "minChoiceCountEditErrorMessage",
+  );
+
+  // If not, create a new element and append it to the page
+  if (!errorMessageElement) {
+    errorMessageElement = document.createElement("div");
+    errorMessageElement.id = "minChoiceCountEditErrorMessage";
+    errorMessageElement.classList.add("alert", "alert-danger");
+
+    // Get the parent node of the dependent income table
+    var parentElement = document.getElementById(
+      "id_dependent_edit_info_needs_type",
+    ).parentNode;
+
+    // Insert the error message element at the top of the parent node
+    parentElement.insertBefore(errorMessageElement, parentElement.firstChild);
+
+    // Focus on the error message
+    errorMessageElement.focus();
+
+    // Remove the error message after a specified duration
+    //setTimeout(function () {
+    //  removeMaxRowErrorMessage();
+    //}, duration);
+  }
+
+  // Listen for changes in the checkboxes to update the error message
+  var checkboxes = document.querySelectorAll(
+    '#id_dependent_edit_info_needs_type input[type="checkbox"]',
+  );
+  checkboxes.forEach(function (checkbox) {
+    checkbox.addEventListener("change", function () {
+      // Check if more than one checkbox is checked
+      var checkedCount = Array.from(checkboxes).filter(function (checkbox) {
+        return checkbox.checked;
+      }).length;
+
+      // If more than one checkbox is checked, remove the error message
+      if (checkedCount > 0) {
+        removeMinChoiceCountEditErrorMessage();
+      }
+    });
+  });
+
+  // Set the error message text
+  errorMessageElement.textContent = message;
+}
+
 // Function to remove the error message
 function removeMaxRowErrorMessage() {
   var errorMessageElement = document.getElementById('incomeTableErrorMessage');
@@ -344,6 +680,12 @@ function removeMaxRowErrorMessage() {
   }
 }
 
+function removeMinChoiceCountEditErrorMessage() {
+  var errorMessageElement = document.getElementById('minChoiceCountEditErrorMessage');
+  if (errorMessageElement) {
+    errorMessageElement.remove();
+  }
+}
 
 function deleteRowIncomeInfoTable(event, row) {
   event.preventDefault(); // Prevents the default behavior if applicable
@@ -368,6 +710,28 @@ function clearInputFieldsIncomeInfoTable() {
   document.getElementById("id_dependent_info_income_source").value = "";
 }
 
+
+function getDependentIncomeTableDataAsJSON(tableId) {
+  var incomeInfoArray = [];
+
+  const dependentIncomeTable = document.getElementById(tableId);
+  const dependentIncomeTableRows = document.querySelectorAll(
+    "#" + tableId + " tr",
+  );
+
+  for (let i = 1; i < dependentIncomeTableRows.length; i++) {
+    const cells = dependentIncomeTableRows[i].getElementsByTagName("td");
+
+    var incomeInfo = {
+      income_amount: cells[0].innerText,
+      income_source: cells[1].innerText,
+    };
+
+    incomeInfoArray.push(incomeInfo);
+  }
+
+  return JSON.stringify(incomeInfoArray);
+}
 
 function addRowToIncomeEditInfoTable() {
   const monthlyIncome = document.getElementById('id_dependent_edit_info_monthly_income').value;
@@ -425,6 +789,56 @@ function addRowToIncomeEditInfoTable() {
   removeMaxRowErrorMessageEditInfoTable();
 }
 
+function getTableDataAsJSON() {
+  const table = document.getElementById("family-table");
+  const rows = document.querySelectorAll("#family-table tr");
+  let dependentsData = [];
+
+  for (let i = 1; i < rows.length; i++) {
+    // Start from 1 to skip table header
+    const cells = rows[i].getElementsByTagName("td");
+
+    // Check if nationalIDExpDate is null or empty and handle it
+    let nationalIDExpDate = cells[13].innerText;
+    if (
+      !nationalIDExpDate ||
+      nationalIDExpDate === "null" ||
+      nationalIDExpDate.trim() === ""
+    ) {
+      nationalIDExpDate = null; // Set it to null if empty or invalid
+    }
+
+    let dependent = {
+      firstName: cells[0].innerText, // Assuming first cell contains the first name
+      secondName: cells[1].innerText,
+      lastName: cells[2].innerText,
+      gender: cells[3].innerText,
+      relationship: cells[4].innerText,
+      educationalStatus: cells[5].innerText,
+      martialStatus: cells[6].innerText,
+      nationalID: cells[7].innerText,
+      bankIban: cells[8].innerText,
+      bankType: cells[9].innerText,
+      healthStatus: cells[10].innerText,
+      dependentIncomeTable: cells[11].innerText,
+      needsType: cells[12].innerText,
+      educationalDegree: cells[13].innerText,
+      dateOfBitrh: cells[14].innerText,
+      nationalIDExpDate: cells[15].innerText,
+      needsDescription: cells[16].innerText,
+      educationalLevel: cells[17].innerText,
+      diseaseType: cells[18].innerText,
+      workStatus: cells[19].innerText,
+      employer: cells[20].innerText,
+      contributeToFamilyIncome: cells[21].innerText,
+      disabilityCheck: cells[22].innerText,
+      disabilityType: cells[23].innerText,
+    };
+    dependentsData.push(dependent);
+  }
+
+  return JSON.stringify(dependentsData);
+}
 
 // Function to display an error message
 function displayMaxRowErrorMessageEditInfoTable(message, duration) {
@@ -493,3 +907,391 @@ function clearInputFieldsIncomeEditInfoTable() {
   document.getElementById("id_dependent_edit_info_monthly_income").value = "";
   document.getElementById("id_dependent_edit_info_income_source").value = "";
 }
+
+function displayMinChoiceCountErrorMessage(message, duration) {
+  // Check if the error message element already exists
+  var errorMessageElement = document.getElementById('minChoiceCountErrorMessage');
+
+  // If not, create a new element and append it to the page
+  if (!errorMessageElement) {
+    errorMessageElement = document.createElement('div');
+    errorMessageElement.id = 'minChoiceCountErrorMessage';
+    errorMessageElement.classList.add('alert', 'alert-danger');
+
+    // Get the parent node of the dependent income table
+    var parentElement = document.getElementById('id_dependent_info_needs_type').parentNode;
+
+    // Insert the error message element at the top of the parent node
+    parentElement.insertBefore(errorMessageElement, parentElement.firstChild);
+
+    // Focus on the error message
+    errorMessageElement.focus();
+
+    // Remove the error message after a specified duration
+    //setTimeout(function () {
+    //  removeMaxRowErrorMessage();
+    //}, duration);
+  }
+
+  // Listen for changes in the checkboxes to update the error message
+  var checkboxes = document.querySelectorAll('#id_dependent_info_needs_type input[type="checkbox"]');
+  checkboxes.forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+      // Check if more than one checkbox is checked
+      var checkedCount = Array.from(checkboxes).filter(function (checkbox) {
+        return checkbox.checked;
+      }).length;
+
+      // If more than one checkbox is checked, remove the error message
+      if (checkedCount > 0) {
+        removeMinChoiceCountErrorMessage();
+      }
+    });
+  });
+
+  // Set the error message text
+  errorMessageElement.textContent = message;
+}
+
+function removeMinChoiceCountErrorMessage() {
+  var errorMessageElement = document.getElementById(
+    "minChoiceCountErrorMessage",
+  );
+  if (errorMessageElement) {
+    errorMessageElement.remove();
+  }
+}
+
+function handleEducationalStatusEditInput() {
+  // Get the selected value
+  var selectedValue = document.getElementById(
+    "id_dependent_edit_info_educational_status",
+  ).value;
+
+  // Get the elements representing educational level and degree sections
+  var educationalLevelGroup = document.getElementById(
+    "id_dependent_edit_info_educational_level_group_info",
+  );
+  var educationalDegreeGroup = document.getElementById(
+    "id_dependent_edit_info_educational_degree_group_info",
+  );
+
+  // Show or hide the sections based on the selected value
+  if (selectedValue === "يدرس") {
+    // If يدرس is selected, show educational level and hide educational degree
+    educationalLevelGroup.style.display = "block";
+    educationalDegreeGroup.style.display = "none";
+  } else if (selectedValue === "لا يدرس") {
+    // If لا يدرس is selected, show educational degree and hide educational level
+    educationalLevelGroup.style.display = "none";
+    educationalDegreeGroup.style.display = "block";
+  } else {
+    // If none is selected, hide both sections
+    educationalLevelGroup.style.display = "none";
+    educationalDegreeGroup.style.display = "none";
+  }
+}
+
+function handleHealthStatusEditInput() {
+  // Get the selected value
+  var selectedValue = document.getElementById(
+    "id_dependent_edit_info_health_status",
+  ).value;
+
+  // Get the elements representing educational level and degree sections
+  var diseaseTypeGroup = document.getElementById(
+    "id_dependent_edit_info_disease_type_group_info",
+  );
+
+  // Show or hide the sections based on the selected value
+  if (selectedValue === "جيدة") {
+    diseaseTypeGroup.style.display = "none";
+  } else if (selectedValue === "غير جيدة") {
+    diseaseTypeGroup.style.display = "block";
+  } else {
+    // If none is selected, hide both sections
+    diseaseTypeGroup.style.display = "none";
+  }
+}
+
+function handleWorkStatusEditInput() {
+  // Get the selected value
+  var selectedValue = document.getElementById(
+    "id_dependent_edit_info_work_status",
+  ).value;
+
+  // Get the elements representing work status sections
+  var employerGroup = document.getElementById(
+    "id_dependent_edit_info_employer_group_info",
+  );
+
+  // Show or hide the sections based on the selected value
+  if (selectedValue === "نعم") {
+    employerGroup.style.display = "block";
+  } else if (selectedValue === "لا") {
+    employerGroup.style.display = "none";
+  } else {
+    // If none is selected, hide both sections
+    employerGroup.style.display = "none";
+  }
+}
+
+function handleIsDisabledEditInput() {
+  // Get the selected value
+  var selectedValue = document.getElementById(
+    "id_dependent_edit_info_is_disabled",
+  ).value;
+
+  // Get the elements representing is disability sections
+  var disabilityTypeGroup = document.getElementById(
+    "id_dependent_edit_info_disability_type_group_info",
+  );
+
+  // Show or hide the sections based on the selected value
+  if (selectedValue === "نعم") {
+    disabilityTypeGroup.style.display = "block";
+  } else if (selectedValue === "لا") {
+    disabilityTypeGroup.style.display = "none";
+  } else {
+    // If none is selected, hide both sections
+    disabilityTypeGroup.style.display = "none";
+  }
+}
+
+function handleModalShown() {
+  // Show loading state
+  document.getElementById("loadingStateEditModal").style.display = "block";
+  document.getElementById("editModalContent").style.display = "none";
+
+  // Simulate an asynchronous operation (replace this with your actual data retrieval logic)
+  setTimeout(function () {
+    // Hide loading state
+    document.getElementById("loadingStateEditModal").style.display = "none";
+    // Show actual content
+    document.getElementById("editModalContent").style.display = "block";
+
+    const educationalStatusDropdown = document.getElementById('id_dependent_info_educational_status'); // It may need to be changed to "_edit_info_"
+    educationalStatusDropdown.addEventListener('input', handleEducationalStatusEditInput);
+
+    // Call the function on the educational status dropdown to set the initial visibility
+    handleEducationalStatusEditInput.call(educationalStatusDropdown);
+    handleHealthStatusEditInput.call();
+    handleWorkStatusEditInput.call();
+    handleIsDisabledEditInput.call();
+  }, 2000); // 2000 = 2 seconds timeout
+}
+
+function resetInputFields() {
+  // Reset the value of the monthly income input field
+  $('#id_dependent_edit_info_monthly_income').val('');
+
+  // Reset the value of the income source select field
+  $('#id_dependent_edit_info_income_source').val('');
+}
+
+
+$(document).ready(function () {
+  $("#saveChanges").click(function (event) {
+    event.preventDefault();
+
+    var duplicateNationalIdFound = false; // Flag to indicate whether a duplicate national ID is found
+
+    var isEqualToApplierNationalId = false; // Flag to indicate whether the dependent national ID is equal to applier national ID
+
+    // Get all checkboxes within the specified container
+    var checkboxes = document.querySelectorAll('#id_dependent_edit_info_needs_type input[type="checkbox"]');
+
+    // Check if at least one checkbox is selected
+    var atLeastOneChecked = Array.from(checkboxes).some(function(checkbox) {
+      return checkbox.checked;
+    });
+
+    if (!atLeastOneChecked) {
+      // Display an error message or perform any other action to indicate the requirement
+      displayMinChoiceCountEditErrorMessage('الرجاء تحديد نوع واحد على الأقل.', 5000);
+      return;
+    }
+
+    var $rowToEdit = $(this).data("rowToEdit");
+    var checkedValues = [];
+
+    // Iterate over all inputs, selects, and textareas in the modal
+    $("#editModal").find(".modal-body input, .modal-body select, .modal-body textarea").each(function () {
+        // Get the name of the input field in the edit modal
+        var inputName = $(this).attr("name");
+        // Select the cell in the corresponding row of the dependent with data-attr as inputName
+        var $cell = $rowToEdit.find('td[data-attr="' + inputName + '"]');
+
+        var applierNationalID = $("#id_personalinfo_national_id").val().trim();
+
+        // Retrieve the data for national id in the edit form
+        if ($(this).attr("name") == "dependent_edit_info_national_id") {
+
+          // Get the value of data-attr-base-nid attribute
+          var baseNid = $(this).data("attr-base-nid");
+
+          // Check whether the provided national ID equal to the applier national ID
+          if ($(this).val() === applierNationalID) {
+            alert("رقم الهوية/الإقامة للمرافق لا يمكن أن يكون مماثلًا لرقم الهوية/الإقامة لمقدم الطلب!!");
+            isEqualToApplierNationalId = true; // Set the flag to true
+            return false; // Exit the loop early since we found a duplicate
+          }
+
+          // Alert the user if the provided national ID is added before in the family table
+          if (isNationalIdExists($(this).val())) {
+
+            // Check whether the national ID equals to the base national ID
+            if (baseNid != $(this).val()) {
+              alert("رقم الهوية/الإقامة للمرافق تم إضافته بالفعل في قائمة المرافقين!");
+              duplicateNationalIdFound = true; // Set the flag to true
+              return false; // Exit the loop early since we found a duplicate
+            }
+          }
+        }
+
+        if ($(this).attr('type') === 'checkbox') {
+            // If it's a checkbox, gather all checked values with this name
+            $('#editModal input[name="' + inputName + '"]:checked').each(function() {
+                checkedValues.push($(this).val());
+            });
+            // Select the cell that holds the dependent needs type as a list
+            var $cell = $rowToEdit.find('td[data-attr="dependent_edit_info_needs_type"]');
+            // Join the values with a comma and update the cell text
+            $cell.text(checkedValues.join(','));
+        } else {
+            // For other input types, just update the cell text
+            $cell.text($(this).val());
+        }
+    });
+
+    // If a duplicate national ID is found, don't proceed with saving changes
+    if (duplicateNationalIdFound || isEqualToApplierNationalId) {
+      return;
+    }
+
+    // Get dependent income information from incomeEditInfoTable
+    let dependentIncomeJSON = getDependentIncomeTableDataAsJSON('incomeEditInfoTable');
+
+    // Select the corresponding cell
+    var $incomeTableCell = $rowToEdit.find('td[data-attr="dependent_edit_info_income_table_data"]');
+
+    // Update the cell text (value)
+    $incomeTableCell.text(dependentIncomeJSON);
+
+    // Remove error messages
+    removeMaxRowErrorMessage();
+    removeMinChoiceCountEditErrorMessage();
+
+    $("#editModal").modal("hide");
+  });
+
+  $("#editModal").on("hidden.bs.modal", function () {
+    // Call the function to reset the input fields
+    resetInputFields();
+
+    // Assuming your button has an ID "saveChanges"
+    var saveChangesButton = document.getElementById("saveChanges");
+
+    // Remove the 'disabled' attribute
+    saveChangesButton.setAttribute("disabled", "disabled");
+
+    // Show loading state
+    document.getElementById("loadingStateEditModal").style.display = "block";
+    // Hide actual content
+    document.getElementById("editModalContent").style.display = "none";
+  });
+
+  $.validator.addMethod(
+    "nationalidRegex",
+    function (value, element) {
+      return this.optional(element) || validateSAID(value);
+    },
+    "أدخل رقم هوية/إقامة صحيح."
+  );
+
+  $.validator.addMethod(
+    "dependentNameRegex",
+    function (value, element) {
+      return (
+        this.optional(element) || /^[a-zA-Z0-9\u0621-\u064A]*$/i.test(value)
+      );
+    },
+    "يحتوي الأسم على حروف فقط."
+  );
+
+  $.validator.addMethod(
+    "validateIBAN",
+    function (value, element) {
+      return this.optional(element) || validateIBAN(value);
+    },
+    "الرجاء إدخال رقم إيبان صحيح"
+  );
+
+  $.validator.addMethod(
+    "fullNameRegex",
+    function (value, element) {
+      return (
+        this.optional(element) ||
+        /^[a-zA-Z\u0621-\u064A]+([ '-][a-zA-Z\u0621-\u064A]+)*$/i.test(value)
+      );
+    },
+    "يجب أن يتكون الاسم الكامل من الاسم الأول والأوسط والأخير."
+  );
+
+  $.validator.addMethod(
+    "saudiPhoneRegex",
+    function (value, element) {
+      return (
+        this.optional(element) || /^(5\d{8})$/i.test(value)
+      );
+    },
+    "الرجاء إدخال رقم جوال صحيح يبدأ برقم 5 وبطول 9 ارقام."
+  );
+
+  $.validator.addMethod(
+        "emailRegex",
+        function (value, element) {
+          return (
+            this.optional(element) ||
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+          );
+        },
+        "الرجاء إدخال بريد إلكتروني صحيح."
+      );
+
+  $.validator.addMethod(
+    "nameRegex",
+    function (value, element) {
+      return (
+        this.optional(element) || /^[a-zA-Z0-9\u0621-\u064A]*$/i.test(value)
+      );
+    },
+    "يحتوي الأسم على حروف فقط."
+  );
+
+  $.validator.addMethod('filesize', function (value, element, param) {
+    return this.optional(element) || (element.files[0].size <= param * 1000000)
+  }, 'حجم الملف يجب أن يكون أقل من {0} MB');
+
+  $.extend($.validator.messages, {
+    required: "هذا الحقل مطلوب.",
+    remote: "الرجاء اصلاح هذا الحقل.",
+    email: "الرجاء إدخال بريد الكتروني صالح.",
+    url: "الرجاء إدخال رابط صحيح وفعال.",
+    date: "الرجاء إدخال تاريخ صالح.",
+    dateISO: "الرجاء إدخال تاريخ صحيح (بصيغة ISO).",
+    number: "الرجاء إدخال رقم صحيح.",
+    digits: "الرجاء إدخال أرقام فقط.",
+    creditcard: "الرجاء إدخال رقم بطاقة ائتمان صالحة.",
+    equalTo: "رجاء أدخل نفس القيمة مره أخرى.",
+    accept: "الرجاء إدخال قيمة بإمتداد صحيح.",
+    maxlength: $.validator.format("الرجاء عدم إدخال أكثر من {0} أحرف."),
+    minlength: $.validator.format("الرجاء إدخال على الأقل {0} حروف."),
+    rangelength: $.validator.format(
+      "Please enter a value between {0} and {1} characters long."
+    ),
+    range: $.validator.format("الرجاء إدخال رقم بين {0} و {1}."),
+    max: $.validator.format(" الرجاء إدخال قيمة أقل من أو تساوي {0}."),
+    min: $.validator.format("الرجاء إدخال قيمة أعلى من أو تساوي {0}."),
+  });
+});
