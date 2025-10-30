@@ -2723,28 +2723,30 @@
     </div>
   </div>
 </div><!-- end line EditModal -->
+{{ beneficiary.family_issues|json_script:"family-issues-data" }}
+{{ beneficiary.family_needs|json_script:"family-needs-data" }}
+{{ dependent_list|json_script:"dependent-list-data" }}
 <script>
-
   // console.log({{ beneficiary_dob }})
   // Populate the date response into the data input element
-  let dob = new Date({{ beneficiary_dob }});
+  let dob = new Date('{{ beneficiary_dob }}');
   let datestring1 = dob.getFullYear().toString().padStart(4, '0') + '-' + (dob.getMonth()+1).toString().padStart(2, '0') + '-' + dob.getDate().toString().padStart(2, '0');
   document.getElementById('id_personalinfo_date_of_birth').value = datestring1;
 
-  let national_id_exp_date = new Date({{ beneficiary_national_id_exp_data }});
+  let national_id_exp_date = new Date('{{ beneficiary_national_id_exp_data }}');
   let datestring2 = national_id_exp_date.getFullYear().toString().padStart(4, '0') + '-' + (national_id_exp_date.getMonth()+1).toString().padStart(2, '0') + '-' + national_id_exp_date.getDate().toString().padStart(2, '0');
   document.getElementById('id_personalinfo_national_id_exp_date').value = datestring2;
 
   {% if beneficiary_death_date_father_husband %}
-  let death_date_father_husband = new Date({{ beneficiary_death_date_father_husband }});
+  let death_date_father_husband = new Date('{{ beneficiary_death_date_father_husband }}');
   let datestring3 = death_date_father_husband.getFullYear().toString().padStart(4, '0') + '-' + (death_date_father_husband.getMonth()+1).toString().padStart(2, '0') + '-' + death_date_father_husband.getDate().toString().padStart(2, '0');
   document.getElementById('id_personalinfo_death_date_father_husband').value = datestring3;
   {% endif %}
 
   $(document).ready(function () {
     // List of values to match
-    var family_issues_list = {{ beneficiary.family_issues | safe }};
-    var family_needs_list = {{ beneficiary.family_needs | safe }};
+    var family_issues_list = JSON.parse(document.getElementById('family-issues-data').textContent);
+    var family_needs_list = JSON.parse(document.getElementById('family-needs-data').textContent);
 
     // Iterate through the checkboxes and set "checked" property based on the match
     $('[name^="familyinfo_issues_"]').each(function () {
@@ -3492,17 +3494,6 @@
       }
     }
 
-    $("#id_dependent_info_bank_iban").on("input", function () {
-          var iban = $(this).val();
-          var bankNameAr = getBankByIBAN(iban);
-
-          if (bankNameAr) {
-            $("#id_dependent_info_bank_type").val(bankNameAr).change();
-          } else {
-            $("#id_dependent_info_bank_type").val("").change(); // Reset to default if IBAN is invalid
-          }
-        });
-
     // Function to update the tabs based on the form's validation status
     function updateTabs() {
       var minChoiceErrorsVisible = $('.minChoiceErrorMessage').length > 0;
@@ -3531,19 +3522,6 @@
       } 
     });
 
-    // Function to convert non-English numbers to English numbers
-    function convertToEnglishNumber(input) {
-      const easternArabicNumerals = '٠١٢٣٤٥٦٧٨٩';
-      const englishNumerals = '0123456789';
-
-      for (let i = 0; i < easternArabicNumerals.length; i++) {
-          const regex = new RegExp(easternArabicNumerals[i], 'g');
-          input = input.replace(regex, englishNumerals[i]);
-      }
-
-      return input;
-    }
-
     // Event listener for all input fields with class 'convert-to-english'
     document.querySelectorAll('.convert-to-english').forEach(function (inputField) {
       inputField.addEventListener('input', function (event) {
@@ -3556,53 +3534,6 @@
         updateTabs();
       });
     });
-
-    // Function to display an error message
-    function displayMinChoiceCountFamilyIssuesErrorMessage(message, duration) {
-      // Check if the error message element already exists
-      var errorMessageElement = document.getElementById('minChoiceCountFamilyIssuesErrorMessage');
-      
-      // If not, create a new element and append it to the page
-      if (!errorMessageElement) {
-        errorMessageElement = document.createElement('div');
-        errorMessageElement.id = 'minChoiceCountFamilyIssuesErrorMessage';
-        errorMessageElement.classList.add('alert', 'alert-danger', 'minChoiceErrorMessage');
-
-        // Get the parent node of the dependent income table
-        var parentElement = document.getElementById('id_familyinfo_family_issues').parentNode;
-
-        // Insert the error message element at the top of the parent node
-        parentElement.insertBefore(errorMessageElement, parentElement.firstChild);
-
-        // Focus on the error message
-        errorMessageElement.focus();
-
-        // Remove the error message after a specified duration
-        //setTimeout(function () {
-        //  removeMaxRowErrorMessage();
-        //}, duration);
-      }
-
-      // Listen for changes in the checkboxes to update the error message
-      var checkboxes = document.querySelectorAll('#id_familyinfo_family_issues input[type="checkbox"]');
-      checkboxes.forEach(function (checkbox) {
-        checkbox.addEventListener('change', function () {
-          // Check if more than one checkbox is checked
-          var checkedCount = Array.from(checkboxes).filter(function (checkbox) {
-            return checkbox.checked;
-          }).length;
-
-          // If more than one checkbox is checked, remove the error message
-          if (checkedCount > 0) {
-            removeMinChoiceCountFamilyIssuesErrorMessage();
-            
-          }
-        });
-      });
-
-      // Set the error message text
-      errorMessageElement.textContent = message;
-    }
 
     // Function to remove the error message
     function removeMinChoiceCountFamilyIssuesErrorMessage() {
@@ -3741,7 +3672,7 @@
             required: true,
             nationalidRegex: true,
             remote: {
-              url: '{% url 'validate_national_id_dependent' user_id=request.user.id %}',
+              url: "{% url 'validate_national_id_dependent' user_id=request.user.id %}",
               type: 'post',
               data: {
                 national_id: function() {
@@ -3900,33 +3831,7 @@
 
           $("#family-table tbody").append($row);
 
-          // Clear checkboxes of dependent needs type
-          $("#id_dependent_info_needs_type input[type=checkbox]").prop('checked', false);
-
-          // Clear input fields
-          $("#id_dependent_info_first_name").val("");
-          $("#id_dependent_info_second_name").val("");
-          $("#id_dependent_info_last_name").val("");
-          $("#id_dependent_info_gender").val("");
-          $("#id_dependent_info_relationship").val("");
-          $("#id_dependent_info_educational_status").val("");
-          $("#id_dependent_info_marital_status").val("");
-          $("#id_dependent_info_national_id").val("");
-          $("#id_dependent_info_health_status").val("");
-          $("#id_dependent_info_monthly_income").val("");
-          $("#id_dependent_info_income_source").val("");
-          $("#id_dependent_info_needs_type").val("");
-          $("#id_dependent_info_educational_level").val("");
-          $("#id_dependent_info_educational_degree").val("");
-          $("#id_dependent_info_date_of_birth").val("");
-          $("#id_dependent_info_national_id_exp_date").val("");
-          $("#id_dependent_info_needs_description").val("");
-          $("#id_dependent_info_disease_type").val("");
-          $("#id_dependent_info_work_status").val("");
-          $("#id_dependent_info_employer").val("");
-          $("#id_dependent_info_contribute_to_family_income").val("");
-          $("#id_dependent_info_is_disabled").val("");
-          $("#id_dependent_info_disability_type").val("");
+          $add_dependent_form.trigger("reset");
 
           // Clear existing rows in the income table
           $("#incomeInfoTableBody").empty();
@@ -3967,19 +3872,6 @@
       populateEditModal($row);
     });
 
-    // Add event listener to the educational status dropdown for the input event
-    var healthStatusDropdown = document.getElementById('id_dependent_edit_info_health_status');
-    healthStatusDropdown.addEventListener('input', handleHealthStatusEditInput);
-
-    var workStatusDropdown = document.getElementById('id_dependent_edit_info_work_status');
-    workStatusDropdown.addEventListener('input', handleWorkStatusEditInput);
-
-    var disabilityTypeDropdown = document.getElementById('id_dependent_edit_info_is_disabled');
-    disabilityTypeDropdown.addEventListener('input', handleIsDisabledEditInput);
-
-    var categoryDropdown = document.getElementById('id_personalinfo_category');
-    categoryDropdown.addEventListener('input', categoryCheck);
-
     // Call the function for the first time the data is loaded
     categoryCheck(categoryDropdown);
 
@@ -3997,35 +3889,6 @@
 
     // Retrieve the data-attr-base-nid 
     //var base_national_id_edit_dep = $('#id_dependent_edit_info_national_id').data('data-attr-base-nid');
-
-
-    // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
-    function validateSAID(id) {
-      let type = id.substr(0, 1);
-      let sum = 0;
-      const _idLength = 10;
-      const _type1 = "1";
-      const _type2 = "2";
-      id = id.trim();
-      if (
-        isNaN(parseInt(id)) ||
-        id.length !== _idLength ||
-        (type !== _type2 && type !== _type1)
-      ) {
-        return false;
-      }
-      for (let num = 0; num < 10; num++) {
-        const digit = Number(id[num]);
-        if (num % 2 === 0) {
-          const doubled = digit * 2;
-          const ZFOdd = `00${doubled}`.slice(-2);
-          sum += Number(ZFOdd[0]) + Number(ZFOdd[1]);
-        } else {
-          sum += digit;
-        }
-      }
-      return sum % 10 !== 0 ? false : true;
-    }
 
     var includedFieldsEditModal = ["id_dependent_edit_info_national_id"]; // IDs of fields to include
 
@@ -4060,7 +3923,7 @@
           required: true,
           nationalidRegex: true,
           remote: {
-            url: '/beneficiaries/' + {{ request.user.id }}  + '/update/validate_national_id_edit_dependent/',
+            url: '/beneficiaries/' + '{{ request.user.id }}' + '/update/validate_national_id_edit_dependent/',
             type: 'post',
             data: {
               national_id: function() {
@@ -4193,27 +4056,6 @@
       }
     });
 
-
-
-    // Add an event listener to the dependent income table for add row btn
-    $("#id_add_row_income_edit_info").on("click", function () {
-      if ($modalForm.valid()) {
-          $saveChangesButton.prop("disabled", false);
-      } else {
-          $saveChangesButton.prop("disabled", true);
-      }
-    });
-
-
-    // Additionally, you may want to trigger the event when a row is removed from income table
-    $(".removeIncomeEditInfoRow").on("click", function () {
-      if ($modalForm.valid()) {
-          $saveChangesButton.prop("disabled", false);
-      } else {
-          $saveChangesButton.prop("disabled", true);
-      }
-    });
-
     // Function to populate the table with dependent data
     function populateTable(dependentData) {
         var tableBody = $('#family-table tbody');
@@ -4260,7 +4102,7 @@
     }
 
     // Call the function with dependent data
-    var dependentData = {{ dependent_list | safe }};
+    var dependentData = JSON.parse(document.getElementById('dependent-list-data').textContent);
     populateTable(dependentData);
 
     // Array to store file IDs marked for deletion
@@ -4340,7 +4182,7 @@
       // along with the correct 'boundary'
       // delete options.headers['Content-Type'];
 
-      fetch('https://beneficiaries.asdiqa.org.sa{% url 'beneficiary_request_update_confirm' user_id=user_info.id %}', {
+      fetch("{% url 'beneficiary_request_update_confirm' user_id=user_info.id %}", {
           method: 'POST',
           body: formData,
       })

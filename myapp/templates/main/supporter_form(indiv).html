@@ -1303,100 +1303,6 @@
 
 <script>
   $(document).ready(function () {
-
-    const banks = [
-      {
-        samaCode: "55",
-        bankName: "Banque Saudi Fransi",
-        nameEn: "Banque Saudi Fransi",
-        nameAr: "السعودي الفرنسي",
-      },
-      {
-        name: "Alrajhi Bank",
-        samaCode: "80",
-        nameEn: "Alrajhi Bank",
-        nameAr: "الراجحي",
-      },
-      {
-        samaCode: "10",
-        bankName: "National Commercial Bank",
-        nameEn: "National Commertial Bank",
-        nameAr: "الأهلي السعودي",
-      },
-      {
-        samaCode: "45",
-        bankName: "Saudi British Bank",
-        nameEn: "SABB",
-        nameAr: "ساب",
-      },
-      {
-        samaCode: "20",
-        bankName: "Riyadh Bank",
-        nameEn: "Riyad Bank",
-        nameAr: "الرياض",
-      },
-      {
-        samaCode: "05",
-        bankName: "Alinma Bank",
-        nameEn: "AL Inma Bank",
-        nameAr: "الإنماء",
-      },
-      {
-        samaCode: "60",
-        bankName: "Bank AlJazira",
-        nameEn: "Bank Aljazerah",
-        nameAr: "الجزيرة",
-      },
-      {
-        samaCode: "15",
-        bankName: "Bank AlBilad ",
-        nameEn: "BANK ALBELAD",
-        nameAr: "البلاد",
-      },
-      {
-        samaCode: "30",
-        bankName: "Arab National Bank",
-        nameEn: "Arab National Bank",
-        nameAr: "العربي",
-      },
-    ];
-
-    /**
-     * validates IBAN
-     * @return {boolean}
-     */
-    function validateIBAN(iban) {
-      if (!iban) {
-        return false;
-      }
-
-      iban = iban.trim();
-
-      if (iban.length !== 24) {
-        return false;
-      }
-
-      if (!iban.startsWith("SA")) {
-        return false;
-      }
-
-      const bankCode = iban.substring(4, 6);
-
-      return banks.some((b) => b.samaCode === bankCode);
-    }
-
-    /**
-     * Returns the bank object
-     * @return {Object}
-     */
-    function getBankByIBAN(iban) {
-      if (!validateIBAN(iban)) return null;
-
-      const bankCode = iban.substring(4, 6);
-      const bank = banks.find((b) => b.samaCode === bankCode);
-      return bank ? bank.nameAr : null;
-    }
-
     $("#id_beneficiaryinfo_iban").on("input", function () {
       var iban = $(this).val();
       var bankNameAr = getBankByIBAN(iban);
@@ -1408,36 +1314,6 @@
       }
     });
 
-    /**
-     * Mark all form steps as unfinished.
-     */
-    document
-      .querySelectorAll(".form-stepper-list")
-      .forEach((formStepHeader) => {
-        formStepHeader.classList.add("form-stepper-unfinished");
-        formStepHeader.classList.remove(
-          "form-stepper-active",
-          "form-stepper-completed"
-        );
-      });
-    let stepNumber = 1;
-    /**
-     * Select the form step circle (progress bar).
-     */
-    const formStepCircle = document.querySelector(
-      'li[step="' + stepNumber + '"]'
-    );
-
-    /**
-     * Mark the current form step as active.
-     */
-    formStepCircle.classList.remove(
-      "form-stepper-unfinished",
-      "form-stepper-completed"
-    );
-    formStepCircle.classList.add("form-stepper-active");
-
-    
     // Validator method for first, second, and last name fields in the form
     $.validator.addMethod(
       "nameRegex",
@@ -1448,34 +1324,6 @@
       },
       "يحتوي الأسم على حروف فقط."
     );
-
-    // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
-    function validateSAID(id) {
-      let type = id.substr(0, 1);
-      let sum = 0;
-      const _idLength = 10;
-      const _type1 = "1";
-      const _type2 = "2";
-      id = id.trim();
-      if (
-        isNaN(parseInt(id)) ||
-        id.length !== _idLength ||
-        (type !== _type2 && type !== _type1)
-      ) {
-        return false;
-      }
-      for (let num = 0; num < 10; num++) {
-        const digit = Number(id[num]);
-        if (num % 2 === 0) {
-          const doubled = digit * 2;
-          const ZFOdd = `00${doubled}`.slice(-2);
-          sum += Number(ZFOdd[0]) + Number(ZFOdd[1]);
-        } else {
-          sum += digit;
-        }
-      }
-      return sum % 10 !== 0 ? false : true;
-    }
 
     // Validator method for the national id (Iqama/Saudi)
     $.validator.addMethod(
@@ -1714,25 +1562,6 @@
         updateSteps(2);
       } else if ($("#payment_and_submit_confirmation").is(":visible")) {
         updateSteps(3);
-      }
-    }
-
-    // Update the class names based on the currentStep
-    function updateSteps(currentStep) {
-      // Reset all steps
-      $(".form-stepper-list")
-        .removeClass("form-stepper-active form-stepper-completed")
-        .addClass("form-stepper-unfinished");
-
-      // Activate and complete relevant steps
-      for (let step = 1; step <= currentStep; step++) {
-        $(`li[step="${step}"]`)
-          .removeClass("form-stepper-unfinished")
-          .addClass(
-            step === currentStep
-              ? "form-stepper-active"
-              : "form-stepper-completed"
-          );
       }
     }
 
@@ -2130,20 +1959,6 @@
   var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
     return new bootstrap.Popover(popoverTriggerEl)
   })
-
-  // Function to convert non-English numbers to English numbers
-  function convertToEnglishNumber(input) {
-    const easternArabicNumerals = '٠١٢٣٤٥٦٧٨٩';
-    const englishNumerals = '0123456789';
-
-    for (let i = 0; i < easternArabicNumerals.length; i++) {
-        const regex = new RegExp(easternArabicNumerals[i], 'g');
-        input = input.replace(regex, englishNumerals[i]);
-    }
-
-    return input;
-  }
-
 
   // Event listener for input field 'iben number'
   document.getElementById('id_personalinfo_national_id').addEventListener('input', function (event) {

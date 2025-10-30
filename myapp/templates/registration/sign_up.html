@@ -19,6 +19,7 @@
 
     <link rel="stylesheet" href="{% static 'css/signup.css' %}" />
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/utilities.js' %}"></script>
     {% comment %} <script src="{% static 'js/bootstrap.min.js' %}"></script> {% endcomment %}
     {% comment %} <link
       rel="stylesheet"
@@ -512,34 +513,6 @@
           "الرجاء إدخال بريد إلكتروني صحيح."
         );
 
-        // Validate Saudi Arabia IDs (Iqama/Saudi Natioanl Id)
-        function validateSAID(id) {
-          let type = id.substr(0, 1);
-          let sum = 0;
-          const _idLength = 10;
-          const _type1 = "1";
-          const _type2 = "2";
-          id = id.trim();
-          if (
-            isNaN(parseInt(id)) ||
-            id.length !== _idLength ||
-            (type !== _type2 && type !== _type1)
-          ) {
-            return false;
-          }
-          for (let num = 0; num < 10; num++) {
-            const digit = Number(id[num]);
-            if (num % 2 === 0) {
-              const doubled = digit * 2;
-              const ZFOdd = `00${doubled}`.slice(-2);
-              sum += Number(ZFOdd[0]) + Number(ZFOdd[1]);
-            } else {
-              sum += digit;
-            }
-          }
-          return sum % 10 !== 0 ? false : true;
-        }
-
         // Validator method for the national id (Iqama/Saudi)
         $.validator.addMethod(
           "nationalidRegex",
@@ -739,9 +712,9 @@
         });
 
       }); // (document).ready() end line
-      
-      const passwordInput = document.getElementById('id_password1');
-      const meterSections = document.querySelectorAll('.meter-section');
+
+      const $passwordInput = $('#id_password1');
+      const $meterSections = $('.meter-section');
 
       const togglePassword = document
             .querySelector('#togglePassword');
@@ -757,69 +730,10 @@
             togglePassword.classList.toggle("active");
         });
 
-      passwordInput.addEventListener('input', updateMeter);
-
-      function updateMeter() {
-          const password = passwordInput.value;
-          let strength = calculatePasswordStrength(password);
-
-          // Remove all strength classes
-          meterSections.forEach((section) => {
-              section.classList.remove('weak', 'medium', 'strong', 'very-strong');
-          });
-
-          // Add the appropriate strength class based on the strength value
-          if (strength >= 1) {
-              meterSections[0].classList.add('weak');
-          }
-          if (strength >= 2) {
-              meterSections[1].classList.add('medium');
-          }
-          if (strength >= 3) {
-              meterSections[2].classList.add('strong');
-          }
-          if (strength >= 4) {
-              meterSections[3].classList.add('very-strong');
-          }
-      }
-
-      function calculatePasswordStrength(password) {
-          const lengthWeight = 0.2;
-          const uppercaseWeight = 0.5;
-          const lowercaseWeight = 0.5;
-          const numberWeight = 0.7;
-          const symbolWeight = 1;
-
-          let strength = 0;
-
-          // Calculate the strength based on the password length
-          strength += password.length * lengthWeight;
-
-          // Calculate the strength based on uppercase letters
-          if (/[A-Z]/.test(password)) {
-              strength += uppercaseWeight;
-          }
-
-          // Calculate the strength based on lowercase letters
-          if (/[a-z]/.test(password)) {
-              strength += lowercaseWeight;
-          }
-
-          // Calculate the strength based on numbers
-          if (/\d/.test(password)) {
-              strength += numberWeight;
-          }
-
-          // Calculate the strength based on symbols
-          if (/[^A-Za-z0-9]/.test(password)) {
-              strength += symbolWeight;
-          }
-
-          return strength;
-      }
+      $passwordInput.on('input', () => updateMeter($meterSections, $passwordInput));
 
       // Add event listener for input event
-      passwordInput.addEventListener("input", function(event) {
+      $passwordInput.on("input", function(event) {
           var inputValue = event.target.value;
           var englishLettersPattern = /^[A-Za-z0-9!@#$%^&*()_~-]+$/; // Adjusted pattern to include additional characters for the strong password
           if (!englishLettersPattern.test(inputValue)) {

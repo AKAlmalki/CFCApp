@@ -209,11 +209,6 @@ function categoryCheck(that) {
   }
 }
 
-// Function to reset the input for IBAN input field 
-function resetInputIban() {
-  document.getElementById('id_beneficiaryinfo_iban').value = "SA";
-}
-
 function educationalStatusCheck(that) {
   if (that.value == "يدرس") {
       document.getElementById("id_dependent_info_educational_level_group_info").style.display = "block";
@@ -704,6 +699,58 @@ function deleteRowIncomeInfoTable(event, row) {
   }
 }
 
+function displayMinChoiceCountFamilyIssuesErrorMessage(message, duration) {
+  // Check if the error message element already exists
+  var errorMessageElement = document.getElementById('minChoiceCountFamilyIssuesErrorMessage');
+
+  // If not, create a new element and append it to the page
+  if (!errorMessageElement) {
+    errorMessageElement = document.createElement('div');
+    errorMessageElement.id = 'minChoiceCountFamilyIssuesErrorMessage';
+    errorMessageElement.classList.add('alert', 'alert-danger', 'minChoiceErrorMessage');
+
+    // Get the parent node of the dependent income table
+    var parentElement = document.getElementById('id_familyinfo_family_issues').parentNode;
+
+    // Insert the error message element at the top of the parent node
+    parentElement.insertBefore(errorMessageElement, parentElement.firstChild);
+
+    // Focus on the error message
+    errorMessageElement.focus();
+
+    // Remove the error message after a specified duration
+    //setTimeout(function () {
+    //  removeMaxRowErrorMessage();
+    //}, duration);
+  }
+
+  // Listen for changes in the checkboxes to update the error message
+  var checkboxes = document.querySelectorAll('#id_familyinfo_family_issues input[type="checkbox"]');
+  checkboxes.forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+      // Check if more than one checkbox is checked
+      var checkedCount = Array.from(checkboxes).filter(function (checkbox) {
+        return checkbox.checked;
+      }).length;
+
+      // If more than one checkbox is checked, remove the error message
+      if (checkedCount > 0) {
+        removeMinChoiceCountFamilyIssuesErrorMessage();
+
+      }
+    });
+  });
+
+  // Set the error message text
+  errorMessageElement.textContent = message;
+}
+
+function removeMinChoiceCountNeedsTypeErrorMessage() {
+  var errorMessageElement = document.getElementById('minChoiceCountNeedsTypeErrorMessage');
+  if (errorMessageElement) {
+    errorMessageElement.remove();
+  }
+}
 
 function clearInputFieldsIncomeInfoTable() {
   document.getElementById("id_dependent_info_monthly_income").value = "";
@@ -953,6 +1000,51 @@ function displayMinChoiceCountErrorMessage(message, duration) {
   errorMessageElement.textContent = message;
 }
 
+function displayMinChoiceCountNeedsTypeErrorMessage(message, duration) {
+  // Check if the error message element already exists
+  var errorMessageElement = document.getElementById('minChoiceCountNeedsTypeErrorMessage');
+
+  // If not, create a new element and append it to the page
+  if (!errorMessageElement) {
+    errorMessageElement = document.createElement('div');
+    errorMessageElement.id = 'minChoiceCountNeedsTypeErrorMessage';
+    errorMessageElement.classList.add('alert', 'alert-danger');
+
+    // Get the parent node of the dependent income table
+    var parentElement = document.getElementById('id_familyinfo_needs_type').parentNode;
+
+    // Insert the error message element at the top of the parent node
+    parentElement.insertBefore(errorMessageElement, parentElement.firstChild);
+
+    // Focus on the error message
+    errorMessageElement.focus();
+
+    // Remove the error message after a specified duration
+    //setTimeout(function () {
+    //  removeMaxRowErrorMessage();
+    //}, duration);
+  }
+
+  // Listen for changes in the checkboxes to update the error message
+  var checkboxes = document.querySelectorAll('#id_familyinfo_needs_type input[type="checkbox"]');
+  checkboxes.forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+      // Check if more than one checkbox is checked
+      var checkedCount = Array.from(checkboxes).filter(function (checkbox) {
+        return checkbox.checked;
+      }).length;
+
+      // If more than one checkbox is checked, remove the error message
+      if (checkedCount > 0) {
+        removeMinChoiceCountNeedsTypeErrorMessage();
+      }
+    });
+  });
+
+  // Set the error message text
+  errorMessageElement.textContent = message;
+}
+
 function removeMinChoiceCountErrorMessage() {
   var errorMessageElement = document.getElementById(
     "minChoiceCountErrorMessage",
@@ -1081,6 +1173,72 @@ function handleModalShown() {
   }, 2000); // 2000 = 2 seconds timeout
 }
 
+function checkAllCheckboxes() {
+  return (
+    $('#submit_confirmation input[type="checkbox"]').length ===
+    $('#submit_confirmation input[type="checkbox"]:checked').length
+  );
+}
+
+function validateCheckboxesAndShowError() {
+  var allChecked = checkAllCheckboxes();
+
+  if (!allChecked) {
+    $("#checkboxError").removeClass("d-none"); // Remove 'd-none' to show the error message
+    alert("الرجاء الموافقة على الإقرار"); // [NOT WORKING]
+    return false; // Indicate validation failed
+  } else {
+    $("#checkboxError").addClass("d-none"); // Add 'd-none' to hide the error message
+    return true; // Indicate validation passed
+  }
+}
+
+function updateFileNamesDisplay(fileInputId, fileNamesDivId) {
+  var fileInput = document.getElementById(fileInputId);
+  var fileNamesDiv = document.getElementById(fileNamesDivId);
+
+
+  // Initialize with a message indicating no file is uploaded
+  fileNamesDiv.innerHTML = "[لم يتم إرفاق أي ملفات]";
+
+  fileInput.addEventListener("change", function () {
+    var fileList = fileInput.files;
+
+    if (fileList.length > 0) {
+      fileNamesDiv.innerHTML = ""; // Clear the initial message
+      var ul = document.createElement("ul"); // Create unordered list element
+      ul.classList.add("file-names-list", "ps-1", "mt-3"); // Add classes to the list
+
+      for (var i = 0; i < fileList.length; i++) {
+        var fileSize = fileList[i].size;
+        var sizeLabel = "";
+
+        if (fileSize < 1024 * 1024) {
+          sizeLabel = (fileSize / 1024).toFixed(2) + " KB";
+        } else {
+          sizeLabel = (fileSize / (1024 * 1024)).toFixed(2) + " MB";
+        }
+
+        // Add CSS class to size label if file size exceeds 1 MB
+        var sizeClass = fileSize > 1024 * 1024 ? "text-bg-danger" : "text-bg-secondary";
+        sizeLabel = "<span class='badge " + sizeClass + " d-inline'>" + sizeLabel + "</span>";
+
+        // Create list item and append to the unordered list
+        var li = document.createElement("li");
+        li.innerHTML = fileList[i].name + " " + sizeLabel;
+        li.classList.add("mb-3", "text-truncate"); // Add class to list item
+        ul.appendChild(li);
+      }
+
+        // Append the unordered list to the fileNamesDiv
+      fileNamesDiv.appendChild(ul);
+    } else {
+      // Show the no files uploaded message if no file is selected
+      fileNamesDiv.innerHTML = "[لم يتم إرفاق أي ملفات]";
+    }
+  });
+}
+
 function resetInputFields() {
   // Reset the value of the monthly income input field
   $('#id_dependent_edit_info_monthly_income').val('');
@@ -1199,6 +1357,111 @@ $(document).ready(function () {
     document.getElementById("loadingStateEditModal").style.display = "block";
     // Hide actual content
     document.getElementById("editModalContent").style.display = "none";
+  });
+
+  $("#id_dependent_edit_info_bank_iban").on("input", function () {
+    var iban = $(this).val();
+    var bankNameAr = getBankByIBAN(iban);
+
+    if (bankNameAr) {
+      $("#id_dependent_edit_info_bank_type").val(bankNameAr).change();
+    } else {
+      $("#id_dependent_edit_info_bank_type").val("").change(); // Reset to default if IBAN is invalid
+    }
+  });
+
+  $("#id_add_row_income_edit_info").on("click", function () {
+    if ($modalForm.valid()) {
+        $saveChangesButton.prop("disabled", false);
+    } else {
+        $saveChangesButton.prop("disabled", true);
+    }
+  });
+
+  $("#submit-btn").click(function (e) {
+    if (!validateCheckboxesAndShowError()) {
+      e.preventDefault(); // Prevent form submission
+    }
+    // else form will be submitted as all checkboxes are checked
+  });
+
+  $('#submit_confirmation input[type="checkbox"]').change(function () {
+    if (checkAllCheckboxes()) {
+      $("#submit-btn").prop("disabled", false); // Enable submit button if all checkboxes are checked
+    } else {
+      $("#submit-btn").prop("disabled", true); // Keep submit button disabled otherwise
+    }
+  });
+
+  // Array of [fileInputId, fileNamesDivId] pairs
+  const fileInputPairs = [
+    ['BeneficiaryNationalAddress', 'NationalAddress'],
+    ['LeaseContractOrTitleDeed', 'LeaseContractOrTitleDeed'],
+    ['DeptInstrument', 'DeptInstrument'],
+    ['NationalIDForBeneficiaryForDependents', 'NationalIDForBeneficiaryForDependents'],
+    ['BeneficiaryNationalID', 'BeneficiaryNationalID'],
+    ['WaterOrElectricityBills', 'WaterOrElectricityBills'],
+    ['SocialWarrantyInquiry', 'SocialWarrantyInquiry'],
+    ['PensionOrSocialInsuranceInquiry', 'PensionOrSocialInsuranceInquiry'],
+    ['FatherOrHusbandDeathCertificate', 'FatherOrHusbandDeathCertificate'],
+    ['LetterFromPrison', 'LetterFromPrison'],
+    ['DivorceDeed', 'DivorceDeed'],
+    ['ChildrenResponsibilityDeed', 'ChildrenResponsibilityDeed'],
+    ['Other', 'Other']
+  ];
+
+  fileInputPairs.forEach(([input, display]) => {
+    updateFileNamesDisplay(`id_formFile${input}`, `id_fileNames${display}`);
+  });
+
+  $("#id_dependent_info_bank_iban").on("input", function () {
+    var iban = $(this).val();
+    var bankNameAr = getBankByIBAN(iban);
+
+    if (bankNameAr) {
+      $("#id_dependent_info_bank_type").val(bankNameAr).change();
+    } else {
+      $("#id_dependent_info_bank_type").val("").change(); // Reset to default if IBAN is invalid
+    }
+  });
+
+  $("#id_personalinfo_bank_iban").on("input", function () {
+    var iban = $(this).val();
+    var bankNameAr = getBankByIBAN(iban);
+
+    if (bankNameAr) {
+      $("#id_personalinfo_bank_type").val(bankNameAr).change();
+    } else {
+      $("#id_personalinfo_bank_type").val("").change(); // Reset to default if IBAN is invalid
+    }
+  });
+
+  $("#id_beneficiaryinfo_iban").on("input", function () {
+    var iban = $(this).val();
+    var bankNameAr = getBankByIBAN(iban);
+
+    if (bankNameAr) {
+      $("#id_beneficiaryinfo_bank").val(bankNameAr).change();
+    } else {
+      $("#id_beneficiaryinfo_bank").val("").change(); // Reset to default if IBAN is invalid
+    }
+  });
+
+  $('#id_dependent_edit_info_health_status').on('input', handleHealthStatusEditInput);
+  $('#id_dependent_edit_info_work_status').on('input', handleWorkStatusEditInput);
+  $('#id_dependent_edit_info_is_disabled').on('input', handleIsDisabledEditInput);
+  $('#id_personalinfo_category').on('input', categoryCheck)
+
+  const fields = [
+    '#id_personalinfo_national_id',
+    '#id_personalinfo_phone_number',
+    '#id_dependent_info_national_id',
+    '#id_houseinfo_unit',
+    '#id_beneficiaryinfo_iban'
+  ];
+
+  $(fields.join(', ')).on('input', function() {
+    this.value = convertToEnglishNumber(this.value);
   });
 
   $.validator.addMethod(

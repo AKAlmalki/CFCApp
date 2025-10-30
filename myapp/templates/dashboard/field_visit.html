@@ -14,6 +14,7 @@
   integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
   crossorigin="anonymous"
 ></script>
+<script src="{% static 'js/utilities.js' %}"></script>
 
 {% endblock %} {% block content %}
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mb-5">
@@ -281,77 +282,6 @@
 
 <script>
   $(document).ready(function () {
-
-    // Function to validate file sizes
-    function validateFileSizes() {
-      var files = document.querySelectorAll('input[type="file"]');
-      var maxSize = 1 * 1024 * 1024; // 1MB in bytes
-
-      for (var i = 0; i < files.length; i++) {
-          var fileInput = files[i];
-          var fileList = fileInput.files;
-
-          for (var j = 0; j < fileList.length; j++) {
-              var file = fileList[j];
-
-              // Check if file size exceeds the limit
-              if (file.size > maxSize) {
-                  alert('حجم الملف يجب ألا يتجاوز 1 ميجابايت.');
-                  return false;
-              }
-          }
-      }
-
-      return true; // All files are within the size limit
-    }
-
-    // Function to update the names of the uploaded files for each file input
-    function updateFileNamesDisplay(fileInputId, fileNamesDivId) {
-      var fileInput = document.getElementById(fileInputId);
-      var fileNamesDiv = document.getElementById(fileNamesDivId);
-      
-
-      // Initialize with a message indicating no file is uploaded
-      fileNamesDiv.innerHTML = "[لم يتم إرفاق أي ملفات]";
-
-      fileInput.addEventListener("change", function () {
-        var fileList = fileInput.files;
-
-        if (fileList.length > 0) {
-          fileNamesDiv.innerHTML = ""; // Clear the initial message
-          var ul = document.createElement("ul"); // Create unordered list element
-          ul.classList.add("file-names-list", "ps-1", "mt-3"); // Add classes to the list
-
-          for (var i = 0; i < fileList.length; i++) {
-            var fileSize = fileList[i].size;
-            var sizeLabel = "";
-
-            if (fileSize < 1024 * 1024) {
-              sizeLabel = (fileSize / 1024).toFixed(2) + " KB";
-            } else {
-              sizeLabel = (fileSize / (1024 * 1024)).toFixed(2) + " MB";
-            }
-
-            // Add CSS class to size label if file size exceeds 1 MB
-            var sizeClass = fileSize > 1024 * 1024 ? "text-bg-danger" : "text-bg-secondary";
-            sizeLabel = "<span class='badge " + sizeClass + " d-inline'>" + sizeLabel + "</span>";
-
-            // Create list item and append to the unordered list
-            var li = document.createElement("li");
-            li.innerHTML = fileList[i].name + " " + sizeLabel;
-            li.classList.add("mb-3", "text-truncate"); // Add class to list item
-            ul.appendChild(li);
-          }
-
-           // Append the unordered list to the fileNamesDiv
-          fileNamesDiv.appendChild(ul);
-        } else {
-          // Show the no files uploaded message if no file is selected
-          fileNamesDiv.innerHTML = "[لم يتم إرفاق أي ملفات]";
-        }
-      });
-    }
-
     // Initialize for each file input (fileInputId, fileNamesDivId)
     updateFileNamesDisplay(
       "id_field_visit_attachment",
