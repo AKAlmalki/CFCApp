@@ -3868,7 +3868,15 @@
 
         $("#family-table tbody").append($row);
 
-        $("#myform").trigger("reset");
+        $('#dependent_information').find('input, select, textarea').each(function() {
+            const $field = $(this);
+
+            if ($field.is(':checkbox') || $field.is(':radio')) {
+                $field.prop('checked', false);
+            } else {
+                $field.val('');
+            }
+        });
 
         // Clear existing rows in the income table
         $("#incomeInfoTableBody").empty();
