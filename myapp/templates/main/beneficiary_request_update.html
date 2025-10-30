@@ -2729,16 +2729,16 @@
 <script>
   // console.log({{ beneficiary_dob }})
   // Populate the date response into the data input element
-  let dob = new Date('{{ beneficiary_dob }}');
+  let dob = new Date({{ beneficiary_dob }});
   let datestring1 = dob.getFullYear().toString().padStart(4, '0') + '-' + (dob.getMonth()+1).toString().padStart(2, '0') + '-' + dob.getDate().toString().padStart(2, '0');
   document.getElementById('id_personalinfo_date_of_birth').value = datestring1;
 
-  let national_id_exp_date = new Date('{{ beneficiary_national_id_exp_data }}');
+  let national_id_exp_date = new Date({{ beneficiary_national_id_exp_data }});
   let datestring2 = national_id_exp_date.getFullYear().toString().padStart(4, '0') + '-' + (national_id_exp_date.getMonth()+1).toString().padStart(2, '0') + '-' + national_id_exp_date.getDate().toString().padStart(2, '0');
   document.getElementById('id_personalinfo_national_id_exp_date').value = datestring2;
 
   {% if beneficiary_death_date_father_husband %}
-  let death_date_father_husband = new Date('{{ beneficiary_death_date_father_husband }}');
+  let death_date_father_husband = new Date({{ beneficiary_death_date_father_husband }});
   let datestring3 = death_date_father_husband.getFullYear().toString().padStart(4, '0') + '-' + (death_date_father_husband.getMonth()+1).toString().padStart(2, '0') + '-' + death_date_father_husband.getDate().toString().padStart(2, '0');
   document.getElementById('id_personalinfo_death_date_father_husband').value = datestring3;
   {% endif %}

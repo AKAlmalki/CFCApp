@@ -2875,7 +2875,7 @@ def beneficiary_request_update(request, user_id):
                 'beneficiary_house': beneficiary_house_obj,
                 'beneficiary_income_expense': beneficiary_income_expense_obj,
                 'beneficiary_attachments': beneficiary_attachment_list,
-                'dependent_list': json.dumps(dependent_data),
+                'dependent_list': dependent_data,
             }
 
         else:
